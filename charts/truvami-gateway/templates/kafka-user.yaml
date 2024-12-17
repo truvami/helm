@@ -1,0 +1,31 @@
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaUser
+metadata:
+  name: truvami-gateway
+  namespace: truvami-development
+  labels:
+    strimzi.io/cluster: truvami-stack
+spec:
+  authentication:
+    type: tls
+  authorization:
+    type: simple
+    acls:
+      - resource:
+          type: topic
+          name: thingpark
+          patternType: literal
+        operations:
+          - Create
+          - Describe
+          - Write
+        host: "*"
+      - resource:
+          type: topic
+          name: thingpark-error
+          patternType: literal
+        operations:
+          - Create
+          - Describe
+          - Write
+        host: "*"

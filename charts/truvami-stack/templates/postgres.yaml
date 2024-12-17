@@ -1,0 +1,20 @@
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: {{ include "truvami-stack.fullname" . }}
+  labels:
+    {{- include "truvami-stack.labels" . | nindent 4 }}
+spec:
+  instances: {{ .Values.postgres.replicaCount }}
+  imageName: "{{ .Values.postgres.image.repository }}:{{ .Values.postgres.image.tag }}"
+  bootstrap:
+    initdb:
+      postInitTemplateSQL:
+        - CREATE EXTENSION postgis;
+  storage: {{ .Values.postgres.storage | toYaml | nindent 4 }}
+  {{- if .Values.postgres.backup.enable }}
+  backup:
+    barmanObjectStore: {{ .Values.postgres.backup.barmanObjectStore | toYaml | nindent 4 }}
+    retentionPolicy: {{ .Values.postgres.backup.retentionPolicy | quote }}
+  {{- end }}
+  

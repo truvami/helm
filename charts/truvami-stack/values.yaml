@@ -1,0 +1,53 @@
+# Default values for truvami-stack.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+kafka:
+  replicaCount: 1
+  storage:
+    size: 25Gi
+
+postgres:
+  replicaCount: 3
+  image:
+    repository: ghcr.io/cloudnative-pg/postgis
+    tag: "17-3.4"
+  storage:
+    storageClass: standard-retain
+    size: 25Gi
+  backup:
+    enable: false
+    retentionPolicy: "30d"
+    barmanObjectStore:
+      destinationPath: "<destination path here>"
+      s3Credentials:
+        accessKeyId:
+          name: aws-creds
+          key: ACCESS_KEY_ID
+        secretAccessKey:
+          name: aws-creds
+          key: ACCESS_SECRET_KEY
+
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+podAnnotations: {}
+podLabels: {}
+
+podSecurityContext: {}
+  # fsGroup: 2000
+
+securityContext: {}
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 1000
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}

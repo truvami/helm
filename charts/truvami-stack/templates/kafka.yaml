@@ -1,0 +1,60 @@
+
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaNodePool
+metadata:
+  name: {{ include "truvami-stack.fullname" . }}-nodepool
+  labels:
+    strimzi.io/cluster: {{ include "truvami-stack.fullname" . }}
+    {{- include "truvami-stack.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.kafka.replicaCount }}
+  roles:
+    - controller
+    - broker
+  storage:
+    type: jbod
+    volumes:
+      - id: 0
+        type: persistent-claim
+        size: {{ .Values.kafka.storage.size }}
+        deleteClaim: false
+        kraftMetadata: shared
+---
+apiVersion: kafka.strimzi.io/v1beta2
+kind: Kafka
+metadata:
+  name: {{ include "truvami-stack.fullname" . }}
+  labels:
+    {{- include "truvami-stack.labels" . | nindent 4 }}
+  annotations:
+    strimzi.io/node-pools: enabled
+    strimzi.io/kraft: enabled
+spec:
+  kafka:
+    version: 3.7.1
+    metadataVersion: 3.7-IV0
+    listeners:
+      - name: tls
+        port: 9093
+        tls: true
+        type: internal
+        authentication:
+          type: tls
+    config:
+      offsets.topic.replication.factor: 1
+      transaction.state.log.replication.factor: 1
+      transaction.state.log.min.isr: 1
+      default.replication.factor: 1
+      min.insync.replicas: 1
+    authorization:
+      type: simple
+    resources:
+      requests:
+        memory: 8Gi
+        cpu: "4"
+      limits:
+        memory: 12Gi
+        cpu: "6"
+  entityOperator:
+    topicOperator: {}
+    userOperator: {}
