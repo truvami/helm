@@ -53,12 +53,36 @@ spec:
             {{- toYaml .Values.readinessProbe | nindent 12 }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
+          env:
+            - name: KAFKA_SSL_KEYSTORE_LOCATION
+              value: /var/run/secrets/kafka/user.p12
+            - name: KAFKA_SSL_KEYSTORE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  key: user.password
+                  name: {{ .Values.gateway.kafkaSecretName }}
+                  optional: false
+            - name: KAFKA_SSL_KEY_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  key: user.password
+                  name: {{ .Values.gateway.kafkaSecretName }}
+                  optional: false
           {{- with .Values.volumeMounts }}
           volumeMounts:
+            - mountPath: /var/run/secrets/kafka
+              mountPropagation: None
+              name: kafka-credentials
+              readOnly: true
             {{- toYaml . | nindent 12 }}
           {{- end }}
       {{- with .Values.volumes }}
       volumes:
+        - name: kafka-credentials
+          secret:
+            defaultMode: 420
+            optional: false
+            secretName: {{ .Values.gateway.kafkaSecretName }}
         {{- toYaml . | nindent 8 }}
       {{- end }}
       {{- with .Values.nodeSelector }}

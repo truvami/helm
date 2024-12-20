@@ -10,9 +10,7 @@ resources:
         memory: 12Gi
         pods: 50
 sourceRepos:
-- https://github.com/truvami/api
-- https://github.com/truvami/ingester
 - https://provectus.github.io/kafka-ui-charts
 - https://helm.coder.com/v2
 - https://github.com/truvami/web.git
-- https://github.com/truvami/helm.git
+- https://helm.truvami.com

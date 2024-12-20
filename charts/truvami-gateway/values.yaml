@@ -4,6 +4,18 @@
 
 gateway:
   host: gateway.foo-bar.com
+  kafkaSecretName: truvami-gateway
+  kafka:
+    bootstrap:
+      servers: 
+        - my-kafka-bootstrap:9093
+    allow.auto.create.topics: false
+    enable.ssl.certificate.verification: false
+    ssl:
+      ca:
+        location: /var/run/secrets/kafka/ca.crt
+    security:
+      protocol: SSL
   integrations:
     - name: my-integration
       type: thingpark
