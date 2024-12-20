@@ -1,0 +1,59 @@
+apiVersion: v1
+entries:
+  truvami-api:
+  - apiVersion: v2
+    appVersion: 0.0.1
+    created: "2024-12-20T14:17:48.981471815Z"
+    description: A Helm chart for Kubernetes
+    digest: 90ddbbf283e02664f2b8a343afbb1ed45ffd79a3b3b17957265896e9bc75629b
+    icon: https://raw.githubusercontent.com/truvami/helm/main/assets/icon.svg
+    name: truvami-api
+    type: application
+    urls:
+    - https://github.com/truvami/helm/releases/download/truvami-api-0.0.1/truvami-api-0.0.1.tgz
+    version: 0.0.1
+  truvami-bridge:
+  - apiVersion: v2
+    appVersion: 0.0.1
+    created: "2024-12-20T14:17:49.126103082Z"
+    description: A Helm chart for Kubernetes
+    digest: ca63db873ba3879c9f54c3f14876ddf16c9472c548b5f50b5c6b0a054317044b
+    icon: https://raw.githubusercontent.com/truvami/helm/main/assets/icon.svg
+    name: truvami-bridge
+    type: application
+    urls:
+    - https://github.com/truvami/helm/releases/download/truvami-bridge-0.0.1/truvami-bridge-0.0.1.tgz
+    version: 0.0.1
+  truvami-gateway:
+  - apiVersion: v2
+    appVersion: 0.0.1
+    created: "2024-12-20T14:17:49.255448646Z"
+    description: A Helm chart for Kubernetes
+    digest: 85280c819edcb040e1ba14cbcc3f19c771f0b264cd7a69c7c12c2d2d11ad33b7
+    icon: https://raw.githubusercontent.com/truvami/helm/main/assets/icon.svg
+    name: truvami-gateway
+    type: application
+    urls:
+    - https://github.com/truvami/helm/releases/download/truvami-gateway-0.0.1/truvami-gateway-0.0.1.tgz
+    version: 0.0.1
+  truvami-stack:
+  - apiVersion: v2
+    created: "2024-12-20T14:17:49.349789939Z"
+    dependencies:
+    - name: truvami-gateway
+      repository: file://../truvami-gateway/
+      version: 0.0.1
+    - name: truvami-bridge
+      repository: file://../truvami-bridge/
+      version: 0.0.1
+    - name: truvami-api
+      repository: file://../truvami-api/
+      version: 0.0.1
+    description: A Helm chart for Kubernetes
+    digest: 1d66a649d4802581a0817abf4141bd0fac05de85b614a59971622e0a9e823c82
+    name: truvami-stack
+    type: application
+    urls:
+    - https://github.com/truvami/helm/releases/download/truvami-stack-0.1.0/truvami-stack-0.1.0.tgz
+    version: 0.1.0
+generated: "2024-12-20T14:17:49.34979585Z"
