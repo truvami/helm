@@ -26,3 +26,6 @@ kube-score:
 		helm template ./charts/$$chart | kube-score score -; \
 		echo; \
 	done
+
+build-stack:
+	helm dep up ./charts/truvami-stack

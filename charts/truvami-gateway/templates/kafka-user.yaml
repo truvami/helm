@@ -1,8 +1,30 @@
+{{- range $i, $integration := .Values.gateway.integrations }}
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaTopic
+metadata:
+  name: {{ $integration.name }}
+  labels:
+    strimzi.io/cluster: truvami-stack
+spec:
+  partitions: {{ $integration.topic.partitions | default 3 }}
+  replicas: {{ $integration.topic.replicas | default 3 }}
+  config: {{ $integration.topic.config | toYaml | nindent 4 }}
+---
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaTopic
+metadata:
+  name: "{{ $integration.name }}-error"
+  labels:
+    strimzi.io/cluster: truvami-stack
+spec:
+  partitions: {{ $integration.topic.partitions | default 3 }}
+  replicas: {{ $integration.topic.replicas | default 3 }}
+  config: {{ $integration.topic.config | toYaml | nindent 4 }}
+---
 apiVersion: kafka.strimzi.io/v1beta2
 kind: KafkaUser
 metadata:
-  name: truvami-gateway
-  namespace: truvami-development
+  name: {{ $integration.name }}
   labels:
     strimzi.io/cluster: truvami-stack
 spec:
@@ -13,7 +35,7 @@ spec:
     acls:
       - resource:
           type: topic
-          name: thingpark
+          name: {{ $integration.name }}
           patternType: literal
         operations:
           - Create
@@ -22,10 +44,12 @@ spec:
         host: "*"
       - resource:
           type: topic
-          name: thingpark-error
+          name: "{{ $integration.name }}-error"
           patternType: literal
         operations:
           - Create
           - Describe
           - Write
         host: "*"
+---
+{{ end -}}
