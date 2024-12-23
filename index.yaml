@@ -38,6 +38,25 @@ entries:
     version: 0.0.1
   truvami-stack:
   - apiVersion: v2
+    created: "2024-12-23T12:28:03.739548551Z"
+    dependencies:
+    - name: truvami-gateway
+      repository: file://../truvami-gateway/
+      version: 0.0.2
+    - name: truvami-bridge
+      repository: file://../truvami-bridge/
+      version: 0.0.1
+    - name: truvami-api
+      repository: file://../truvami-api/
+      version: 0.0.1
+    description: A Helm chart for Kubernetes
+    digest: 828b6b6213c099d8c7f9af79fe8ed0501cb0d2fb8fb23665600160c5adad7a96
+    name: truvami-stack
+    type: application
+    urls:
+    - https://github.com/truvami/helm/releases/download/truvami-stack-0.1.1/truvami-stack-0.1.1.tgz
+    version: 0.1.1
+  - apiVersion: v2
     created: "2024-12-20T14:17:49.349789939Z"
     dependencies:
     - name: truvami-gateway
@@ -56,4 +75,4 @@ entries:
     urls:
     - https://github.com/truvami/helm/releases/download/truvami-stack-0.1.0/truvami-stack-0.1.0.tgz
     version: 0.1.0
-generated: "2024-12-20T14:17:49.34979585Z"
+generated: "2024-12-23T12:28:03.739556616Z"
