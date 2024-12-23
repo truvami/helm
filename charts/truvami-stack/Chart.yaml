@@ -12,7 +12,7 @@ version: 0.1.0
 # This chart is a parent chart that deploys all the truvami applications.
 dependencies:
   - name: truvami-gateway
-    version: 0.0.1
+    version: 0.0.2
     repository: "file://../truvami-gateway/"
   - name: truvami-bridge
     version: 0.0.1
