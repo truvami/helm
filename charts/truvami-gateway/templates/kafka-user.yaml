@@ -5,9 +5,9 @@ metadata:
   labels:
     strimzi.io/cluster: truvami-stack
 spec:
-  partitions: {{ .Values.gateway.kafka.topic.partitions | default 3 }}
-  replicas: {{ .Values.gateway.kafka.topic.replicas | default 3 }}
-  config: {{ .Values.gateway.kafka.topic.config | toYaml | nindent 4 }}
+  partitions: {{ .Values.kafka.topic.partitions | default 3 }}
+  replicas: {{ .Values.kafka.topic.replicas | default 3 }}
+  config: {{ .Values.kafka.topic.config | toYaml | nindent 4 }}
 ---
 apiVersion: kafka.strimzi.io/v1beta2
 kind: KafkaTopic
@@ -16,9 +16,9 @@ metadata:
   labels:
     strimzi.io/cluster: truvami-stack
 spec:
-  partitions: {{ .Values.gateway.kafka.topic.partitions | default 3 }}
-  replicas: {{ .Values.gateway.kafka.topic.replicas | default 3 }}
-  config: {{ .Values.gateway.kafka.topic.config | toYaml | nindent 4 }}
+  partitions: {{ .Values.kafka.topic.partitions | default 3 }}
+  replicas: {{ .Values.kafka.topic.replicas | default 3 }}
+  config: {{ .Values.kafka.topic.config | toYaml | nindent 4 }}
 ---
 apiVersion: kafka.strimzi.io/v1beta2
 kind: KafkaUser
