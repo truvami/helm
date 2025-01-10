@@ -65,13 +65,13 @@ spec:
               valueFrom:
                 secretKeyRef:
                   key: user.password
-                  name: {{ .Values.gateway.kafkaSecretName }}
+                  name: {{ .Values.gateway.name }}
                   optional: false
             - name: KAFKA_SSL_KEY_PASSWORD
               valueFrom:
                 secretKeyRef:
                   key: user.password
-                  name: {{ .Values.gateway.kafkaSecretName }}
+                  name: {{ .Values.gateway.name }}
                   optional: false
           {{- with .Values.volumeMounts }}
           volumeMounts:

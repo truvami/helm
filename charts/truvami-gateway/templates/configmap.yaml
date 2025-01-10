@@ -3,4 +3,5 @@ kind: ConfigMap
 metadata:
   name: "config-{{ .Values.gateway.name }}"
 data:
-  config.yaml: | {{ .Values.gateway | toYaml | nindent 4 }}
+  config.yaml: | 
+    {{ .Values.gateway | toYaml | nindent 4 }}

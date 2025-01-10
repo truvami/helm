@@ -1,7 +1,7 @@
 apiVersion: kafka.strimzi.io/v1beta2
 kind: KafkaTopic
 metadata:
-  name: {{ .Values.gateway.name }}
+  name: "{{ .Values.gateway.topic }}"
   labels:
     strimzi.io/cluster: truvami-stack
 spec:
@@ -12,7 +12,7 @@ spec:
 apiVersion: kafka.strimzi.io/v1beta2
 kind: KafkaTopic
 metadata:
-  name: "{{ .Values.gateway.name }}-error"
+  name: "{{ .Values.gateway.errorTopic }}"
   labels:
     strimzi.io/cluster: truvami-stack
 spec:
@@ -34,7 +34,7 @@ spec:
     acls:
       - resource:
           type: topic
-          name: {{ .Values.gateway.name }}
+          name: {{ .Values.gateway.topic }}
           patternType: literal
         operations:
           - Create
@@ -43,7 +43,7 @@ spec:
         host: "*"
       - resource:
           type: topic
-          name: "{{ .Values.gateway.name }}-error"
+          name: "{{ .Values.gateway.errorTopic }}"
           patternType: literal
         operations:
           - Create

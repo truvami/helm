@@ -4,13 +4,17 @@
 
 gateway:
   name: my-integration
-  type: thingpark
-  host: gateway.foo-bar.com
-  kafkaSecretName: truvami-gateway
+  host: 0.0.0.0
+  port: 8080
+  uplinkFormat: thingpark
+
+  topic: "thingpark"
+  errorTopic: "thingpark-errors"
+
   kafka:
     bootstrap:
-      servers:
-        - truvami-stack-bootstrap:9093
+      servers: 
+        - truvami-stack-kafka-bootstrap:9093
     allow.auto.create.topics: false
     enable.ssl.certificate.verification: false
     ssl:
