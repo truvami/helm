@@ -3,7 +3,7 @@
 # Declare variables to be passed into your templates.
 
 kafka:
-  replicaCount: 1
+  replicaCount: 3
   storage:
     size: 25Gi
 

@@ -37,11 +37,12 @@ spec:
     {{- end }}
   {{- end }}
   rules:
-    - host: {{ .Values.gateway.host | quote }}
+    {{- range .Values.ingress.tls }}
+    {{- range .hosts }}
+    - host: {{ . | quote }}
       http:
         paths:
-          {{- range $i, $integration := .Values.gateway.integrations }}
-          - path: "/{{ sha256sum $integration.name }}"
+          - path: "/{{ sha256sum .Values.gateway.name }}"
             backend:
               {{- if semverCompare ">=1.19-0" $.Capabilities.KubeVersion.GitVersion }}
               service:
@@ -52,5 +53,6 @@ spec:
               serviceName: {{ $fullName }}
               servicePort: {{ $svcPort }}
               {{- end }}
-          {{- end }}
+    {{- end }}
+    {{- end }}
 {{- end }}

@@ -1,0 +1,12 @@
+truvami-gateway:
+  imagePullSecrets:
+    - name: ghcr-io
+  ingress:
+    enabled: true
+    className: "nginx-external"
+    annotations:
+      cert-manager.io/issuer": "truvami-letsencrypt-production"
+    tls:
+      - secretName: gateway-truvami-com-tls
+        hosts:
+          - gateway.truvami.com
