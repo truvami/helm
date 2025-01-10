@@ -1,19 +1,6 @@
-{{ $kafka := .Values.gateway.kafka }}
-{{- range $i, $integration := .Values.gateway.integrations }}
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: "config-{{ $integration.name }}"
+  name: "config-{{ .Values.gateway.name }}"
 data:
-  config.yaml: |-
-    host: 0.0.0.0
-    port: 8080
-    topic: {{ $integration.name }}
-    errorTopic: "{{ $integration.name }}-error"
-    uplinkFormat: {{ $integration.type }}
-    kafka:
-      {{ $kafka | toYaml | nindent 6 }}
----
-{{ end -}}
-
-  
+  config.yaml: | {{ .Values.gateway | toYaml | nindent 4 }}

@@ -3,12 +3,14 @@
 # Declare variables to be passed into your templates.
 
 gateway:
+  name: my-integration
+  type: thingpark
   host: gateway.foo-bar.com
   kafkaSecretName: truvami-gateway
   kafka:
     bootstrap:
-      servers: 
-        - my-kafka-bootstrap:9093
+      servers:
+        - truvami-stack-bootstrap:9093
     allow.auto.create.topics: false
     enable.ssl.certificate.verification: false
     ssl:
@@ -16,15 +18,12 @@ gateway:
         location: /var/run/secrets/kafka/ca.crt
     security:
       protocol: SSL
-  integrations:
-    - name: my-integration
-      type: thingpark
-      topic:
-        partitions: 3
-        replicas: 3
-        config:
-          retention.ms: 2592000000
-          segment.bytes: 1073741824
+    topic:
+      partitions: 3
+      replicas: 3
+      config:
+        retention.ms: 2592000000
+        segment.bytes: 1073741824
 
 replicaCount: 1
 
@@ -108,18 +107,27 @@ autoscaling:
   targetCPUUtilizationPercentage: 80
   # targetMemoryUtilizationPercentage: 80
 
-# Additional volumes on the output Deployment definition.
-volumes: []
-# - name: foo
-#   secret:
-#     secretName: mysecret
-#     optional: false
+volumes:
+  - configMap:
+      defaultMode: 420
+      name: "config-my-integration"
+      optional: false
+    name: config
+  - name: kafka-credentials
+    secret:
+      defaultMode: 420
+      optional: false
+      secretName: "my-integration"
 
 # Additional volumeMounts on the output Deployment definition.
-volumeMounts: []
-# - name: foo
-#   mountPath: "/etc/foo"
-#   readOnly: true
+volumeMounts:
+  - mountPath: /etc/gateway
+    name: config
+    readOnly: true
+  - mountPath: /var/run/secrets/kafka
+    mountPropagation: None
+    name: kafka-credentials
+    readOnly: true
 
 nodeSelector: {}
 

@@ -39,6 +39,11 @@ spec:
               {{- include "truvami-gateway.selectorLabels" . | nindent 14 }}
       containers:
         - name: {{ .Chart.Name }}
+          args:
+            - '--config'
+            - /etc/gateway/config.yaml
+          command:
+            - /usr/bin/gateway
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
@@ -70,19 +75,10 @@ spec:
                   optional: false
           {{- with .Values.volumeMounts }}
           volumeMounts:
-            - mountPath: /var/run/secrets/kafka
-              mountPropagation: None
-              name: kafka-credentials
-              readOnly: true
             {{- toYaml . | nindent 12 }}
           {{- end }}
       {{- with .Values.volumes }}
       volumes:
-        - name: kafka-credentials
-          secret:
-            defaultMode: 420
-            optional: false
-            secretName: {{ .Values.gateway.kafkaSecretName }}
         {{- toYaml . | nindent 8 }}
       {{- end }}
       {{- with .Values.nodeSelector }}
