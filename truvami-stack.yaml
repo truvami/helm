@@ -1,4 +1,5 @@
 truvami-gateway:
+  replicaCount: 3
   imagePullSecrets:
     - name: ghcr-io
   ingress:
