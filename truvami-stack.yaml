@@ -5,7 +5,7 @@ truvami-gateway:
     enabled: true
     className: "nginx-external"
     annotations:
-      cert-manager.io/issuer": "truvami-letsencrypt-production"
+      "cert-manager.io/issuer": "truvami-letsencrypt-production"
     tls:
       - secretName: gateway-truvami-com-tls
         hosts:

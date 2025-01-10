@@ -44,6 +44,7 @@ spec:
       http:
         paths:
           - path: "/{{ sha256sum $gateway.name }}"
+            pathType: Prefix
             backend:
               {{- if semverCompare ">=1.19-0" $.Capabilities.KubeVersion.GitVersion }}
               service:
