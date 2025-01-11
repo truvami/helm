@@ -18,5 +18,5 @@ dependencies:
     version: 0.0.1
     repository: "file://../truvami-bridge/"
   - name: truvami-api
-    version: 0.0.4
+    version: 0.0.5
     repository: "file://../truvami-api/"
