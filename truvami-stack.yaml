@@ -15,6 +15,11 @@ truvami-gateway:
 
 truvami-api:
   api:
+    server:
+      cors:
+        allowedOrigins:
+          - "http://localhost:3000"
+          - "https://dashboard.truvami.com"
     auth:
       jwksURL: "https://sso.sbcdc.ch/auth/realms/truvami/protocol/openid-connect/certs"
       issuer: "https://sso.sbcdc.ch/auth/realms/truvami"

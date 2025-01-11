@@ -5,6 +5,11 @@
 api:
   server:
     port: 8888
+    cors:
+      allowedOrigins:
+        - http://dashboard.truvami.com
+        - http://dashboard.test.truvami.com
+
 
   metrics:
     enabled: true
