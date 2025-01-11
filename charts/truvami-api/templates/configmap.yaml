@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: "config-api"
+data:
+  config.yaml: | 
+    {{ .Values.api | toYaml | nindent 4 }}
