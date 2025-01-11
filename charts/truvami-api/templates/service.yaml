@@ -5,11 +5,21 @@ metadata:
   labels:
     {{- include "truvami-api.labels" . | nindent 4 }}
 spec:
-  type: {{ .Values.service.type }}
+  type: ClusterIP
   ports:
-    - port: {{ .Values.service.port }}
+    - port: {{ .Values.api.server.port }}
       targetPort: http
       protocol: TCP
       name: http
+    - port: {{ .Values.api.grpc.port }}
+      targetPort: grpc
+      protocol: TCP
+      name: grpc
+    {{- if .Values.api.metrics.enabled }}
+    - port: {{ .Values.api.metrics.port }}
+      targetPort: metrics
+      protocol: TCP
+      name: metrics
+    {{- end }}
   selector:
     {{- include "truvami-api.selectorLabels" . | nindent 4 }}

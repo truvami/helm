@@ -7,6 +7,6 @@ dependencies:
   version: 0.0.1
 - name: truvami-api
   repository: file://../truvami-api/
-  version: 0.0.1
-digest: sha256:c6d18ffb736ea3dec90eb8484ade76135b9469fc67c264b4a03fec46e4122a70
-generated: "2025-01-10T20:13:34.208743+01:00"
+  version: 0.0.2
+digest: sha256:8c6e112388669646c459ddad0de315cb34cee1236b737cbb855a6f20231548a2
+generated: "2025-01-11T01:03:06.775866+01:00"

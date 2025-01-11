@@ -32,14 +32,34 @@ spec:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
       containers:
         - name: {{ .Chart.Name }}
+          args:
+            - '--config'
+            - /etc/truvami-api/config.yaml
+          command:
+            - /usr/bin/server
+          env:
+            - name: DATABASE_URI
+              valueFrom:
+                secretKeyRef:
+                  key: {{ .Values.database.secretKey }}
+                  name: {{ .Values.database.secretName }}
+                  optional: false
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
             - name: http
-              containerPort: {{ .Values.service.port }}
+              containerPort: {{ .Values.api.server.port }}
               protocol: TCP
+            - name: grpc
+              containerPort: {{ .Values.api.grpc.port }}
+              protocol: TCP
+            {{- if .Values.api.metrics.enabled }}
+            - name: metrics
+              containerPort: {{ .Values.api.metrics.port }}
+              protocol: TCP
+            {{- end }}
           livenessProbe:
             {{- toYaml .Values.livenessProbe | nindent 12 }}
           readinessProbe:

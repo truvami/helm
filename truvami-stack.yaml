@@ -12,3 +12,26 @@ truvami-gateway:
       - secretName: gateway-test-truvami-com-tls
         hosts:
           - gateway.test.truvami.com
+
+truvami-api:
+  api:
+    auth:
+      jwksURL: "https://sso.sbcdc.ch/auth/realms/truvami/protocol/openid-connect/certs"
+      issuer: "https://sso.sbcdc.ch/auth/realms/truvami"
+  replicaCount: 3
+  imagePullSecrets:
+    - name: ghcr-io
+  ingress:
+    enabled: true
+    className: "nginx-external"
+    annotations:
+      "cert-manager.io/issuer": "truvami-letsencrypt-production"
+    hosts:
+      - host: api.test.truvami.com
+        paths:
+          - path: /
+            pathType: ImplementationSpecific
+    tls:
+      - secretName: api-test-truvami-com-tls
+        hosts:
+          - api.test.truvami.com
