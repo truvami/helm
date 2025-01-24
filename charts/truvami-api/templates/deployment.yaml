@@ -36,7 +36,7 @@ spec:
             - '--config'
             - /etc/truvami-api/config.yaml
           command:
-            - /usr/bin/server
+            - /usr/bin/truvami-api
           env:
             - name: DATABASE_URI
               valueFrom:

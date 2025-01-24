@@ -15,7 +15,7 @@ truvami-gateway:
 
 truvami-api:
   image:
-    tag: "0.0.6-alpha6"
+    tag: "0.1.0-alpha2"
   api:
     server:
       cors:
