@@ -14,8 +14,10 @@ truvami-gateway:
           - gateway.test.truvami.com
 
 truvami-api:
+  serviceMonitor:
+    enabled: true
   image:
-    tag: "0.1.0-alpha2"
+    tag: "0.1.0-alpha13"
   api:
     server:
       cors:
@@ -25,7 +27,7 @@ truvami-api:
     auth:
       jwksURL: "https://sso.sbcdc.ch/auth/realms/truvami/protocol/openid-connect/certs"
       issuer: "https://sso.sbcdc.ch/auth/realms/truvami"
-  replicaCount: 3
+  replicaCount: 1
   imagePullSecrets:
     - name: ghcr-io
   ingress:

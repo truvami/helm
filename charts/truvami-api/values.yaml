@@ -7,21 +7,17 @@ api:
     port: 8888
     cors:
       allowedOrigins:
-        - http://dashboard.truvami.com
-        - http://dashboard.test.truvami.com
-
+        - http://localhost:3000
+        - http://api.truvami.com
+        - http://api.test.truvami.com
 
   metrics:
     enabled: true
-    port: 9090  
-
-  logging:
-    level: "debug"
-    json: true
+    port: 8889
 
   auth:
-    jwksURL: "https://foo.bar/protocol/openid-connect/certs"
-    issuer: "https://foo.bar/realms/truvami"
+    jwksURL: "https://sso.sbcdc.ch/auth/realms/truvami/protocol/openid-connect/certs"
+    issuer: "https://sso.sbcdc.ch/auth/realms/truvami"
 
   grpc:
     host: "0.0.0.0"
@@ -101,11 +97,11 @@ resources:
 
 livenessProbe:
   httpGet:
-    path: /metrics
+    path: /healthz
     port: metrics
 readinessProbe:
   httpGet:
-    path: /metrics
+    path: /readyz
     port: metrics
 
 autoscaling:
@@ -134,3 +130,6 @@ nodeSelector: {}
 tolerations: []
 
 affinity: {}
+
+serviceMonitor:
+  enabled: false
