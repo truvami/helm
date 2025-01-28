@@ -30,7 +30,7 @@ jobs:
 
       - name: Build Charts
         run: |
-          make build-charts
+          make build-stack
           
       - name: Run chart-releaser
         uses: helm/chart-releaser-action@v1.6.0
