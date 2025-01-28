@@ -1,40 +1,14 @@
-# Default values for truvami-api.
+# Default values for truvami-dashboard.
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
-api:
-  server:
-    port: 8888
-    cors:
-      allowedOrigins:
-        - http://localhost:3000
-        - http://api.truvami.com
-        - http://api.test.truvami.com
-
-  metrics:
-    enabled: true
-    port: 8889
-
-  auth:
-    jwksURL: "https://sso.sbcdc.ch/auth/realms/truvami/protocol/openid-connect/certs"
-    issuer: "https://sso.sbcdc.ch/auth/realms/truvami"
-
-  grpc:
-    host: "0.0.0.0"
-    port: 5001
-
-  otel:
-    enabled: false
-    endpoint: "localhost:4318"
-
-database:
-  secretName: truvami-stack-app
-  secretKey: uri
-
 replicaCount: 1
 
+issuer: https://sso.sbcdc.ch/auth/realms/truvami
+clientId: api
+
 image:
-  repository: ghcr.io/truvami/api
+  repository: ghcr.io/truvami/dashboard
   pullPolicy: Always
   # Overrides the image tag whose default is the chart appVersion.
   tag: ""
@@ -60,20 +34,17 @@ podLabels: {}
 podSecurityContext: {}
   # fsGroup: 2000
 
-securityContext:
-  capabilities:
-    drop:
-      - ALL
-  readOnlyRootFilesystem: true
-  runAsNonRoot: true
-  runAsUser: 1000
+securityContext: {}
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 1000
 
-metrics:
-  enabled: true
-  port: 9090
-  serviceMonitor:
-    enabled: false
-    additionalLabels: {}
+service:
+  type: ClusterIP
+  port: 8080
 
 ingress:
   enabled: false
@@ -91,22 +62,26 @@ ingress:
   #    hosts:
   #      - chart-example.local
 
-resources:
-  limits:
-    cpu: 100m
-    memory: 128Mi
-  requests:
-    cpu: 100m
-    memory: 128Mi
+resources: {}
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  # limits:
+  #   cpu: 100m
+  #   memory: 128Mi
+  # requests:
+  #   cpu: 100m
+  #   memory: 128Mi
 
 livenessProbe:
   httpGet:
-    path: /healthz
-    port: metrics
+    path: /
+    port: http
 readinessProbe:
   httpGet:
-    path: /readyz
-    port: metrics
+    path: /
+    port: http
 
 autoscaling:
   enabled: false
@@ -116,24 +91,20 @@ autoscaling:
   # targetMemoryUtilizationPercentage: 80
 
 # Additional volumes on the output Deployment definition.
-volumes:
-  - configMap:
-      defaultMode: 420
-      name: "config-api"
-      optional: false
-    name: config
+volumes: []
+# - name: foo
+#   secret:
+#     secretName: mysecret
+#     optional: false
 
 # Additional volumeMounts on the output Deployment definition.
-volumeMounts:
-  - mountPath: /etc/truvami-api
-    name: config
-    readOnly: true
+volumeMounts: []
+# - name: foo
+#   mountPath: "/etc/foo"
+#   readOnly: true
 
 nodeSelector: {}
 
 tolerations: []
 
 affinity: {}
-
-serviceMonitor:
-  enabled: false

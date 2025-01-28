@@ -1,0 +1,23 @@
+apiVersion: monitoring.coreos.com/v1alpha1
+kind: AlertmanagerConfig
+metadata:
+  name: truvami-stack
+  labels:
+    alertmanagerConfig: truvami-stack
+spec:
+  route:
+    groupBy: ["job"]
+    groupWait: 30s
+    groupInterval: 5m
+    repeatInterval: 12h
+    receiver: "teams"
+    matchers:
+      - name: "namespace"
+        value: "truvami-development"
+  receivers:
+    - name: "teams"
+      msteamsConfigs:
+        - webhookUrl:
+            name: truvami-stack
+            key: "msteams-webhook-url"
+          sendResolved: true

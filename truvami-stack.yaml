@@ -13,11 +13,33 @@ truvami-gateway:
         hosts:
           - gateway.test.truvami.com
 
+truvami-bridge:
+  replicaCount: 0
+
+truvami-decoder:
+  replicaCount: 0
+
+truvami-dashboard:
+  ingress:
+    enabled: true
+    className: "nginx-external"
+    annotations:
+      "cert-manager.io/issuer": "truvami-letsencrypt-production"
+    hosts:
+      - host: dashboard.test.truvami.com
+        paths:
+          - path: /
+            pathType: ImplementationSpecific
+    tls:
+      - secretName: dashboard-test-truvami-com-tls
+        hosts:
+          - dashboard.test.truvami.com
+
 truvami-api:
   serviceMonitor:
     enabled: true
   image:
-    tag: "0.1.0-alpha13"
+    tag: "0.1.0-alpha14"
   api:
     server:
       cors:
@@ -27,7 +49,10 @@ truvami-api:
     auth:
       jwksURL: "https://sso.sbcdc.ch/auth/realms/truvami/protocol/openid-connect/certs"
       issuer: "https://sso.sbcdc.ch/auth/realms/truvami"
-  replicaCount: 1
+    otel:
+      enabled: true
+      endpoint: "tempo.grafana-tempo.svc.cluster.local:4318"
+  replicaCount: 3
   imagePullSecrets:
     - name: ghcr-io
   ingress:
@@ -44,3 +69,7 @@ truvami-api:
       - secretName: api-test-truvami-com-tls
         hosts:
           - api.test.truvami.com
+  autoscaling:
+    enabled: true
+    minReplicas: 2
+    maxReplicas: 6
