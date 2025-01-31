@@ -128,6 +128,17 @@ entries:
   truvami-gateway:
   - apiVersion: v2
     appVersion: 0.1.0-alpha1
+    created: "2025-01-31T10:16:54.969866439Z"
+    description: A Helm chart for Kubernetes
+    digest: 44a4fe828992078721fb2caf2fbb4c772748cb62fa61818a5a8504e2fe94372b
+    icon: https://raw.githubusercontent.com/truvami/helm/main/assets/icon.svg
+    name: truvami-gateway
+    type: application
+    urls:
+    - https://github.com/truvami/helm/releases/download/truvami-gateway-0.0.21/truvami-gateway-0.0.21.tgz
+    version: 0.0.21
+  - apiVersion: v2
+    appVersion: 0.1.0-alpha1
     created: "2025-01-31T10:11:49.242651768Z"
     description: A Helm chart for Kubernetes
     digest: 6532c2bb82bc7439330523f68bcd7a3bf537ba2db15a10ce53b95505318c719f
@@ -325,6 +336,31 @@ entries:
     - https://github.com/truvami/helm/releases/download/truvami-gateway-0.0.1/truvami-gateway-0.0.1.tgz
     version: 0.0.1
   truvami-stack:
+  - apiVersion: v2
+    created: "2025-01-31T10:16:55.126343793Z"
+    dependencies:
+    - name: truvami-gateway
+      repository: file://../truvami-gateway/
+      version: 0.0.21
+    - name: truvami-bridge
+      repository: file://../truvami-bridge/
+      version: 0.0.1
+    - name: truvami-api
+      repository: file://../truvami-api/
+      version: 0.0.9
+    - name: truvami-decoder
+      repository: file://../truvami-decoder/
+      version: 0.0.1
+    - name: truvami-dashboard
+      repository: file://../truvami-dashboard/
+      version: 0.0.2
+    description: A Helm chart for Kubernetes
+    digest: e53eb895d939f8579e080cb77d93b266456258cad94dc9a862b4bbebd034cbfb
+    name: truvami-stack
+    type: application
+    urls:
+    - https://github.com/truvami/helm/releases/download/truvami-stack-0.1.29/truvami-stack-0.1.29.tgz
+    version: 0.1.29
   - apiVersion: v2
     created: "2025-01-31T10:11:49.417243372Z"
     dependencies:
@@ -846,4 +882,4 @@ entries:
     urls:
     - https://github.com/truvami/helm/releases/download/truvami-stack-0.1.0/truvami-stack-0.1.0.tgz
     version: 0.1.0
-generated: "2025-01-31T10:11:49.417584247Z"
+generated: "2025-01-31T10:16:55.126985033Z"
