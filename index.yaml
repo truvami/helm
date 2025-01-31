@@ -91,6 +91,17 @@ entries:
     version: 0.0.1
   truvami-bridge:
   - apiVersion: v2
+    appVersion: 2.0.2
+    created: "2025-01-31T20:02:53.762585298Z"
+    description: A Helm chart for Kubernetes
+    digest: 488dbcd062a69576d3258490aeaea90e9ddf576f3b7fbaed201ad9be200ef76e
+    icon: https://raw.githubusercontent.com/truvami/helm/main/assets/icon.svg
+    name: truvami-bridge
+    type: application
+    urls:
+    - https://github.com/truvami/helm/releases/download/truvami-bridge-0.1.0/truvami-bridge-0.1.0.tgz
+    version: 0.1.0
+  - apiVersion: v2
     appVersion: 0.0.1
     created: "2024-12-20T14:17:49.126103082Z"
     description: A Helm chart for Kubernetes
@@ -358,6 +369,31 @@ entries:
     - https://github.com/truvami/helm/releases/download/truvami-gateway-0.0.1/truvami-gateway-0.0.1.tgz
     version: 0.0.1
   truvami-stack:
+  - apiVersion: v2
+    created: "2025-01-31T20:02:53.92309398Z"
+    dependencies:
+    - name: truvami-gateway
+      repository: file://../truvami-gateway/
+      version: 0.0.23
+    - name: truvami-bridge
+      repository: file://../truvami-bridge/
+      version: 0.1.0
+    - name: truvami-api
+      repository: file://../truvami-api/
+      version: 0.0.9
+    - name: truvami-decoder
+      repository: file://../truvami-decoder/
+      version: 0.0.1
+    - name: truvami-dashboard
+      repository: file://../truvami-dashboard/
+      version: 0.0.2
+    description: A Helm chart for Kubernetes
+    digest: 8c6f0e601b03ac74ed0a163bd80892b7233928a90fd8ead1f31dd600f85011c8
+    name: truvami-stack
+    type: application
+    urls:
+    - https://github.com/truvami/helm/releases/download/truvami-stack-0.1.32/truvami-stack-0.1.32.tgz
+    version: 0.1.32
   - apiVersion: v2
     created: "2025-01-31T10:32:42.120612403Z"
     dependencies:
@@ -954,4 +990,4 @@ entries:
     urls:
     - https://github.com/truvami/helm/releases/download/truvami-stack-0.1.0/truvami-stack-0.1.0.tgz
     version: 0.1.0
-generated: "2025-01-31T10:32:42.120957471Z"
+generated: "2025-01-31T20:02:53.923327056Z"
