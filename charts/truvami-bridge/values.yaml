@@ -7,6 +7,8 @@ bridge:
     enable: true
     endpoint: "tempo.grafana-tempo.svc.cluster.local:4318"
 
+  topic: "truvami"
+
   grpc:
     server: truvami-stack-truvami-api:5001
 

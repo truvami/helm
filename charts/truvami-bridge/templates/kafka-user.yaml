@@ -12,20 +12,22 @@ spec:
     acls:
       - resource:
           type: topic
-          name:  "{{ .Values.bridge.topic }}-uplinks"
+          name: "{{ .Values.bridge.topic }}-uplinks"
           patternType: literal
-        operations:
-          - Create
-          - Describe
-          - Write
-        host: "*"
+        operation: Read
       - resource:
           type: topic
-          name:  "{{ .Values.bridge.topic }}-errors"
+          name: __consumer_offsets
           patternType: literal
-        operations:
-          - Create
-          - Describe
-          - Write
-        host: "*"
+        operation: Write
+      - resource:
+          type: group
+          name: truvami-bridge
+          patternType: literal
+        operation: Describe
+      - resource:
+          type: group
+          name: truvami-bridge
+          patternType: literal
+        operation: Read
 ---
