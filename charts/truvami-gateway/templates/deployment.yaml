@@ -41,9 +41,9 @@ spec:
         - name: {{ .Chart.Name }}
           args:
             - '--config'
-            - /etc/gateway/config.yaml
+            - /etc/truvami-gateway/config.yaml
           command:
-            - /usr/bin/gateway
+            - /usr/bin/truvami-gateway
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
