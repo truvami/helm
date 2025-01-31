@@ -3,7 +3,7 @@ kind: KafkaTopic
 metadata:
   name: "{{ .Values.gateway.topic }}-uplinks"
   labels:
-    strimzi.io/cluster: truvami-stack
+    strimzi.io/cluster: {{ .Release.Name }}
 spec:
   partitions: {{ .Values.kafka.topic.partitions | default 3 }}
   replicas: {{ .Values.kafka.topic.replicas | default 3 }}
@@ -14,7 +14,7 @@ kind: KafkaTopic
 metadata:
   name: "{{ .Values.gateway.topic }}-uplinks"
   labels:
-    strimzi.io/cluster: truvami-stack
+    strimzi.io/cluster: {{ .Release.Name }}
 spec:
   partitions: {{ .Values.kafka.topic.partitions | default 3 }}
   replicas: {{ .Values.kafka.topic.replicas | default 3 }}
@@ -23,9 +23,9 @@ spec:
 apiVersion: kafka.strimzi.io/v1beta2
 kind: KafkaUser
 metadata:
-  name: {{ .Release.Name }}
+  name: "{{ .Values.gateway.topic }}-gateway-kafka"
   labels:
-    strimzi.io/cluster: truvami-stack
+    strimzi.io/cluster: {{ .Release.Name }}
 spec:
   authentication:
     type: tls

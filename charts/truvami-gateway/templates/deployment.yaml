@@ -68,7 +68,7 @@ spec:
               valueFrom:
                 secretKeyRef:
                   key: user.password
-                  name: {{ .Release.Name }}
+                  name: "{{ .Values.gateway.topic }}-gateway-config"
                   optional: false
             - name: KAFKA_SSL_KEY_PASSWORD
               valueFrom:
@@ -80,7 +80,7 @@ spec:
               valueFrom:
                 secretKeyRef:
                   key: apikeys
-                  name: "{{ .Release.Name }}-apikeys"
+                  name: "{{ .Values.gateway.topic }}-gateway-apikeys"
                   optional: false
           {{- with .Values.volumeMounts }}
           volumeMounts:
