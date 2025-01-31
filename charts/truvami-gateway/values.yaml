@@ -95,12 +95,12 @@ resources:
 
 livenessProbe:
   httpGet:
-    path: /ready
-    port: http
+    path: /
+    port: metrics
 readinessProbe:
   httpGet:
-    path: /ready
-    port: http
+    path: /
+    port: metrics
 
 autoscaling:
   enabled: false
@@ -112,14 +112,14 @@ autoscaling:
 volumes:
   - configMap:
       defaultMode: 420
-      name: "config-my-integration"
+      name: "truvami-gateway-config"
       optional: false
     name: config
   - name: kafka-credentials
     secret:
       defaultMode: 420
       optional: false
-      secretName: "my-integration"
+      secretName: "truvami-gateway"
 
 # Additional volumeMounts on the output Deployment definition.
 volumeMounts:

@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: "config-{{ .Values.gateway.name }}"
+  name: "{{ .Release.Name }}-config"
 data:
   config.yaml: | 
     {{ .Values.gateway | toYaml | nindent 4 }}
