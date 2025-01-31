@@ -68,13 +68,13 @@ spec:
               valueFrom:
                 secretKeyRef:
                   key: user.password
-                  name: "{{ .Values.gateway.topic }}-gateway-config"
+                  name: "{{ .Values.gateway.topic }}-gateway-kafka"
                   optional: false
             - name: KAFKA_SSL_KEY_PASSWORD
               valueFrom:
                 secretKeyRef:
                   key: user.password
-                  name: {{ .Release.Name }}
+                  name: "{{ .Values.gateway.topic }}-gateway-kafka"
                   optional: false
             - name: APIKEYS
               valueFrom:
