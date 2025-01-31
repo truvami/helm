@@ -30,8 +30,20 @@ spec:
       serviceAccountName: {{ include "truvami-bridge.serviceAccountName" . }}
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      topologySpreadConstraints:
+        - maxSkew: 1
+          topologyKey: kubernetes.io/hostname
+          whenUnsatisfiable: ScheduleAnyway
+          labelSelector:
+            matchLabels:
+              {{- include "truvami-bridge.selectorLabels" . | nindent 14 }}
       containers:
         - name: {{ .Chart.Name }}
+          args:
+            - '--config'
+            - /etc/truvami-bridge/config.yaml
+          command:
+            - /usr/bin/truvami-bridge
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
@@ -40,12 +52,30 @@ spec:
             - name: http
               containerPort: {{ .Values.service.port }}
               protocol: TCP
+            - name: metrics
+              containerPort: 9090
+              protocol: TCP
           livenessProbe:
             {{- toYaml .Values.livenessProbe | nindent 12 }}
           readinessProbe:
             {{- toYaml .Values.readinessProbe | nindent 12 }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
+          env:
+            - name: KAFKA_SSL_KEYSTORE_LOCATION
+              value: /var/run/secrets/kafka/user.p12
+            - name: KAFKA_SSL_KEYSTORE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  key: user.password
+                  name: "{{ .Values.bridge.topic }}-bridge-kafka"
+                  optional: false
+            - name: KAFKA_SSL_KEY_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  key: user.password
+                  name: "{{ .Values.bridge.topic }}-bridge-kafka"
+                  optional: false
           {{- with .Values.volumeMounts }}
           volumeMounts:
             {{- toYaml . | nindent 12 }}

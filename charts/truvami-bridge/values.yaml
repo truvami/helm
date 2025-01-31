@@ -2,10 +2,38 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
+bridge:
+  otel:
+    enable: true
+    endpoint: "tempo.grafana-tempo.svc.cluster.local:4318"
+
+  grpc:
+    server: truvami-stack-truvami-api:5001
+
+  kafka:
+    bootstrap:
+      servers: 
+        - truvami-stack-kafka-bootstrap:9093
+    allow.auto.create.topics: false
+    enable.ssl.certificate.verification: false
+    ssl:
+      ca:
+        location: /var/run/secrets/kafka/ca.crt
+    security:
+      protocol: SSL
+
+kafka:
+  topic:
+    partitions: 12
+    replicas: 3
+    config:
+      retention.ms: 2592000000
+      segment.bytes: 1073741824
+
 replicaCount: 1
 
 image:
-  repository: ghcr.io/truvami/truvami-bridge
+  repository: ghcr.io/truvami/bridge
   pullPolicy: Always
   # Overrides the image tag whose default is the chart appVersion.
   tag: ""
@@ -16,9 +44,9 @@ fullnameOverride: ""
 
 serviceAccount:
   # Specifies whether a service account should be created
-  create: true
+  create: false
   # Automatically mount a ServiceAccount's API credentials?
-  automount: true
+  automount: false
   # Annotations to add to the service account
   annotations: {}
   # The name of the service account to use.
@@ -28,20 +56,21 @@ serviceAccount:
 podAnnotations: {}
 podLabels: {}
 
-podSecurityContext: {}
+podSecurityContext:
+  {}
   # fsGroup: 2000
 
-securityContext: {}
-  # capabilities:
-  #   drop:
-  #   - ALL
-  # readOnlyRootFilesystem: true
-  # runAsNonRoot: true
-  # runAsUser: 1000
+securityContext:
+  capabilities:
+    drop:
+      - ALL
+  readOnlyRootFilesystem: true
+  runAsNonRoot: true
+  runAsUser: 1000
 
 service:
   type: ClusterIP
-  port: 80
+  port: 8080
 
 ingress:
   enabled: false
@@ -49,36 +78,31 @@ ingress:
   annotations: {}
     # kubernetes.io/ingress.class: nginx
     # kubernetes.io/tls-acme: "true"
-  hosts:
-    - host: chart-example.local
-      paths:
-        - path: /
-          pathType: ImplementationSpecific
   tls: []
   #  - secretName: chart-example-tls
   #    hosts:
   #      - chart-example.local
 
-resources: {}
-  # We usually recommend not to specify default resources and to leave this as a conscious
-  # choice for the user. This also increases chances charts run on environments with little
-  # resources, such as Minikube. If you do want to specify resources, uncomment the following
-  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
-  # limits:
-  #   cpu: 100m
-  #   memory: 128Mi
-  # requests:
-  #   cpu: 100m
-  #   memory: 128Mi
+# We usually recommend not to specify default resources and to leave this as a conscious
+# choice for the user. This also increases chances charts run on environments with little
+# resources, such as Minikube. If you do want to specify resources, uncomment the following
+# lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+resources:
+  limits:
+    cpu: 100m
+    memory: 128Mi
+  requests:
+    cpu: 100m
+    memory: 128Mi
 
 livenessProbe:
   httpGet:
     path: /
-    port: http
+    port: metrics
 readinessProbe:
   httpGet:
     path: /
-    port: http
+    port: metrics
 
 autoscaling:
   enabled: false
@@ -87,18 +111,27 @@ autoscaling:
   targetCPUUtilizationPercentage: 80
   # targetMemoryUtilizationPercentage: 80
 
-# Additional volumes on the output Deployment definition.
-volumes: []
-# - name: foo
-#   secret:
-#     secretName: mysecret
-#     optional: false
+volumes:
+  - configMap:
+      defaultMode: 420
+      name: "truvami-bridge-config"
+      optional: false
+    name: config
+  - name: kafka-credentials
+    secret:
+      defaultMode: 420
+      optional: false
+      secretName: "truvami-bridge-kafka"
 
 # Additional volumeMounts on the output Deployment definition.
-volumeMounts: []
-# - name: foo
-#   mountPath: "/etc/foo"
-#   readOnly: true
+volumeMounts:
+  - mountPath: /etc/truvami-bridge
+    name: config
+    readOnly: true
+  - mountPath: /var/run/secrets/kafka
+    mountPropagation: None
+    name: kafka-credentials
+    readOnly: true
 
 nodeSelector: {}
 

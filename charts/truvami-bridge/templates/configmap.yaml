@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: "{{ .Values.bridge.topic }}-bridge-config"
+data:
+  config.yaml: | 
+    {{ .Values.bridge | toYaml | nindent 4 }}
