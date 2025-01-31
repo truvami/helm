@@ -1,7 +1,7 @@
 dependencies:
 - name: truvami-gateway
   repository: file://../truvami-gateway/
-  version: 0.0.16
+  version: 0.0.17
 - name: truvami-bridge
   repository: file://../truvami-bridge/
   version: 0.0.1
@@ -14,5 +14,5 @@ dependencies:
 - name: truvami-dashboard
   repository: file://../truvami-dashboard/
   version: 0.0.2
-digest: sha256:0b2c0bf775bb70caf19a078df0ffacb645bc42d70959e88780af590848965d27
-generated: "2025-01-28T14:33:19.450721+01:00"
+digest: sha256:71b69608d56a934f8979f6ce024375a745ec05953dcede2b9202733f8aee03d4
+generated: "2025-01-31T09:39:10.865591261Z"
