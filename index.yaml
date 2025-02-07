@@ -126,6 +126,17 @@ entries:
   truvami-dashboard:
   - apiVersion: v2
     appVersion: 2.0.0-alpha7
+    created: "2025-02-07T14:19:59.284019252Z"
+    description: A Helm chart for Kubernetes
+    digest: 079f0700676b5455b64925293e0f9c3fdc0d8c7458bd2b0c60edbf6647cac0cd
+    icon: https://raw.githubusercontent.com/truvami/helm/main/assets/icon.svg
+    name: truvami-dashboard
+    type: application
+    urls:
+    - https://github.com/truvami/helm/releases/download/truvami-dashboard-0.0.4/truvami-dashboard-0.0.4.tgz
+    version: 0.0.4
+  - apiVersion: v2
+    appVersion: 2.0.0-alpha7
     created: "2025-02-07T14:16:17.689275541Z"
     description: A Helm chart for Kubernetes
     digest: 2d2735e8523ea010875a2178d3d5153b44a57a249bf40bdbe39cdd655d7eb940
@@ -391,6 +402,31 @@ entries:
     - https://github.com/truvami/helm/releases/download/truvami-gateway-0.0.1/truvami-gateway-0.0.1.tgz
     version: 0.0.1
   truvami-stack:
+  - apiVersion: v2
+    created: "2025-02-07T14:19:59.391827982Z"
+    dependencies:
+    - name: truvami-gateway
+      repository: file://../truvami-gateway/
+      version: 0.0.23
+    - name: truvami-bridge
+      repository: file://../truvami-bridge/
+      version: 0.1.1
+    - name: truvami-api
+      repository: file://../truvami-api/
+      version: 0.0.9
+    - name: truvami-decoder
+      repository: file://../truvami-decoder/
+      version: 0.0.1
+    - name: truvami-dashboard
+      repository: file://../truvami-dashboard/
+      version: 0.0.4
+    description: A Helm chart for Kubernetes
+    digest: e767b8f0a46859d1d665432d2f520998942b51d99f8501aee1124c6a7b55a41c
+    name: truvami-stack
+    type: application
+    urls:
+    - https://github.com/truvami/helm/releases/download/truvami-stack-0.1.35/truvami-stack-0.1.35.tgz
+    version: 0.1.35
   - apiVersion: v2
     created: "2025-02-07T14:16:17.80334986Z"
     dependencies:
@@ -1062,4 +1098,4 @@ entries:
     urls:
     - https://github.com/truvami/helm/releases/download/truvami-stack-0.1.0/truvami-stack-0.1.0.tgz
     version: 0.1.0
-generated: "2025-02-07T14:16:17.803882745Z"
+generated: "2025-02-07T14:19:59.392161107Z"
