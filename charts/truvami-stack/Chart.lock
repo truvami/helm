@@ -13,6 +13,6 @@ dependencies:
   version: 0.0.1
 - name: truvami-dashboard
   repository: file://../truvami-dashboard/
-  version: 0.0.3
-digest: sha256:380fc156d44f280e709d3fb01e6870fbc6effcd7f3ffb2e9d5942f6c375d92d7
-generated: "2025-02-07T15:15:43.460652+01:00"
+  version: 0.0.4
+digest: sha256:ecc75c67df2f58132e5f301f74daf58e0e2a04f4f7f9be8e7364c17ce353b5a8
+generated: "2025-02-07T15:19:11.799483+01:00"
