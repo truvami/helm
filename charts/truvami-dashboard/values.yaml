@@ -5,7 +5,7 @@
 replicaCount: 1
 
 issuer: https://sso.sbcdc.ch/auth/realms/truvami
-clientId: api
+clientId: dashboard
 
 image:
   repository: ghcr.io/truvami/dashboard
@@ -44,7 +44,7 @@ securityContext: {}
 
 service:
   type: ClusterIP
-  port: 8080
+  port: 3000
 
 ingress:
   enabled: false
