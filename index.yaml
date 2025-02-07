@@ -126,6 +126,17 @@ entries:
   truvami-dashboard:
   - apiVersion: v2
     appVersion: 2.0.0-alpha7
+    created: "2025-02-07T14:33:48.203356978Z"
+    description: A Helm chart for Kubernetes
+    digest: e35932e5c0db3feffce64cc4ae2b7f0272f9202c376a8494ba34f570cc2928c3
+    icon: https://raw.githubusercontent.com/truvami/helm/main/assets/icon.svg
+    name: truvami-dashboard
+    type: application
+    urls:
+    - https://github.com/truvami/helm/releases/download/truvami-dashboard-0.0.6/truvami-dashboard-0.0.6.tgz
+    version: 0.0.6
+  - apiVersion: v2
+    appVersion: 2.0.0-alpha7
     created: "2025-02-07T14:27:01.659965823Z"
     description: A Helm chart for Kubernetes
     digest: af3a4b4950b8a91cd570e3baaef25601f3f349410f30407a277d8fb672e933b0
@@ -413,6 +424,31 @@ entries:
     - https://github.com/truvami/helm/releases/download/truvami-gateway-0.0.1/truvami-gateway-0.0.1.tgz
     version: 0.0.1
   truvami-stack:
+  - apiVersion: v2
+    created: "2025-02-07T14:33:48.343225771Z"
+    dependencies:
+    - name: truvami-gateway
+      repository: file://../truvami-gateway/
+      version: 0.0.23
+    - name: truvami-bridge
+      repository: file://../truvami-bridge/
+      version: 0.1.1
+    - name: truvami-api
+      repository: file://../truvami-api/
+      version: 0.0.9
+    - name: truvami-decoder
+      repository: file://../truvami-decoder/
+      version: 0.0.1
+    - name: truvami-dashboard
+      repository: file://../truvami-dashboard/
+      version: 0.0.6
+    description: A Helm chart for Kubernetes
+    digest: f2d9906c54f8db86b3a26ebf3ea6d51e5fbac0f6a651ec3246fb524904bbf238
+    name: truvami-stack
+    type: application
+    urls:
+    - https://github.com/truvami/helm/releases/download/truvami-stack-0.1.37/truvami-stack-0.1.37.tgz
+    version: 0.1.37
   - apiVersion: v2
     created: "2025-02-07T14:27:01.808366556Z"
     dependencies:
@@ -1134,4 +1170,4 @@ entries:
     urls:
     - https://github.com/truvami/helm/releases/download/truvami-stack-0.1.0/truvami-stack-0.1.0.tgz
     version: 0.1.0
-generated: "2025-02-07T14:27:01.808777296Z"
+generated: "2025-02-07T14:33:48.343619639Z"
