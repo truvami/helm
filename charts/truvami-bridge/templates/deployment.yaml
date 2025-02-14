@@ -62,6 +62,14 @@ spec:
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
           env:
+            - name: KAFKA_GROUP_ID
+              value: {{ .Release.Name }}
+            - name: GOOGLE_APIKEY
+              valueFrom:
+                secretKeyRef:
+                  key: apikey
+                  name: "{{ .Values.bridge.topic }}-google"
+                  optional: false
             - name: KAFKA_SSL_KEYSTORE_LOCATION
               value: /var/run/secrets/kafka/user.p12
             - name: KAFKA_SSL_KEYSTORE_PASSWORD
