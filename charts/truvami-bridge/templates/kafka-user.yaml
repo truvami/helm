@@ -11,7 +11,7 @@ spec:
     acls:
       - host: '*'
         operations:
-          - Create
+          - Read
           - Describe
         resource:
           name: truvami-uplinks
