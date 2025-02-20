@@ -2,7 +2,7 @@
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
-  name: truvami-api
+  name: truvami-bridge
   labels:
     {{- include "truvami-bridge.labels" . | nindent 4 }}
 spec:
