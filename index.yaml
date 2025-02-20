@@ -102,6 +102,17 @@ entries:
     version: 0.0.1
   truvami-bridge:
   - apiVersion: v2
+    appVersion: 2.1.1
+    created: "2025-02-20T22:04:04.863597575Z"
+    description: A Helm chart for Kubernetes
+    digest: c4c9701e5a22e5e5f6a378021d2492b34cda75b58beacf2193a7546f14640939
+    icon: https://raw.githubusercontent.com/truvami/helm/main/assets/icon.svg
+    name: truvami-bridge
+    type: application
+    urls:
+    - https://github.com/truvami/helm/releases/download/truvami-bridge-0.1.4/truvami-bridge-0.1.4.tgz
+    version: 0.1.4
+  - apiVersion: v2
     appVersion: 2.0.4
     created: "2025-02-14T09:20:29.619258553Z"
     description: A Helm chart for Kubernetes
@@ -545,6 +556,31 @@ entries:
     - https://github.com/truvami/helm/releases/download/truvami-gateway-0.0.1/truvami-gateway-0.0.1.tgz
     version: 0.0.1
   truvami-stack:
+  - apiVersion: v2
+    created: "2025-02-20T22:04:05.060593441Z"
+    dependencies:
+    - name: truvami-gateway
+      repository: file://../truvami-gateway/
+      version: 0.0.25
+    - name: truvami-bridge
+      repository: file://../truvami-bridge/
+      version: 0.1.4
+    - name: truvami-api
+      repository: file://../truvami-api/
+      version: 0.0.10
+    - name: truvami-decoder
+      repository: file://../truvami-decoder/
+      version: 0.0.7
+    - name: truvami-dashboard
+      repository: file://../truvami-dashboard/
+      version: 0.0.8
+    description: A Helm chart for Kubernetes
+    digest: 64d2fefb01164125c9d8b2aad46bcd2d7876eedbc3c2337fc1dd8f6732361bcd
+    name: truvami-stack
+    type: application
+    urls:
+    - https://github.com/truvami/helm/releases/download/truvami-stack-0.1.45/truvami-stack-0.1.45.tgz
+    version: 0.1.45
   - apiVersion: v2
     created: "2025-02-20T16:23:10.621644516Z"
     dependencies:
@@ -1466,4 +1502,4 @@ entries:
     urls:
     - https://github.com/truvami/helm/releases/download/truvami-stack-0.1.0/truvami-stack-0.1.0.tgz
     version: 0.1.0
-generated: "2025-02-20T16:23:10.622118752Z"
+generated: "2025-02-20T22:04:05.060935467Z"
