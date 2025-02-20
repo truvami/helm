@@ -12,7 +12,7 @@ spec:
 apiVersion: kafka.strimzi.io/v1beta2
 kind: KafkaTopic
 metadata:
-  name: "{{ .Values.gateway.topic }}-uplinks"
+  name: "{{ .Values.gateway.topic }}-errors"
   labels:
     strimzi.io/cluster: {{ .Release.Name }}
 spec:

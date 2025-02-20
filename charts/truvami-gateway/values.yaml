@@ -3,6 +3,7 @@
 # Declare variables to be passed into your templates.
 
 gateway:
+  topic: truvami
   otel:
     enable: true
     endpoint: "localhost:4318"

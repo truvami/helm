@@ -71,11 +71,11 @@ resources: {}
   #   cpu: 100m
   #   memory: 128Mi
 
-livenessProbe: {}
+# livenessProbe:
   # httpGet:
   #   path: /
   #   port: http
-readinessProbe: {}
+# readinessProbe:
   # httpGet:
   #   path: /
   #   port: http
