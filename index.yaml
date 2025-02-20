@@ -103,6 +103,17 @@ entries:
   truvami-bridge:
   - apiVersion: v2
     appVersion: 2.1.1
+    created: "2025-02-20T23:53:51.093361588Z"
+    description: A Helm chart for Kubernetes
+    digest: 2153f5e4307dbfaf343e557b20d78441efdd25ab6a14fa4fb9241b65cc2e3c95
+    icon: https://raw.githubusercontent.com/truvami/helm/main/assets/icon.svg
+    name: truvami-bridge
+    type: application
+    urls:
+    - https://github.com/truvami/helm/releases/download/truvami-bridge-0.1.10/truvami-bridge-0.1.10.tgz
+    version: 0.1.10
+  - apiVersion: v2
+    appVersion: 2.1.1
     created: "2025-02-20T23:50:57.140737538Z"
     description: A Helm chart for Kubernetes
     digest: bbcc43987a553f3f6ce2bf4bfb5707f8500e748e86745b560f514685f591afc7
@@ -611,6 +622,31 @@ entries:
     - https://github.com/truvami/helm/releases/download/truvami-gateway-0.0.1/truvami-gateway-0.0.1.tgz
     version: 0.0.1
   truvami-stack:
+  - apiVersion: v2
+    created: "2025-02-20T23:53:51.219490646Z"
+    dependencies:
+    - name: truvami-gateway
+      repository: file://../truvami-gateway/
+      version: 0.0.25
+    - name: truvami-bridge
+      repository: file://../truvami-bridge/
+      version: 0.1.10
+    - name: truvami-api
+      repository: file://../truvami-api/
+      version: 0.0.10
+    - name: truvami-decoder
+      repository: file://../truvami-decoder/
+      version: 0.0.7
+    - name: truvami-dashboard
+      repository: file://../truvami-dashboard/
+      version: 0.0.8
+    description: A Helm chart for Kubernetes
+    digest: fce7622eeb84bdce63efc0b28cea8b3dde28c33ef9fa393e1b6028b7c7cb1e32
+    name: truvami-stack
+    type: application
+    urls:
+    - https://github.com/truvami/helm/releases/download/truvami-stack-0.1.51/truvami-stack-0.1.51.tgz
+    version: 0.1.51
   - apiVersion: v2
     created: "2025-02-20T23:50:57.271921326Z"
     dependencies:
@@ -1682,4 +1718,4 @@ entries:
     urls:
     - https://github.com/truvami/helm/releases/download/truvami-stack-0.1.0/truvami-stack-0.1.0.tgz
     version: 0.1.0
-generated: "2025-02-20T23:50:57.272326139Z"
+generated: "2025-02-20T23:53:51.220010188Z"
