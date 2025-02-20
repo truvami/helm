@@ -10,9 +10,9 @@ dependencies:
   version: 0.0.10
 - name: truvami-decoder
   repository: file://../truvami-decoder/
-  version: 0.0.5
+  version: 0.0.6
 - name: truvami-dashboard
   repository: file://../truvami-dashboard/
   version: 0.0.8
-digest: sha256:e64178a7a416e782b5c3c7cba17daeebaf9995a095348474c7989b4f69279832
-generated: "2025-02-20T17:15:58.285485+01:00"
+digest: sha256:84d1e2d83fdbd790b670ddc62194ecfbcb08669fcbab7a3c4fc3d40d2571cf31
+generated: "2025-02-20T17:22:01.955105+01:00"
