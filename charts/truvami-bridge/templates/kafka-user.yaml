@@ -8,31 +8,40 @@ spec:
   authentication:
     type: tls
   authorization:
-    type: simple
     acls:
-      - resource:
-          type: topic
-          name: "{{ .Values.bridge.topic }}-uplinks"
+      - host: '*'
+        operations:
+          - Create
+          - Describe
+        resource:
+          name: truvami-uplinks
           patternType: literal
-        operation: Read
-      - resource:
           type: topic
-          name: "{{ .Values.bridge.topic }}-errors"
+      - host: '*'
+        operations:
+          - Create
+          - Describe
+          - Write
+        resource:
+          name: truvami-errors
           patternType: literal
-        operation: Write
-      - resource:
           type: topic
+      - host: '*'
+        operations:
+          - Read
+          - Write
+        resource:
           name: __consumer_offsets
           patternType: literal
-        operation: Write
-      - resource:
-          type: group
-          name: truvami-bridge
+          type: topic
+      - host: '*'
+        operations:
+          - Describe
+          - Read
+          - Write
+        resource:
+          name: {{ .Release.Name }}
           patternType: literal
-        operation: Describe
-      - resource:
           type: group
-          name: truvami-bridge
-          patternType: literal
-        operation: Read
+    type: simple
 ---
