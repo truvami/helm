@@ -370,6 +370,17 @@ entries:
   truvami-gateway:
   - apiVersion: v2
     appVersion: 2.5.2
+    created: "2025-03-12T12:31:39.002223435Z"
+    description: A Helm chart for Kubernetes
+    digest: db3b9221f84edbd5c12364caa64e4d631ede61dc7df95a8d6fe71d1662bf50da
+    icon: https://raw.githubusercontent.com/truvami/helm/main/assets/icon.svg
+    name: truvami-gateway
+    type: application
+    urls:
+    - https://github.com/truvami/helm/releases/download/truvami-gateway-0.0.26/truvami-gateway-0.0.26.tgz
+    version: 0.0.26
+  - apiVersion: v2
+    appVersion: 2.5.2
     created: "2025-02-20T15:53:39.981652848Z"
     description: A Helm chart for Kubernetes
     digest: e0689eddb4cb97c815697cdf758e069e56a924223a60c0f53c740110a5f26bf9
@@ -622,6 +633,31 @@ entries:
     - https://github.com/truvami/helm/releases/download/truvami-gateway-0.0.1/truvami-gateway-0.0.1.tgz
     version: 0.0.1
   truvami-stack:
+  - apiVersion: v2
+    created: "2025-03-12T12:31:39.141905232Z"
+    dependencies:
+    - name: truvami-gateway
+      repository: file://../truvami-gateway/
+      version: 0.0.26
+    - name: truvami-bridge
+      repository: file://../truvami-bridge/
+      version: 0.1.10
+    - name: truvami-api
+      repository: file://../truvami-api/
+      version: 0.0.10
+    - name: truvami-decoder
+      repository: file://../truvami-decoder/
+      version: 0.0.7
+    - name: truvami-dashboard
+      repository: file://../truvami-dashboard/
+      version: 0.0.8
+    description: A Helm chart for Kubernetes
+    digest: 83c2e8c7e9e1789ce32bc319cc68139280de7826d2ebffbb6e40e18102febb82
+    name: truvami-stack
+    type: application
+    urls:
+    - https://github.com/truvami/helm/releases/download/truvami-stack-0.1.52/truvami-stack-0.1.52.tgz
+    version: 0.1.52
   - apiVersion: v2
     created: "2025-02-20T23:53:51.219490646Z"
     dependencies:
@@ -1718,4 +1754,4 @@ entries:
     urls:
     - https://github.com/truvami/helm/releases/download/truvami-stack-0.1.0/truvami-stack-0.1.0.tgz
     version: 0.1.0
-generated: "2025-02-20T23:53:51.220010188Z"
+generated: "2025-03-12T12:31:39.142408363Z"
