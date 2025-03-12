@@ -3,7 +3,7 @@ kind: KafkaTopic
 metadata:
   name: "{{ .Values.gateway.topic }}-uplinks"
   labels:
-    strimzi.io/cluster: {{ .Release.Name }}
+    strimzi.io/cluster: {{ .Values.gateway.cluster | default .Release.Name }}
 spec:
   partitions: {{ .Values.kafka.topic.partitions | default 3 }}
   replicas: {{ .Values.kafka.topic.replicas | default 3 }}
@@ -14,7 +14,7 @@ kind: KafkaTopic
 metadata:
   name: "{{ .Values.gateway.topic }}-errors"
   labels:
-    strimzi.io/cluster: {{ .Release.Name }}
+    strimzi.io/cluster: {{ .Values.gateway.cluster | default .Release.Name }}
 spec:
   partitions: {{ .Values.kafka.topic.partitions | default 3 }}
   replicas: {{ .Values.kafka.topic.replicas | default 3 }}
@@ -25,7 +25,7 @@ kind: KafkaUser
 metadata:
   name: "{{ .Values.gateway.topic }}-gateway-kafka"
   labels:
-    strimzi.io/cluster: {{ .Release.Name }}
+    strimzi.io/cluster: {{ .Values.gateway.cluster | default .Release.Name }}
 spec:
   authentication:
     type: tls
