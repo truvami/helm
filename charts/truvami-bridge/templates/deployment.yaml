@@ -64,6 +64,12 @@ spec:
           env:
             - name: KAFKA_GROUP_ID
               value: {{ .Release.Name }}
+            - name: LORACLOUD_APIKEY
+              valueFrom:
+                secretKeyRef:
+                  key: apikey
+                  name: "{{ .Values.bridge.topic }}-loracloud"
+                  optional: true # only required for some devices
             - name: GOOGLE_APIKEY
               valueFrom:
                 secretKeyRef:
