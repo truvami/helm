@@ -1,0 +1,1236 @@
+{
+    "annotations": {
+        "list": [
+            {
+                "builtIn": 1,
+                "datasource": {
+                    "type": "grafana",
+                    "uid": "-- Grafana --"
+                },
+                "enable": true,
+                "hide": true,
+                "iconColor": "rgba(0, 211, 255, 1)",
+                "name": "Annotations & Alerts",
+                "type": "dashboard"
+            }
+        ]
+    },
+    "editable": true,
+    "fiscalYearStartMonth": 0,
+    "graphTooltip": 1,
+    "id": 45,
+    "links": [],
+    "panels": [
+        {
+            "collapsed": true,
+            "gridPos": {
+                "h": 1,
+                "w": 24,
+                "x": 0,
+                "y": 0
+            },
+            "id": 82,
+            "panels": [
+                {
+                    "datasource": {
+                        "default": true,
+                        "type": "prometheus",
+                        "uid": "prometheus"
+                    },
+                    "description": "",
+                    "fieldConfig": {
+                        "defaults": {
+                            "color": {
+                                "mode": "palette-classic"
+                            },
+                            "custom": {
+                                "axisBorderShow": false,
+                                "axisCenteredZero": false,
+                                "axisColorMode": "text",
+                                "axisLabel": "",
+                                "axisPlacement": "auto",
+                                "barAlignment": 0,
+                                "barWidthFactor": 0.6,
+                                "drawStyle": "line",
+                                "fillOpacity": 0,
+                                "gradientMode": "opacity",
+                                "hideFrom": {
+                                    "legend": false,
+                                    "tooltip": false,
+                                    "viz": false
+                                },
+                                "insertNulls": false,
+                                "lineInterpolation": "linear",
+                                "lineWidth": 1,
+                                "pointSize": 5,
+                                "scaleDistribution": {
+                                    "type": "linear"
+                                },
+                                "showPoints": "auto",
+                                "spanNulls": false,
+                                "stacking": {
+                                    "group": "A",
+                                    "mode": "none"
+                                },
+                                "thresholdsStyle": {
+                                    "mode": "area"
+                                }
+                            },
+                            "mappings": [],
+                            "max": 100,
+                            "min": 0,
+                            "thresholds": {
+                                "mode": "absolute",
+                                "steps": [
+                                    {
+                                        "color": "green"
+                                    },
+                                    {
+                                        "color": "#EAB839",
+                                        "value": 35
+                                    },
+                                    {
+                                        "color": "red",
+                                        "value": 60
+                                    }
+                                ]
+                            },
+                            "unit": "percent"
+                        },
+                        "overrides": []
+                    },
+                    "gridPos": {
+                        "h": 11,
+                        "w": 24,
+                        "x": 0,
+                        "y": 99
+                    },
+                    "id": 1,
+                    "options": {
+                        "legend": {
+                            "calcs": [],
+                            "displayMode": "list",
+                            "placement": "bottom",
+                            "showLegend": false
+                        },
+                        "tooltip": {
+                            "mode": "single",
+                            "sort": "none"
+                        }
+                    },
+                    "targets": [
+                        {
+                            "datasource": {
+                                "type": "prometheus",
+                                "uid": "prometheus"
+                            },
+                            "editorMode": "code",
+                            "expr": "100 * sum(rate(google_wifi_solver_error_total[$__rate_interval])) / (sum(rate(google_wifi_solver_error_total[$__rate_interval])) + sum(rate(google_wifi_solver_success_total[$__rate_interval])))\n",
+                            "instant": false,
+                            "legendFormat": "__auto",
+                            "range": true,
+                            "refId": "A"
+                        }
+                    ],
+                    "title": "Wi-Fi solver error rate",
+                    "type": "timeseries"
+                }
+            ],
+            "title": "Solver",
+            "type": "row"
+        },
+        {
+            "collapsed": true,
+            "gridPos": {
+                "h": 1,
+                "w": 24,
+                "x": 0,
+                "y": 1
+            },
+            "id": 3,
+            "panels": [
+                {
+                    "datasource": "${DS_PG_DATASOURCE}",
+                    "fieldConfig": {
+                        "defaults": {
+                            "color": {
+                                "mode": "palette-classic"
+                            },
+                            "custom": {
+                                "hideFrom": {
+                                    "legend": false,
+                                    "tooltip": false,
+                                    "viz": false
+                                }
+                            },
+                            "fieldMinMax": false,
+                            "mappings": [],
+                            "noValue": "0"
+                        },
+                        "overrides": [
+                            {
+                                "matcher": {
+                                    "id": "byFrameRefID",
+                                    "options": "wifi"
+                                },
+                                "properties": [
+                                    {
+                                        "id": "color",
+                                        "value": {
+                                            "fixedColor": "red",
+                                            "mode": "fixed"
+                                        }
+                                    }
+                                ]
+                            },
+                            {
+                                "matcher": {
+                                    "id": "byFrameRefID",
+                                    "options": "gnss"
+                                },
+                                "properties": [
+                                    {
+                                        "id": "color",
+                                        "value": {
+                                            "fixedColor": "green",
+                                            "mode": "fixed"
+                                        }
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    "gridPos": {
+                        "h": 6,
+                        "w": 6,
+                        "x": 0,
+                        "y": 37
+                    },
+                    "id": 2,
+                    "options": {
+                        "displayLabels": [
+                            "percent"
+                        ],
+                        "legend": {
+                            "displayMode": "list",
+                            "placement": "bottom",
+                            "showLegend": true,
+                            "values": [
+                                "percent",
+                                "value"
+                            ]
+                        },
+                        "pieType": "pie",
+                        "reduceOptions": {
+                            "calcs": [
+                                "lastNotNull"
+                            ],
+                            "fields": "/^count$/",
+                            "values": true
+                        },
+                        "tooltip": {
+                            "mode": "multi",
+                            "sort": "none"
+                        }
+                    },
+                    "pluginVersion": "11.2.1",
+                    "repeat": "devices",
+                    "repeatDirection": "h",
+                    "targets": [
+                        {
+                            "datasource": "${DS_PG_DATASOURCE}",
+                            "editorMode": "code",
+                            "format": "table",
+                            "hide": false,
+                            "rawQuery": true,
+                            "rawSql": "SELECT source, COUNT(*) FROM positions WHERE (device IN ($devices)) AND source = 'wifi' GROUP BY source, device",
+                            "refId": "wifi",
+                            "sql": {
+                                "columns": [
+                                    {
+                                        "parameters": [
+                                            {
+                                                "name": "source",
+                                                "type": "functionParameter"
+                                            }
+                                        ],
+                                        "type": "function"
+                                    },
+                                    {
+                                        "parameters": [
+                                            {
+                                                "name": "device",
+                                                "type": "functionParameter"
+                                            }
+                                        ],
+                                        "type": "function"
+                                    },
+                                    {
+                                        "name": "COUNT",
+                                        "parameters": [
+                                            {
+                                                "name": "*",
+                                                "type": "functionParameter"
+                                            }
+                                        ],
+                                        "type": "function"
+                                    }
+                                ],
+                                "groupBy": [],
+                                "limit": 50,
+                                "whereJsonTree": {
+                                    "children1": [
+                                        {
+                                            "id": "8aaba88a-0123-4456-b89a-b1961a54e6a9",
+                                            "properties": {
+                                                "field": "device",
+                                                "fieldSrc": "field",
+                                                "operator": "select_any_in",
+                                                "value": [
+                                                    "$devices"
+                                                ],
+                                                "valueError": [
+                                                    null
+                                                ],
+                                                "valueSrc": [
+                                                    "value"
+                                                ],
+                                                "valueType": [
+                                                    "text"
+                                                ]
+                                            },
+                                            "type": "rule"
+                                        },
+                                        {
+                                            "id": "aaabab9b-cdef-4012-b456-71961a564284",
+                                            "properties": {
+                                                "field": "source",
+                                                "fieldSrc": "field",
+                                                "operator": "equal",
+                                                "value": [
+                                                    "gnss"
+                                                ],
+                                                "valueError": [
+                                                    null
+                                                ],
+                                                "valueSrc": [
+                                                    "value"
+                                                ],
+                                                "valueType": [
+                                                    "text"
+                                                ]
+                                            },
+                                            "type": "rule"
+                                        }
+                                    ],
+                                    "id": "b88ba98b-0123-4456-b89a-b1961a53b31e",
+                                    "type": "group"
+                                },
+                                "whereString": "(device IN ($devices) AND source = 'gnss)"
+                            },
+                            "table": "positions"
+                        },
+                        {
+                            "datasource": "${DS_PG_DATASOURCE}",
+                            "editorMode": "code",
+                            "format": "table",
+                            "hide": false,
+                            "rawQuery": true,
+                            "rawSql": "SELECT source, COUNT(*) FROM positions WHERE (device IN ($devices)) AND source = 'gnss' GROUP BY source, device",
+                            "refId": "gnss",
+                            "sql": {
+                                "columns": [
+                                    {
+                                        "parameters": [
+                                            {
+                                                "name": "source",
+                                                "type": "functionParameter"
+                                            }
+                                        ],
+                                        "type": "function"
+                                    },
+                                    {
+                                        "parameters": [
+                                            {
+                                                "name": "device",
+                                                "type": "functionParameter"
+                                            }
+                                        ],
+                                        "type": "function"
+                                    },
+                                    {
+                                        "name": "COUNT",
+                                        "parameters": [
+                                            {
+                                                "name": "*",
+                                                "type": "functionParameter"
+                                            }
+                                        ],
+                                        "type": "function"
+                                    }
+                                ],
+                                "groupBy": [],
+                                "limit": 50,
+                                "whereJsonTree": {
+                                    "children1": [
+                                        {
+                                            "id": "8aaba88a-0123-4456-b89a-b1961a54e6a9",
+                                            "properties": {
+                                                "field": "device",
+                                                "fieldSrc": "field",
+                                                "operator": "select_any_in",
+                                                "value": [
+                                                    "$devices"
+                                                ],
+                                                "valueError": [
+                                                    null
+                                                ],
+                                                "valueSrc": [
+                                                    "value"
+                                                ],
+                                                "valueType": [
+                                                    "text"
+                                                ]
+                                            },
+                                            "type": "rule"
+                                        },
+                                        {
+                                            "id": "aaabab9b-cdef-4012-b456-71961a564284",
+                                            "properties": {
+                                                "field": "source",
+                                                "fieldSrc": "field",
+                                                "operator": "equal",
+                                                "value": [
+                                                    "gnss"
+                                                ],
+                                                "valueError": [
+                                                    null
+                                                ],
+                                                "valueSrc": [
+                                                    "value"
+                                                ],
+                                                "valueType": [
+                                                    "text"
+                                                ]
+                                            },
+                                            "type": "rule"
+                                        }
+                                    ],
+                                    "id": "b88ba98b-0123-4456-b89a-b1961a53b31e",
+                                    "type": "group"
+                                },
+                                "whereString": "(device IN ($devices) AND source = 'gnss)"
+                            },
+                            "table": "positions"
+                        }
+                    ],
+                    "title": "$devices",
+                    "type": "piechart"
+                }
+            ],
+            "title": "Source",
+            "type": "row"
+        },
+        {
+            "collapsed": true,
+            "gridPos": {
+                "h": 1,
+                "w": 24,
+                "x": 0,
+                "y": 2
+            },
+            "id": 83,
+            "panels": [
+                {
+                    "datasource": "${DS_PG_DATASOURCE}",
+                    "description": "",
+                    "fieldConfig": {
+                        "defaults": {
+                            "color": {
+                                "mode": "palette-classic"
+                            },
+                            "custom": {
+                                "hideFrom": {
+                                    "legend": false,
+                                    "tooltip": false,
+                                    "viz": false
+                                }
+                            },
+                            "mappings": []
+                        },
+                        "overrides": [
+                            {
+                                "matcher": {
+                                    "id": "byFrameRefID",
+                                    "options": "high"
+                                },
+                                "properties": [
+                                    {
+                                        "id": "displayName",
+                                        "value": ">= 20"
+                                    },
+                                    {
+                                        "id": "color",
+                                        "value": {
+                                            "fixedColor": "red",
+                                            "mode": "fixed"
+                                        }
+                                    }
+                                ]
+                            },
+                            {
+                                "matcher": {
+                                    "id": "byFrameRefID",
+                                    "options": "low"
+                                },
+                                "properties": [
+                                    {
+                                        "id": "displayName",
+                                        "value": "< 10"
+                                    },
+                                    {
+                                        "id": "color",
+                                        "value": {
+                                            "fixedColor": "green",
+                                            "mode": "fixed"
+                                        }
+                                    }
+                                ]
+                            },
+                            {
+                                "matcher": {
+                                    "id": "byFrameRefID",
+                                    "options": "medium"
+                                },
+                                "properties": [
+                                    {
+                                        "id": "displayName",
+                                        "value": ">= 10"
+                                    },
+                                    {
+                                        "id": "color",
+                                        "value": {
+                                            "fixedColor": "yellow",
+                                            "mode": "fixed"
+                                        }
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    "gridPos": {
+                        "h": 7,
+                        "w": 6,
+                        "x": 0,
+                        "y": 38
+                    },
+                    "id": 164,
+                    "options": {
+                        "displayLabels": [],
+                        "legend": {
+                            "displayMode": "list",
+                            "placement": "bottom",
+                            "showLegend": true,
+                            "values": [
+                                "percent",
+                                "value"
+                            ]
+                        },
+                        "pieType": "pie",
+                        "reduceOptions": {
+                            "calcs": [
+                                "lastNotNull"
+                            ],
+                            "fields": "",
+                            "values": false
+                        },
+                        "tooltip": {
+                            "mode": "single",
+                            "sort": "none"
+                        }
+                    },
+                    "pluginVersion": "11.2.1",
+                    "repeat": "devices",
+                    "repeatDirection": "h",
+                    "targets": [
+                        {
+                            "datasource": "${DS_PG_DATASOURCE}",
+                            "editorMode": "code",
+                            "format": "table",
+                            "hide": false,
+                            "rawQuery": true,
+                            "rawSql": "SELECT COUNT(*) FROM positions WHERE pdop >= 20  AND device IN ( $devices );",
+                            "refId": "high",
+                            "sql": {
+                                "columns": [
+                                    {
+                                        "parameters": [],
+                                        "type": "function"
+                                    }
+                                ],
+                                "groupBy": [
+                                    {
+                                        "property": {
+                                            "type": "string"
+                                        },
+                                        "type": "groupBy"
+                                    }
+                                ],
+                                "limit": 50
+                            }
+                        },
+                        {
+                            "datasource": "${DS_PG_DATASOURCE}",
+                            "editorMode": "code",
+                            "format": "table",
+                            "hide": false,
+                            "rawQuery": true,
+                            "rawSql": "SELECT COUNT(*) FROM positions WHERE pdop >= 0 AND pdop < 10 AND device IN ( $devices ) ",
+                            "refId": "low",
+                            "sql": {
+                                "columns": [
+                                    {
+                                        "parameters": [],
+                                        "type": "function"
+                                    }
+                                ],
+                                "groupBy": [
+                                    {
+                                        "property": {
+                                            "type": "string"
+                                        },
+                                        "type": "groupBy"
+                                    }
+                                ],
+                                "limit": 50
+                            }
+                        },
+                        {
+                            "datasource": "${DS_PG_DATASOURCE}",
+                            "editorMode": "code",
+                            "format": "table",
+                            "hide": false,
+                            "rawQuery": true,
+                            "rawSql": "SELECT COUNT(*) FROM positions WHERE pdop >= 10 AND pdop < 20 AND device IN ( $devices ) ",
+                            "refId": "medium",
+                            "sql": {
+                                "columns": [
+                                    {
+                                        "parameters": [],
+                                        "type": "function"
+                                    }
+                                ],
+                                "groupBy": [
+                                    {
+                                        "property": {
+                                            "type": "string"
+                                        },
+                                        "type": "groupBy"
+                                    }
+                                ],
+                                "limit": 50
+                            }
+                        }
+                    ],
+                    "title": "$devices",
+                    "type": "piechart"
+                }
+            ],
+            "title": "PDOP",
+            "type": "row"
+        },
+        {
+            "collapsed": false,
+            "gridPos": {
+                "h": 1,
+                "w": 24,
+                "x": 0,
+                "y": 3
+            },
+            "id": 408,
+            "panels": [],
+            "repeat": "devices",
+            "repeatDirection": "h",
+            "title": "$devices",
+            "type": "row"
+        },
+        {
+            "datasource": "${DS_PG_DATASOURCE}",
+            "fieldConfig": {
+                "defaults": {
+                    "color": {
+                        "fixedColor": "blue",
+                        "mode": "fixed"
+                    },
+                    "custom": {
+                        "axisBorderShow": false,
+                        "axisCenteredZero": false,
+                        "axisColorMode": "text",
+                        "axisLabel": "",
+                        "axisPlacement": "auto",
+                        "barAlignment": 0,
+                        "barWidthFactor": 0.6,
+                        "drawStyle": "line",
+                        "fillOpacity": 0,
+                        "gradientMode": "opacity",
+                        "hideFrom": {
+                            "legend": false,
+                            "tooltip": false,
+                            "viz": false
+                        },
+                        "insertNulls": false,
+                        "lineInterpolation": "linear",
+                        "lineStyle": {
+                            "fill": "solid"
+                        },
+                        "lineWidth": 1,
+                        "pointSize": 5,
+                        "scaleDistribution": {
+                            "type": "linear"
+                        },
+                        "showPoints": "auto",
+                        "spanNulls": false,
+                        "stacking": {
+                            "group": "A",
+                            "mode": "none"
+                        },
+                        "thresholdsStyle": {
+                            "mode": "area"
+                        }
+                    },
+                    "mappings": [],
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "green",
+                                "value": null
+                            },
+                            {
+                                "color": "#EAB839",
+                                "value": 10
+                            },
+                            {
+                                "color": "red",
+                                "value": 20
+                            }
+                        ]
+                    }
+                },
+                "overrides": []
+            },
+            "gridPos": {
+                "h": 8,
+                "w": 12,
+                "x": 0,
+                "y": 4
+            },
+            "id": 490,
+            "options": {
+                "legend": {
+                    "calcs": [],
+                    "displayMode": "list",
+                    "placement": "bottom",
+                    "showLegend": true
+                },
+                "tooltip": {
+                    "mode": "single",
+                    "sort": "none"
+                }
+            },
+            "targets": [
+                {
+                    "datasource": "${DS_PG_DATASOURCE}",
+                    "editorMode": "builder",
+                    "format": "time_series",
+                    "hide": false,
+                    "rawSql": "SELECT captured_at AS \"time\", pdop AS \"value\" FROM positions WHERE (device IN ($devices) AND pdop IS NOT NULL) LIMIT 5000 ",
+                    "refId": "A",
+                    "sql": {
+                        "columns": [
+                            {
+                                "alias": "\"time\"",
+                                "parameters": [
+                                    {
+                                        "name": "captured_at",
+                                        "type": "functionParameter"
+                                    }
+                                ],
+                                "type": "function"
+                            },
+                            {
+                                "alias": "\"value\"",
+                                "parameters": [
+                                    {
+                                        "name": "pdop",
+                                        "type": "functionParameter"
+                                    }
+                                ],
+                                "type": "function"
+                            }
+                        ],
+                        "groupBy": [
+                            {
+                                "property": {
+                                    "type": "string"
+                                },
+                                "type": "groupBy"
+                            }
+                        ],
+                        "limit": 5000,
+                        "whereJsonTree": {
+                            "children1": [
+                                {
+                                    "id": "a8ab8bb8-cdef-4012-b456-71961ac69027",
+                                    "properties": {
+                                        "field": "device",
+                                        "fieldSrc": "field",
+                                        "operator": "select_any_in",
+                                        "value": [
+                                            "$devices"
+                                        ],
+                                        "valueError": [
+                                            null
+                                        ],
+                                        "valueSrc": [
+                                            "value"
+                                        ],
+                                        "valueType": [
+                                            "text"
+                                        ]
+                                    },
+                                    "type": "rule"
+                                },
+                                {
+                                    "id": "ba8a8b89-89ab-4cde-b012-31961ac6c705",
+                                    "properties": {
+                                        "field": "pdop",
+                                        "fieldSrc": "field",
+                                        "operator": "is_not_null",
+                                        "value": [],
+                                        "valueSrc": [],
+                                        "valueType": []
+                                    },
+                                    "type": "rule"
+                                }
+                            ],
+                            "id": "99888a8b-0123-4456-b89a-b1961ab118cc",
+                            "type": "group"
+                        },
+                        "whereString": "(device IN ($devices) AND pdop IS NOT NULL)"
+                    },
+                    "table": "positions"
+                }
+            ],
+            "title": "PDOP",
+            "type": "timeseries"
+        },
+        {
+            "datasource": "${DS_PG_DATASOURCE}",
+            "fieldConfig": {
+                "defaults": {
+                    "color": {
+                        "fixedColor": "blue",
+                        "mode": "fixed"
+                    },
+                    "custom": {
+                        "axisBorderShow": false,
+                        "axisCenteredZero": false,
+                        "axisColorMode": "text",
+                        "axisLabel": "",
+                        "axisPlacement": "auto",
+                        "barAlignment": 0,
+                        "barWidthFactor": 0.6,
+                        "drawStyle": "line",
+                        "fillOpacity": 0,
+                        "gradientMode": "opacity",
+                        "hideFrom": {
+                            "legend": false,
+                            "tooltip": false,
+                            "viz": false
+                        },
+                        "insertNulls": false,
+                        "lineInterpolation": "linear",
+                        "lineStyle": {
+                            "fill": "solid"
+                        },
+                        "lineWidth": 1,
+                        "pointSize": 5,
+                        "scaleDistribution": {
+                            "type": "linear"
+                        },
+                        "showPoints": "auto",
+                        "spanNulls": false,
+                        "stacking": {
+                            "group": "A",
+                            "mode": "none"
+                        },
+                        "thresholdsStyle": {
+                            "mode": "area"
+                        }
+                    },
+                    "mappings": [],
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "green",
+                                "value": null
+                            },
+                            {
+                                "color": "#EAB839",
+                                "value": 60
+                            },
+                            {
+                                "color": "red",
+                                "value": 100
+                            }
+                        ]
+                    },
+                    "unit": "s"
+                },
+                "overrides": []
+            },
+            "gridPos": {
+                "h": 8,
+                "w": 12,
+                "x": 12,
+                "y": 4
+            },
+            "id": 653,
+            "options": {
+                "legend": {
+                    "calcs": [],
+                    "displayMode": "list",
+                    "placement": "bottom",
+                    "showLegend": true
+                },
+                "tooltip": {
+                    "mode": "single",
+                    "sort": "none"
+                }
+            },
+            "targets": [
+                {
+                    "datasource": "${DS_PG_DATASOURCE}",
+                    "editorMode": "code",
+                    "format": "table",
+                    "hide": false,
+                    "rawQuery": true,
+                    "rawSql": "SELECT captured_at AS \"time\", ttf AS \"value\" FROM positions WHERE (device IN ($devices) AND ttf IS NOT NULL) LIMIT 5000",
+                    "refId": "A",
+                    "sql": {
+                        "columns": [
+                            {
+                                "parameters": [],
+                                "type": "function"
+                            }
+                        ],
+                        "groupBy": [
+                            {
+                                "property": {
+                                    "type": "string"
+                                },
+                                "type": "groupBy"
+                            }
+                        ],
+                        "limit": 50
+                    }
+                }
+            ],
+            "title": "TTF",
+            "type": "timeseries"
+        },
+        {
+            "datasource": "${DS_PG_DATASOURCE}",
+            "fieldConfig": {
+                "defaults": {
+                    "color": {
+                        "mode": "thresholds"
+                    },
+                    "mappings": [],
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "green",
+                                "value": null
+                            },
+                            {
+                                "color": "yellow",
+                                "value": 10
+                            },
+                            {
+                                "color": "red",
+                                "value": 20
+                            }
+                        ]
+                    }
+                },
+                "overrides": []
+            },
+            "gridPos": {
+                "h": 3,
+                "w": 12,
+                "x": 0,
+                "y": 12
+            },
+            "id": 897,
+            "options": {
+                "colorMode": "value",
+                "graphMode": "area",
+                "justifyMode": "auto",
+                "orientation": "auto",
+                "percentChangeColorMode": "standard",
+                "reduceOptions": {
+                    "calcs": [
+                        "lastNotNull"
+                    ],
+                    "fields": "",
+                    "values": false
+                },
+                "showPercentChange": false,
+                "textMode": "auto",
+                "wideLayout": true
+            },
+            "pluginVersion": "11.2.1",
+            "targets": [
+                {
+                    "datasource": "${DS_PG_DATASOURCE}",
+                    "editorMode": "code",
+                    "format": "table",
+                    "rawQuery": true,
+                    "rawSql": "SELECT AVG(pdop) FROM positions WHERE device IN ($devices) LIMIT 5000 \n",
+                    "refId": "A",
+                    "sql": {
+                        "columns": [
+                            {
+                                "name": "AVG",
+                                "parameters": [
+                                    {
+                                        "name": "pdop",
+                                        "type": "functionParameter"
+                                    }
+                                ],
+                                "type": "function"
+                            }
+                        ],
+                        "groupBy": [
+                            {
+                                "property": {
+                                    "type": "string"
+                                },
+                                "type": "groupBy"
+                            }
+                        ],
+                        "limit": 50,
+                        "whereJsonTree": {
+                            "children1": [
+                                {
+                                    "id": "89a98a89-cdef-4012-b456-71961ad0e81c",
+                                    "properties": {
+                                        "field": "device",
+                                        "fieldSrc": "field",
+                                        "operator": "select_any_in",
+                                        "value": [
+                                            "$devices"
+                                        ],
+                                        "valueError": [
+                                            null
+                                        ],
+                                        "valueSrc": [
+                                            "value"
+                                        ],
+                                        "valueType": [
+                                            "text"
+                                        ]
+                                    },
+                                    "type": "rule"
+                                }
+                            ],
+                            "id": "b8aaaa9b-0123-4456-b89a-b1961ad09923",
+                            "type": "group"
+                        },
+                        "whereString": "device IN ($devices)"
+                    },
+                    "table": "positions"
+                }
+            ],
+            "title": "PDOP (avg)",
+            "type": "stat"
+        },
+        {
+            "datasource": "${DS_PG_DATASOURCE}",
+            "fieldConfig": {
+                "defaults": {
+                    "color": {
+                        "mode": "thresholds"
+                    },
+                    "mappings": [],
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "green",
+                                "value": null
+                            },
+                            {
+                                "color": "#EAB839",
+                                "value": 60
+                            },
+                            {
+                                "color": "red",
+                                "value": 100
+                            }
+                        ]
+                    },
+                    "unit": "s"
+                },
+                "overrides": []
+            },
+            "gridPos": {
+                "h": 3,
+                "w": 12,
+                "x": 12,
+                "y": 12
+            },
+            "id": 1070,
+            "options": {
+                "colorMode": "value",
+                "graphMode": "area",
+                "justifyMode": "auto",
+                "orientation": "auto",
+                "percentChangeColorMode": "standard",
+                "reduceOptions": {
+                    "calcs": [
+                        "lastNotNull"
+                    ],
+                    "fields": "",
+                    "values": false
+                },
+                "showPercentChange": false,
+                "textMode": "auto",
+                "wideLayout": true
+            },
+            "pluginVersion": "11.2.1",
+            "targets": [
+                {
+                    "datasource": "${DS_PG_DATASOURCE}",
+                    "editorMode": "code",
+                    "format": "table",
+                    "rawQuery": true,
+                    "rawSql": "SELECT AVG(ttf) FROM positions WHERE device IN ($devices) LIMIT 5000 \n",
+                    "refId": "A",
+                    "sql": {
+                        "columns": [
+                            {
+                                "name": "AVG",
+                                "parameters": [
+                                    {
+                                        "name": "pdop",
+                                        "type": "functionParameter"
+                                    }
+                                ],
+                                "type": "function"
+                            }
+                        ],
+                        "groupBy": [
+                            {
+                                "property": {
+                                    "type": "string"
+                                },
+                                "type": "groupBy"
+                            }
+                        ],
+                        "limit": 50,
+                        "whereJsonTree": {
+                            "children1": [
+                                {
+                                    "id": "89a98a89-cdef-4012-b456-71961ad0e81c",
+                                    "properties": {
+                                        "field": "device",
+                                        "fieldSrc": "field",
+                                        "operator": "select_any_in",
+                                        "value": [
+                                            "$devices"
+                                        ],
+                                        "valueError": [
+                                            null
+                                        ],
+                                        "valueSrc": [
+                                            "value"
+                                        ],
+                                        "valueType": [
+                                            "text"
+                                        ]
+                                    },
+                                    "type": "rule"
+                                }
+                            ],
+                            "id": "b8aaaa9b-0123-4456-b89a-b1961ad09923",
+                            "type": "group"
+                        },
+                        "whereString": "device IN ($devices)"
+                    },
+                    "table": "positions"
+                }
+            ],
+            "title": "TTF (avg)",
+            "type": "stat"
+        }
+    ],
+    "refresh": "",
+    "schemaVersion": 39,
+    "tags": [],
+    "templating": {
+        "list": [
+            {
+                "name": "DS_PG_DATASOURCE",
+                "type": "datasource",
+                "pluginId": "grafana-postgresql-datasource",
+                "query": "grafana-postgresql-datasource",
+                "current": {
+                    "selected": true,
+                    "text": "PostgreSQL",
+                    "value": ""
+                },
+                "refresh": 1
+            },
+            {
+                "current": {
+                    "selected": true,
+                    "text": [
+                        "All"
+                    ],
+                    "value": [
+                        "$__all"
+                    ]
+                },
+                "datasource": "${DS_PG_DATASOURCE}",
+                "definition": "SELECT device from positions WHERE pdop >= 0;",
+                "hide": 0,
+                "includeAll": true,
+                "label": "Devices",
+                "multi": true,
+                "name": "devices",
+                "options": [],
+                "query": "SELECT device from positions WHERE pdop >= 0;",
+                "refresh": 1,
+                "regex": "",
+                "skipUrlSync": false,
+                "sort": 0,
+                "type": "query"
+            }
+        ]
+    },
+    "time": {
+        "from": "now-7d",
+        "to": "now"
+    },
+    "timepicker": {},
+    "timezone": "browser",
+    "title": "Troubleshooting",
+    "uid": "feh6xv96n56o0c",
+    "version": 38,
+    "weekStart": ""
+}
