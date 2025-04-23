@@ -667,6 +667,16 @@ entries:
     version: 0.0.1
   truvami-monitoring:
   - apiVersion: v2
+    created: "2025-04-23T12:05:16.950556203Z"
+    description: This chart contains all CRD's for the truvami-stack monitoring and
+      alerting.
+    digest: 963fe38820f96d6fddf7247bf8fad860f4d68ede87aa84c22090b3bf3ba659ed
+    name: truvami-monitoring
+    type: application
+    urls:
+    - https://github.com/truvami/helm/releases/download/truvami-monitoring-0.1.2/truvami-monitoring-0.1.2.tgz
+    version: 0.1.2
+  - apiVersion: v2
     created: "2025-04-22T07:49:31.510689178Z"
     description: This chart contains all CRD's for the truvami-stack monitoring and
       alerting.
@@ -677,6 +687,34 @@ entries:
     - https://github.com/truvami/helm/releases/download/truvami-monitoring-0.1.0/truvami-monitoring-0.1.0.tgz
     version: 0.1.0
   truvami-stack:
+  - apiVersion: v2
+    created: "2025-04-23T12:05:17.084879911Z"
+    dependencies:
+    - name: truvami-gateway
+      repository: file://../truvami-gateway/
+      version: 0.0.26
+    - name: truvami-bridge
+      repository: file://../truvami-bridge/
+      version: 0.1.12
+    - name: truvami-api
+      repository: file://../truvami-api/
+      version: 0.0.10
+    - name: truvami-decoder
+      repository: file://../truvami-decoder/
+      version: 0.0.7
+    - name: truvami-dashboard
+      repository: file://../truvami-dashboard/
+      version: 0.0.9
+    - name: truvami-monitoring
+      repository: file://../truvami-monitoring/
+      version: 0.1.2
+    description: A Helm chart for Kubernetes
+    digest: 2a8bfb0ce8b5a1f42fe726176e5d4f8e549bceb292bb9590169682406964dfaf
+    name: truvami-stack
+    type: application
+    urls:
+    - https://github.com/truvami/helm/releases/download/truvami-stack-0.1.56/truvami-stack-0.1.56.tgz
+    version: 0.1.56
   - apiVersion: v2
     created: "2025-04-22T07:49:31.639318038Z"
     dependencies:
@@ -1873,4 +1911,4 @@ entries:
     urls:
     - https://github.com/truvami/helm/releases/download/truvami-stack-0.1.0/truvami-stack-0.1.0.tgz
     version: 0.1.0
-generated: "2025-04-22T07:49:31.639619199Z"
+generated: "2025-04-23T12:05:17.085220173Z"
