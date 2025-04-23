@@ -14,5 +14,8 @@ dependencies:
 - name: truvami-dashboard
   repository: file://../truvami-dashboard/
   version: 0.0.9
-digest: sha256:7838df0126023ec954c3cd33641da142a77b8a44fad254554a053ef2058636a6
-generated: "2025-04-22T09:48:51.79143+02:00"
+- name: truvami-monitoring
+  repository: file://../truvami-monitoring/
+  version: 0.1.2
+digest: sha256:aa5bcd6f0f5f238e20c95b1352662697724ba212148b24c005c3d5e0116a8c20
+generated: "2025-04-23T14:04:31.051374+02:00"
