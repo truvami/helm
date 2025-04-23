@@ -2,6 +2,33 @@ nameOverride: ""
 fullnameOverride: ""
 
 grafana:
+  ## Grafana's SMTP configuration
+  ## NOTE: To enable, grafana.ini must be configured with smtp.enabled
+  ## ref: http://docs.grafana.org/installation/configuration/#smtp
+  smtp:
+    # `existingSecret` is a reference to an existing secret containing the smtp configuration
+    # for Grafana.
+    existingSecret: ""
+    userKey: "user"
+    passwordKey: "password"
+
+  ## Configure grafana datasources
+  ## ref: http://docs.grafana.org/administration/provisioning/#datasources
+  ##
+  datasources:
+    "datasources.yaml":
+      apiVersion: 1
+      datasources:
+        - name: Prometheus
+          type: prometheus
+          url: http://prometheus-operated:9090
+          access: proxy
+          isDefault: true
+
+  sidecar:
+    dashboards:
+      enabled: true
+
   ingress:
     enabled: false
     className: ""

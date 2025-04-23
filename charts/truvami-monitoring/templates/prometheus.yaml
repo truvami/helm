@@ -1,12 +1,12 @@
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  name: "{{ include "truvami-monitoring.fullname" . }}-prometheus"
+  name: "{{ include "truvami-monitoring.fullname" . }}"
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
-  name: "{{ include "truvami-monitoring.fullname" . }}-prometheus"
+  name: "{{ include "truvami-monitoring.fullname" . }}"
 rules:
 - apiGroups: [""]
   resources:
@@ -32,22 +32,22 @@ rules:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
-  name: "{{ include "truvami-monitoring.fullname" . }}-prometheus"
+  name: "{{ include "truvami-monitoring.fullname" . }}"
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
-  name: "{{ include "truvami-monitoring.fullname" . }}-prometheus"
+  name: "{{ include "truvami-monitoring.fullname" . }}"
 subjects:
 - kind: ServiceAccount
-  name: "{{ include "truvami-monitoring.fullname" . }}-prometheus"
+  name: "{{ include "truvami-monitoring.fullname" . }}"
   namespace: {{ .Release.Namespace }}
 ---
 apiVersion: monitoring.coreos.com/v1
 kind: Prometheus
 metadata:
-  name: "{{ include "truvami-monitoring.fullname" . }}-prometheus"
+  name: "{{ include "truvami-monitoring.fullname" . }}"
 spec:
-  serviceAccountName: "{{ include "truvami-monitoring.fullname" . }}-prometheus"
+  serviceAccountName: "{{ include "truvami-monitoring.fullname" . }}"
   replicas: 2
   podMonitorNamespaceSelector: {}
   podMonitorSelector: {}
@@ -68,12 +68,12 @@ spec:
   alerting:
     alertmanagers:
     - namespace: {{ .Release.Namespace }}
-      name: "{{ include "truvami-monitoring.fullname" . }}-alertmanager"
+      name: "{{ include "truvami-monitoring.fullname" . }}"
       port: web
 ---
 apiVersion: monitoring.coreos.com/v1
 kind: Alertmanager
 metadata:
-  name: "{{ include "truvami-monitoring.fullname" . }}-alertmanager"
+  name: "{{ include "truvami-monitoring.fullname" . }}"
 spec:
   replicas: 2
