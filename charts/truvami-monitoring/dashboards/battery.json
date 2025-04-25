@@ -143,7 +143,7 @@
                     },
                     "disableTextWrap": false,
                     "editorMode": "builder",
-                    "expr": "truvami_device_battery_status{devEui=\"$devices\"}",
+                    "expr": "sum by(__name__) (truvami_device_battery_status{devEui=\"$devices\"})",
                     "fullMetaSearch": false,
                     "includeNullMetadata": false,
                     "legendFormat": "Battery",

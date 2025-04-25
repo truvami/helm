@@ -1,0 +1,38 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  labels:
+    prometheus: kube-prometheus-stack-prometheus
+    role: alert-rules
+  name: truvami-decoder
+spec:
+  groups:
+    - name: truvami-decoder
+      rules:
+        - alert: TruvamiDecoderFailedToDecodePayload
+          annotations:
+            description: >-
+              Decoder failed to decode payload for device {{ $labels.devEui }} within the last 2h.
+              Please check the decoder configuration and the payload format.
+            summary: >-
+              Decoder failed to decode payload for device {{ $labels.devEui }}.
+          expr: >-
+            sum by(devEui) (increase(truvami_failed_to_decode_payload_count[2h])) > 0
+          labels:
+            altravis_prod: 'false'
+            altravis_test: 'true'
+            service: truvami-bridge
+            severity: warning
+        - alert: TruvamiWiFiSolverError
+          annotations:
+            description: >-
+              The Wi-Fi solver returned an error, please check the logs for more details.
+            summary: >-
+              Wi-Fi solver error
+          expr: >-
+            sum by(__name__) (rate(truvami_wifi_solver_error_count[1h])) > 0
+          labels:
+            altravis_prod: 'false'
+            altravis_test: 'true'
+            service: truvami-bridge
+            severity: critical
