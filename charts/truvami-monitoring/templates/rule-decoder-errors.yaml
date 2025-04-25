@@ -12,10 +12,9 @@ spec:
         - alert: TruvamiDecoderFailedToDecodePayload
           annotations:
             description: >-
-              Decoder failed to decode payload for device {{ $labels.devEui }} within the last 2h.
-              Please check the decoder configuration and the payload format.
+              Decoder failed to decode payload for device {{ "{{" }} $labels.devEui }} within the last 2h. Please check the decoder configuration and the payload format.
             summary: >-
-              Decoder failed to decode payload for device {{ $labels.devEui }}.
+              Decoder failed to decode payload for device {{ "{{" }} $labels.devEui }}
           expr: >-
             sum by(devEui) (increase(truvami_failed_to_decode_payload_count[2h])) > 0
           labels:
@@ -30,7 +29,7 @@ spec:
             summary: >-
               Wi-Fi solver error
           expr: >-
-            sum by(__name__) (rate(truvami_wifi_solver_error_count[1h])) > 0
+            rate(truvami_wifi_solver_error_count[1h]) > 0
           labels:
             altravis_prod: 'false'
             altravis_test: 'true'
