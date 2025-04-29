@@ -18,7 +18,7 @@
     "editable": true,
     "fiscalYearStartMonth": 0,
     "graphTooltip": 2,
-    "id": 5,
+    "id": 2,
     "links": [],
     "panels": [
         {
@@ -72,9 +72,22 @@
                                 "color": "green"
                             }
                         ]
-                    }
+                    },
+                    "unit": "mps"
                 },
-                "overrides": []
+                "overrides": [
+                    {
+                        "matcher": {
+                            "id": "byFrameRefID",
+                            "options": "FCount"
+                        },
+                        "properties": [
+                            {
+                                "id": "unit"
+                            }
+                        ]
+                    }
+                ]
             },
             "gridPos": {
                 "h": 13,
@@ -105,12 +118,28 @@
                     },
                     "disableTextWrap": false,
                     "editorMode": "builder",
-                    "expr": "sum by(devEui) (increase(truvami_device_uplink_count{devEui=\"$device\", port=~\"$ports\"}[$interval]))",
+                    "expr": "sum by(devEui) (rate(truvami_device_uplink_count{devEui=\"$device\", port=~\"$ports\"}[$interval]))",
                     "fullMetaSearch": false,
                     "includeNullMetadata": false,
-                    "legendFormat": "__auto",
+                    "legendFormat": "Uplinks",
                     "range": true,
                     "refId": "A",
+                    "useBackend": false
+                },
+                {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "${DS_PROMETHEUS}"
+                    },
+                    "disableTextWrap": false,
+                    "editorMode": "builder",
+                    "expr": "sum by(devEui) (truvami_device_uplink_frame_counter{devEui=\"$device\", port=~\"$ports\"})",
+                    "fullMetaSearch": false,
+                    "hide": false,
+                    "includeNullMetadata": false,
+                    "legendFormat": "FCount",
+                    "range": true,
+                    "refId": "FCount",
                     "useBackend": false
                 }
             ],
@@ -630,8 +659,8 @@
             },
             {
                 "current": {
-                    "text": "10CE45FFFE00D66E",
-                    "value": "10CE45FFFE00D66E"
+                    "text": "10CE45FFFE00CC74",
+                    "value": "10CE45FFFE00CC74"
                 },
                 "definition": "label_values(truvami_device_uplink_count,devEui)",
                 "description": "",
@@ -750,5 +779,5 @@
     "timezone": "browser",
     "title": "Device",
     "uid": "aejur9vxz1mo0h",
-    "version": 15
+    "version": 1
 }

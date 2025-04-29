@@ -16,6 +16,6 @@ dependencies:
   version: 0.0.9
 - name: truvami-monitoring
   repository: file://../truvami-monitoring/
-  version: 0.1.13
-digest: sha256:9c872cd376c6d00fcd8ab1925ebc0bc36f40f4d73824f9f901df173483e9a88e
-generated: "2025-04-29T11:19:29.170528+02:00"
+  version: 0.1.14
+digest: sha256:46c9dd612656b1103a1c0a0f96322a20d6f6babd8a0f2ddc1ff9e491a2437d32
+generated: "2025-04-29T15:44:24.33655+02:00"
