@@ -279,6 +279,17 @@ entries:
     version: 0.0.1
   truvami-dashboard:
   - apiVersion: v2
+    appVersion: 2.2.0-beta2
+    created: "2025-04-30T21:19:57.559845946Z"
+    description: A Helm chart for Kubernetes
+    digest: b9c07373e18b76d6c51d77dcfa828439ba5d7252ddc1cbedf755db0ad55ba366
+    icon: https://raw.githubusercontent.com/truvami/helm/main/assets/icon.svg
+    name: truvami-dashboard
+    type: application
+    urls:
+    - https://github.com/truvami/helm/releases/download/truvami-dashboard-0.0.11/truvami-dashboard-0.0.11.tgz
+    version: 0.0.11
+  - apiVersion: v2
     appVersion: 2.2.0-beta1
     created: "2025-04-30T18:20:51.454542376Z"
     description: A Helm chart for Kubernetes
@@ -913,6 +924,34 @@ entries:
     - https://github.com/truvami/helm/releases/download/truvami-monitoring-0.1.0/truvami-monitoring-0.1.0.tgz
     version: 0.1.0
   truvami-stack:
+  - apiVersion: v2
+    created: "2025-04-30T21:19:57.772855745Z"
+    dependencies:
+    - name: truvami-gateway
+      repository: file://../truvami-gateway/
+      version: 0.0.26
+    - name: truvami-bridge
+      repository: file://../truvami-bridge/
+      version: 0.1.12
+    - name: truvami-api
+      repository: file://../truvami-api/
+      version: 0.0.13
+    - name: truvami-decoder
+      repository: file://../truvami-decoder/
+      version: 0.0.7
+    - name: truvami-dashboard
+      repository: file://../truvami-dashboard/
+      version: 0.0.11
+    - name: truvami-monitoring
+      repository: file://../truvami-monitoring/
+      version: 0.1.17
+    description: A Helm chart for Kubernetes
+    digest: 24ab90530350ca87d61596d0aed9ac831b6e0d2fb3f61a0cd22f2d518e0a2d36
+    name: truvami-stack
+    type: application
+    urls:
+    - https://github.com/truvami/helm/releases/download/truvami-stack-0.1.75/truvami-stack-0.1.75.tgz
+    version: 0.1.75
   - apiVersion: v2
     created: "2025-04-30T18:20:51.587348527Z"
     dependencies:
@@ -2613,4 +2652,4 @@ entries:
     urls:
     - https://github.com/truvami/helm/releases/download/truvami-stack-0.1.0/truvami-stack-0.1.0.tgz
     version: 0.1.0
-generated: "2025-04-30T18:20:51.587738034Z"
+generated: "2025-04-30T21:19:57.773195546Z"
