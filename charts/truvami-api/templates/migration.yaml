@@ -18,7 +18,12 @@ spec:
       containers:
         - name: migrate
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
-          command: ["/usr/bin/truvami-api", "migrate"]
+          command: 
+            - "/usr/bin/truvami-api"
+          args:
+            - '--config'
+            - /etc/truvami-api/config.yaml
+            - 'migrate'
           env:
             - name: DATABASE_URI
               valueFrom:

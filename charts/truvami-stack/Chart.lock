@@ -7,7 +7,7 @@ dependencies:
   version: 0.1.12
 - name: truvami-api
   repository: file://../truvami-api/
-  version: 0.0.12
+  version: 0.0.13
 - name: truvami-decoder
   repository: file://../truvami-decoder/
   version: 0.0.7
@@ -17,5 +17,5 @@ dependencies:
 - name: truvami-monitoring
   repository: file://../truvami-monitoring/
   version: 0.1.17
-digest: sha256:9cc337cd905daca690d108a96b6763885d2eee3284150daf6bb8b655eec6dfbc
-generated: "2025-04-30T17:53:04.492759+02:00"
+digest: sha256:fea23975e32b71a250e362b23c9bc8bb92f2829f48f8746038a8bce06b82bc68
+generated: "2025-04-30T17:59:47.592112+02:00"
