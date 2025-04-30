@@ -6,6 +6,7 @@ replicaCount: 1
 
 issuer: https://sso.sbcdc.ch/auth/realms/truvami
 clientId: dashboard
+apiUrl: https://api.truvami.com
 
 image:
   repository: ghcr.io/truvami/dashboard
