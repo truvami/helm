@@ -26,6 +26,14 @@ api:
   otel:
     enabled: false
     endpoint: "localhost:4318"
+    
+  webhook:
+    initializationTimeout: 15s
+    postRequestTimeout: 5s
+    response:
+      storedMaxBodySize: 512
+  database:
+    initializationTimeout: 15s
 
 database:
   secretName: truvami-stack-app
@@ -57,7 +65,8 @@ serviceAccount:
 podAnnotations: {}
 podLabels: {}
 
-podSecurityContext: {}
+podSecurityContext:
+  {}
   # fsGroup: 2000
 
 securityContext:
@@ -78,7 +87,8 @@ metrics:
 ingress:
   enabled: false
   className: ""
-  annotations: {}
+  annotations:
+    {}
     # kubernetes.io/ingress.class: nginx
     # kubernetes.io/tls-acme: "true"
   hosts:
