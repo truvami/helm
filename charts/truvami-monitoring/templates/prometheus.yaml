@@ -53,6 +53,10 @@ spec:
   podMonitorSelector: {}
   logFormat: "json"
   retention: 10d
+  {{- with .Values.prometheus.storage }}
+  storage:
+  {{ toYaml . | indent 4 }}
+  {{- end }}
   ruleNamespaceSelector:
     matchLabels:
       kubernetes.io/metadata.name : {{ .Release.Namespace }}

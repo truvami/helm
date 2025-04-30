@@ -1,6 +1,14 @@
 nameOverride: ""
 fullnameOverride: ""
 
+prometheus:
+  storage:
+    volumeClaimTemplate:
+      spec:
+        resources:
+          requests:
+            storage: 100Gi
+
 grafana:
   ## Grafana's SMTP configuration
   ## NOTE: To enable, grafana.ini must be configured with smtp.enabled
