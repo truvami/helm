@@ -2,6 +2,17 @@ apiVersion: v1
 entries:
   truvami-api:
   - apiVersion: v2
+    appVersion: 0.6.2
+    created: "2025-04-30T15:15:40.251641357Z"
+    description: A Helm chart for Kubernetes
+    digest: 414fb6a01c05f01f0f453d4e651af34b8035f2bbbbae49c3a2e23e2db9504af6
+    icon: https://raw.githubusercontent.com/truvami/helm/main/assets/icon.svg
+    name: truvami-api
+    type: application
+    urls:
+    - https://github.com/truvami/helm/releases/download/truvami-api-0.0.11/truvami-api-0.0.11.tgz
+    version: 0.0.11
+  - apiVersion: v2
     appVersion: 0.3.1
     created: "2025-02-20T14:14:51.559596029Z"
     description: A Helm chart for Kubernetes
@@ -869,6 +880,34 @@ entries:
     - https://github.com/truvami/helm/releases/download/truvami-monitoring-0.1.0/truvami-monitoring-0.1.0.tgz
     version: 0.1.0
   truvami-stack:
+  - apiVersion: v2
+    created: "2025-04-30T15:15:40.379627819Z"
+    dependencies:
+    - name: truvami-gateway
+      repository: file://../truvami-gateway/
+      version: 0.0.26
+    - name: truvami-bridge
+      repository: file://../truvami-bridge/
+      version: 0.1.12
+    - name: truvami-api
+      repository: file://../truvami-api/
+      version: 0.0.11
+    - name: truvami-decoder
+      repository: file://../truvami-decoder/
+      version: 0.0.7
+    - name: truvami-dashboard
+      repository: file://../truvami-dashboard/
+      version: 0.0.9
+    - name: truvami-monitoring
+      repository: file://../truvami-monitoring/
+      version: 0.1.17
+    description: A Helm chart for Kubernetes
+    digest: 7d3b8dba2196e6cb9de8b17b6b230eb977246107ac977fb8c3cc5e8f3dbdda7a
+    name: truvami-stack
+    type: application
+    urls:
+    - https://github.com/truvami/helm/releases/download/truvami-stack-0.1.71/truvami-stack-0.1.71.tgz
+    version: 0.1.71
   - apiVersion: v2
     created: "2025-04-30T13:01:17.114932931Z"
     dependencies:
@@ -2457,4 +2496,4 @@ entries:
     urls:
     - https://github.com/truvami/helm/releases/download/truvami-stack-0.1.0/truvami-stack-0.1.0.tgz
     version: 0.1.0
-generated: "2025-04-30T13:01:17.115308617Z"
+generated: "2025-04-30T15:15:40.37993576Z"
