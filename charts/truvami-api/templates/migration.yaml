@@ -5,10 +5,16 @@ metadata:
   labels:
     app.kubernetes.io/component: migration
 spec:
-  backoffLimit: 3
+  backoffLimit: 2
+  completions: 1
+  parallelism: 1
   template:
     spec:
       restartPolicy: Never
+      imagePullPolicy: Always
+      serviceAccountName: {{ include "truvami-api.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
       containers:
         - name: migrate
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
@@ -20,7 +26,27 @@ spec:
                   key: {{ .Values.database.secretKey }}
                   name: {{ .Values.database.secretName }}
                   optional: false
+          {{- with .Values.volumeMounts }}
+          volumeMounts:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.volumes }}
+      volumes:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
         {{- toYaml . | nindent 8 }}
       {{- end }}
