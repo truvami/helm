@@ -53,6 +53,13 @@ spec:
   podMonitorSelector: {}
   logFormat: "json"
   retention: 10d
+  securityContext:
+    fsGroup: 0
+    runAsGroup: 0
+    runAsNonRoot: false
+    runAsUser: 0
+    seccompProfile:
+      type: RuntimeDefault
   storage:
     volumeClaimTemplate:
       spec:

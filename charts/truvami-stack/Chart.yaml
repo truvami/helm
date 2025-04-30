@@ -27,5 +27,5 @@ dependencies:
     version: 0.0.9
     repository: "file://../truvami-dashboard/"
   - name: truvami-monitoring
-    version: 0.1.16
+    version: 0.1.17
     repository: "file://../truvami-monitoring/"
