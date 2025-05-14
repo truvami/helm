@@ -3,6 +3,17 @@ entries:
   truvami-api:
   - apiVersion: v2
     appVersion: 0.6.2
+    created: "2025-05-14T21:09:50.615468404Z"
+    description: A Helm chart for Kubernetes
+    digest: 23a085b6604a1834b8de76745d8809184a7c03251cf5560e5535095fa8efee21
+    icon: https://raw.githubusercontent.com/truvami/helm/main/assets/icon.svg
+    name: truvami-api
+    type: application
+    urls:
+    - https://github.com/truvami/helm/releases/download/truvami-api-0.0.14/truvami-api-0.0.14.tgz
+    version: 0.0.14
+  - apiVersion: v2
+    appVersion: 0.6.2
     created: "2025-04-30T16:00:35.483056335Z"
     description: A Helm chart for Kubernetes
     digest: 3ccea2bdcf9ca4da813c410724af2126859990e397d63b7dfb79cfb94600a4cf
@@ -924,6 +935,34 @@ entries:
     - https://github.com/truvami/helm/releases/download/truvami-monitoring-0.1.0/truvami-monitoring-0.1.0.tgz
     version: 0.1.0
   truvami-stack:
+  - apiVersion: v2
+    created: "2025-05-14T21:09:50.764104013Z"
+    dependencies:
+    - name: truvami-gateway
+      repository: file://../truvami-gateway/
+      version: 0.0.26
+    - name: truvami-bridge
+      repository: file://../truvami-bridge/
+      version: 0.1.12
+    - name: truvami-api
+      repository: file://../truvami-api/
+      version: 0.0.14
+    - name: truvami-decoder
+      repository: file://../truvami-decoder/
+      version: 0.0.7
+    - name: truvami-dashboard
+      repository: file://../truvami-dashboard/
+      version: 0.0.11
+    - name: truvami-monitoring
+      repository: file://../truvami-monitoring/
+      version: 0.1.17
+    description: A Helm chart for Kubernetes
+    digest: a80f5c7b9d2387c0b32e8bed86cce5a3de87338fd66e59cd502a01713cbb22a0
+    name: truvami-stack
+    type: application
+    urls:
+    - https://github.com/truvami/helm/releases/download/truvami-stack-0.1.77/truvami-stack-0.1.77.tgz
+    version: 0.1.77
   - apiVersion: v2
     created: "2025-05-14T21:06:54.364628196Z"
     dependencies:
@@ -2680,4 +2719,4 @@ entries:
     urls:
     - https://github.com/truvami/helm/releases/download/truvami-stack-0.1.0/truvami-stack-0.1.0.tgz
     version: 0.1.0
-generated: "2025-05-14T21:06:54.364970943Z"
+generated: "2025-05-14T21:09:50.764741544Z"
