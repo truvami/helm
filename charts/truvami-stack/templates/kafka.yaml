@@ -31,6 +31,12 @@ metadata:
     strimzi.io/kraft: enabled
 spec:
   kafka:
+    template:
+      persistentVolumeClaim:
+        metadata:
+          annotations:
+            argocd.argoproj.io/sync-options: Prune=false
+            argocd.argoproj.io/compare-options: IgnoreExtraneous
     version: 3.7.1
     metadataVersion: 3.7-IV0
     listeners:
