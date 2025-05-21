@@ -15,6 +15,13 @@ postgres:
   storage:
     storageClass: standard-retain
     size: 25Gi
+  resources:
+    requests:
+      memory: "250Mi"
+      cpu: "500m"
+    limits:
+      memory: "1Gi"
+      cpu: "1000m"
   backup:
     enable: false
     retentionPolicy: "30d"

@@ -12,6 +12,8 @@ spec:
       postInitTemplateSQL:
         - CREATE EXTENSION postgis;
   storage: {{ .Values.postgres.storage | toYaml | nindent 4 }}
+  resources: 
+    {{- toYaml .Values.postgres.resources | nindent 4 }}
   {{- if .Values.postgres.backup.enable }}
   backup:
     barmanObjectStore: {{ .Values.postgres.backup.barmanObjectStore | toYaml | nindent 4 }}
