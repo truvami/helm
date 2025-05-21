@@ -17,11 +17,11 @@ postgres:
     size: 25Gi
   resources:
     requests:
-      memory: "250Mi"
+      memory: "450Mi"
       cpu: "500m"
     limits:
       memory: "1Gi"
-      cpu: "1000m"
+      cpu: "1"
   backup:
     enable: false
     retentionPolicy: "30d"
