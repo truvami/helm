@@ -2,6 +2,17 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
+valkey:
+  enabled: true
+  primary:
+    resourcesPreset: "small"
+  replica:
+    resourcesPreset: "small"
+  metrics:
+    enabled: true
+    serviceMonitor: 
+      enabled: true
+
 kafka:
   replicaCount: 3
   storage:
