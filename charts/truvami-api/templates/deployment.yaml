@@ -44,6 +44,24 @@ spec:
                   key: {{ .Values.database.secretKey }}
                   name: {{ .Values.database.secretName }}
                   optional: false
+            - name: AUTH_APIKEYSECRET
+              valueFrom:
+                secretKeyRef:
+                  key: apikeysecret
+                  name: truvami-api
+                  optional: false
+            - name: ENCRYPTION_KEY
+              valueFrom:
+                secretKeyRef:
+                  key: encryption-key
+                  name: truvami-api
+                  optional: false
+            - name: THINGPARK_ASSECRET
+              valueFrom:
+                secretKeyRef:
+                  key: thingpark-assecret
+                  name: truvami-api
+                  optional: false
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"

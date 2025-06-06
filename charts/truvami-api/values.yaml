@@ -35,6 +35,15 @@ api:
   database:
     initializationTimeout: 15s
 
+  # This should be set using environment variables
+  # encryption:
+  #   key: "truvami"
+
+  thingpark:
+    host: "proxy1.lpn.swisscom.ch"
+    asId: "TWA_xxxxxxxxx.xxxxx.AS"
+    # asSecret: "xxxxxxxxxxxxxx"
+
 database:
   secretName: truvami-stack-app
   secretKey: uri
