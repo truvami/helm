@@ -24,7 +24,7 @@ spec:
             severity: warning
             code: SBCC
             customer: truvami
-            node: sbcc-cluster-7401-truvami-bridge
+            node: truvami-{{ "{{" }} $labels.devEui }}
         - alert: TruvamiWiFiSolverError
           annotations:
             description: >-
