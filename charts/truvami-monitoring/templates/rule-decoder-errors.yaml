@@ -22,6 +22,9 @@ spec:
             altravis_test: 'true'
             service: truvami-bridge
             severity: warning
+            code: SBCC
+            customer: truvami
+            node: sbcc-cluster-7401-truvami-bridge
         - alert: TruvamiWiFiSolverError
           annotations:
             description: >-
@@ -35,3 +38,6 @@ spec:
             altravis_test: 'true'
             service: truvami-bridge
             severity: critical
+            code: SBCC
+            customer: truvami
+            node: sbcc-cluster-7401-truvami-bridge
