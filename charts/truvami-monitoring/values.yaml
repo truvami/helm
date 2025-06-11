@@ -2,6 +2,8 @@ nameOverride: ""
 fullnameOverride: ""
 
 grafana:
+  enabled: false
+
   ## Grafana's SMTP configuration
   ## NOTE: To enable, grafana.ini must be configured with smtp.enabled
   ## ref: http://docs.grafana.org/installation/configuration/#smtp
