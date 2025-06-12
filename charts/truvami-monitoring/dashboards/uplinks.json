@@ -146,9 +146,7 @@
             },
             "id": 1,
             "options": {
-                "displayLabels": [
-                    "name"
-                ],
+                "displayLabels": ["name"],
                 "legend": {
                     "displayMode": "list",
                     "placement": "bottom",
@@ -157,9 +155,7 @@
                 },
                 "pieType": "donut",
                 "reduceOptions": {
-                    "calcs": [
-                        "lastNotNull"
-                    ],
+                    "calcs": ["lastNotNull"],
                     "fields": "",
                     "values": false
                 },
@@ -178,7 +174,7 @@
                     },
                     "disableTextWrap": false,
                     "editorMode": "builder",
-                    "expr": "sum by(port) (increase(truvami_device_uplink_count{devEui=~\"$devices\", port=~\"$ports\"}[$interval]))",
+                    "expr": "sum by(port) (truvami_device_uplink_count{devEui=~\"$devices\", port=~\"$ports\"})",
                     "fullMetaSearch": false,
                     "includeNullMetadata": false,
                     "legendFormat": "{{reason}}",
@@ -319,9 +315,7 @@
             },
             "id": 13,
             "options": {
-                "displayLabels": [
-                    "name"
-                ],
+                "displayLabels": ["name"],
                 "legend": {
                     "displayMode": "list",
                     "placement": "bottom",
@@ -330,9 +324,7 @@
                 },
                 "pieType": "donut",
                 "reduceOptions": {
-                    "calcs": [
-                        "lastNotNull"
-                    ],
+                    "calcs": ["lastNotNull"],
                     "fields": "",
                     "values": false
                 },
@@ -351,7 +343,7 @@
                     },
                     "disableTextWrap": false,
                     "editorMode": "builder",
-                    "expr": "sum by(spreadingFactor) (increase(truvami_device_uplink_count{devEui=~\"$devices\", spreadingFactor=~\"$spreadingFactors\"}[$interval]))",
+                    "expr": "sum by(spreadingFactor) (truvami_device_uplink_count{devEui=~\"$devices\", spreadingFactor=~\"$spreadingFactors\"})",
                     "fullMetaSearch": false,
                     "includeNullMetadata": true,
                     "legendFormat": "__auto",
@@ -497,9 +489,7 @@
                 "orientation": "auto",
                 "percentChangeColorMode": "standard",
                 "reduceOptions": {
-                    "calcs": [
-                        "lastNotNull"
-                    ],
+                    "calcs": ["lastNotNull"],
                     "fields": "",
                     "values": false
                 },
@@ -565,9 +555,7 @@
                 "orientation": "auto",
                 "percentChangeColorMode": "standard",
                 "reduceOptions": {
-                    "calcs": [
-                        "lastNotNull"
-                    ],
+                    "calcs": ["lastNotNull"],
                     "fields": "",
                     "values": false
                 },
@@ -633,9 +621,7 @@
                 "orientation": "auto",
                 "percentChangeColorMode": "standard",
                 "reduceOptions": {
-                    "calcs": [
-                        "lastNotNull"
-                    ],
+                    "calcs": ["lastNotNull"],
                     "fields": "",
                     "values": false
                 },
@@ -701,9 +687,7 @@
                 "orientation": "auto",
                 "percentChangeColorMode": "standard",
                 "reduceOptions": {
-                    "calcs": [
-                        "lastNotNull"
-                    ],
+                    "calcs": ["lastNotNull"],
                     "fields": "",
                     "values": false
                 },
@@ -796,9 +780,7 @@
             "id": 5,
             "options": {
                 "legend": {
-                    "calcs": [
-                        "mean"
-                    ],
+                    "calcs": ["mean"],
                     "displayMode": "table",
                     "placement": "right",
                     "showLegend": true
@@ -898,9 +880,7 @@
             "id": 6,
             "options": {
                 "legend": {
-                    "calcs": [
-                        "mean"
-                    ],
+                    "calcs": ["mean"],
                     "displayMode": "table",
                     "placement": "right",
                     "showLegend": true
@@ -955,9 +935,7 @@
             {
                 "current": {
                     "text": "All",
-                    "value": [
-                        "$__all"
-                    ]
+                    "value": ["$__all"]
                 },
                 "definition": "label_values(truvami_device_uplink_count,devEui)",
                 "description": "",
@@ -979,9 +957,7 @@
             {
                 "current": {
                     "text": "All",
-                    "value": [
-                        "$__all"
-                    ]
+                    "value": ["$__all"]
                 },
                 "definition": "label_values(truvami_device_uplink_count,port)",
                 "description": "",
@@ -1101,5 +1077,5 @@
     "timezone": "browser",
     "title": "Uplinks",
     "uid": "aejur9vxz1mo0c",
-    "version": 1
+    "version": 2
 }
