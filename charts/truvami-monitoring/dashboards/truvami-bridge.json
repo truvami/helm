@@ -1,31 +1,4 @@
 {
-  "__elements": {},
-  "__requires": [
-    {
-      "type": "panel",
-      "id": "alertlist",
-      "name": "Alert list",
-      "version": ""
-    },
-    {
-      "type": "grafana",
-      "id": "grafana",
-      "name": "Grafana",
-      "version": "11.6.0"
-    },
-    {
-      "type": "datasource",
-      "id": "prometheus",
-      "name": "Prometheus",
-      "version": "1.0.0"
-    },
-    {
-      "type": "panel",
-      "id": "timeseries",
-      "name": "Time series",
-      "version": ""
-    }
-  ],
   "annotations": {
     "list": [
       {
@@ -46,13 +19,13 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": null,
+  "id": 6,
   "links": [],
   "panels": [
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "${datasource}"
+        "uid": "PBFA97CFB590B2093"
       },
       "fieldConfig": {
         "defaults": {
@@ -128,6 +101,10 @@
       "pluginVersion": "11.6.0",
       "targets": [
         {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
           "disableTextWrap": false,
           "editorMode": "code",
           "expr": "avg(sum by() (increase(truvami_device_uplink_count{namespace=~\"^($namespace)$\", pod=~\"^($pod)$\",service=~\".*truvami-bridge\"}[$interval])))",
@@ -136,11 +113,7 @@
           "legendFormat": "Total",
           "range": true,
           "refId": "A",
-          "useBackend": false,
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${datasource}"
-          }
+          "useBackend": false
         }
       ],
       "title": "Uplinks (1h interval)",
@@ -149,7 +122,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "${datasource}"
+        "uid": "PBFA97CFB590B2093"
       },
       "fieldConfig": {
         "defaults": {
@@ -225,6 +198,10 @@
       "pluginVersion": "11.6.0",
       "targets": [
         {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
           "disableTextWrap": false,
           "editorMode": "code",
           "expr": "avg(sum by() (increase(truvami_failed_to_decode_payload_count{namespace=~\"^($namespace)$\", pod=~\"^($pod)$\",service=~\".*truvami-bridge\"}[$interval])))",
@@ -233,17 +210,17 @@
           "legendFormat": "Decoder Errors",
           "range": true,
           "refId": "A",
-          "useBackend": false,
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${datasource}"
-          }
+          "useBackend": false
         }
       ],
       "title": "Decoder Errors (1h interval)",
       "type": "timeseries"
     },
     {
+      "fieldConfig": {
+        "defaults": {},
+        "overrides": []
+      },
       "gridPos": {
         "h": 10,
         "w": 24,
@@ -288,7 +265,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${datasource}"
+            "uid": "PBFA97CFB590B2093"
           },
           "fieldConfig": {
             "defaults": {
@@ -382,7 +359,7 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 9
+            "y": 27
           },
           "id": 1,
           "options": {
@@ -441,7 +418,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${datasource}"
+            "uid": "PBFA97CFB590B2093"
           },
           "fieldConfig": {
             "defaults": {
@@ -502,7 +479,7 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 9
+            "y": 27
           },
           "id": 4,
           "options": {
@@ -561,7 +538,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${datasource}"
+            "uid": "PBFA97CFB590B2093"
           },
           "fieldConfig": {
             "defaults": {
@@ -655,7 +632,7 @@
             "h": 7,
             "w": 12,
             "x": 0,
-            "y": 17
+            "y": 35
           },
           "id": 2,
           "options": {
@@ -745,7 +722,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${datasource}"
+            "uid": "PBFA97CFB590B2093"
           },
           "fieldConfig": {
             "defaults": {
@@ -839,7 +816,7 @@
             "h": 7,
             "w": 12,
             "x": 12,
-            "y": 17
+            "y": 35
           },
           "id": 5,
           "options": {
@@ -929,7 +906,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${datasource}"
+            "uid": "PBFA97CFB590B2093"
           },
           "fieldConfig": {
             "defaults": {
@@ -990,7 +967,7 @@
             "h": 7,
             "w": 12,
             "x": 0,
-            "y": 24
+            "y": 42
           },
           "id": 3,
           "options": {
@@ -1034,7 +1011,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${datasource}"
+            "uid": "PBFA97CFB590B2093"
           },
           "fieldConfig": {
             "defaults": {
@@ -1095,7 +1072,7 @@
             "h": 7,
             "w": 12,
             "x": 12,
-            "y": 24
+            "y": 42
           },
           "id": 6,
           "options": {
@@ -1139,7 +1116,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${datasource}"
+            "uid": "PBFA97CFB590B2093"
           },
           "fieldConfig": {
             "defaults": {
@@ -1200,7 +1177,7 @@
             "h": 7,
             "w": 12,
             "x": 0,
-            "y": 31
+            "y": 49
           },
           "id": 7,
           "options": {
@@ -1244,7 +1221,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${datasource}"
+            "uid": "PBFA97CFB590B2093"
           },
           "fieldConfig": {
             "defaults": {
@@ -1305,7 +1282,7 @@
             "h": 7,
             "w": 12,
             "x": 12,
-            "y": 31
+            "y": 49
           },
           "id": 8,
           "options": {
@@ -1351,6 +1328,7 @@
       "type": "row"
     }
   ],
+  "preload": false,
   "refresh": "30s",
   "schemaVersion": 41,
   "tags": [],
@@ -1361,7 +1339,7 @@
         "current": {},
         "datasource": {
           "type": "prometheus",
-          "uid": "${datasource}"
+          "uid": "PBFA97CFB590B2093"
         },
         "includeAll": true,
         "multi": true,
@@ -1377,7 +1355,7 @@
         "current": {},
         "datasource": {
           "type": "prometheus",
-          "uid": "${datasource}"
+          "uid": "PBFA97CFB590B2093"
         },
         "includeAll": true,
         "multi": true,
@@ -1438,6 +1416,5 @@
   "timezone": "browser",
   "title": "Bridge Service",
   "uid": "ypFZFgvmy",
-  "version": 5,
-  "weekStart": ""
+  "version": 2
 }
