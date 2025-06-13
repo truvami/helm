@@ -77,7 +77,7 @@
 				"overrides": []
 			},
 			"gridPos": {
-				"h": 13,
+				"h": 12,
 				"w": 18,
 				"x": 0,
 				"y": 0
@@ -114,7 +114,7 @@
 					"useBackend": false
 				}
 			],
-			"title": "Uplinks",
+			"title": "Devices",
 			"type": "timeseries"
 		},
 		{
@@ -139,10 +139,178 @@
 				"overrides": []
 			},
 			"gridPos": {
-				"h": 13,
+				"h": 12,
 				"w": 6,
 				"x": 18,
 				"y": 0
+			},
+			"id": 14,
+			"options": {
+				"legend": {
+					"displayMode": "list",
+					"placement": "bottom",
+					"showLegend": false,
+					"values": []
+				},
+				"pieType": "donut",
+				"reduceOptions": {
+					"calcs": ["lastNotNull"],
+					"fields": "",
+					"values": false
+				},
+				"tooltip": {
+					"hideZeros": false,
+					"mode": "single",
+					"sort": "none"
+				}
+			},
+			"pluginVersion": "11.6.0",
+			"targets": [
+				{
+					"datasource": {
+						"type": "prometheus",
+						"uid": "${datasource}"
+					},
+					"disableTextWrap": false,
+					"editorMode": "builder",
+					"expr": "sum by(devEui) (truvami_device_uplink_count{devEui=~\"$devices\", port=~\"$ports\", spreadingFactor=~\"$spreadingFactors\"})",
+					"fullMetaSearch": false,
+					"includeNullMetadata": true,
+					"legendFormat": "__auto",
+					"range": true,
+					"refId": "A",
+					"useBackend": false
+				}
+			],
+			"title": "Devices",
+			"type": "piechart"
+		},
+		{
+			"datasource": {
+				"type": "prometheus",
+				"uid": "${datasource}"
+			},
+			"fieldConfig": {
+				"defaults": {
+					"color": {
+						"mode": "palette-classic"
+					},
+					"custom": {
+						"axisBorderShow": false,
+						"axisCenteredZero": false,
+						"axisColorMode": "text",
+						"axisLabel": "",
+						"axisPlacement": "auto",
+						"barAlignment": 0,
+						"barWidthFactor": 0.6,
+						"drawStyle": "line",
+						"fillOpacity": 10,
+						"gradientMode": "none",
+						"hideFrom": {
+							"legend": false,
+							"tooltip": false,
+							"viz": false
+						},
+						"insertNulls": false,
+						"lineInterpolation": "linear",
+						"lineWidth": 1,
+						"pointSize": 5,
+						"scaleDistribution": {
+							"type": "linear"
+						},
+						"showPoints": "auto",
+						"spanNulls": false,
+						"stacking": {
+							"group": "A",
+							"mode": "none"
+						},
+						"thresholdsStyle": {
+							"mode": "off"
+						}
+					},
+					"mappings": [],
+					"thresholds": {
+						"mode": "absolute",
+						"steps": [
+							{
+								"color": "green"
+							},
+							{
+								"color": "red",
+								"value": 80
+							}
+						]
+					}
+				},
+				"overrides": []
+			},
+			"gridPos": {
+				"h": 12,
+				"w": 18,
+				"x": 0,
+				"y": 12
+			},
+			"id": 15,
+			"options": {
+				"legend": {
+					"calcs": [],
+					"displayMode": "list",
+					"placement": "bottom",
+					"showLegend": true
+				},
+				"tooltip": {
+					"hideZeros": false,
+					"mode": "single",
+					"sort": "none"
+				}
+			},
+			"pluginVersion": "11.6.0",
+			"targets": [
+				{
+					"datasource": {
+						"type": "prometheus",
+						"uid": "${datasource}"
+					},
+					"disableTextWrap": false,
+					"editorMode": "builder",
+					"expr": "sum by(port) (increase(truvami_device_uplink_count{devEui=~\"$devices\", port=~\"$ports\", spreadingFactor=~\"$spreadingFactors\"}[$interval]))",
+					"fullMetaSearch": false,
+					"includeNullMetadata": true,
+					"legendFormat": "__auto",
+					"range": true,
+					"refId": "A",
+					"useBackend": false
+				}
+			],
+			"title": "Ports",
+			"type": "timeseries"
+		},
+		{
+			"datasource": {
+				"type": "prometheus",
+				"uid": "${datasource}"
+			},
+			"fieldConfig": {
+				"defaults": {
+					"color": {
+						"mode": "palette-classic"
+					},
+					"custom": {
+						"hideFrom": {
+							"legend": false,
+							"tooltip": false,
+							"viz": false
+						}
+					},
+					"mappings": []
+				},
+				"overrides": []
+			},
+			"gridPos": {
+				"h": 12,
+				"w": 6,
+				"x": 18,
+				"y": 12
 			},
 			"id": 1,
 			"options": {
@@ -150,7 +318,7 @@
 				"legend": {
 					"displayMode": "list",
 					"placement": "bottom",
-					"showLegend": true,
+					"showLegend": false,
 					"values": []
 				},
 				"pieType": "donut",
@@ -249,7 +417,7 @@
 				"h": 12,
 				"w": 18,
 				"x": 0,
-				"y": 13
+				"y": 24
 			},
 			"id": 12,
 			"options": {
@@ -311,7 +479,7 @@
 				"h": 12,
 				"w": 6,
 				"x": 18,
-				"y": 13
+				"y": 24
 			},
 			"id": 13,
 			"options": {
@@ -319,7 +487,7 @@
 				"legend": {
 					"displayMode": "list",
 					"placement": "bottom",
-					"showLegend": true,
+					"showLegend": false,
 					"values": []
 				},
 				"pieType": "donut",
@@ -415,7 +583,7 @@
 				"h": 12,
 				"w": 18,
 				"x": 0,
-				"y": 25
+				"y": 36
 			},
 			"id": 7,
 			"options": {
@@ -479,7 +647,7 @@
 				"h": 3,
 				"w": 6,
 				"x": 18,
-				"y": 25
+				"y": 36
 			},
 			"id": 8,
 			"options": {
@@ -545,7 +713,7 @@
 				"h": 3,
 				"w": 6,
 				"x": 18,
-				"y": 28
+				"y": 39
 			},
 			"id": 9,
 			"options": {
@@ -611,7 +779,7 @@
 				"h": 3,
 				"w": 6,
 				"x": 18,
-				"y": 31
+				"y": 42
 			},
 			"id": 10,
 			"options": {
@@ -677,7 +845,7 @@
 				"h": 3,
 				"w": 6,
 				"x": 18,
-				"y": 34
+				"y": 45
 			},
 			"id": 11,
 			"options": {
@@ -775,7 +943,7 @@
 				"h": 8,
 				"w": 24,
 				"x": 0,
-				"y": 37
+				"y": 48
 			},
 			"id": 5,
 			"options": {
@@ -875,7 +1043,7 @@
 				"h": 8,
 				"w": 24,
 				"x": 0,
-				"y": 45
+				"y": 56
 			},
 			"id": 6,
 			"options": {
