@@ -18,7 +18,7 @@
 	"editable": true,
 	"fiscalYearStartMonth": 0,
 	"graphTooltip": 2,
-	"id": 5,
+	"id": 7,
 	"links": [],
 	"panels": [
 		{
@@ -77,7 +77,7 @@
 				"overrides": []
 			},
 			"gridPos": {
-				"h": 12,
+				"h": 10,
 				"w": 18,
 				"x": 0,
 				"y": 0
@@ -87,7 +87,7 @@
 				"legend": {
 					"calcs": [],
 					"displayMode": "list",
-					"placement": "bottom",
+					"placement": "right",
 					"showLegend": true
 				},
 				"tooltip": {
@@ -114,7 +114,7 @@
 					"useBackend": false
 				}
 			],
-			"title": "Devices",
+			"title": "Uplinks by devices",
 			"type": "timeseries"
 		},
 		{
@@ -139,7 +139,7 @@
 				"overrides": []
 			},
 			"gridPos": {
-				"h": 12,
+				"h": 10,
 				"w": 6,
 				"x": 18,
 				"y": 0
@@ -182,7 +182,7 @@
 					"useBackend": false
 				}
 			],
-			"title": "Devices",
+			"title": "Uplinks by devices",
 			"type": "piechart"
 		},
 		{
@@ -234,10 +234,6 @@
 						"steps": [
 							{
 								"color": "green"
-							},
-							{
-								"color": "red",
-								"value": 80
 							}
 						]
 					}
@@ -245,17 +241,17 @@
 				"overrides": []
 			},
 			"gridPos": {
-				"h": 12,
+				"h": 10,
 				"w": 18,
 				"x": 0,
-				"y": 12
+				"y": 10
 			},
 			"id": 15,
 			"options": {
 				"legend": {
 					"calcs": [],
 					"displayMode": "list",
-					"placement": "bottom",
+					"placement": "right",
 					"showLegend": true
 				},
 				"tooltip": {
@@ -282,7 +278,7 @@
 					"useBackend": false
 				}
 			],
-			"title": "Ports",
+			"title": "Uplinks by ports",
 			"type": "timeseries"
 		},
 		{
@@ -307,10 +303,10 @@
 				"overrides": []
 			},
 			"gridPos": {
-				"h": 12,
+				"h": 10,
 				"w": 6,
 				"x": 18,
-				"y": 12
+				"y": 10
 			},
 			"id": 1,
 			"options": {
@@ -351,7 +347,7 @@
 					"useBackend": false
 				}
 			],
-			"title": "Ports",
+			"title": "Uplinks by ports",
 			"type": "piechart"
 		},
 		{
@@ -403,10 +399,6 @@
 						"steps": [
 							{
 								"color": "green"
-							},
-							{
-								"color": "red",
-								"value": 80
 							}
 						]
 					}
@@ -414,17 +406,17 @@
 				"overrides": []
 			},
 			"gridPos": {
-				"h": 12,
+				"h": 10,
 				"w": 18,
 				"x": 0,
-				"y": 24
+				"y": 20
 			},
 			"id": 12,
 			"options": {
 				"legend": {
 					"calcs": [],
 					"displayMode": "list",
-					"placement": "bottom",
+					"placement": "right",
 					"showLegend": true
 				},
 				"tooltip": {
@@ -451,7 +443,7 @@
 					"useBackend": false
 				}
 			],
-			"title": "Spreading Factors",
+			"title": "Uplinks by spreading factors",
 			"type": "timeseries"
 		},
 		{
@@ -476,10 +468,10 @@
 				"overrides": []
 			},
 			"gridPos": {
-				"h": 12,
+				"h": 10,
 				"w": 6,
 				"x": 18,
-				"y": 24
+				"y": 20
 			},
 			"id": 13,
 			"options": {
@@ -520,7 +512,7 @@
 					"useBackend": false
 				}
 			],
-			"title": "Spreading Factors",
+			"title": "Uplinks by spreading factors",
 			"type": "piechart"
 		},
 		{
@@ -583,7 +575,7 @@
 				"h": 12,
 				"w": 18,
 				"x": 0,
-				"y": 36
+				"y": 30
 			},
 			"id": 7,
 			"options": {
@@ -591,7 +583,7 @@
 					"calcs": [],
 					"displayMode": "list",
 					"placement": "bottom",
-					"showLegend": true
+					"showLegend": false
 				},
 				"tooltip": {
 					"hideZeros": false,
@@ -647,7 +639,7 @@
 				"h": 3,
 				"w": 6,
 				"x": 18,
-				"y": 36
+				"y": 30
 			},
 			"id": 8,
 			"options": {
@@ -713,7 +705,7 @@
 				"h": 3,
 				"w": 6,
 				"x": 18,
-				"y": 39
+				"y": 33
 			},
 			"id": 9,
 			"options": {
@@ -779,7 +771,7 @@
 				"h": 3,
 				"w": 6,
 				"x": 18,
-				"y": 42
+				"y": 36
 			},
 			"id": 10,
 			"options": {
@@ -845,7 +837,7 @@
 				"h": 3,
 				"w": 6,
 				"x": 18,
-				"y": 45
+				"y": 39
 			},
 			"id": 11,
 			"options": {
@@ -933,6 +925,10 @@
 						"steps": [
 							{
 								"color": "green"
+							},
+							{
+								"color": "red",
+								"value": 80
 							}
 						]
 					}
@@ -941,11 +937,11 @@
 			},
 			"gridPos": {
 				"h": 8,
-				"w": 24,
+				"w": 19,
 				"x": 0,
-				"y": 48
+				"y": 42
 			},
-			"id": 5,
+			"id": 6,
 			"options": {
 				"legend": {
 					"calcs": ["mean"],
@@ -968,7 +964,7 @@
 					},
 					"disableTextWrap": false,
 					"editorMode": "builder",
-					"expr": "sum by(port) (increase(truvami_failed_to_decode_payload_count{devEui=~\"$devices\", port=~\"$ports\"}[$interval]))",
+					"expr": "sum by(devEui) (increase(truvami_failed_to_decode_payload_count{devEui=~\"$devices\", port=~\"$ports\"}[$interval]))",
 					"fullMetaSearch": false,
 					"includeNullMetadata": false,
 					"legendFormat": "__auto",
@@ -977,8 +973,75 @@
 					"useBackend": false
 				}
 			],
-			"title": "Decoder Errors",
+			"title": "Decode errors by devices",
 			"type": "timeseries"
+		},
+		{
+			"datasource": {
+				"type": "prometheus",
+				"uid": "${datasource}"
+			},
+			"fieldConfig": {
+				"defaults": {
+					"color": {
+						"mode": "palette-classic"
+					},
+					"custom": {
+						"hideFrom": {
+							"legend": false,
+							"tooltip": false,
+							"viz": false
+						}
+					},
+					"mappings": []
+				},
+				"overrides": []
+			},
+			"gridPos": {
+				"h": 8,
+				"w": 5,
+				"x": 19,
+				"y": 42
+			},
+			"id": 16,
+			"options": {
+				"legend": {
+					"displayMode": "list",
+					"placement": "bottom",
+					"showLegend": false
+				},
+				"pieType": "donut",
+				"reduceOptions": {
+					"calcs": ["lastNotNull"],
+					"fields": "",
+					"values": false
+				},
+				"tooltip": {
+					"hideZeros": false,
+					"mode": "single",
+					"sort": "none"
+				}
+			},
+			"pluginVersion": "11.6.0",
+			"targets": [
+				{
+					"datasource": {
+						"type": "prometheus",
+						"uid": "${datasource}"
+					},
+					"disableTextWrap": false,
+					"editorMode": "builder",
+					"expr": "sum by(devEui) (truvami_failed_to_decode_payload_count{devEui=~\"$devices\", port=~\"$ports\"})",
+					"fullMetaSearch": false,
+					"includeNullMetadata": true,
+					"legendFormat": "__auto",
+					"range": true,
+					"refId": "A",
+					"useBackend": false
+				}
+			],
+			"title": "Decode errors by devices",
+			"type": "piechart"
 		},
 		{
 			"datasource": {
@@ -1041,11 +1104,11 @@
 			},
 			"gridPos": {
 				"h": 8,
-				"w": 24,
+				"w": 19,
 				"x": 0,
-				"y": 56
+				"y": 50
 			},
-			"id": 6,
+			"id": 5,
 			"options": {
 				"legend": {
 					"calcs": ["mean"],
@@ -1068,7 +1131,7 @@
 					},
 					"disableTextWrap": false,
 					"editorMode": "builder",
-					"expr": "sum by(devEui) (increase(truvami_failed_to_decode_payload_count{devEui=~\"$devices\", port=~\"$ports\"}[$interval]))",
+					"expr": "sum by(port) (increase(truvami_failed_to_decode_payload_count{devEui=~\"$devices\", port=~\"$ports\"}[$interval]))",
 					"fullMetaSearch": false,
 					"includeNullMetadata": false,
 					"legendFormat": "__auto",
@@ -1077,8 +1140,75 @@
 					"useBackend": false
 				}
 			],
-			"title": "Decoder Errors",
+			"title": "Decode errors by ports",
 			"type": "timeseries"
+		},
+		{
+			"datasource": {
+				"type": "prometheus",
+				"uid": "${datasource}"
+			},
+			"fieldConfig": {
+				"defaults": {
+					"color": {
+						"mode": "palette-classic"
+					},
+					"custom": {
+						"hideFrom": {
+							"legend": false,
+							"tooltip": false,
+							"viz": false
+						}
+					},
+					"mappings": []
+				},
+				"overrides": []
+			},
+			"gridPos": {
+				"h": 8,
+				"w": 5,
+				"x": 19,
+				"y": 50
+			},
+			"id": 17,
+			"options": {
+				"legend": {
+					"displayMode": "list",
+					"placement": "bottom",
+					"showLegend": false
+				},
+				"pieType": "donut",
+				"reduceOptions": {
+					"calcs": ["lastNotNull"],
+					"fields": "",
+					"values": false
+				},
+				"tooltip": {
+					"hideZeros": false,
+					"mode": "single",
+					"sort": "none"
+				}
+			},
+			"pluginVersion": "11.6.0",
+			"targets": [
+				{
+					"datasource": {
+						"type": "prometheus",
+						"uid": "${datasource}"
+					},
+					"disableTextWrap": false,
+					"editorMode": "builder",
+					"expr": "sum by(port) (truvami_failed_to_decode_payload_count{devEui=~\"$devices\", port=~\"$ports\"})",
+					"fullMetaSearch": false,
+					"includeNullMetadata": true,
+					"legendFormat": "__auto",
+					"range": true,
+					"refId": "A",
+					"useBackend": false
+				}
+			],
+			"title": "Decode errors by ports",
+			"type": "piechart"
 		}
 	],
 	"preload": false,
@@ -1245,5 +1375,5 @@
 	"timezone": "browser",
 	"title": "Uplinks",
 	"uid": "aejur9vxz1mo0c",
-	"version": 3
+	"version": 4
 }
