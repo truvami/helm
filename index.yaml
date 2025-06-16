@@ -766,6 +766,21 @@ entries:
     version: 0.0.1
   truvami-monitoring:
   - apiVersion: v2
+    created: "2025-06-16T11:59:31.631899796Z"
+    dependencies:
+    - condition: grafana.enabled
+      name: grafana
+      repository: https://grafana.github.io/helm-charts
+      version: 8.12.1
+    description: This chart contains all CRD's for the truvami-stack monitoring and
+      alerting.
+    digest: 14a9bb74448df3f5eda7b944a324303718300d561ab7cae3d177689b729ec31c
+    name: truvami-monitoring
+    type: application
+    urls:
+    - https://github.com/truvami/helm/releases/download/truvami-monitoring-0.1.26/truvami-monitoring-0.1.26.tgz
+    version: 0.1.26
+  - apiVersion: v2
     created: "2025-06-13T15:20:26.402906635Z"
     dependencies:
     - condition: grafana.enabled
@@ -1072,6 +1087,38 @@ entries:
     - https://github.com/truvami/helm/releases/download/truvami-monitoring-0.1.0/truvami-monitoring-0.1.0.tgz
     version: 0.1.0
   truvami-stack:
+  - apiVersion: v2
+    created: "2025-06-16T11:59:31.848781634Z"
+    dependencies:
+    - name: truvami-gateway
+      repository: file://../truvami-gateway/
+      version: 0.0.26
+    - name: truvami-bridge
+      repository: file://../truvami-bridge/
+      version: 0.1.13
+    - name: truvami-api
+      repository: file://../truvami-api/
+      version: 0.0.15
+    - name: truvami-decoder
+      repository: file://../truvami-decoder/
+      version: 0.0.7
+    - name: truvami-dashboard
+      repository: file://../truvami-dashboard/
+      version: 0.0.12
+    - name: truvami-monitoring
+      repository: file://../truvami-monitoring/
+      version: 0.1.26
+    - condition: valkey.enabled
+      name: valkey
+      repository: https://charts.bitnami.com/bitnami
+      version: 3.0.9
+    description: A Helm chart for Kubernetes
+    digest: 369634eb868de9a57de96e1a0b56da5a72a0f6db27550957668e58886fb9d7c6
+    name: truvami-stack
+    type: application
+    urls:
+    - https://github.com/truvami/helm/releases/download/truvami-stack-0.1.93/truvami-stack-0.1.93.tgz
+    version: 0.1.93
   - apiVersion: v2
     created: "2025-06-13T20:13:52.841558003Z"
     dependencies:
@@ -3296,4 +3343,4 @@ entries:
     urls:
     - https://github.com/truvami/helm/releases/download/truvami-stack-0.1.0/truvami-stack-0.1.0.tgz
     version: 0.1.0
-generated: "2025-06-13T20:13:52.841964353Z"
+generated: "2025-06-16T11:59:31.849234287Z"
