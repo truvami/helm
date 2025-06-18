@@ -403,7 +403,98 @@
 						]
 					}
 				},
-				"overrides": []
+				"overrides": [
+					{
+						"matcher": {
+							"id": "byName",
+							"options": "SF7"
+						},
+						"properties": [
+							{
+								"id": "color",
+								"value": {
+									"fixedColor": "#22c55e",
+									"mode": "fixed"
+								}
+							}
+						]
+					},
+					{
+						"matcher": {
+							"id": "byName",
+							"options": "SF8"
+						},
+						"properties": [
+							{
+								"id": "color",
+								"value": {
+									"fixedColor": "#84cc16",
+									"mode": "fixed"
+								}
+							}
+						]
+					},
+					{
+						"matcher": {
+							"id": "byName",
+							"options": "SF9"
+						},
+						"properties": [
+							{
+								"id": "color",
+								"value": {
+									"fixedColor": "#eab308",
+									"mode": "fixed"
+								}
+							}
+						]
+					},
+					{
+						"matcher": {
+							"id": "byName",
+							"options": "SF10"
+						},
+						"properties": [
+							{
+								"id": "color",
+								"value": {
+									"fixedColor": "#f59e0b",
+									"mode": "fixed"
+								}
+							}
+						]
+					},
+					{
+						"matcher": {
+							"id": "byName",
+							"options": "SF11"
+						},
+						"properties": [
+							{
+								"id": "color",
+								"value": {
+									"fixedColor": "#f97316",
+									"mode": "fixed"
+								}
+							}
+						]
+					},
+					{
+						"matcher": {
+							"id": "byName",
+							"options": "SF12"
+						},
+						"properties": [
+							{
+								"id": "color",
+								"value": {
+									"fixedColor": "#ef4444",
+									"mode": "fixed"
+								}
+							}
+						]
+					}
+				]
 			},
 			"gridPos": {
 				"h": 10,
@@ -1805,5 +1896,5 @@
 	"timezone": "browser",
 	"title": "Uplinks",
 	"uid": "aejur9vxz1mo0c",
-	"version": 7
+	"version": 8
 }
