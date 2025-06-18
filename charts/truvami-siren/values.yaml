@@ -125,7 +125,7 @@ autoscaling:
 volumes:
   - configMap:
       defaultMode: 420
-      name: "truvami-siren-config"
+      name: "siren-config"
       optional: false
     name: config
   - name: kafka-credentials
