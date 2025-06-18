@@ -11,7 +11,7 @@ siren:
     items:
       - uplinks
       - positions
-      - battery_statuses
+      - battery-statuses
       - rotations
       - events
 
