@@ -964,7 +964,7 @@
 					},
 					"disableTextWrap": false,
 					"editorMode": "builder",
-					"expr": "sum by(devEui) (increase(truvami_failed_to_decode_payload_count{devEui=~\"$devices\", port=~\"$ports\"}[$interval])) > 0",
+					"expr": "sum by(devEui) (increase(truvami_uplink_created_but_decoder_err_count{devEui=~\"$devices\", port=~\"$ports\"}[$interval])) > 0",
 					"fullMetaSearch": false,
 					"includeNullMetadata": false,
 					"legendFormat": "__auto",
@@ -1031,7 +1031,7 @@
 					},
 					"disableTextWrap": false,
 					"editorMode": "builder",
-					"expr": "sum by(devEui) (increase(truvami_failed_to_decode_payload_count{devEui=~\"$devices\", port=~\"$ports\"}[$__range]))",
+					"expr": "sum by(devEui) (increase(truvami_uplink_created_but_decoder_err_count{devEui=~\"$devices\", port=~\"$ports\"}[$__range]))",
 					"fullMetaSearch": false,
 					"includeNullMetadata": true,
 					"legendFormat": "__auto",
@@ -1131,7 +1131,7 @@
 					},
 					"disableTextWrap": false,
 					"editorMode": "builder",
-					"expr": "sum by(port) (increase(truvami_failed_to_decode_payload_count{devEui=~\"$devices\", port=~\"$ports\"}[$interval])) > 0",
+					"expr": "sum by(port) (increase(truvami_uplink_created_but_decoder_err_count{devEui=~\"$devices\", port=~\"$ports\"}[$interval])) > 0",
 					"fullMetaSearch": false,
 					"includeNullMetadata": false,
 					"legendFormat": "__auto",
@@ -1198,7 +1198,7 @@
 					},
 					"disableTextWrap": false,
 					"editorMode": "builder",
-					"expr": "sum by(port) (increase(truvami_failed_to_decode_payload_count{devEui=~\"$devices\", port=~\"$ports\"}[$__range]))",
+					"expr": "sum by(port) (increase(truvami_uplink_created_but_decoder_err_count{devEui=~\"$devices\", port=~\"$ports\"}[$__range]))",
 					"fullMetaSearch": false,
 					"includeNullMetadata": true,
 					"legendFormat": "__auto",
@@ -1208,6 +1208,340 @@
 				}
 			],
 			"title": "Decode errors by ports",
+			"type": "piechart"
+		},
+		{
+			"datasource": {
+				"type": "prometheus",
+				"uid": "${datasource}"
+			},
+			"fieldConfig": {
+				"defaults": {
+					"color": {
+						"mode": "palette-classic"
+					},
+					"custom": {
+						"axisBorderShow": false,
+						"axisCenteredZero": false,
+						"axisColorMode": "text",
+						"axisLabel": "",
+						"axisPlacement": "auto",
+						"barAlignment": 0,
+						"barWidthFactor": 0.6,
+						"drawStyle": "line",
+						"fillOpacity": 10,
+						"gradientMode": "none",
+						"hideFrom": {
+							"legend": false,
+							"tooltip": false,
+							"viz": false
+						},
+						"insertNulls": false,
+						"lineInterpolation": "linear",
+						"lineWidth": 1,
+						"pointSize": 5,
+						"scaleDistribution": {
+							"type": "linear"
+						},
+						"showPoints": "auto",
+						"spanNulls": false,
+						"stacking": {
+							"group": "A",
+							"mode": "none"
+						},
+						"thresholdsStyle": {
+							"mode": "off"
+						}
+					},
+					"mappings": [],
+					"thresholds": {
+						"mode": "absolute",
+						"steps": [
+							{
+								"color": "green"
+							},
+							{
+								"color": "red",
+								"value": 80
+							}
+						]
+					}
+				},
+				"overrides": []
+			},
+			"gridPos": {
+				"h": 8,
+				"w": 19,
+				"x": 0,
+				"y": 58
+			},
+			"id": 21,
+			"options": {
+				"legend": {
+					"calcs": ["distinctCount"],
+					"displayMode": "table",
+					"placement": "right",
+					"showLegend": true
+				},
+				"tooltip": {
+					"hideZeros": false,
+					"mode": "single",
+					"sort": "none"
+				}
+			},
+			"pluginVersion": "11.6.0",
+			"targets": [
+				{
+					"datasource": {
+						"type": "prometheus",
+						"uid": "${DS_PROMETHEUS}"
+					},
+					"disableTextWrap": false,
+					"editorMode": "builder",
+					"expr": "sum by(devEui) (increase(truvami_uplink_created_but_decoder_warn_count{devEui=~\"$devices\", port=~\"$ports\"}[$interval])) > 0",
+					"fullMetaSearch": false,
+					"includeNullMetadata": false,
+					"legendFormat": "__auto",
+					"range": true,
+					"refId": "A",
+					"useBackend": false
+				}
+			],
+			"title": "Decode warnings by devices",
+			"type": "timeseries"
+		},
+		{
+			"datasource": {
+				"type": "prometheus",
+				"uid": "${datasource}"
+			},
+			"fieldConfig": {
+				"defaults": {
+					"color": {
+						"mode": "palette-classic"
+					},
+					"custom": {
+						"hideFrom": {
+							"legend": false,
+							"tooltip": false,
+							"viz": false
+						}
+					},
+					"mappings": []
+				},
+				"overrides": []
+			},
+			"gridPos": {
+				"h": 8,
+				"w": 5,
+				"x": 19,
+				"y": 58
+			},
+			"id": 22,
+			"options": {
+				"legend": {
+					"displayMode": "list",
+					"placement": "bottom",
+					"showLegend": false
+				},
+				"pieType": "donut",
+				"reduceOptions": {
+					"calcs": ["lastNotNull"],
+					"fields": "",
+					"values": false
+				},
+				"tooltip": {
+					"hideZeros": false,
+					"mode": "single",
+					"sort": "none"
+				}
+			},
+			"pluginVersion": "11.6.0",
+			"targets": [
+				{
+					"datasource": {
+						"type": "prometheus",
+						"uid": "${datasource}"
+					},
+					"disableTextWrap": false,
+					"editorMode": "builder",
+					"expr": "sum by(devEui) (increase(truvami_uplink_created_but_decoder_warn_count{devEui=~\"$devices\", port=~\"$ports\"}[$__range]))",
+					"fullMetaSearch": false,
+					"includeNullMetadata": true,
+					"legendFormat": "__auto",
+					"range": true,
+					"refId": "A",
+					"useBackend": false
+				}
+			],
+			"title": "Decode warnings by devices",
+			"type": "piechart"
+		},
+		{
+			"datasource": {
+				"type": "prometheus",
+				"uid": "${datasource}"
+			},
+			"fieldConfig": {
+				"defaults": {
+					"color": {
+						"mode": "palette-classic"
+					},
+					"custom": {
+						"axisBorderShow": false,
+						"axisCenteredZero": false,
+						"axisColorMode": "text",
+						"axisLabel": "",
+						"axisPlacement": "auto",
+						"barAlignment": 0,
+						"barWidthFactor": 0.6,
+						"drawStyle": "line",
+						"fillOpacity": 10,
+						"gradientMode": "none",
+						"hideFrom": {
+							"legend": false,
+							"tooltip": false,
+							"viz": false
+						},
+						"insertNulls": false,
+						"lineInterpolation": "linear",
+						"lineWidth": 1,
+						"pointSize": 5,
+						"scaleDistribution": {
+							"type": "linear"
+						},
+						"showPoints": "auto",
+						"spanNulls": false,
+						"stacking": {
+							"group": "A",
+							"mode": "none"
+						},
+						"thresholdsStyle": {
+							"mode": "off"
+						}
+					},
+					"mappings": [],
+					"thresholds": {
+						"mode": "absolute",
+						"steps": [
+							{
+								"color": "green"
+							},
+							{
+								"color": "red",
+								"value": 80
+							}
+						]
+					}
+				},
+				"overrides": []
+			},
+			"gridPos": {
+				"h": 8,
+				"w": 19,
+				"x": 0,
+				"y": 66
+			},
+			"id": 19,
+			"options": {
+				"legend": {
+					"calcs": ["distinctCount"],
+					"displayMode": "table",
+					"placement": "right",
+					"showLegend": true
+				},
+				"tooltip": {
+					"hideZeros": false,
+					"mode": "single",
+					"sort": "none"
+				}
+			},
+			"pluginVersion": "11.6.0",
+			"targets": [
+				{
+					"datasource": {
+						"type": "prometheus",
+						"uid": "${DS_PROMETHEUS}"
+					},
+					"disableTextWrap": false,
+					"editorMode": "builder",
+					"expr": "sum by(port) (increase(truvami_uplink_created_but_decoder_warn_count{devEui=~\"$devices\", port=~\"$ports\"}[$interval])) > 0",
+					"fullMetaSearch": false,
+					"includeNullMetadata": false,
+					"legendFormat": "__auto",
+					"range": true,
+					"refId": "A",
+					"useBackend": false
+				}
+			],
+			"title": "Decode warnings by ports",
+			"type": "timeseries"
+		},
+		{
+			"datasource": {
+				"type": "prometheus",
+				"uid": "${datasource}"
+			},
+			"fieldConfig": {
+				"defaults": {
+					"color": {
+						"mode": "palette-classic"
+					},
+					"custom": {
+						"hideFrom": {
+							"legend": false,
+							"tooltip": false,
+							"viz": false
+						}
+					},
+					"mappings": []
+				},
+				"overrides": []
+			},
+			"gridPos": {
+				"h": 8,
+				"w": 5,
+				"x": 19,
+				"y": 66
+			},
+			"id": 20,
+			"options": {
+				"legend": {
+					"displayMode": "list",
+					"placement": "bottom",
+					"showLegend": false
+				},
+				"pieType": "donut",
+				"reduceOptions": {
+					"calcs": ["lastNotNull"],
+					"fields": "",
+					"values": false
+				},
+				"tooltip": {
+					"hideZeros": false,
+					"mode": "single",
+					"sort": "none"
+				}
+			},
+			"pluginVersion": "11.6.0",
+			"targets": [
+				{
+					"datasource": {
+						"type": "prometheus",
+						"uid": "${datasource}"
+					},
+					"disableTextWrap": false,
+					"editorMode": "builder",
+					"expr": "sum by(port) (increase(truvami_uplink_created_but_decoder_warn_count{devEui=~\"$devices\", port=~\"$ports\"}[$__range]))",
+					"fullMetaSearch": false,
+					"includeNullMetadata": true,
+					"legendFormat": "__auto",
+					"range": true,
+					"refId": "A",
+					"useBackend": false
+				}
+			],
+			"title": "Decode warnings by ports",
 			"type": "piechart"
 		},
 		{
@@ -1269,7 +1603,7 @@
 				"h": 8,
 				"w": 24,
 				"x": 0,
-				"y": 58
+				"y": 74
 			},
 			"id": 18,
 			"options": {
@@ -1471,5 +1805,5 @@
 	"timezone": "browser",
 	"title": "Uplinks",
 	"uid": "aejur9vxz1mo0c",
-	"version": 6
+	"version": 7
 }
