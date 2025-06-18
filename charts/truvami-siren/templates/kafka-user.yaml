@@ -1,0 +1,92 @@
+{{- $root := . -}}
+{{- range $i, $item := .Values.siren.topics }}
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaTopic
+metadata:
+  name: "alerts.{{ $item }}"
+  labels:
+    strimzi.io/cluster: {{ $root.Release.Name }}
+spec:
+  partitions: {{ $root.Values.kafka.topic.partitions | default 3 }}
+  replicas: {{ $root.Values.kafka.topic.replicas | default 3 }}
+  config: {{ $root.Values.kafka.topic.config | toYaml | nindent 4 }}
+---
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaTopic
+metadata:
+  name: "alerts.{{ $item }}-retry"
+  labels:
+    strimzi.io/cluster: {{ $root.Release.Name }}
+spec:
+  partitions: {{ $root.Values.kafka.topic.partitions | default 3 }}
+  replicas: {{ $root.Values.kafka.topic.replicas | default 3 }}
+  config: {{ $root.Values.kafka.topic.config | toYaml | nindent 4 }}
+---
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaTopic
+metadata:
+  name: "alerts.{{ $item }}-dql"
+  labels:
+    strimzi.io/cluster: {{ $root.Release.Name }}
+spec:
+  partitions: {{ $root.Values.kafka.topic.partitions | default 3 }}
+  replicas: {{ $root.Values.kafka.topic.replicas | default 3 }}
+  config: {{ $root.Values.kafka.topic.config | toYaml | nindent 4 }}
+---
+{{ end -}}
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaUser
+metadata:
+  name: "siren-kafka"
+  labels:
+    strimzi.io/cluster: {{ .Release.Name }}
+spec:
+  authentication:
+    type: tls
+  authorization:
+    acls:
+      - host: '*'
+        operations:
+          - Read
+          - Describe
+        resource:
+          name: alerts.*
+          patternType: literal
+          type: topic
+      - host: '*'
+        operations:
+          - Create
+          - Describe
+          - Write
+        resource:
+          name: alerts.*-retry
+          patternType: literal
+          type: topic
+      - host: '*'
+        operations:
+          - Create
+          - Describe
+          - Write
+        resource:
+          name: alerts.*-dlq
+          patternType: literal
+          type: topic
+      - host: '*'
+        operations:
+          - Read
+          - Write
+        resource:
+          name: __consumer_offsets
+          patternType: literal
+          type: topic
+      - host: '*'
+        operations:
+          - Describe
+          - Read
+          - Write
+        resource:
+          name: {{ .Release.Name }}
+          patternType: literal
+          type: group
+    type: simple
+---

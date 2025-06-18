@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: "{{ .Values.siren.topic }}-siren-config"
+data:
+  config.yaml: | 
+    {{ .Values.siren | toYaml | nindent 4 }}
