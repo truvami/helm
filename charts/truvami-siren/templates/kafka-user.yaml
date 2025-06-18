@@ -1,5 +1,5 @@
 {{- $root := . -}}
-{{- range $i, $item := .Values.siren.topics }}
+{{- range $i, $item := .Values.siren.topics.items }}
 apiVersion: kafka.strimzi.io/v1beta2
 kind: KafkaTopic
 metadata:

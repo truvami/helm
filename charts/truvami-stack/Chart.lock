@@ -19,9 +19,9 @@ dependencies:
   version: 0.1.29
 - name: truvami-siren
   repository: file://../truvami-siren/
-  version: 0.1.4
+  version: 0.1.5
 - name: valkey
   repository: https://charts.bitnami.com/bitnami
   version: 3.0.9
-digest: sha256:dc09aff976761c7e79b940cbdd11753da4b9c43239b63ae0ce369971d1011044
-generated: "2025-06-18T16:48:55.764037+02:00"
+digest: sha256:ebe246282ea4776d675ca3cf43eabec2a1dd6acf48d295fe32a82b6486f8a88f
+generated: "2025-06-18T17:22:16.639928+02:00"
