@@ -16,12 +16,12 @@ dependencies:
   version: 0.0.12
 - name: truvami-monitoring
   repository: file://../truvami-monitoring/
-  version: 0.1.29
+  version: 0.1.30
 - name: truvami-siren
   repository: file://../truvami-siren/
   version: 0.1.6
 - name: valkey
   repository: https://charts.bitnami.com/bitnami
   version: 3.0.9
-digest: sha256:a3c11eac6fa5cd0819678fcbc712ac78dd89c6fe551891ded9bec05f07548348
-generated: "2025-06-18T17:26:26.544135+02:00"
+digest: sha256:3d545b3c8d61d649a965c5b3f7089d51d65a9c72cd44594a83e5485cd5607fec
+generated: "2025-06-18T15:35:22.686507066Z"
