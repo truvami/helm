@@ -12,6 +12,8 @@ spec:
       postInitTemplateSQL:
         - CREATE EXTENSION postgis;
   storage: {{ .Values.postgres.storage | toYaml | nindent 4 }}
+  monitoring:
+    enablePodMonitor: true
   resources: 
     {{- toYaml .Values.postgres.resources | nindent 4 }}
   {{- if .Values.postgres.backup.enable }}
