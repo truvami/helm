@@ -18,7 +18,7 @@
 	"editable": true,
 	"fiscalYearStartMonth": 0,
 	"graphTooltip": 2,
-	"id": 7,
+	"id": 8,
 	"links": [],
 	"panels": [
 		{
@@ -1107,6 +1107,102 @@
 						"steps": [
 							{
 								"color": "green"
+							}
+						]
+					}
+				},
+				"overrides": []
+			},
+			"gridPos": {
+				"h": 8,
+				"w": 24,
+				"x": 0,
+				"y": 42
+			},
+			"id": 23,
+			"options": {
+				"legend": {
+					"calcs": [],
+					"displayMode": "list",
+					"placement": "right",
+					"showLegend": true
+				},
+				"tooltip": {
+					"hideZeros": false,
+					"mode": "single",
+					"sort": "none"
+				}
+			},
+			"pluginVersion": "11.6.0",
+			"targets": [
+				{
+					"datasource": {
+						"type": "prometheus",
+						"uid": "${datasource}"
+					},
+					"disableTextWrap": false,
+					"editorMode": "builder",
+					"expr": "max by(devEui) (truvami_device_uplink_frame_counter{devEui=~\"$devices\"})",
+					"fullMetaSearch": false,
+					"includeNullMetadata": true,
+					"legendFormat": "__auto",
+					"range": true,
+					"refId": "A",
+					"useBackend": false
+				}
+			],
+			"title": "Uplink sequence",
+			"type": "timeseries"
+		},
+		{
+			"datasource": {
+				"type": "prometheus",
+				"uid": "${datasource}"
+			},
+			"fieldConfig": {
+				"defaults": {
+					"color": {
+						"mode": "palette-classic"
+					},
+					"custom": {
+						"axisBorderShow": false,
+						"axisCenteredZero": false,
+						"axisColorMode": "text",
+						"axisLabel": "",
+						"axisPlacement": "auto",
+						"barAlignment": 0,
+						"barWidthFactor": 0.6,
+						"drawStyle": "line",
+						"fillOpacity": 10,
+						"gradientMode": "none",
+						"hideFrom": {
+							"legend": false,
+							"tooltip": false,
+							"viz": false
+						},
+						"insertNulls": false,
+						"lineInterpolation": "linear",
+						"lineWidth": 1,
+						"pointSize": 5,
+						"scaleDistribution": {
+							"type": "linear"
+						},
+						"showPoints": "auto",
+						"spanNulls": false,
+						"stacking": {
+							"group": "A",
+							"mode": "none"
+						},
+						"thresholdsStyle": {
+							"mode": "off"
+						}
+					},
+					"mappings": [],
+					"thresholds": {
+						"mode": "absolute",
+						"steps": [
+							{
+								"color": "green"
 							},
 							{
 								"color": "red",
@@ -1121,7 +1217,7 @@
 				"h": 8,
 				"w": 19,
 				"x": 0,
-				"y": 42
+				"y": 50
 			},
 			"id": 6,
 			"options": {
@@ -1183,7 +1279,7 @@
 				"h": 8,
 				"w": 5,
 				"x": 19,
-				"y": 42
+				"y": 50
 			},
 			"id": 16,
 			"options": {
@@ -1288,7 +1384,7 @@
 				"h": 8,
 				"w": 19,
 				"x": 0,
-				"y": 50
+				"y": 58
 			},
 			"id": 5,
 			"options": {
@@ -1350,7 +1446,7 @@
 				"h": 8,
 				"w": 5,
 				"x": 19,
-				"y": 50
+				"y": 58
 			},
 			"id": 17,
 			"options": {
@@ -1455,7 +1551,7 @@
 				"h": 8,
 				"w": 19,
 				"x": 0,
-				"y": 58
+				"y": 66
 			},
 			"id": 21,
 			"options": {
@@ -1517,7 +1613,7 @@
 				"h": 8,
 				"w": 5,
 				"x": 19,
-				"y": 58
+				"y": 66
 			},
 			"id": 22,
 			"options": {
@@ -1622,7 +1718,7 @@
 				"h": 8,
 				"w": 19,
 				"x": 0,
-				"y": 66
+				"y": 74
 			},
 			"id": 19,
 			"options": {
@@ -1684,7 +1780,7 @@
 				"h": 8,
 				"w": 5,
 				"x": 19,
-				"y": 66
+				"y": 74
 			},
 			"id": 20,
 			"options": {
@@ -1785,7 +1881,7 @@
 				"h": 8,
 				"w": 24,
 				"x": 0,
-				"y": 74
+				"y": 82
 			},
 			"id": 18,
 			"options": {
@@ -1987,5 +2083,5 @@
 	"timezone": "browser",
 	"title": "Uplinks",
 	"uid": "aejur9vxz1mo0c",
-	"version": 9
+	"version": 10
 }
