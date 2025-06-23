@@ -18,7 +18,7 @@
 	"editable": true,
 	"fiscalYearStartMonth": 0,
 	"graphTooltip": 2,
-	"id": 8,
+	"id": 6,
 	"links": [],
 	"panels": [
 		{
@@ -1203,10 +1203,198 @@
 						"steps": [
 							{
 								"color": "green"
-							},
+							}
+						]
+					}
+				},
+				"overrides": []
+			},
+			"gridPos": {
+				"h": 8,
+				"w": 24,
+				"x": 0,
+				"y": 50
+			},
+			"id": 18,
+			"options": {
+				"legend": {
+					"calcs": [],
+					"displayMode": "list",
+					"placement": "right",
+					"showLegend": true
+				},
+				"tooltip": {
+					"hideZeros": false,
+					"mode": "single",
+					"sort": "none"
+				}
+			},
+			"pluginVersion": "11.6.0",
+			"targets": [
+				{
+					"datasource": {
+						"type": "prometheus",
+						"uid": "${datasource}"
+					},
+					"disableTextWrap": false,
+					"editorMode": "builder",
+					"expr": "avg by(devEui) (truvami_device_battery_status{devEui=~\"$devices\"})",
+					"fullMetaSearch": false,
+					"includeNullMetadata": true,
+					"legendFormat": "__auto",
+					"range": true,
+					"refId": "A",
+					"useBackend": false
+				}
+			],
+			"title": "Battery by devices",
+			"type": "timeseries"
+		},
+		{
+			"datasource": {
+				"type": "prometheus",
+				"uid": "${datasource}"
+			},
+			"fieldConfig": {
+				"defaults": {
+					"color": {
+						"mode": "palette-classic"
+					},
+					"custom": {
+						"axisBorderShow": false,
+						"axisCenteredZero": false,
+						"axisColorMode": "text",
+						"axisLabel": "",
+						"axisPlacement": "auto",
+						"barAlignment": 0,
+						"barWidthFactor": 0.6,
+						"drawStyle": "line",
+						"fillOpacity": 10,
+						"gradientMode": "none",
+						"hideFrom": {
+							"legend": false,
+							"tooltip": false,
+							"viz": false
+						},
+						"insertNulls": false,
+						"lineInterpolation": "linear",
+						"lineWidth": 1,
+						"pointSize": 5,
+						"scaleDistribution": {
+							"type": "linear"
+						},
+						"showPoints": "auto",
+						"spanNulls": false,
+						"stacking": {
+							"group": "A",
+							"mode": "none"
+						},
+						"thresholdsStyle": {
+							"mode": "off"
+						}
+					},
+					"mappings": [],
+					"thresholds": {
+						"mode": "absolute",
+						"steps": [
 							{
-								"color": "red",
-								"value": 80
+								"color": "green"
+							}
+						]
+					}
+				},
+				"overrides": []
+			},
+			"gridPos": {
+				"h": 8,
+				"w": 24,
+				"x": 0,
+				"y": 58
+			},
+			"id": 24,
+			"options": {
+				"legend": {
+					"calcs": [],
+					"displayMode": "list",
+					"placement": "right",
+					"showLegend": true
+				},
+				"tooltip": {
+					"hideZeros": false,
+					"mode": "single",
+					"sort": "none"
+				}
+			},
+			"pluginVersion": "11.6.0",
+			"targets": [
+				{
+					"datasource": {
+						"type": "prometheus",
+						"uid": "${datasource}"
+					},
+					"disableTextWrap": false,
+					"editorMode": "builder",
+					"expr": "avg by(devEui) (truvami_device_uplink_buffered_count{devEui=~\"$devices\"})",
+					"fullMetaSearch": false,
+					"includeNullMetadata": true,
+					"legendFormat": "__auto",
+					"range": true,
+					"refId": "A",
+					"useBackend": false
+				}
+			],
+			"title": "Buffer level by devices",
+			"type": "timeseries"
+		},
+		{
+			"datasource": {
+				"type": "prometheus",
+				"uid": "${datasource}"
+			},
+			"fieldConfig": {
+				"defaults": {
+					"color": {
+						"mode": "palette-classic"
+					},
+					"custom": {
+						"axisBorderShow": false,
+						"axisCenteredZero": false,
+						"axisColorMode": "text",
+						"axisLabel": "",
+						"axisPlacement": "auto",
+						"barAlignment": 0,
+						"barWidthFactor": 0.6,
+						"drawStyle": "line",
+						"fillOpacity": 10,
+						"gradientMode": "none",
+						"hideFrom": {
+							"legend": false,
+							"tooltip": false,
+							"viz": false
+						},
+						"insertNulls": false,
+						"lineInterpolation": "linear",
+						"lineWidth": 1,
+						"pointSize": 5,
+						"scaleDistribution": {
+							"type": "linear"
+						},
+						"showPoints": "auto",
+						"spanNulls": false,
+						"stacking": {
+							"group": "A",
+							"mode": "none"
+						},
+						"thresholdsStyle": {
+							"mode": "off"
+						}
+					},
+					"mappings": [],
+					"thresholds": {
+						"mode": "absolute",
+						"steps": [
+							{
+								"color": "green"
 							}
 						]
 					}
@@ -1217,7 +1405,7 @@
 				"h": 8,
 				"w": 19,
 				"x": 0,
-				"y": 50
+				"y": 66
 			},
 			"id": 6,
 			"options": {
@@ -1279,7 +1467,7 @@
 				"h": 8,
 				"w": 5,
 				"x": 19,
-				"y": 50
+				"y": 66
 			},
 			"id": 16,
 			"options": {
@@ -1370,10 +1558,6 @@
 						"steps": [
 							{
 								"color": "green"
-							},
-							{
-								"color": "red",
-								"value": 80
 							}
 						]
 					}
@@ -1384,7 +1568,7 @@
 				"h": 8,
 				"w": 19,
 				"x": 0,
-				"y": 58
+				"y": 74
 			},
 			"id": 5,
 			"options": {
@@ -1446,7 +1630,7 @@
 				"h": 8,
 				"w": 5,
 				"x": 19,
-				"y": 58
+				"y": 74
 			},
 			"id": 17,
 			"options": {
@@ -1537,10 +1721,6 @@
 						"steps": [
 							{
 								"color": "green"
-							},
-							{
-								"color": "red",
-								"value": 80
 							}
 						]
 					}
@@ -1551,7 +1731,7 @@
 				"h": 8,
 				"w": 19,
 				"x": 0,
-				"y": 66
+				"y": 82
 			},
 			"id": 21,
 			"options": {
@@ -1613,7 +1793,7 @@
 				"h": 8,
 				"w": 5,
 				"x": 19,
-				"y": 66
+				"y": 82
 			},
 			"id": 22,
 			"options": {
@@ -1704,10 +1884,6 @@
 						"steps": [
 							{
 								"color": "green"
-							},
-							{
-								"color": "red",
-								"value": 80
 							}
 						]
 					}
@@ -1718,7 +1894,7 @@
 				"h": 8,
 				"w": 19,
 				"x": 0,
-				"y": 74
+				"y": 90
 			},
 			"id": 19,
 			"options": {
@@ -1780,7 +1956,7 @@
 				"h": 8,
 				"w": 5,
 				"x": 19,
-				"y": 74
+				"y": 90
 			},
 			"id": 20,
 			"options": {
@@ -1821,102 +1997,6 @@
 			],
 			"title": "Decode warnings by ports",
 			"type": "piechart"
-		},
-		{
-			"datasource": {
-				"type": "prometheus",
-				"uid": "${datasource}"
-			},
-			"fieldConfig": {
-				"defaults": {
-					"color": {
-						"mode": "palette-classic"
-					},
-					"custom": {
-						"axisBorderShow": false,
-						"axisCenteredZero": false,
-						"axisColorMode": "text",
-						"axisLabel": "",
-						"axisPlacement": "auto",
-						"barAlignment": 0,
-						"barWidthFactor": 0.6,
-						"drawStyle": "line",
-						"fillOpacity": 0,
-						"gradientMode": "none",
-						"hideFrom": {
-							"legend": false,
-							"tooltip": false,
-							"viz": false
-						},
-						"insertNulls": false,
-						"lineInterpolation": "linear",
-						"lineWidth": 1,
-						"pointSize": 5,
-						"scaleDistribution": {
-							"type": "linear"
-						},
-						"showPoints": "auto",
-						"spanNulls": false,
-						"stacking": {
-							"group": "A",
-							"mode": "none"
-						},
-						"thresholdsStyle": {
-							"mode": "off"
-						}
-					},
-					"mappings": [],
-					"thresholds": {
-						"mode": "absolute",
-						"steps": [
-							{
-								"color": "green"
-							}
-						]
-					}
-				},
-				"overrides": []
-			},
-			"gridPos": {
-				"h": 8,
-				"w": 24,
-				"x": 0,
-				"y": 82
-			},
-			"id": 18,
-			"options": {
-				"legend": {
-					"calcs": [],
-					"displayMode": "list",
-					"placement": "right",
-					"showLegend": true
-				},
-				"tooltip": {
-					"hideZeros": false,
-					"mode": "single",
-					"sort": "none"
-				}
-			},
-			"pluginVersion": "11.6.0",
-			"targets": [
-				{
-					"datasource": {
-						"type": "prometheus",
-						"uid": "${datasource}"
-					},
-					"disableTextWrap": false,
-					"editorMode": "builder",
-					"expr": "avg by(devEui) (truvami_device_battery_status{devEui=~\"$devices\"})",
-					"fullMetaSearch": false,
-					"includeNullMetadata": true,
-					"legendFormat": "__auto",
-					"range": true,
-					"refId": "A",
-					"useBackend": false
-				}
-			],
-			"title": "Battery by devices",
-			"type": "timeseries"
 		}
 	],
 	"preload": false,
@@ -2083,5 +2163,5 @@
 	"timezone": "browser",
 	"title": "Uplinks",
 	"uid": "aejur9vxz1mo0c",
-	"version": 10
+	"version": 11
 }
