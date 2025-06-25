@@ -12,6 +12,9 @@ spec:
       postInitTemplateSQL:
         - CREATE EXTENSION postgis;
   storage: {{ .Values.postgres.storage | toYaml | nindent 4 }}
+  postgresql:
+    parameters:
+      shared_buffers: {{ .Values.postgres.sharedBuffers }}
   monitoring:
     enablePodMonitor: true
   resources: 
