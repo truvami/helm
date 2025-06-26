@@ -18,7 +18,7 @@
     "editable": true,
     "fiscalYearStartMonth": 0,
     "graphTooltip": 2,
-    "id": 9,
+    "id": 8,
     "links": [],
     "panels": [
         {
@@ -393,5 +393,5 @@
     "timezone": "browser",
     "title": "Gateways",
     "uid": "deq4i4emn2whsd",
-    "version": 1
+    "version": 5
 }
