@@ -18,13 +18,29 @@ spec:
           expr: >-
             sum by(devEui) (increase(truvami_failed_to_decode_payload_count[2h])) > 0
           labels:
-            altravis_prod: 'false'
-            altravis_test: 'true'
+            altravis_prod: "false"
+            altravis_test: "true"
             service: truvami-bridge
             severity: warning
             code: SBCC
             customer: truvami
             node: truvami-{{ "{{" }} $labels.devEui }}
+        - alert: TruvamiPositionEstimationError
+          annotations:
+            descriptions: >-
+              Position estimation failed to solve {{ "{{" }} $value | humanizePercentage }} positions within the last 2h. Please check the solver configuration.
+            summary: >-
+              Position estimation failed to solve {{ "{{" }} $value | humanizePercentage }} positions
+          expr: >-
+            (sum by(namespace) (increase(truvami_aws_position_estimates_success_total{namespace="truvami-dev"}[2h])) / sum by(namespace) (increase(truvami_aws_position_estimates_total{namespace="truvami-dev"}[2h]))) * 100 < 70
+          labels:
+            altravis_prod: "false"
+            altravis_test: "true"
+            service: truvami-bridge
+            severity: critical
+            code: SBCC
+            customer: truvami
+            node: sbcc-cluster-7401-truvami-bridge
         - alert: TruvamiWiFiSolverError
           annotations:
             description: >-
@@ -34,8 +50,8 @@ spec:
           expr: >-
             rate(truvami_wifi_solver_error_count[1h]) > 0
           labels:
-            altravis_prod: 'false'
-            altravis_test: 'true'
+            altravis_prod: "false"
+            altravis_test: "true"
             service: truvami-bridge
             severity: critical
             code: SBCC
