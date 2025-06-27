@@ -18,7 +18,7 @@
 	"editable": true,
 	"fiscalYearStartMonth": 0,
 	"graphTooltip": 2,
-	"id": 6,
+	"id": 7,
 	"links": [],
 	"panels": [
 		{
@@ -1334,7 +1334,7 @@
 					},
 					"disableTextWrap": false,
 					"editorMode": "builder",
-					"expr": "avg by(devEui) (truvami_device_uplink_buffered_count{devEui=~\"$devices\"})",
+					"expr": "avg by(devEui) (truvami_device_buffer_level{devEui=~\"$devices\"})",
 					"fullMetaSearch": false,
 					"includeNullMetadata": true,
 					"legendFormat": "__auto",
@@ -2163,5 +2163,5 @@
 	"timezone": "browser",
 	"title": "Uplinks",
 	"uid": "aejur9vxz1mo0c",
-	"version": 11
+	"version": 12
 }
