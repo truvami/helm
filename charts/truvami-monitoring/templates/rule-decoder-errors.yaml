@@ -28,11 +28,11 @@ spec:
         - alert: TruvamiPositionEstimationError
           annotations:
             descriptions: >-
-              The position estimation returned an error, please check the logs for more details.
+              Position estimation failed to solve {{ "{{" }} $value | humanizePercentage }} positions within the last 2h. Please check the solver configuration.
             summary: >-
-              Position estimation error
+              Position estimation failed to solve {{ "{{" }} $value | humanizePercentage }} positions
           expr: >-
-            (((sum by(namespace) (truvami_aws_position_estimates_success_total{namespace="truvami-dev"})) / (sum by(namespace) (truvami_aws_position_estimates_total{namespace="truvami-dev"}))) * 100) < 90
+            (sum by(namespace) (increase(truvami_aws_position_estimates_success_total{namespace="truvami-dev"}[2h])) / sum by(namespace) (increase(truvami_aws_position_estimates_total{namespace="truvami-dev"}[2h]))) * 100 < 70
           labels:
             altravis_prod: "false"
             altravis_test: "true"
