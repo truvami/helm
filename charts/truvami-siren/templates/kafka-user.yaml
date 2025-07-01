@@ -37,7 +37,7 @@ spec:
 apiVersion: kafka.strimzi.io/v1beta2
 kind: KafkaUser
 metadata:
-  name: "siren-kafka"
+  name: "truvami-siren-kafka"
   labels:
     strimzi.io/cluster: {{ .Release.Name }}
 spec:
