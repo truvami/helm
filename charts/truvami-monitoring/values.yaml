@@ -1,6 +1,9 @@
 nameOverride: ""
 fullnameOverride: ""
 
+prometheus:
+  storageSize: "10Gi"
+
 grafana:
   enabled: false
 

@@ -49,8 +49,9 @@ metadata:
 spec:
   serviceAccountName: "{{ include "truvami-monitoring.fullname" . }}"
   replicas: 2
-  podMonitorNamespaceSelector: {}
-  podMonitorSelector: {}
+  podMonitorNamespaceSelector:
+    matchLabels:
+      kubernetes.io/metadata.name : {{ .Release.Namespace }}
   logFormat: "json"
   retention: 10d
   securityContext:
@@ -65,19 +66,16 @@ spec:
       spec:
         resources:
           requests:
-            storage: 100Gi
+            storage: {{ .Values.prometheus.storageSize | default "10Gi" }}
   ruleNamespaceSelector:
     matchLabels:
       kubernetes.io/metadata.name : {{ .Release.Namespace }}
-  ruleSelector: {}
   scrapeConfigNamespaceSelector:
     matchLabels:
       kubernetes.io/metadata.name : {{ .Release.Namespace }}
-  scrapeConfigSelector: {}
   serviceMonitorNamespaceSelector:
     matchLabels:
       kubernetes.io/metadata.name : {{ .Release.Namespace }}
-  serviceMonitorSelector: {}
   alerting:
     alertmanagers:
     - namespace: {{ .Release.Namespace }}
