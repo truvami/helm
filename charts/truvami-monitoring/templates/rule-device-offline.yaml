@@ -1,0 +1,43 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  labels:
+    prometheus: kube-prometheus-stack-prometheus
+    role: alert-rules
+  name: truvami-bridge
+spec:
+  groups:
+    - name: truvami-bridge
+      rules:
+        - alert: TruvamiDeviceNoUplink24h
+          annotations:
+            description: >-
+              Device {{ "{{" }} $labels.devEui }} has not sent any uplinks within the last 24 hours.
+            summary: >-
+              Device {{ "{{" }} $labels.devEui }} no uplinks in 24h.
+          expr: >-
+            sum by(devEui) (increase(truvami_device_uplink_count[24h])) == 0
+          labels:
+            altravis_prod: "false"
+            altravis_test: "true"
+            service: truvami-bridge
+            severity: info
+            code: SBCC
+            customer: truvami
+            node: truvami-{{ "{{" }} $labels.devEui }}
+        - alert: TruvamiDeviceNoUplink72h
+          annotations:
+            description: >-
+              Device {{ "{{" }} $labels.devEui }} has not sent any uplinks within the last 72 hours.
+            summary: >-
+              Device {{ "{{" }} $labels.devEui }} no uplinks in 72h.
+          expr: >-
+            sum by(devEui) (increase(truvami_device_uplink_count[72h])) == 0
+          labels:
+            altravis_prod: "false"
+            altravis_test: "true"
+            service: truvami-bridge
+            severity: warning
+            code: SBCC
+            customer: truvami
+            node: truvami-{{ "{{" }} $labels.devEui }}
