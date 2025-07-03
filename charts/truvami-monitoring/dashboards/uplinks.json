@@ -154,7 +154,9 @@
 				},
 				"pieType": "donut",
 				"reduceOptions": {
-					"calcs": ["lastNotNull"],
+					"calcs": [
+						"lastNotNull"
+					],
 					"fields": "",
 					"values": false
 				},
@@ -310,7 +312,9 @@
 			},
 			"id": 1,
 			"options": {
-				"displayLabels": ["name"],
+				"displayLabels": [
+					"name"
+				],
 				"legend": {
 					"displayMode": "list",
 					"placement": "bottom",
@@ -319,7 +323,9 @@
 				},
 				"pieType": "donut",
 				"reduceOptions": {
-					"calcs": ["lastNotNull"],
+					"calcs": [
+						"lastNotNull"
+					],
 					"fields": "",
 					"values": false
 				},
@@ -657,7 +663,9 @@
 			},
 			"id": 13,
 			"options": {
-				"displayLabels": ["name"],
+				"displayLabels": [
+					"name"
+				],
 				"legend": {
 					"displayMode": "list",
 					"placement": "bottom",
@@ -666,7 +674,9 @@
 				},
 				"pieType": "donut",
 				"reduceOptions": {
-					"calcs": ["lastNotNull"],
+					"calcs": [
+						"lastNotNull"
+					],
 					"fields": "",
 					"values": false
 				},
@@ -831,7 +841,9 @@
 				"orientation": "auto",
 				"percentChangeColorMode": "standard",
 				"reduceOptions": {
-					"calcs": ["lastNotNull"],
+					"calcs": [
+						"lastNotNull"
+					],
 					"fields": "",
 					"values": false
 				},
@@ -897,7 +909,9 @@
 				"orientation": "auto",
 				"percentChangeColorMode": "standard",
 				"reduceOptions": {
-					"calcs": ["lastNotNull"],
+					"calcs": [
+						"lastNotNull"
+					],
 					"fields": "",
 					"values": false
 				},
@@ -963,7 +977,9 @@
 				"orientation": "auto",
 				"percentChangeColorMode": "standard",
 				"reduceOptions": {
-					"calcs": ["lastNotNull"],
+					"calcs": [
+						"lastNotNull"
+					],
 					"fields": "",
 					"values": false
 				},
@@ -1029,7 +1045,9 @@
 				"orientation": "auto",
 				"percentChangeColorMode": "standard",
 				"reduceOptions": {
-					"calcs": ["lastNotNull"],
+					"calcs": [
+						"lastNotNull"
+					],
 					"fields": "",
 					"values": false
 				},
@@ -1354,6 +1372,120 @@
 			"fieldConfig": {
 				"defaults": {
 					"color": {
+						"fixedColor": "#5794F2",
+						"mode": "fixed"
+					},
+					"custom": {
+						"axisBorderShow": false,
+						"axisCenteredZero": false,
+						"axisColorMode": "text",
+						"axisLabel": "",
+						"axisPlacement": "auto",
+						"axisSoftMax": 1,
+						"axisSoftMin": 0,
+						"barAlignment": 0,
+						"barWidthFactor": 0.6,
+						"drawStyle": "line",
+						"fillOpacity": 0,
+						"gradientMode": "none",
+						"hideFrom": {
+							"legend": false,
+							"tooltip": false,
+							"viz": false
+						},
+						"insertNulls": false,
+						"lineInterpolation": "linear",
+						"lineWidth": 2,
+						"pointSize": 5,
+						"scaleDistribution": {
+							"type": "linear"
+						},
+						"showPoints": "auto",
+						"spanNulls": false,
+						"stacking": {
+							"group": "A",
+							"mode": "none"
+						},
+						"thresholdsStyle": {
+							"mode": "area"
+						}
+					},
+					"mappings": [],
+					"thresholds": {
+						"mode": "absolute",
+						"steps": [
+							{
+								"color": "green"
+							},
+							{
+								"color": "#EAB839",
+								"value": 0.1
+							},
+							{
+								"color": "orange",
+								"value": 0.3
+							},
+							{
+								"color": "red",
+								"value": 0.5
+							}
+						]
+					},
+					"unit": "percentunit"
+				},
+				"overrides": []
+			},
+			"gridPos": {
+				"h": 9,
+				"w": 24,
+				"x": 0,
+				"y": 66
+			},
+			"id": 5,
+			"options": {
+				"legend": {
+					"calcs": [
+						"distinctCount"
+					],
+					"displayMode": "table",
+					"placement": "right",
+					"showLegend": false
+				},
+				"tooltip": {
+					"hideZeros": false,
+					"mode": "single",
+					"sort": "none"
+				}
+			},
+			"pluginVersion": "11.6.0",
+			"targets": [
+				{
+					"datasource": {
+						"type": "prometheus",
+						"uid": "${DS_PROMETHEUS}"
+					},
+					"disableTextWrap": false,
+					"editorMode": "code",
+					"expr": "100 / sum by(__name__) (increase(truvami_device_uplink_count{devEui=~\"$devices\", port=~\"$ports\"}[$interval])) > 0 * sum by(__name__) (increase(truvami_uplink_created_but_decoder_err_count{devEui=~\"$devices\", port=~\"$ports\"}[$interval])) > 0",
+					"fullMetaSearch": false,
+					"includeNullMetadata": false,
+					"legendFormat": "Error rate",
+					"range": true,
+					"refId": "A",
+					"useBackend": false
+				}
+			],
+			"title": "Decode error rate",
+			"type": "timeseries"
+		},
+		{
+			"datasource": {
+				"type": "prometheus",
+				"uid": "${datasource}"
+			},
+			"fieldConfig": {
+				"defaults": {
+					"color": {
 						"mode": "palette-classic"
 					},
 					"custom": {
@@ -1405,12 +1537,14 @@
 				"h": 8,
 				"w": 19,
 				"x": 0,
-				"y": 66
+				"y": 75
 			},
 			"id": 6,
 			"options": {
 				"legend": {
-					"calcs": ["distinctCount"],
+					"calcs": [
+						"distinctCount"
+					],
 					"displayMode": "table",
 					"placement": "right",
 					"showLegend": true
@@ -1467,7 +1601,7 @@
 				"h": 8,
 				"w": 5,
 				"x": 19,
-				"y": 66
+				"y": 75
 			},
 			"id": 16,
 			"options": {
@@ -1478,7 +1612,9 @@
 				},
 				"pieType": "donut",
 				"reduceOptions": {
-					"calcs": ["lastNotNull"],
+					"calcs": [
+						"lastNotNull"
+					],
 					"fields": "",
 					"values": false
 				},
@@ -1568,12 +1704,14 @@
 				"h": 8,
 				"w": 19,
 				"x": 0,
-				"y": 74
+				"y": 83
 			},
-			"id": 5,
+			"id": 21,
 			"options": {
 				"legend": {
-					"calcs": ["distinctCount"],
+					"calcs": [
+						"distinctCount"
+					],
 					"displayMode": "table",
 					"placement": "right",
 					"showLegend": true
@@ -1593,7 +1731,7 @@
 					},
 					"disableTextWrap": false,
 					"editorMode": "builder",
-					"expr": "sum by(port) (increase(truvami_uplink_created_but_decoder_err_count{devEui=~\"$devices\", port=~\"$ports\"}[$interval])) > 0",
+					"expr": "sum by(devEui) (increase(truvami_uplink_created_but_decoder_warn_count{devEui=~\"$devices\", port=~\"$ports\"}[$interval])) > 0",
 					"fullMetaSearch": false,
 					"includeNullMetadata": false,
 					"legendFormat": "__auto",
@@ -1602,7 +1740,7 @@
 					"useBackend": false
 				}
 			],
-			"title": "Decode errors by ports",
+			"title": "Decode warnings by devices",
 			"type": "timeseries"
 		},
 		{
@@ -1630,7 +1768,7 @@
 				"h": 8,
 				"w": 5,
 				"x": 19,
-				"y": 74
+				"y": 83
 			},
 			"id": 17,
 			"options": {
@@ -1641,7 +1779,9 @@
 				},
 				"pieType": "donut",
 				"reduceOptions": {
-					"calcs": ["lastNotNull"],
+					"calcs": [
+						"lastNotNull"
+					],
 					"fields": "",
 					"values": false
 				},
@@ -1731,12 +1871,14 @@
 				"h": 8,
 				"w": 19,
 				"x": 0,
-				"y": 82
+				"y": 91
 			},
-			"id": 21,
+			"id": 19,
 			"options": {
 				"legend": {
-					"calcs": ["distinctCount"],
+					"calcs": [
+						"distinctCount"
+					],
 					"displayMode": "table",
 					"placement": "right",
 					"showLegend": true
@@ -1765,7 +1907,7 @@
 					"useBackend": false
 				}
 			],
-			"title": "Decode warnings by devices",
+			"title": "Decode warnings by ports",
 			"type": "timeseries"
 		},
 		{
@@ -1793,7 +1935,7 @@
 				"h": 8,
 				"w": 5,
 				"x": 19,
-				"y": 82
+				"y": 91
 			},
 			"id": 22,
 			"options": {
@@ -1804,7 +1946,9 @@
 				},
 				"pieType": "donut",
 				"reduceOptions": {
-					"calcs": ["lastNotNull"],
+					"calcs": [
+						"lastNotNull"
+					],
 					"fields": "",
 					"values": false
 				},
@@ -1894,12 +2038,14 @@
 				"h": 8,
 				"w": 19,
 				"x": 0,
-				"y": 90
+				"y": 99
 			},
-			"id": 19,
+			"id": 25,
 			"options": {
 				"legend": {
-					"calcs": ["distinctCount"],
+					"calcs": [
+						"distinctCount"
+					],
 					"displayMode": "table",
 					"placement": "right",
 					"showLegend": true
@@ -1956,7 +2102,7 @@
 				"h": 8,
 				"w": 5,
 				"x": 19,
-				"y": 90
+				"y": 99
 			},
 			"id": 20,
 			"options": {
@@ -1967,7 +2113,9 @@
 				},
 				"pieType": "donut",
 				"reduceOptions": {
-					"calcs": ["lastNotNull"],
+					"calcs": [
+						"lastNotNull"
+					],
 					"fields": "",
 					"values": false
 				},
@@ -2021,7 +2169,9 @@
 			{
 				"current": {
 					"text": "All",
-					"value": ["$__all"]
+					"value": [
+						"$__all"
+					]
 				},
 				"definition": "label_values(truvami_device_uplink_count,devEui)",
 				"description": "",
@@ -2043,7 +2193,9 @@
 			{
 				"current": {
 					"text": "All",
-					"value": ["$__all"]
+					"value": [
+						"$__all"
+					]
 				},
 				"definition": "label_values(truvami_device_uplink_count,port)",
 				"description": "",
@@ -2163,5 +2315,5 @@
 	"timezone": "browser",
 	"title": "Uplinks",
 	"uid": "aejur9vxz1mo0c",
-	"version": 12
+	"version": 1
 }
