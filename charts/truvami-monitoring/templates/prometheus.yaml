@@ -67,12 +67,15 @@ spec:
         resources:
           requests:
             storage: {{ .Values.prometheus.storageSize | default "10Gi" }}
+  ruleSelector: {}
   ruleNamespaceSelector:
     matchNames: 
       - {{ .Release.Namespace }}
+  scrapeConfigSelector: {}
   scrapeConfigNamespaceSelector:
     matchNames: 
       - {{ .Release.Namespace }}
+  serviceMonitorSelector: {}
   serviceMonitorNamespaceSelector:
     matchNames: 
       - {{ .Release.Namespace }}
