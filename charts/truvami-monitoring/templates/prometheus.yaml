@@ -68,14 +68,14 @@ spec:
           requests:
             storage: {{ .Values.prometheus.storageSize | default "10Gi" }}
   ruleNamespaceSelector:
-    matchLabels:
-      kubernetes.io/metadata.name : {{ .Release.Namespace }}
+    matchNames: 
+      - {{ .Release.Namespace }}
   scrapeConfigNamespaceSelector:
-    matchLabels:
-      kubernetes.io/metadata.name : {{ .Release.Namespace }}
+    matchNames: 
+      - {{ .Release.Namespace }}
   serviceMonitorNamespaceSelector:
-    matchLabels:
-      kubernetes.io/metadata.name : {{ .Release.Namespace }}
+    matchNames: 
+      - {{ .Release.Namespace }}
   alerting:
     alertmanagers:
     - namespace: {{ .Release.Namespace }}
