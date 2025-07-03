@@ -105,7 +105,7 @@
 					},
 					"disableTextWrap": false,
 					"editorMode": "builder",
-					"expr": "sum by(devEui) (increase(truvami_device_uplink_count{devEui=~\"$devices\", port=~\"$ports\", spreadingFactor=~\"$spreadingFactors\"}[$interval]))",
+					"expr": "sum by(devEui) (increase(truvami_device_uplink_count{customer=~\"$customers\", devEui=~\"$devices\", port=~\"$ports\", spreadingFactor=~\"$spreadingFactors\"}[$interval]))",
 					"fullMetaSearch": false,
 					"includeNullMetadata": false,
 					"legendFormat": "__auto",
@@ -154,9 +154,7 @@
 				},
 				"pieType": "donut",
 				"reduceOptions": {
-					"calcs": [
-						"lastNotNull"
-					],
+					"calcs": ["lastNotNull"],
 					"fields": "",
 					"values": false
 				},
@@ -175,7 +173,7 @@
 					},
 					"disableTextWrap": false,
 					"editorMode": "builder",
-					"expr": "sum by(devEui) (increase(truvami_device_uplink_count{devEui=~\"$devices\", port=~\"$ports\", spreadingFactor=~\"$spreadingFactors\"}[$__range]))",
+					"expr": "sum by(devEui) (increase(truvami_device_uplink_count{customer=~\"$customers\", devEui=~\"$devices\", port=~\"$ports\", spreadingFactor=~\"$spreadingFactors\"}[$__range]))",
 					"fullMetaSearch": false,
 					"includeNullMetadata": true,
 					"legendFormat": "__auto",
@@ -271,7 +269,7 @@
 					},
 					"disableTextWrap": false,
 					"editorMode": "builder",
-					"expr": "sum by(port) (increase(truvami_device_uplink_count{devEui=~\"$devices\", port=~\"$ports\", spreadingFactor=~\"$spreadingFactors\"}[$interval]))",
+					"expr": "sum by(port) (increase(truvami_device_uplink_count{customer=~\"$customers\", devEui=~\"$devices\", port=~\"$ports\", spreadingFactor=~\"$spreadingFactors\"}[$interval]))",
 					"fullMetaSearch": false,
 					"includeNullMetadata": true,
 					"legendFormat": "__auto",
@@ -312,9 +310,7 @@
 			},
 			"id": 1,
 			"options": {
-				"displayLabels": [
-					"name"
-				],
+				"displayLabels": ["name"],
 				"legend": {
 					"displayMode": "list",
 					"placement": "bottom",
@@ -323,9 +319,7 @@
 				},
 				"pieType": "donut",
 				"reduceOptions": {
-					"calcs": [
-						"lastNotNull"
-					],
+					"calcs": ["lastNotNull"],
 					"fields": "",
 					"values": false
 				},
@@ -344,7 +338,7 @@
 					},
 					"disableTextWrap": false,
 					"editorMode": "builder",
-					"expr": "sum by(port) (increase(truvami_device_uplink_count{devEui=~\"$devices\", port=~\"$ports\", spreadingFactor=~\"$spreadingFactors\"}[$__range]))",
+					"expr": "sum by(port) (increase(truvami_device_uplink_count{customer=~\"$customers\", devEui=~\"$devices\", port=~\"$ports\", spreadingFactor=~\"$spreadingFactors\"}[$__range]))",
 					"fullMetaSearch": false,
 					"includeNullMetadata": false,
 					"legendFormat": "{{reason}}",
@@ -531,7 +525,7 @@
 					},
 					"disableTextWrap": false,
 					"editorMode": "builder",
-					"expr": "sum by(spreadingFactor) (increase(truvami_device_uplink_count{devEui=~\"$devices\", port=~\"$ports\", spreadingFactor=~\"$spreadingFactors\"}[$interval]))",
+					"expr": "sum by(spreadingFactor) (increase(truvami_device_uplink_count{customer=~\"$customers\", devEui=~\"$devices\", port=~\"$ports\", spreadingFactor=~\"$spreadingFactors\"}[$interval]))",
 					"fullMetaSearch": false,
 					"includeNullMetadata": true,
 					"legendFormat": "__auto",
@@ -663,9 +657,7 @@
 			},
 			"id": 13,
 			"options": {
-				"displayLabels": [
-					"name"
-				],
+				"displayLabels": ["name"],
 				"legend": {
 					"displayMode": "list",
 					"placement": "bottom",
@@ -674,9 +666,7 @@
 				},
 				"pieType": "donut",
 				"reduceOptions": {
-					"calcs": [
-						"lastNotNull"
-					],
+					"calcs": ["lastNotNull"],
 					"fields": "",
 					"values": false
 				},
@@ -695,7 +685,7 @@
 					},
 					"disableTextWrap": false,
 					"editorMode": "builder",
-					"expr": "sum by(spreadingFactor) (increase(truvami_device_uplink_count{devEui=~\"$devices\", port=~\"$ports\", spreadingFactor=~\"$spreadingFactors\"}[$__range]))",
+					"expr": "sum by(spreadingFactor) (increase(truvami_device_uplink_count{customer=~\"$customers\", devEui=~\"$devices\", port=~\"$ports\", spreadingFactor=~\"$spreadingFactors\"}[$__range]))",
 					"fullMetaSearch": false,
 					"includeNullMetadata": true,
 					"legendFormat": "__auto",
@@ -792,7 +782,7 @@
 					},
 					"disableTextWrap": false,
 					"editorMode": "builder",
-					"expr": "sum by(__name__) (rate(truvami_device_uplink_count{devEui=~\"$devices\", port=~\"$ports\", spreadingFactor=~\"$spreadingFactors\"}[$interval]))",
+					"expr": "sum by(__name__) (rate(truvami_device_uplink_count{customer=~\"$customers\", devEui=~\"$devices\", port=~\"$ports\", spreadingFactor=~\"$spreadingFactors\"}[$interval]))",
 					"fullMetaSearch": false,
 					"includeNullMetadata": false,
 					"legendFormat": "Uplinks",
@@ -841,9 +831,7 @@
 				"orientation": "auto",
 				"percentChangeColorMode": "standard",
 				"reduceOptions": {
-					"calcs": [
-						"lastNotNull"
-					],
+					"calcs": ["lastNotNull"],
 					"fields": "",
 					"values": false
 				},
@@ -860,7 +848,7 @@
 					},
 					"disableTextWrap": false,
 					"editorMode": "builder",
-					"expr": "sum by(__name__) (rate(truvami_device_uplink_count{devEui=~\"$devices\", port=~\"$ports\", spreadingFactor=~\"$spreadingFactors\"}[$interval]))",
+					"expr": "sum by(__name__) (rate(truvami_device_uplink_count{customer=~\"$customers\", devEui=~\"$devices\", port=~\"$ports\", spreadingFactor=~\"$spreadingFactors\"}[$interval]))",
 					"fullMetaSearch": false,
 					"includeNullMetadata": false,
 					"legendFormat": "Uplinks",
@@ -909,9 +897,7 @@
 				"orientation": "auto",
 				"percentChangeColorMode": "standard",
 				"reduceOptions": {
-					"calcs": [
-						"lastNotNull"
-					],
+					"calcs": ["lastNotNull"],
 					"fields": "",
 					"values": false
 				},
@@ -928,7 +914,7 @@
 					},
 					"disableTextWrap": false,
 					"editorMode": "builder",
-					"expr": "sum by(__name__) (rate(truvami_device_uplink_count{devEui=~\"$devices\", port=~\"$ports\", spreadingFactor=~\"$spreadingFactors\"}[$interval])) * 60",
+					"expr": "sum by(__name__) (rate(truvami_device_uplink_count{customer=~\"$customers\", devEui=~\"$devices\", port=~\"$ports\", spreadingFactor=~\"$spreadingFactors\"}[$interval])) * 60",
 					"fullMetaSearch": false,
 					"includeNullMetadata": false,
 					"legendFormat": "Uplinks",
@@ -977,9 +963,7 @@
 				"orientation": "auto",
 				"percentChangeColorMode": "standard",
 				"reduceOptions": {
-					"calcs": [
-						"lastNotNull"
-					],
+					"calcs": ["lastNotNull"],
 					"fields": "",
 					"values": false
 				},
@@ -996,7 +980,7 @@
 					},
 					"disableTextWrap": false,
 					"editorMode": "builder",
-					"expr": "sum by(__name__) (rate(truvami_device_uplink_count{devEui=~\"$devices\", port=~\"$ports\", spreadingFactor=~\"$spreadingFactors\"}[$interval])) * 60 * 60",
+					"expr": "sum by(__name__) (rate(truvami_device_uplink_count{customer=~\"$customers\", devEui=~\"$devices\", port=~\"$ports\", spreadingFactor=~\"$spreadingFactors\"}[$interval])) * 60 * 60",
 					"fullMetaSearch": false,
 					"includeNullMetadata": false,
 					"legendFormat": "Uplinks",
@@ -1045,9 +1029,7 @@
 				"orientation": "auto",
 				"percentChangeColorMode": "standard",
 				"reduceOptions": {
-					"calcs": [
-						"lastNotNull"
-					],
+					"calcs": ["lastNotNull"],
 					"fields": "",
 					"values": false
 				},
@@ -1064,7 +1046,7 @@
 					},
 					"disableTextWrap": false,
 					"editorMode": "builder",
-					"expr": "sum by(__name__) (rate(truvami_device_uplink_count{devEui=~\"$devices\", port=~\"$ports\", spreadingFactor=~\"$spreadingFactors\"}[$interval])) * 60 * 60 * 24",
+					"expr": "sum by(__name__) (rate(truvami_device_uplink_count{customer=~\"$customers\", devEui=~\"$devices\", port=~\"$ports\", spreadingFactor=~\"$spreadingFactors\"}[$interval])) * 60 * 60 * 24",
 					"fullMetaSearch": false,
 					"includeNullMetadata": false,
 					"legendFormat": "Uplinks",
@@ -1160,7 +1142,7 @@
 					},
 					"disableTextWrap": false,
 					"editorMode": "builder",
-					"expr": "max by(devEui) (truvami_device_uplink_frame_counter{devEui=~\"$devices\"})",
+					"expr": "max by(devEui) (truvami_device_uplink_frame_counter{customer=~\"$customers\", devEui=~\"$devices\"})",
 					"fullMetaSearch": false,
 					"includeNullMetadata": true,
 					"legendFormat": "__auto",
@@ -1256,7 +1238,7 @@
 					},
 					"disableTextWrap": false,
 					"editorMode": "builder",
-					"expr": "avg by(devEui) (truvami_device_battery_status{devEui=~\"$devices\"})",
+					"expr": "avg by(devEui) (truvami_device_battery_status{customer=~\"$customers\", devEui=~\"$devices\"})",
 					"fullMetaSearch": false,
 					"includeNullMetadata": true,
 					"legendFormat": "__auto",
@@ -1352,7 +1334,7 @@
 					},
 					"disableTextWrap": false,
 					"editorMode": "builder",
-					"expr": "avg by(devEui) (truvami_device_buffer_level{devEui=~\"$devices\"})",
+					"expr": "avg by(devEui) (truvami_device_buffer_level{customer=~\"$customers\", devEui=~\"$devices\"})",
 					"fullMetaSearch": false,
 					"includeNullMetadata": true,
 					"legendFormat": "__auto",
@@ -1444,9 +1426,7 @@
 			"id": 5,
 			"options": {
 				"legend": {
-					"calcs": [
-						"distinctCount"
-					],
+					"calcs": ["distinctCount"],
 					"displayMode": "table",
 					"placement": "right",
 					"showLegend": false
@@ -1537,15 +1517,13 @@
 				"h": 8,
 				"w": 19,
 				"x": 0,
-				"y": 75
+				"y": 74
 			},
 			"id": 6,
 			"options": {
 				"legend": {
-					"calcs": [
-						"distinctCount"
-					],
-					"displayMode": "table",
+					"calcs": [],
+					"displayMode": "list",
 					"placement": "right",
 					"showLegend": true
 				},
@@ -1601,7 +1579,7 @@
 				"h": 8,
 				"w": 5,
 				"x": 19,
-				"y": 75
+				"y": 74
 			},
 			"id": 16,
 			"options": {
@@ -1612,9 +1590,7 @@
 				},
 				"pieType": "donut",
 				"reduceOptions": {
-					"calcs": [
-						"lastNotNull"
-					],
+					"calcs": ["lastNotNull"],
 					"fields": "",
 					"values": false
 				},
@@ -1704,15 +1680,13 @@
 				"h": 8,
 				"w": 19,
 				"x": 0,
-				"y": 83
+				"y": 82
 			},
 			"id": 21,
 			"options": {
 				"legend": {
-					"calcs": [
-						"distinctCount"
-					],
-					"displayMode": "table",
+					"calcs": [],
+					"displayMode": "list",
 					"placement": "right",
 					"showLegend": true
 				},
@@ -1731,7 +1705,7 @@
 					},
 					"disableTextWrap": false,
 					"editorMode": "builder",
-					"expr": "sum by(devEui) (increase(truvami_uplink_created_but_decoder_warn_count{devEui=~\"$devices\", port=~\"$ports\"}[$interval])) > 0",
+					"expr": "sum by(port) (increase(truvami_uplink_created_but_decoder_err_count{devEui=~\"$devices\", port=~\"$ports\"}[$interval])) > 0",
 					"fullMetaSearch": false,
 					"includeNullMetadata": false,
 					"legendFormat": "__auto",
@@ -1740,7 +1714,7 @@
 					"useBackend": false
 				}
 			],
-			"title": "Decode warnings by devices",
+			"title": "Decode errors by ports",
 			"type": "timeseries"
 		},
 		{
@@ -1768,7 +1742,7 @@
 				"h": 8,
 				"w": 5,
 				"x": 19,
-				"y": 83
+				"y": 82
 			},
 			"id": 17,
 			"options": {
@@ -1779,9 +1753,7 @@
 				},
 				"pieType": "donut",
 				"reduceOptions": {
-					"calcs": [
-						"lastNotNull"
-					],
+					"calcs": ["lastNotNull"],
 					"fields": "",
 					"values": false
 				},
@@ -1871,15 +1843,13 @@
 				"h": 8,
 				"w": 19,
 				"x": 0,
-				"y": 91
+				"y": 90
 			},
 			"id": 19,
 			"options": {
 				"legend": {
-					"calcs": [
-						"distinctCount"
-					],
-					"displayMode": "table",
+					"calcs": [],
+					"displayMode": "list",
 					"placement": "right",
 					"showLegend": true
 				},
@@ -1907,7 +1877,7 @@
 					"useBackend": false
 				}
 			],
-			"title": "Decode warnings by ports",
+			"title": "Decode warnings by devices",
 			"type": "timeseries"
 		},
 		{
@@ -1935,7 +1905,7 @@
 				"h": 8,
 				"w": 5,
 				"x": 19,
-				"y": 91
+				"y": 90
 			},
 			"id": 22,
 			"options": {
@@ -1946,9 +1916,7 @@
 				},
 				"pieType": "donut",
 				"reduceOptions": {
-					"calcs": [
-						"lastNotNull"
-					],
+					"calcs": ["lastNotNull"],
 					"fields": "",
 					"values": false
 				},
@@ -2038,15 +2006,13 @@
 				"h": 8,
 				"w": 19,
 				"x": 0,
-				"y": 99
+				"y": 98
 			},
 			"id": 25,
 			"options": {
 				"legend": {
-					"calcs": [
-						"distinctCount"
-					],
-					"displayMode": "table",
+					"calcs": [],
+					"displayMode": "list",
 					"placement": "right",
 					"showLegend": true
 				},
@@ -2102,7 +2068,7 @@
 				"h": 8,
 				"w": 5,
 				"x": 19,
-				"y": 99
+				"y": 98
 			},
 			"id": 20,
 			"options": {
@@ -2113,9 +2079,7 @@
 				},
 				"pieType": "donut",
 				"reduceOptions": {
-					"calcs": [
-						"lastNotNull"
-					],
+					"calcs": ["lastNotNull"],
 					"fields": "",
 					"values": false
 				},
@@ -2167,11 +2131,31 @@
 				"type": "datasource"
 			},
 			{
+				"allValue": "",
+				"allowCustomValue": false,
+				"current": {
+					"text": ["All"],
+					"value": ["$__all"]
+				},
+				"definition": "label_values(truvami_device_uplink_count,customer)",
+				"includeAll": true,
+				"label": "Customers",
+				"multi": true,
+				"name": "customers",
+				"options": [],
+				"query": {
+					"qryType": 1,
+					"query": "label_values(truvami_device_uplink_count,customer)",
+					"refId": "PrometheusVariableQueryEditor-VariableQuery"
+				},
+				"refresh": 1,
+				"regex": "",
+				"type": "query"
+			},
+			{
 				"current": {
 					"text": "All",
-					"value": [
-						"$__all"
-					]
+					"value": ["$__all"]
 				},
 				"definition": "label_values(truvami_device_uplink_count,devEui)",
 				"description": "",
@@ -2193,9 +2177,7 @@
 			{
 				"current": {
 					"text": "All",
-					"value": [
-						"$__all"
-					]
+					"value": ["$__all"]
 				},
 				"definition": "label_values(truvami_device_uplink_count,port)",
 				"description": "",
@@ -2314,6 +2296,6 @@
 	"timepicker": {},
 	"timezone": "browser",
 	"title": "Uplinks",
-	"uid": "aejur9vxz1mo0c",
-	"version": 1
+	"uid": "eeqt78anid6gwd",
+	"version": 14
 }
