@@ -3,6 +3,13 @@ fullnameOverride: ""
 
 prometheus:
   storageSize: "10Gi"
+  resources:
+    requests:
+      cpu: "100m"
+      memory: "256Mi"
+    limits:
+      cpu: "1"
+      memory: "1Gi"
 
 grafana:
   enabled: false

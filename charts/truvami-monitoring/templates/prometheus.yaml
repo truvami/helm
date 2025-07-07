@@ -54,6 +54,7 @@ spec:
       kubernetes.io/metadata.name : {{ .Release.Namespace }}
   logFormat: "json"
   retention: 10d
+  resources: {{ toYaml .Values.prometheus.resources | nindent 4 }}
   securityContext:
     fsGroup: 0
     runAsGroup: 0
