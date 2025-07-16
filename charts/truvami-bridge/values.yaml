@@ -26,6 +26,18 @@ bridge:
         location: /var/run/secrets/kafka/ca.crt
     security:
       protocol: SSL
+    alerts:
+      topics:
+        uplinks: alerts.uplinks
+        positions: alerts.positions
+        battery-statuses: alerts.battery-statuses
+        rotations: alerts.rotations
+        events: alerts.events
+      flush-timeout: 10s
+      flush-remaining-timeout: 1s
+    integrations:
+      cache:
+        duration: 1m
 
 kafka:
   topic:
