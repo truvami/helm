@@ -3,6 +3,9 @@
 # Declare variables to be passed into your templates.
 
 bridge:
+  metrics:
+    port: 9090
+
   otel:
     enable: true
     endpoint: "tempo.grafana-tempo.svc.cluster.local:4318"
