@@ -11,7 +11,7 @@ spec:
       targetPort: http
       protocol: TCP
       name: http
-    - port: 9090
+    - port: {{ .Values.bridge.metrics.port }}
       targetPort: metrics
       protocol: TCP
       name: metrics
