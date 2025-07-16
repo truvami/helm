@@ -4,13 +4,13 @@ dependencies:
   version: 0.0.26
 - name: truvami-bridge
   repository: file://../truvami-bridge/
-  version: 0.1.16
+  version: 0.1.17
 - name: truvami-api
   repository: file://../truvami-api/
   version: 0.0.16
 - name: truvami-decoder
   repository: file://../truvami-decoder/
-  version: 0.0.8
+  version: 0.0.9
 - name: truvami-dashboard
   repository: file://../truvami-dashboard/
   version: 0.0.12
@@ -23,5 +23,5 @@ dependencies:
 - name: valkey
   repository: https://charts.bitnami.com/bitnami
   version: 3.0.9
-digest: sha256:96fe80d1f04b92c6e66567a7c4dfd752e0346f22adf3859929641dc8f0e66105
-generated: "2025-07-16T11:25:23.611862535Z"
+digest: sha256:476dccbca0f7c870b23f491c5f31ee1874884edc5d40bf5ed848775c3c0f2362
+generated: "2025-07-16T12:38:35.222475888Z"
