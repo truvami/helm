@@ -15,13 +15,13 @@ dependencies:
     version: 0.0.26
     repository: "file://../truvami-gateway/"
   - name: truvami-bridge
-    version: 0.1.22
+    version: 0.1.23
     repository: "file://../truvami-bridge/"
   - name: truvami-api
     version: 0.0.16
     repository: "file://../truvami-api/"
   - name: truvami-decoder
-    version: 0.0.13
+    version: 0.0.14
     repository: "file://../truvami-decoder/"
   - name: truvami-dashboard
     version: 0.0.12
