@@ -269,7 +269,23 @@
 						]
 					}
 				},
-				"overrides": []
+				"overrides": [
+					{
+						"matcher": {
+							"id": "byFrameRefID",
+							"options": "A"
+						},
+						"properties": [
+							{
+								"id": "color",
+								"value": {
+									"fixedColor": "red",
+									"mode": "fixed"
+								}
+							}
+						]
+					}
+				]
 			},
 			"gridPos": {
 				"h": 9,
@@ -1537,5 +1553,5 @@
 	"timezone": "browser",
 	"title": "Bridge Service",
 	"uid": "ypFZFgvmy",
-	"version": 1
+	"version": 2
 }
