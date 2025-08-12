@@ -19,7 +19,7 @@
 	"editable": true,
 	"fiscalYearStartMonth": 0,
 	"graphTooltip": 0,
-	"id": 6,
+	"id": 7,
 	"links": [],
 	"panels": [
 		{
@@ -217,6 +217,114 @@
 			"type": "timeseries"
 		},
 		{
+			"datasource": {
+				"type": "prometheus",
+				"uid": "PBFA97CFB590B2093"
+			},
+			"fieldConfig": {
+				"defaults": {
+					"color": {
+						"mode": "palette-classic"
+					},
+					"custom": {
+						"axisBorderShow": false,
+						"axisCenteredZero": false,
+						"axisColorMode": "text",
+						"axisLabel": "",
+						"axisPlacement": "auto",
+						"barAlignment": 0,
+						"barWidthFactor": 0.6,
+						"drawStyle": "line",
+						"fillOpacity": 10,
+						"gradientMode": "none",
+						"hideFrom": {
+							"legend": false,
+							"tooltip": false,
+							"viz": false
+						},
+						"insertNulls": false,
+						"lineInterpolation": "linear",
+						"lineWidth": 2,
+						"pointSize": 5,
+						"scaleDistribution": {
+							"type": "linear"
+						},
+						"showPoints": "auto",
+						"spanNulls": false,
+						"stacking": {
+							"group": "A",
+							"mode": "none"
+						},
+						"thresholdsStyle": {
+							"mode": "off"
+						}
+					},
+					"mappings": [],
+					"thresholds": {
+						"mode": "absolute",
+						"steps": [
+							{
+								"color": "green"
+							}
+						]
+					}
+				},
+				"overrides": []
+			},
+			"gridPos": {
+				"h": 9,
+				"w": 24,
+				"x": 0,
+				"y": 16
+			},
+			"id": 13,
+			"options": {
+				"legend": {
+					"calcs": [],
+					"displayMode": "list",
+					"placement": "bottom",
+					"showLegend": true
+				},
+				"tooltip": {
+					"hideZeros": false,
+					"mode": "single",
+					"sort": "none"
+				}
+			},
+			"pluginVersion": "11.6.0",
+			"targets": [
+				{
+					"disableTextWrap": false,
+					"editorMode": "builder",
+					"expr": "sum(increase(truvami_loracloud_position_estimate_no_captured_at_set_and_zero_coordinates_set_total{namespace=~\"$namespace\"}[$interval]))",
+					"fullMetaSearch": false,
+					"includeNullMetadata": true,
+					"legendFormat": "invalid coordinates",
+					"range": true,
+					"refId": "A",
+					"useBackend": false
+				},
+				{
+					"datasource": {
+						"type": "prometheus",
+						"uid": "PBFA97CFB590B2093"
+					},
+					"disableTextWrap": false,
+					"editorMode": "builder",
+					"expr": "sum(increase(truvami_loracloud_position_estimate_no_captured_at_set_with_valid_coordinates_total{namespace=~\"$namespace\"}[$interval]))",
+					"fullMetaSearch": false,
+					"hide": false,
+					"includeNullMetadata": true,
+					"legendFormat": "valid coordinates",
+					"range": true,
+					"refId": "B",
+					"useBackend": false
+				}
+			],
+			"title": "No captured at",
+			"type": "timeseries"
+		},
+		{
 			"fieldConfig": {
 				"defaults": {},
 				"overrides": []
@@ -225,14 +333,16 @@
 				"h": 10,
 				"w": 24,
 				"x": 0,
-				"y": 16
+				"y": 25
 			},
 			"id": 12,
 			"options": {
 				"alertInstanceLabelFilter": "service=\"truvami-bridge\"",
 				"alertName": "",
 				"dashboardAlerts": false,
-				"groupBy": ["severity"],
+				"groupBy": [
+					"severity"
+				],
 				"groupMode": "default",
 				"maxItems": 20,
 				"showInactiveAlerts": false,
@@ -256,7 +366,7 @@
 				"h": 1,
 				"w": 24,
 				"x": 0,
-				"y": 26
+				"y": 35
 			},
 			"id": 9,
 			"panels": [],
@@ -360,12 +470,16 @@
 				"h": 8,
 				"w": 12,
 				"x": 0,
-				"y": 27
+				"y": 36
 			},
 			"id": 1,
 			"options": {
 				"legend": {
-					"calcs": ["mean", "lastNotNull", "max"],
+					"calcs": [
+						"mean",
+						"lastNotNull",
+						"max"
+					],
 					"displayMode": "table",
 					"placement": "bottom",
 					"showLegend": true
@@ -476,12 +590,16 @@
 				"h": 8,
 				"w": 12,
 				"x": 12,
-				"y": 27
+				"y": 36
 			},
 			"id": 4,
 			"options": {
 				"legend": {
-					"calcs": ["mean", "lastNotNull", "max"],
+					"calcs": [
+						"mean",
+						"lastNotNull",
+						"max"
+					],
 					"displayMode": "table",
 					"placement": "bottom",
 					"showLegend": true
@@ -625,12 +743,16 @@
 				"h": 7,
 				"w": 12,
 				"x": 0,
-				"y": 35
+				"y": 44
 			},
 			"id": 2,
 			"options": {
 				"legend": {
-					"calcs": ["mean", "lastNotNull", "max"],
+					"calcs": [
+						"mean",
+						"lastNotNull",
+						"max"
+					],
 					"displayMode": "table",
 					"placement": "bottom",
 					"showLegend": true
@@ -805,12 +927,16 @@
 				"h": 7,
 				"w": 12,
 				"x": 12,
-				"y": 35
+				"y": 44
 			},
 			"id": 5,
 			"options": {
 				"legend": {
-					"calcs": ["mean", "lastNotNull", "max"],
+					"calcs": [
+						"mean",
+						"lastNotNull",
+						"max"
+					],
 					"displayMode": "table",
 					"placement": "bottom",
 					"showLegend": true
@@ -952,12 +1078,16 @@
 				"h": 7,
 				"w": 12,
 				"x": 0,
-				"y": 42
+				"y": 51
 			},
 			"id": 3,
 			"options": {
 				"legend": {
-					"calcs": ["mean", "lastNotNull", "max"],
+					"calcs": [
+						"mean",
+						"lastNotNull",
+						"max"
+					],
 					"displayMode": "table",
 					"placement": "bottom",
 					"showLegend": true
@@ -1053,12 +1183,16 @@
 				"h": 7,
 				"w": 12,
 				"x": 12,
-				"y": 42
+				"y": 51
 			},
 			"id": 6,
 			"options": {
 				"legend": {
-					"calcs": ["mean", "lastNotNull", "max"],
+					"calcs": [
+						"mean",
+						"lastNotNull",
+						"max"
+					],
 					"displayMode": "table",
 					"placement": "bottom",
 					"showLegend": true
@@ -1154,12 +1288,16 @@
 				"h": 7,
 				"w": 12,
 				"x": 0,
-				"y": 49
+				"y": 58
 			},
 			"id": 7,
 			"options": {
 				"legend": {
-					"calcs": ["mean", "lastNotNull", "max"],
+					"calcs": [
+						"mean",
+						"lastNotNull",
+						"max"
+					],
 					"displayMode": "table",
 					"placement": "bottom",
 					"showLegend": true
@@ -1255,12 +1393,16 @@
 				"h": 7,
 				"w": 12,
 				"x": 12,
-				"y": 49
+				"y": 58
 			},
 			"id": 8,
 			"options": {
 				"legend": {
-					"calcs": ["mean", "lastNotNull", "max"],
+					"calcs": [
+						"mean",
+						"lastNotNull",
+						"max"
+					],
 					"displayMode": "table",
 					"placement": "bottom",
 					"showLegend": true
@@ -1388,12 +1530,12 @@
 		]
 	},
 	"time": {
-		"from": "now-30m",
+		"from": "now-6h",
 		"to": "now"
 	},
 	"timepicker": {},
 	"timezone": "browser",
 	"title": "Bridge Service",
 	"uid": "ypFZFgvmy",
-	"version": 3
+	"version": 1
 }
