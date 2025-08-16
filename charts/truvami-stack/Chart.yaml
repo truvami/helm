@@ -27,7 +27,7 @@ dependencies:
     version: 0.0.14
     repository: "file://../truvami-dashboard/"
   - name: truvami-monitoring
-    version: 0.1.49
+    version: 0.1.50
     repository: "file://../truvami-monitoring/"
   - name: truvami-siren
     version: 0.1.7
