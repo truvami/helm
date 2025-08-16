@@ -4,6 +4,10 @@ metadata:
   name: {{ include "truvami-api.fullname" . }}-migrate
   labels:
     app.kubernetes.io/component: migration
+  annotations:
+    argocd.argoproj.io/hook: PreSync
+    argocd.argoproj.io/hook-delete-policy: BeforeHookCreation
+    argocd.argoproj.io/sync-wave: "-1"
 spec:
   backoffLimit: 2
   completions: 1

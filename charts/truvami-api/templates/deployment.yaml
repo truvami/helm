@@ -2,6 +2,8 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ include "truvami-api.fullname" . }}
+  annotations:
+    argocd.argoproj.io/sync-wave: "0"
   labels:
     {{- include "truvami-api.labels" . | nindent 4 }}
 spec:
