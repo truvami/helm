@@ -39,6 +39,10 @@ bridge:
       cache:
         duration: 1m
 
+  featureFlags:
+    fed1a230-cee8-11ee-9ddb-47f5f8bdd1a5: # Holcim
+      doNotFallbackSetCapturedAt: true
+
 kafka:
   topic:
     partitions: 12
