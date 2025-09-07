@@ -4,7 +4,7 @@ metadata:
   labels:
     prometheus: kube-prometheus-stack-prometheus
     role: alert-rules
-  name: truvami-bridge
+  name: truvami-kafka-integration
 spec:
   groups:
     - name: truvami-bridge
