@@ -26,7 +26,7 @@ api:
   otel:
     enabled: false
     endpoint: "localhost:4318"
-    
+
   webhook:
     initializationTimeout: 15s
     postRequestTimeout: 5s
@@ -46,6 +46,10 @@ api:
 
 database:
   secretName: truvami-stack-app
+  secretKey: uri
+
+valkey:
+  secretName: truvami-stack-valkey
   secretKey: uri
 
 replicaCount: 1

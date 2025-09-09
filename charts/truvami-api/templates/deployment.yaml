@@ -64,6 +64,12 @@ spec:
                   key: thingpark-assecret
                   name: truvami-api
                   optional: false
+            - name: VALKEY_URL
+              valueFrom:
+                secretKeyRef:
+                  key: {{ .Values.valkey.secretKey }}
+                  name: {{ .Values.valkey.secretName }}
+                  optional: false
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
