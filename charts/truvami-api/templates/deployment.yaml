@@ -64,7 +64,7 @@ spec:
                   key: thingpark-assecret
                   name: truvami-api
                   optional: false
-            - name: VALKEY_URL
+            - name: VALKEY_URI
               valueFrom:
                 secretKeyRef:
                   key: {{ .Values.valkey.secretKey }}
