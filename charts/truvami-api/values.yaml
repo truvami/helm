@@ -44,6 +44,11 @@ api:
     asId: "TWA_xxxxxxxxx.xxxxx.AS"
     # asSecret: "xxxxxxxxxxxxxx"
 
+  valkey:
+    configDispatch:
+      keyPrefix: "config_dispatch"
+      defaultTimeout: 60s
+
 database:
   secretName: truvami-stack-app
   secretKey: uri
