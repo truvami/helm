@@ -17,7 +17,7 @@ bridge:
 
   kafka:
     bootstrap:
-      servers: 
+      servers:
         - truvami-stack-kafka-bootstrap:9093
     allow.auto.create.topics: false
     enable.ssl.certificate.verification: false
@@ -99,7 +99,8 @@ service:
 ingress:
   enabled: false
   className: ""
-  annotations: {}
+  annotations:
+    {}
     # kubernetes.io/ingress.class: nginx
     # kubernetes.io/tls-acme: "true"
   tls: []
@@ -162,3 +163,15 @@ nodeSelector: {}
 tolerations: []
 
 affinity: {}
+
+initContainers: []
+  # - name: check-network-access
+  #   image: alpine/curl
+  #   imagePullPolicy: IfNotPresent
+  #   # If the curl commands returns a 400 or 200 the init container will exit with code 0
+  #   command:
+  #     [
+  #       "sh",
+  #       "-c",
+  #       'curl -Iv -m 30 xyz.com | grep "400 Bad Request"',
+  #     ]
