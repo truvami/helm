@@ -36,6 +36,15 @@ spec:
           type: topic
       - host: '*'
         operations:
+          - Read
+          - Describe
+          - Write
+        resource:
+          name: alerts.*
+          patternType: literal
+          type: topic
+      - host: '*'
+        operations:
           - Describe
           - Read
           - Write
@@ -43,5 +52,8 @@ spec:
           name: {{ .Release.Name }}
           patternType: literal
           type: group
+{{- with .Values.kafka.additionalAcls }}
+{{ toYaml . | indent 6 }}
+{{- end }}
     type: simple
 ---
