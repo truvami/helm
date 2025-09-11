@@ -37,6 +37,7 @@ spec:
           labelSelector:
             matchLabels:
               {{- include "truvami-bridge.selectorLabels" . | nindent 14 }}
+      initContainers: {{- toYaml .Values.initContainers | nindent 8 }}
       containers:
         - name: {{ .Chart.Name }}
           args:
