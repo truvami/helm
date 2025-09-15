@@ -80,6 +80,12 @@ spec:
                   key: user.password
                   name: "truvami-siren-kafka"
                   optional: false
+            - name: VALKEY_URI
+              valueFrom:
+                secretKeyRef:
+                  key: {{ .Values.valkey.secretKey }}
+                  name: {{ .Values.valkey.secretName }}
+                  optional: false
           {{- with .Values.volumeMounts }}
           volumeMounts:
             {{- toYaml . | nindent 12 }}

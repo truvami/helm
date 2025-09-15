@@ -3,32 +3,58 @@
 # Declare variables to be passed into your templates.
 
 siren:
+  metrics:
+    port: 9090
+
   otel:
-    enable: true
     endpoint: "tempo.grafana-tempo.svc.cluster.local:4318"
 
-  topics:
-    items:
-      - uplinks
-      - positions
-      - battery-statuses
-      - rotations
-      - events
 
   grpc:
     server: truvami-stack-truvami-api:5001
 
+  valkey:
+    key-prefix: "siren"
+    cache-ttl: 15m
+
   kafka:
     bootstrap:
-      servers: 
+      servers:
         - truvami-stack-kafka-bootstrap:9093
-    allow.auto.create.topics: false
     enable.ssl.certificate.verification: false
     ssl:
       ca:
         location: /var/run/secrets/kafka/ca.crt
     security:
       protocol: SSL
+    alerts:
+      topics:
+        uplinks: alerts.uplinks
+        positions: alerts.positions
+        battery-statuses: alerts.battery-statuses
+        rotations: alerts.rotations
+        events: alerts.events
+      retry-topics:
+        uplinks: alerts.uplinks-retry
+        positions: alerts.positions-retry
+        battery-statuses: alerts.battery-statuses-retry
+        rotations: alerts.rotations-retry
+        events: alerts.events-retry
+      dlq-topics:
+        uplinks: alerts.uplinks-dlq
+        positions: alerts.positions-dlq
+        battery-statuses: alerts.battery-statuses-dlq
+        rotations: alerts.rotations-dlq
+        events: alerts.events-dlq
+      retry:
+        first-retry: 5s
+        second-retry: 10m
+        third-retry: 1h
+      poll-timeout: 1s
+
+valkey:
+  secretName: truvami-stack-valkey
+  secretKey: uri
 
 kafka:
   topic:
