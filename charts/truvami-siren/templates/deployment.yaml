@@ -72,13 +72,13 @@ spec:
               valueFrom:
                 secretKeyRef:
                   key: user.password
-                  name: "siren-kafka"
+                  name: "truvami-siren-kafka"
                   optional: false
             - name: KAFKA_SSL_KEY_PASSWORD
               valueFrom:
                 secretKeyRef:
                   key: user.password
-                  name: "siren-kafka"
+                  name: "truvami-siren-kafka"
                   optional: false
           {{- with .Values.volumeMounts }}
           volumeMounts:
