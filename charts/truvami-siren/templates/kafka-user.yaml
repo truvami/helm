@@ -45,32 +45,23 @@ spec:
     type: tls
   authorization:
     acls:
-      - host: '*'
-        operations:
-          - Read
-          - Describe
+      # Read/Describe ANY topic starting with "alerts."
+      - host: "*"
+        operations: ["Read","Describe"]
         resource:
-          name: alerts.*
-          patternType: literal
           type: topic
-      - host: '*'
-        operations:
-          - Create
-          - Describe
-          - Write
+          name: "alerts."
+          patternType: prefix
+
+      # Produce/Create to ANY topic starting with "alerts."
+      # (Kafka doesn’t support suffix-only ACLs like "*-retry" or "*-dlq")
+      - host: "*"
+        operations: ["Create","Describe","Write"]
         resource:
-          name: alerts.*-retry
-          patternType: literal
           type: topic
-      - host: '*'
-        operations:
-          - Create
-          - Describe
-          - Write
-        resource:
-          name: alerts.*-dlq
-          patternType: literal
-          type: topic
+          name: "alerts."
+          patternType: prefix
+
       - host: '*'
         operations:
           - Read

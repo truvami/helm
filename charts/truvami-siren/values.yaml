@@ -22,6 +22,8 @@ siren:
       servers:
         - truvami-stack-kafka-bootstrap:9093
     enable.ssl.certificate.verification: false
+    group:
+      id: siren
     ssl:
       ca:
         location: /var/run/secrets/kafka/ca.crt
