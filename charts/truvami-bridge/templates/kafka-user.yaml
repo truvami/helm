@@ -40,44 +40,8 @@ spec:
           - Describe
           - Write
         resource:
-          name: {{ .Values.bridge.kafka.alerts.topics.uplinks }}
-          patternType: literal
-          type: topic
-      - host: '*'
-        operations:
-          - Read
-          - Describe
-          - Write
-        resource:
-          name: {{ .Values.bridge.kafka.alerts.topics.positions }}
-          patternType: literal
-          type: topic
-      - host: '*'
-        operations:
-          - Read
-          - Describe
-          - Write
-        resource:
-          name: "battery-statuses"
-          patternType: literal
-          type: topic
-      - host: '*'
-        operations:
-          - Read
-          - Describe
-          - Write
-        resource:
-          name: {{ .Values.bridge.kafka.alerts.topics.rotations }}
-          patternType: literal
-          type: topic
-      - host: '*'
-        operations:
-          - Read
-          - Describe
-          - Write
-        resource:
-          name: {{ .Values.bridge.kafka.alerts.topics.events }}
-          patternType: literal
+          name: alerts.
+          patternType: prefix
           type: topic
       - host: '*'
         operations:
