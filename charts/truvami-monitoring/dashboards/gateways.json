@@ -18,237 +18,21 @@
 	"editable": true,
 	"fiscalYearStartMonth": 0,
 	"graphTooltip": 2,
-	"id": 8,
+	"id": 3,
 	"links": [],
 	"panels": [
 		{
-			"datasource": {
-				"type": "prometheus",
-				"uid": "${datasource}"
-			},
-			"fieldConfig": {
-				"defaults": {
-					"color": {
-						"mode": "palette-classic"
-					},
-					"custom": {
-						"axisBorderShow": false,
-						"axisCenteredZero": false,
-						"axisColorMode": "text",
-						"axisLabel": "",
-						"axisPlacement": "auto",
-						"axisSoftMax": -30,
-						"barAlignment": 0,
-						"barWidthFactor": 0.6,
-						"drawStyle": "line",
-						"fillOpacity": 0,
-						"gradientMode": "none",
-						"hideFrom": {
-							"legend": false,
-							"tooltip": false,
-							"viz": false
-						},
-						"insertNulls": false,
-						"lineInterpolation": "linear",
-						"lineWidth": 1,
-						"pointSize": 5,
-						"scaleDistribution": {
-							"type": "linear"
-						},
-						"showPoints": "auto",
-						"spanNulls": false,
-						"stacking": {
-							"group": "A",
-							"mode": "none"
-						},
-						"thresholdsStyle": {
-							"mode": "area"
-						}
-					},
-					"mappings": [],
-					"max": 4,
-					"thresholds": {
-						"mode": "absolute",
-						"steps": [
-							{
-								"color": "red"
-							},
-							{
-								"color": "orange",
-								"value": -90
-							},
-							{
-								"color": "yellow",
-								"value": -80
-							},
-							{
-								"color": "green",
-								"value": -70
-							},
-							{
-								"color": "dark-green",
-								"value": -67
-							}
-						]
-					},
-					"unit": "dBm"
-				},
-				"overrides": []
-			},
+			"collapsed": false,
 			"gridPos": {
-				"h": 10,
+				"h": 1,
 				"w": 24,
 				"x": 0,
 				"y": 0
 			},
-			"id": 4,
-			"options": {
-				"legend": {
-					"calcs": [],
-					"displayMode": "list",
-					"placement": "right",
-					"showLegend": true
-				},
-				"tooltip": {
-					"hideZeros": false,
-					"mode": "single",
-					"sort": "none"
-				}
-			},
-			"pluginVersion": "11.6.0",
-			"targets": [
-				{
-					"datasource": {
-						"type": "prometheus",
-						"uid": "${DS_PROMETHEUS}"
-					},
-					"disableTextWrap": false,
-					"editorMode": "builder",
-					"expr": "avg by(devEui) (truvami_gateway_uplink_rssi{devEui=~\"$devices\", gatewayId=~\"$gateways\"})",
-					"fullMetaSearch": false,
-					"includeNullMetadata": false,
-					"legendFormat": "__auto",
-					"range": true,
-					"refId": "A",
-					"useBackend": false
-				}
-			],
-			"title": "Rssi by devices",
-			"type": "timeseries"
-		},
-		{
-			"datasource": {
-				"type": "prometheus",
-				"uid": "${datasource}"
-			},
-			"fieldConfig": {
-				"defaults": {
-					"color": {
-						"mode": "palette-classic"
-					},
-					"custom": {
-						"axisBorderShow": false,
-						"axisCenteredZero": false,
-						"axisColorMode": "text",
-						"axisLabel": "",
-						"axisPlacement": "auto",
-						"axisSoftMin": -22,
-						"barAlignment": 0,
-						"barWidthFactor": 0.6,
-						"drawStyle": "line",
-						"fillOpacity": 0,
-						"gradientMode": "none",
-						"hideFrom": {
-							"legend": false,
-							"tooltip": false,
-							"viz": false
-						},
-						"insertNulls": false,
-						"lineInterpolation": "linear",
-						"lineWidth": 1,
-						"pointSize": 5,
-						"scaleDistribution": {
-							"type": "linear"
-						},
-						"showPoints": "auto",
-						"spanNulls": false,
-						"stacking": {
-							"group": "A",
-							"mode": "none"
-						},
-						"thresholdsStyle": {
-							"mode": "area"
-						}
-					},
-					"mappings": [],
-					"max": 12,
-					"thresholds": {
-						"mode": "absolute",
-						"steps": [
-							{
-								"color": "red"
-							},
-							{
-								"color": "orange",
-								"value": -10
-							},
-							{
-								"color": "yellow",
-								"value": -5
-							},
-							{
-								"color": "green",
-								"value": 0
-							},
-							{
-								"color": "dark-green",
-								"value": 5
-							}
-						]
-					}
-				},
-				"overrides": []
-			},
-			"gridPos": {
-				"h": 10,
-				"w": 24,
-				"x": 0,
-				"y": 10
-			},
-			"id": 26,
-			"options": {
-				"legend": {
-					"calcs": [],
-					"displayMode": "list",
-					"placement": "right",
-					"showLegend": true
-				},
-				"tooltip": {
-					"hideZeros": false,
-					"mode": "single",
-					"sort": "none"
-				}
-			},
-			"pluginVersion": "11.6.0",
-			"targets": [
-				{
-					"datasource": {
-						"type": "prometheus",
-						"uid": "${DS_PROMETHEUS}"
-					},
-					"disableTextWrap": false,
-					"editorMode": "builder",
-					"expr": "avg by(devEui) (truvami_gateway_uplink_snr{devEui=~\"$devices\", gatewayId=~\"$gateways\"})",
-					"fullMetaSearch": false,
-					"includeNullMetadata": false,
-					"legendFormat": "__auto",
-					"range": true,
-					"refId": "A",
-					"useBackend": false
-				}
-			],
-			"title": "Snr by devices",
-			"type": "timeseries"
+			"id": 31,
+			"panels": [],
+			"title": "By gateways",
+			"type": "row"
 		},
 		{
 			"datasource": {
@@ -327,7 +111,7 @@
 				"h": 10,
 				"w": 24,
 				"x": 0,
-				"y": 20
+				"y": 1
 			},
 			"id": 25,
 			"options": {
@@ -441,7 +225,7 @@
 				"h": 10,
 				"w": 24,
 				"x": 0,
-				"y": 30
+				"y": 11
 			},
 			"id": 27,
 			"options": {
@@ -477,6 +261,706 @@
 			],
 			"title": "Snr by gateways",
 			"type": "timeseries"
+		},
+		{
+			"collapsed": false,
+			"gridPos": {
+				"h": 1,
+				"w": 24,
+				"x": 0,
+				"y": 21
+			},
+			"id": 30,
+			"panels": [],
+			"title": "By devices",
+			"type": "row"
+		},
+		{
+			"datasource": {
+				"type": "prometheus",
+				"uid": "${datasource}"
+			},
+			"fieldConfig": {
+				"defaults": {
+					"color": {
+						"mode": "palette-classic"
+					},
+					"custom": {
+						"axisBorderShow": false,
+						"axisCenteredZero": false,
+						"axisColorMode": "text",
+						"axisLabel": "",
+						"axisPlacement": "auto",
+						"axisSoftMax": -30,
+						"barAlignment": 0,
+						"barWidthFactor": 0.6,
+						"drawStyle": "line",
+						"fillOpacity": 0,
+						"gradientMode": "none",
+						"hideFrom": {
+							"legend": false,
+							"tooltip": false,
+							"viz": false
+						},
+						"insertNulls": false,
+						"lineInterpolation": "linear",
+						"lineWidth": 1,
+						"pointSize": 5,
+						"scaleDistribution": {
+							"type": "linear"
+						},
+						"showPoints": "auto",
+						"spanNulls": false,
+						"stacking": {
+							"group": "A",
+							"mode": "none"
+						},
+						"thresholdsStyle": {
+							"mode": "area"
+						}
+					},
+					"mappings": [],
+					"max": 4,
+					"thresholds": {
+						"mode": "absolute",
+						"steps": [
+							{
+								"color": "red"
+							},
+							{
+								"color": "orange",
+								"value": -90
+							},
+							{
+								"color": "yellow",
+								"value": -80
+							},
+							{
+								"color": "green",
+								"value": -70
+							},
+							{
+								"color": "dark-green",
+								"value": -67
+							}
+						]
+					},
+					"unit": "dBm"
+				},
+				"overrides": []
+			},
+			"gridPos": {
+				"h": 10,
+				"w": 8,
+				"x": 0,
+				"y": 22
+			},
+			"id": 4,
+			"options": {
+				"legend": {
+					"calcs": [],
+					"displayMode": "list",
+					"placement": "right",
+					"showLegend": true
+				},
+				"tooltip": {
+					"hideZeros": false,
+					"mode": "single",
+					"sort": "none"
+				}
+			},
+			"pluginVersion": "11.6.0",
+			"targets": [
+				{
+					"datasource": {
+						"type": "prometheus",
+						"uid": "${DS_PROMETHEUS}"
+					},
+					"disableTextWrap": false,
+					"editorMode": "builder",
+					"expr": "avg by(devEui) (truvami_gateway_uplink_rssi{devEui=~\"$devices\", gatewayId=~\"$gateways\"})",
+					"fullMetaSearch": false,
+					"includeNullMetadata": false,
+					"legendFormat": "__auto",
+					"range": true,
+					"refId": "A",
+					"useBackend": false
+				}
+			],
+			"title": "Rssi by devices (avg)",
+			"type": "timeseries"
+		},
+		{
+			"datasource": {
+				"type": "prometheus",
+				"uid": "${datasource}"
+			},
+			"fieldConfig": {
+				"defaults": {
+					"color": {
+						"mode": "palette-classic"
+					},
+					"custom": {
+						"axisBorderShow": false,
+						"axisCenteredZero": false,
+						"axisColorMode": "text",
+						"axisLabel": "",
+						"axisPlacement": "auto",
+						"axisSoftMax": -30,
+						"barAlignment": 0,
+						"barWidthFactor": 0.6,
+						"drawStyle": "line",
+						"fillOpacity": 0,
+						"gradientMode": "none",
+						"hideFrom": {
+							"legend": false,
+							"tooltip": false,
+							"viz": false
+						},
+						"insertNulls": false,
+						"lineInterpolation": "linear",
+						"lineWidth": 1,
+						"pointSize": 5,
+						"scaleDistribution": {
+							"type": "linear"
+						},
+						"showPoints": "auto",
+						"spanNulls": false,
+						"stacking": {
+							"group": "A",
+							"mode": "none"
+						},
+						"thresholdsStyle": {
+							"mode": "area"
+						}
+					},
+					"mappings": [],
+					"max": 4,
+					"thresholds": {
+						"mode": "absolute",
+						"steps": [
+							{
+								"color": "red"
+							},
+							{
+								"color": "orange",
+								"value": -90
+							},
+							{
+								"color": "yellow",
+								"value": -80
+							},
+							{
+								"color": "green",
+								"value": -70
+							},
+							{
+								"color": "dark-green",
+								"value": -67
+							}
+						]
+					},
+					"unit": "dBm"
+				},
+				"overrides": []
+			},
+			"gridPos": {
+				"h": 10,
+				"w": 8,
+				"x": 8,
+				"y": 22
+			},
+			"id": 28,
+			"options": {
+				"legend": {
+					"calcs": [],
+					"displayMode": "list",
+					"placement": "right",
+					"showLegend": true
+				},
+				"tooltip": {
+					"hideZeros": false,
+					"mode": "single",
+					"sort": "none"
+				}
+			},
+			"pluginVersion": "11.6.0",
+			"targets": [
+				{
+					"datasource": {
+						"type": "prometheus",
+						"uid": "${DS_PROMETHEUS}"
+					},
+					"disableTextWrap": false,
+					"editorMode": "builder",
+					"expr": "min by(devEui) (truvami_gateway_uplink_rssi{devEui=~\"$devices\", gatewayId=~\"$gateways\"})",
+					"fullMetaSearch": false,
+					"includeNullMetadata": false,
+					"legendFormat": "__auto",
+					"range": true,
+					"refId": "A",
+					"useBackend": false
+				}
+			],
+			"title": "Rssi by devices (min)",
+			"type": "timeseries"
+		},
+		{
+			"datasource": {
+				"type": "prometheus",
+				"uid": "${datasource}"
+			},
+			"fieldConfig": {
+				"defaults": {
+					"color": {
+						"mode": "palette-classic"
+					},
+					"custom": {
+						"axisBorderShow": false,
+						"axisCenteredZero": false,
+						"axisColorMode": "text",
+						"axisLabel": "",
+						"axisPlacement": "auto",
+						"axisSoftMax": -30,
+						"barAlignment": 0,
+						"barWidthFactor": 0.6,
+						"drawStyle": "line",
+						"fillOpacity": 0,
+						"gradientMode": "none",
+						"hideFrom": {
+							"legend": false,
+							"tooltip": false,
+							"viz": false
+						},
+						"insertNulls": false,
+						"lineInterpolation": "linear",
+						"lineWidth": 1,
+						"pointSize": 5,
+						"scaleDistribution": {
+							"type": "linear"
+						},
+						"showPoints": "auto",
+						"spanNulls": false,
+						"stacking": {
+							"group": "A",
+							"mode": "none"
+						},
+						"thresholdsStyle": {
+							"mode": "area"
+						}
+					},
+					"mappings": [],
+					"max": 4,
+					"thresholds": {
+						"mode": "absolute",
+						"steps": [
+							{
+								"color": "red"
+							},
+							{
+								"color": "orange",
+								"value": -90
+							},
+							{
+								"color": "yellow",
+								"value": -80
+							},
+							{
+								"color": "green",
+								"value": -70
+							},
+							{
+								"color": "dark-green",
+								"value": -67
+							}
+						]
+					},
+					"unit": "dBm"
+				},
+				"overrides": []
+			},
+			"gridPos": {
+				"h": 10,
+				"w": 8,
+				"x": 16,
+				"y": 22
+			},
+			"id": 29,
+			"options": {
+				"legend": {
+					"calcs": [],
+					"displayMode": "list",
+					"placement": "right",
+					"showLegend": true
+				},
+				"tooltip": {
+					"hideZeros": false,
+					"mode": "single",
+					"sort": "none"
+				}
+			},
+			"pluginVersion": "11.6.0",
+			"targets": [
+				{
+					"datasource": {
+						"type": "prometheus",
+						"uid": "${DS_PROMETHEUS}"
+					},
+					"disableTextWrap": false,
+					"editorMode": "builder",
+					"expr": "max by(devEui) (truvami_gateway_uplink_rssi{devEui=~\"$devices\", gatewayId=~\"$gateways\"})",
+					"fullMetaSearch": false,
+					"includeNullMetadata": false,
+					"legendFormat": "__auto",
+					"range": true,
+					"refId": "A",
+					"useBackend": false
+				}
+			],
+			"title": "Rssi by devices (max)",
+			"type": "timeseries"
+		},
+		{
+			"datasource": {
+				"type": "prometheus",
+				"uid": "${datasource}"
+			},
+			"fieldConfig": {
+				"defaults": {
+					"color": {
+						"mode": "palette-classic"
+					},
+					"custom": {
+						"axisBorderShow": false,
+						"axisCenteredZero": false,
+						"axisColorMode": "text",
+						"axisLabel": "",
+						"axisPlacement": "auto",
+						"axisSoftMin": -22,
+						"barAlignment": 0,
+						"barWidthFactor": 0.6,
+						"drawStyle": "line",
+						"fillOpacity": 0,
+						"gradientMode": "none",
+						"hideFrom": {
+							"legend": false,
+							"tooltip": false,
+							"viz": false
+						},
+						"insertNulls": false,
+						"lineInterpolation": "linear",
+						"lineWidth": 1,
+						"pointSize": 5,
+						"scaleDistribution": {
+							"type": "linear"
+						},
+						"showPoints": "auto",
+						"spanNulls": false,
+						"stacking": {
+							"group": "A",
+							"mode": "none"
+						},
+						"thresholdsStyle": {
+							"mode": "area"
+						}
+					},
+					"mappings": [],
+					"max": 12,
+					"thresholds": {
+						"mode": "absolute",
+						"steps": [
+							{
+								"color": "red"
+							},
+							{
+								"color": "orange",
+								"value": -10
+							},
+							{
+								"color": "yellow",
+								"value": -5
+							},
+							{
+								"color": "green",
+								"value": 0
+							},
+							{
+								"color": "dark-green",
+								"value": 5
+							}
+						]
+					}
+				},
+				"overrides": []
+			},
+			"gridPos": {
+				"h": 10,
+				"w": 8,
+				"x": 0,
+				"y": 32
+			},
+			"id": 26,
+			"options": {
+				"legend": {
+					"calcs": [],
+					"displayMode": "list",
+					"placement": "right",
+					"showLegend": true
+				},
+				"tooltip": {
+					"hideZeros": false,
+					"mode": "single",
+					"sort": "none"
+				}
+			},
+			"pluginVersion": "11.6.0",
+			"targets": [
+				{
+					"datasource": {
+						"type": "prometheus",
+						"uid": "${DS_PROMETHEUS}"
+					},
+					"disableTextWrap": false,
+					"editorMode": "builder",
+					"expr": "avg by(devEui) (truvami_gateway_uplink_snr{devEui=~\"$devices\", gatewayId=~\"$gateways\"})",
+					"fullMetaSearch": false,
+					"includeNullMetadata": false,
+					"legendFormat": "__auto",
+					"range": true,
+					"refId": "A",
+					"useBackend": false
+				}
+			],
+			"title": "Snr by devices (avg)",
+			"type": "timeseries"
+		},
+		{
+			"datasource": {
+				"type": "prometheus",
+				"uid": "${datasource}"
+			},
+			"fieldConfig": {
+				"defaults": {
+					"color": {
+						"mode": "palette-classic"
+					},
+					"custom": {
+						"axisBorderShow": false,
+						"axisCenteredZero": false,
+						"axisColorMode": "text",
+						"axisLabel": "",
+						"axisPlacement": "auto",
+						"axisSoftMin": -22,
+						"barAlignment": 0,
+						"barWidthFactor": 0.6,
+						"drawStyle": "line",
+						"fillOpacity": 0,
+						"gradientMode": "none",
+						"hideFrom": {
+							"legend": false,
+							"tooltip": false,
+							"viz": false
+						},
+						"insertNulls": false,
+						"lineInterpolation": "linear",
+						"lineWidth": 1,
+						"pointSize": 5,
+						"scaleDistribution": {
+							"type": "linear"
+						},
+						"showPoints": "auto",
+						"spanNulls": false,
+						"stacking": {
+							"group": "A",
+							"mode": "none"
+						},
+						"thresholdsStyle": {
+							"mode": "area"
+						}
+					},
+					"mappings": [],
+					"max": 12,
+					"thresholds": {
+						"mode": "absolute",
+						"steps": [
+							{
+								"color": "red"
+							},
+							{
+								"color": "orange",
+								"value": -10
+							},
+							{
+								"color": "yellow",
+								"value": -5
+							},
+							{
+								"color": "green",
+								"value": 0
+							},
+							{
+								"color": "dark-green",
+								"value": 5
+							}
+						]
+					}
+				},
+				"overrides": []
+			},
+			"gridPos": {
+				"h": 10,
+				"w": 8,
+				"x": 8,
+				"y": 32
+			},
+			"id": 32,
+			"options": {
+				"legend": {
+					"calcs": [],
+					"displayMode": "list",
+					"placement": "right",
+					"showLegend": true
+				},
+				"tooltip": {
+					"hideZeros": false,
+					"mode": "single",
+					"sort": "none"
+				}
+			},
+			"pluginVersion": "11.6.0",
+			"targets": [
+				{
+					"datasource": {
+						"type": "prometheus",
+						"uid": "${DS_PROMETHEUS}"
+					},
+					"disableTextWrap": false,
+					"editorMode": "builder",
+					"expr": "min by(devEui) (truvami_gateway_uplink_snr{devEui=~\"$devices\", gatewayId=~\"$gateways\"})",
+					"fullMetaSearch": false,
+					"includeNullMetadata": false,
+					"legendFormat": "__auto",
+					"range": true,
+					"refId": "A",
+					"useBackend": false
+				}
+			],
+			"title": "Snr by devices (min)",
+			"type": "timeseries"
+		},
+		{
+			"datasource": {
+				"type": "prometheus",
+				"uid": "${datasource}"
+			},
+			"fieldConfig": {
+				"defaults": {
+					"color": {
+						"mode": "palette-classic"
+					},
+					"custom": {
+						"axisBorderShow": false,
+						"axisCenteredZero": false,
+						"axisColorMode": "text",
+						"axisLabel": "",
+						"axisPlacement": "auto",
+						"axisSoftMin": -22,
+						"barAlignment": 0,
+						"barWidthFactor": 0.6,
+						"drawStyle": "line",
+						"fillOpacity": 0,
+						"gradientMode": "none",
+						"hideFrom": {
+							"legend": false,
+							"tooltip": false,
+							"viz": false
+						},
+						"insertNulls": false,
+						"lineInterpolation": "linear",
+						"lineWidth": 1,
+						"pointSize": 5,
+						"scaleDistribution": {
+							"type": "linear"
+						},
+						"showPoints": "auto",
+						"spanNulls": false,
+						"stacking": {
+							"group": "A",
+							"mode": "none"
+						},
+						"thresholdsStyle": {
+							"mode": "area"
+						}
+					},
+					"mappings": [],
+					"max": 12,
+					"thresholds": {
+						"mode": "absolute",
+						"steps": [
+							{
+								"color": "red"
+							},
+							{
+								"color": "orange",
+								"value": -10
+							},
+							{
+								"color": "yellow",
+								"value": -5
+							},
+							{
+								"color": "green",
+								"value": 0
+							},
+							{
+								"color": "dark-green",
+								"value": 5
+							}
+						]
+					}
+				},
+				"overrides": []
+			},
+			"gridPos": {
+				"h": 10,
+				"w": 8,
+				"x": 16,
+				"y": 32
+			},
+			"id": 33,
+			"options": {
+				"legend": {
+					"calcs": [],
+					"displayMode": "list",
+					"placement": "right",
+					"showLegend": true
+				},
+				"tooltip": {
+					"hideZeros": false,
+					"mode": "single",
+					"sort": "none"
+				}
+			},
+			"pluginVersion": "11.6.0",
+			"targets": [
+				{
+					"datasource": {
+						"type": "prometheus",
+						"uid": "${DS_PROMETHEUS}"
+					},
+					"disableTextWrap": false,
+					"editorMode": "builder",
+					"expr": "max by(devEui) (truvami_gateway_uplink_snr{devEui=~\"$devices\", gatewayId=~\"$gateways\"})",
+					"fullMetaSearch": false,
+					"includeNullMetadata": false,
+					"legendFormat": "__auto",
+					"range": true,
+					"refId": "A",
+					"useBackend": false
+				}
+			],
+			"title": "Snr by devices (max)",
+			"type": "timeseries"
 		}
 	],
 	"preload": false,
@@ -501,7 +985,9 @@
 			{
 				"current": {
 					"text": "All",
-					"value": ["$__all"]
+					"value": [
+						"$__all"
+					]
 				},
 				"definition": "label_values(truvami_device_uplink_count,devEui)",
 				"description": "",
@@ -523,7 +1009,9 @@
 			{
 				"current": {
 					"text": "All",
-					"value": ["$__all"]
+					"value": [
+						"$__all"
+					]
 				},
 				"definition": "label_values(truvami_gateway_uplink_rssi,gatewayId)",
 				"includeAll": true,
@@ -550,5 +1038,5 @@
 	"timezone": "browser",
 	"title": "Gateways",
 	"uid": "deq4i4emn2whsd",
-	"version": 6
+	"version": 1
 }
