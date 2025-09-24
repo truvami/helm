@@ -54,6 +54,16 @@ siren:
         third-retry: 1h
       poll-timeout: 1s
 
+  alerts:
+    device-inactive:
+      evaluation-interval: 1m
+    dispatcher:
+      webhook:
+        timeout: 5s
+      worker-pool:
+        size: 8
+        queue: 32
+
 valkey:
   secretName: truvami-stack-valkey
   secretKey: uri
