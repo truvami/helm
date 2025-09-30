@@ -5,3 +5,11 @@ metadata:
 data:
   config.yaml: | 
     {{ .Values.siren | toYaml | nindent 4 }}
+  set-env.sh: |
+    #!/bin/bash
+    if [[ "$POD_NAME" == *"-0" ]]; then
+      export ENABLE_DEVICE_INACTIVE_EVALUATION="true"
+    else
+      export ENABLE_DEVICE_INACTIVE_EVALUATION="false"
+    fi
+    exec "$@"

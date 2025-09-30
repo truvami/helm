@@ -76,6 +76,8 @@ kafka:
       retention.ms: 2592000000
       segment.bytes: 1073741824
 
+# Number of replicas for the StatefulSet
+# Note: Only the first replica (pod-0) will have ENABLE_DEVICE_INACTIVE_EVALUATION="true"
 replicaCount: 1
 
 image:
@@ -172,7 +174,7 @@ volumes:
       optional: false
       secretName: "truvami-siren-kafka"
 
-# Additional volumeMounts on the output Deployment definition.
+# Additional volumeMounts on the output StatefulSet definition.
 volumeMounts:
   - mountPath: /etc/truvami-siren
     name: config
