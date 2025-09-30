@@ -40,13 +40,14 @@ spec:
               {{- include "truvami-siren.selectorLabels" . | nindent 14 }}
       containers:
         - name: {{ .Chart.Name }}
-          args:
-            - /usr/bin/truvami-siren
-            - '--config'
-            - /etc/truvami-siren/config.yaml
+          # Run the wrapper script, forward args to the binary
           command:
             - /bin/bash
             - /etc/truvami-siren/set-env.sh
+          args:
+            - /usr/bin/truvami-siren
+            - --config
+            - /etc/truvami-siren/config.yaml
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
@@ -89,18 +90,32 @@ spec:
                   key: {{ .Values.valkey.secretKey }}
                   name: {{ .Values.valkey.secretName }}
                   optional: false
+            # Downward API: pod name for ordinal detection in set-env.sh
             - name: POD_NAME
               valueFrom:
                 fieldRef:
                   fieldPath: metadata.name
-          {{- with .Values.volumeMounts }}
           volumeMounts:
+            {{- with .Values.volumeMounts }}
             {{- toYaml . | nindent 12 }}
-          {{- end }}
-      {{- with .Values.volumes }}
+            {{- end }}
+            - name: siren-config
+              mountPath: /etc/truvami-siren
+              readOnly: true
       volumes:
+        {{- with .Values.volumes }}
         {{- toYaml . | nindent 8 }}
-      {{- end }}
+        {{- end }}
+        - name: siren-config
+          configMap:
+            name: siren-config
+            items:
+              - key: config.yaml
+                path: config.yaml
+              - key: set-env.sh
+                path: set-env.sh
+            # We invoke via /bin/bash, so +x isn't required; 0444 is fine.
+            # defaultMode: 0444
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}

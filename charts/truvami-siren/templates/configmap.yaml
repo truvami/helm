@@ -6,10 +6,17 @@ data:
   config.yaml: | 
     {{ .Values.siren | toYaml | nindent 4 }}
   set-env.sh: |
-    #!/bin/bash
-    if [[ "$POD_NAME" == *"-0" ]]; then
+    #!/usr/bin/env bash
+    set -euo pipefail
+
+    # Use POD_NAME if provided (Downward API), else fall back to HOSTNAME.
+    pod="${POD_NAME:-$HOSTNAME}"
+    ordinal="${pod##*-}"
+
+    if [[ "$ordinal" == "0" ]]; then
       export ENABLE_DEVICE_INACTIVE_EVALUATION="true"
     else
       export ENABLE_DEVICE_INACTIVE_EVALUATION="false"
     fi
+
     exec "$@"
