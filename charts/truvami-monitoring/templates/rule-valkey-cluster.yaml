@@ -1,0 +1,285 @@
+{{- if .Values.prometheusRule.enabled }}
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: {{ include "truvami-monitoring.fullname" . }}-valkey-cluster
+  namespace: {{ .Release.Namespace | quote }}
+  labels:
+    {{- include "truvami-monitoring.labels" . | nindent 4 }}
+    {{- with .Values.prometheusRule.labels }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+  {{- with .Values.prometheusRule.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  groups:
+  - name: truvami-valkey-cluster
+    interval: {{ .Values.prometheusRule.interval | default "30s" }}
+    rules:
+    # Valkey Instance Down
+    - alert: TruvamiValkeyInstanceDown
+      expr: redis_up == 0
+      for: 2m
+      labels:
+        severity: critical
+        service: valkey
+        component: instance
+        node: "{{ "{{" }} $labels.instance }}"
+        {{- with .Values.alertLabels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+      annotations:
+        summary: "Valkey instance is down"
+        description: |
+          Valkey instance {{ "{{" }} $labels.instance }} is not responding.
+          
+          This affects:
+          - Application caching performance
+          - Session storage functionality
+          - Real-time data access
+          
+          Immediate investigation required to restore service.
+
+    # High Memory Usage
+    - alert: TruvamiValkeyHighMemoryUsage
+      expr: |
+        (redis_memory_used_bytes / redis_memory_max_bytes) * 100 > 90
+      for: 5m
+      labels:
+        severity: critical
+        service: valkey
+        component: memory
+        node: "{{ "{{" }} $labels.instance }}"
+        {{- with .Values.alertLabels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+      annotations:
+        summary: "Valkey memory usage is critically high"
+        description: |
+          Valkey instance {{ "{{" }} $labels.instance }} memory usage is {{ "{{" }} $value | humanizePercentage }}.
+          
+          This may cause:
+          - Memory exhaustion
+          - Performance degradation
+          - Potential data eviction
+          
+          Consider scaling or optimizing memory usage.
+
+    # Memory Usage Warning
+    - alert: TruvamiValkeyMemoryUsageHigh
+      expr: |
+        (redis_memory_used_bytes / redis_memory_max_bytes) * 100 > 80
+      for: 10m
+      labels:
+        severity: warning
+        service: valkey
+        component: memory
+        node: "{{ "{{" }} $labels.instance }}"
+        {{- with .Values.alertLabels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+      annotations:
+        summary: "Valkey memory usage is high"
+        description: |
+          Valkey instance {{ "{{" }} $labels.instance }} memory usage is {{ "{{" }} $value | humanizePercentage }}.
+          
+          Monitor for continued growth and potential need for optimization.
+
+    # High Memory Fragmentation
+    - alert: TruvamiValkeyHighMemoryFragmentation
+      expr: redis_mem_fragmentation_ratio > 1.5
+      for: 15m
+      labels:
+        severity: warning
+        service: valkey
+        component: memory
+        node: "{{ "{{" }} $labels.instance }}"
+        {{- with .Values.alertLabels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+      annotations:
+        summary: "Valkey memory fragmentation is high"
+        description: |
+          Valkey instance {{ "{{" }} $labels.instance }} has memory fragmentation ratio of {{ "{{" }} $value }}.
+          
+          This indicates:
+          - Inefficient memory usage
+          - Potential performance impact
+          
+          Consider restarting the instance during maintenance window.
+
+    # Hit Ratio Too Low
+    - alert: TruvamiValkeyLowHitRatio
+      expr: |
+        (
+          rate(redis_keyspace_hits_total[5m]) / 
+          (rate(redis_keyspace_hits_total[5m]) + rate(redis_keyspace_misses_total[5m]))
+        ) < 0.8
+      for: 10m
+      labels:
+        severity: warning
+        service: valkey
+        component: performance
+        node: "{{ "{{" }} $labels.instance }}"
+        {{- with .Values.alertLabels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+      annotations:
+        summary: "Valkey cache hit ratio is low"
+        description: |
+          Valkey instance {{ "{{" }} $labels.instance }} has cache hit ratio of {{ "{{" }} $value | humanizePercentage }}.
+          
+          This may indicate:
+          - Inefficient caching strategy
+          - Insufficient cache memory
+          - High cache eviction rate
+          
+          Review caching patterns and memory allocation.
+
+    # Too Many Connected Clients
+    - alert: TruvamiValkeyTooManyClients
+      expr: redis_connected_clients > (redis_max_clients * 0.8)
+      for: 5m
+      labels:
+        severity: major
+        service: valkey
+        component: connections
+        node: "{{ "{{" }} $labels.instance }}"
+        {{- with .Values.alertLabels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+      annotations:
+        summary: "Valkey has too many connected clients"
+        description: |
+          Valkey instance {{ "{{" }} $labels.instance }} has {{ "{{" }} $value }} connected clients ({{ "{{" }} with query "redis_max_clients" }}{{ "{{" }} . | first | value }}{{ "{{" }} end }} max).
+          
+          This may indicate:
+          - Connection leak in applications
+          - High concurrent usage
+          - Need for connection pooling optimization
+          
+          Monitor connection patterns and consider scaling.
+
+    # Blocked Clients
+    - alert: TruvamiValkeyBlockedClients
+      expr: redis_blocked_clients > 10
+      for: 5m
+      labels:
+        severity: warning
+        service: valkey
+        component: performance
+        node: "{{ "{{" }} $labels.instance }}"
+        {{- with .Values.alertLabels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+      annotations:
+        summary: "Valkey has blocked clients"
+        description: |
+          Valkey instance {{ "{{" }} $labels.instance }} has {{ "{{" }} $value }} blocked clients.
+          
+          This may indicate:
+          - Long-running operations
+          - Blocking commands (BLPOP, BRPOP, etc.)
+          - Performance bottlenecks
+          
+          Review blocking operations and client behavior.
+
+    # Replication Lag
+    - alert: TruvamiValkeyReplicationLag
+      expr: redis_connected_slave_lag_seconds > 30
+      for: 5m
+      labels:
+        severity: major
+        service: valkey
+        component: replication
+        node: "{{ "{{" }} $labels.instance }}"
+        {{- with .Values.alertLabels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+      annotations:
+        summary: "Valkey replica is lagging"
+        description: |
+          Valkey replica {{ "{{" }} $labels.instance }} is {{ "{{" }} $value }} seconds behind master.
+          
+          This may indicate:
+          - Network connectivity issues
+          - High master load
+          - Replica performance problems
+          
+          Check replication health and network connectivity.
+
+    # RDB Save Failures
+    - alert: TruvamiValkeyRDBSaveFailure
+      expr: redis_rdb_last_bgsave_status == 0
+      for: 1m
+      labels:
+        severity: major
+        service: valkey
+        component: persistence
+        node: "{{ "{{" }} $labels.instance }}"
+        {{- with .Values.alertLabels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+      annotations:
+        summary: "Valkey RDB save failed"
+        description: |
+          Valkey instance {{ "{{" }} $labels.instance }} last RDB background save failed.
+          
+          This affects:
+          - Data persistence
+          - Backup reliability
+          - Recovery capabilities
+          
+          Check disk space and I/O performance.
+
+    # AOF Last Write Status
+    - alert: TruvamiValkeyAOFWriteFailure
+      expr: redis_aof_last_write_status == 0
+      for: 1m
+      labels:
+        severity: major
+        service: valkey
+        component: persistence
+        node: "{{ "{{" }} $labels.instance }}"
+        {{- with .Values.alertLabels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+      annotations:
+        summary: "Valkey AOF write failed"
+        description: |
+          Valkey instance {{ "{{" }} $labels.instance }} last AOF write failed.
+          
+          This affects:
+          - Data durability
+          - Write persistence
+          - Recovery capabilities
+          
+          Check disk space and AOF configuration.
+
+    # Slow Queries
+    - alert: TruvamiValkeySlowQueries
+      expr: increase(redis_slowlog_length[5m]) > 10
+      for: 2m
+      labels:
+        severity: warning
+        service: valkey
+        component: performance
+        node: "{{ "{{" }} $labels.instance }}"
+        {{- with .Values.alertLabels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+      annotations:
+        summary: "Valkey has slow queries"
+        description: |
+          Valkey instance {{ "{{" }} $labels.instance }} has {{ "{{" }} $value }} slow queries in the last 5 minutes.
+          
+          This may indicate:
+          - Inefficient query patterns
+          - Large data operations
+          - Performance degradation
+          
+          Review slow log and optimize queries.
+
+{{- end }}
