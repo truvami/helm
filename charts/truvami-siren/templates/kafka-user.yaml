@@ -76,7 +76,7 @@ spec:
           - Read
           - Write
         resource:
-          name: {{ .Release.Name }}
+          name: {{ .Release.Name }}-siren
           patternType: literal
           type: group
     type: simple
