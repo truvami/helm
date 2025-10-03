@@ -1,100 +1,64 @@
-apiVersion: monitoring.core        - alert: TruvamiPositionEstimationErrorMinor
-          annotations:
-            description: >
-              Position estimation success rate is {{ "{{" }} $value | humanizePercentage }} within the last 2h. Consider checking solver configuration.
-            summary: >
-              Truvami position estimation success rate below optimal
-          expr: >
-            (sum by(namespace) (increase(truvami_aws_position_estimates_success_total{namespace="truvami-dev"}[2h])) / sum by(namespace) (increase(truvami_aws_position_estimates_total{namespace="truvami-dev"}[2h]))) * 100 < 85
-          for: 10m
-          labels:
-            {{- range $key, $value := .Values.alertLabels }}
-            {{ $key }}: {{ $value | quote }}
-            {{- end }}
-            service: truvami-bridge
-            severity: minor
-        - alert: TruvamiPositionEstimationErrorWarning
-          annotations:
-            description: >
-              Position estimation success rate is {{ "{{" }} $value | humanizePercentage }} within the last 2h. Please check the solver configuration.
-            summary: >
-              Truvami position estimation success rate degraded
-          expr: >
-            (sum by(namespace) (increase(truvami_aws_position_estimates_success_total{namespace="truvami-dev"}[2h])) / sum by(namespace) (increase(truvami_aws_position_estimates_total{namespace="truvami-dev"}[2h]))) * 100 < 75
-          for: 5m
-          labels:
-            {{- range $key, $value := .Values.alertLabels }}
-            {{ $key }}: {{ $value | quote }}
-            {{- end }}
-            service: truvami-bridge
-            severity: warning
-        - alert: TruvamiPositionEstimationErrorCritical
-          annotations:
-            description: >
-              Position estimation success rate is {{ "{{" }} $value | humanizePercentage }} within the last 2h. Immediate attention required - check solver configuration and AWS positioning service.
-            summary: >
-              Critical Truvami position estimation failure rate
-          expr: >
-            (sum by(namespace) (increase(truvami_aws_position_estimates_success_total{namespace="truvami-dev"}[2h])) / sum by(namespace) (increase(truvami_aws_position_estimates_total{namespace="truvami-dev"}[2h]))) * 100 < 60
-          for: 2m
-          labels:
-            {{- range $key, $value := .Values.alertLabels }}
-            {{ $key }}: {{ $value | quote }}
-            {{- end }}
-            service: truvami-bridge
-            severity: critical PrometheusRule
+{{- if .Values.prometheusRule.enabled }}
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
 metadata:
+  name: {{ include "truvami-monitoring.fullname" . }}-decoder-errors
+  namespace: {{ .Release.Namespace | quote }}
   labels:
-    prometheus: kube-prometheus-stack-prometheus
-    role: alert-rules
-  name: truvami-decoder
+    {{- include "truvami-monitoring.labels" . | nindent 4 }}
+    {{- with .Values.prometheusRule.labels }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+  {{- with .Values.prometheusRule.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
 spec:
   groups:
-    - name: truvami-decoder
-      rules:
-        - alert: TruvamiDecoderFailedToDecodePayload
-          annotations:
-            description: >-
-              Decoder failed to decode payload for device {{ "{{" }} $labels.devEui }} within the last 2h. Please check the decoder configuration and the payload format.
-            summary: >-
-              Decoder failed to decode payload for device {{ "{{" }} $labels.devEui }}
-          expr: >-
-            sum by(devEui) (increase(truvami_failed_to_decode_payload_count[2h])) > 0
-          for: 2m
-          labels:
-            {{- range $key, $value := .Values.alertLabels }}
-            {{ $key }}: {{ $value | quote }}
-            {{- end }}
-            service: truvami-bridge
-            severity: warning
-            node: truvami-{{ "{{" }} $labels.devEui }}
-        - alert: TruvamiPositionEstimationError
-          annotations:
-            description: >-
-              Position estimation failed to solve {{ "{{" }} $value | humanizePercentage }} positions within the last 2h. Please check the solver configuration.
-            summary: >-
-              Position estimation failed to solve {{ "{{" }} $value | humanizePercentage }} positions
-          expr: >-
-            (sum by(namespace) (increase(truvami_aws_position_estimates_success_total{namespace="truvami-dev"}[2h])) / sum by(namespace) (increase(truvami_aws_position_estimates_total{namespace="truvami-dev"}[2h]))) * 100 < 70
-          for: 2m
-          labels:
-            {{- range $key, $value := .Values.alertLabels }}
-            {{ $key }}: {{ $value | quote }}
-            {{- end }}
-            service: truvami-bridge
-            severity: critical
-        - alert: TruvamiWiFiSolverError
-          annotations:
-            description: >-
-              The Wi-Fi solver returned an error, please check the logs for more details.
-            summary: >-
-              Wi-Fi solver error
-          expr: >-
-            rate(truvami_wifi_solver_error_count[1h]) > 0
-          for: 2m
-          labels:
-            {{- range $key, $value := .Values.alertLabels }}
-            {{ $key }}: {{ $value | quote }}
-            {{- end }}
-            service: truvami-bridge
-            severity: critical
+  - name: truvami.decoder.errors
+    interval: {{ .Values.prometheusRule.interval | default "30s" }}
+    rules:
+    - alert: TruvamiDecodingErrors
+      expr: rate(truvami_payloadparser_error_total[5m]) > 0.1
+      for: 2m
+      labels:
+        severity: major
+        service: truvami-bridge
+        component: decoder
+        node: "{{ "{{" }} $labels.devEui }}"
+        {{- with .Values.alertLabels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+      annotations:
+        summary: "High payload decoding error rates"
+        description: |
+          High decoder error rates ({{ "{{" }} $value }}/sec) - payload decoding failures detected for device {{ "{{" }} $labels.devEui }}.
+          
+          This indicates issues with:
+          - Device payload format changes
+          - Decoder configuration problems
+          - Corrupted or malformed payloads
+          
+    - alert: TruvamiDecodingErrorsCritical
+      expr: rate(truvami_payloadparser_error_total[5m]) > 1
+      for: 1m
+      labels:
+        severity: critical
+        service: truvami-bridge
+        component: decoder
+        node: "{{ "{{" }} $labels.devEui }}"
+        {{- with .Values.alertLabels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+      annotations:
+        summary: "Critical payload decoding error rates"
+        description: |
+          Critical decoder error rates ({{ "{{" }} $value }}/sec) - immediate attention required for payload decoding failures for device {{ "{{" }} $labels.devEui }}.
+          
+          This requires immediate investigation of:
+          - Device firmware compatibility
+          - Decoder service health
+          - Network connectivity issues
+          - Payload corruption at the source
+
+{{- end }}

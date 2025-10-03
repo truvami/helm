@@ -1,48 +1,63 @@
-apiVersion: monitoring.cor        - alert: TruvamiKafkaConsumerBlocked
-          annotations:
-            description: >
-              Kafka consumer appears blocked or in infinite loop - no messages processed for more than 30 minutes. Immediate attention required.
-              Check the consumer health, Kafka connectivity, and system resources.
-            summary: >
-              Truvami Kafka consumer appears blocked or in infinite loop/v1
+{{- if .Values.prometheusRule.enabled }}
+apiVersion: monitoring.coreos.com/v1
 kind: PrometheusRule
 metadata:
+  name: {{ include "truvami-monitoring.fullname" . }}-kafka-consumer
+  namespace: {{ .Release.Namespace | quote }}
   labels:
-    prometheus: kube-prometheus-stack-prometheus
-    role: alert-rules
-  name: truvami-kafka-consumer
+    {{- include "truvami-monitoring.labels" . | nindent 4 }}
+    {{- with .Values.prometheusRule.labels }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+  {{- with .Values.prometheusRule.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
 spec:
   groups:
-    - name: truvami-kafka-consumer
-      rules:
-        - alert: TruvamiKafkaConsumerLag
-          annotations:
-            description: >-
-              No messages consumed for more than 15 minutes. Last message was {{ "{{" }} $value | humanizeDuration }} ago.
-            summary: >-
-              Truvami Kafka consumer lag detected
-          expr: >-
-            time() - truvami_kafka_consumer_last_message_timestamp_seconds > 900
-          for: 1m
-          labels:
-            {{- range $key, $value := .Values.alertLabels }}
-            {{ $key }}: {{ $value | quote }}
-            {{- end }}
-            service: truvami-bridge
-            severity: warning
-        - alert: KafkaConsumerBlocked
-          annotations:
-            description: >-
-              Kafka consumer appears blocked or in infinite loop - no messages processed for more than 30 minutes. Immediate attention required.
-              Check the consumer health, Kafka connectivity, and system resources.
-            summary: >-
-              Kafka consumer appears blocked or in infinite loop
-          expr: >-
-            time() - truvami_kafka_consumer_last_message_timestamp_seconds > 1800
-          for: 2m
-          labels:
-            {{- range $key, $value := .Values.alertLabels }}
-            {{ $key }}: {{ $value | quote }}
-            {{- end }}
-            service: truvami-bridge
-            severity: critical
+  - name: truvami.kafka.consumer
+    interval: {{ .Values.prometheusRule.interval | default "30s" }}
+    rules:
+    - alert: TruvamiKafkaConsumerLag
+      expr: time() - truvami_kafka_consumer_last_message_timestamp_seconds > 900
+      for: 1m
+      labels:
+        severity: warning
+        service: truvami-bridge
+        component: kafka-consumer
+        {{- with .Values.alertLabels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+      annotations:
+        summary: "Truvami Kafka consumer lag detected"
+        description: |
+          No messages consumed for more than 15 minutes. Last message was {{ "{{" }} $value | humanizeDuration }} ago.
+          
+          This may indicate:
+          - Low message volume (normal during quiet periods)
+          - Consumer processing delays
+          - Kafka connectivity issues
+          
+    - alert: TruvamiKafkaConsumerBlocked
+      expr: time() - truvami_kafka_consumer_last_message_timestamp_seconds > 1800
+      for: 2m
+      labels:
+        severity: critical
+        service: truvami-bridge
+        component: kafka-consumer
+        {{- with .Values.alertLabels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+      annotations:
+        summary: "Truvami Kafka consumer appears blocked"
+        description: |
+          Kafka consumer appears blocked or in infinite loop - no messages processed for more than 30 minutes. Immediate attention required.
+          
+          Check the following:
+          - Consumer health and status
+          - Kafka connectivity and broker health
+          - System resources (CPU, memory)
+          - Network connectivity to Kafka cluster
+          - Consumer group rebalancing issues
+
+{{- end }}

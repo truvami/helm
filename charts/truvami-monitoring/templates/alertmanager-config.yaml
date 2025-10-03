@@ -1,0 +1,167 @@
+{{- if .Values.alertmanager.enabled }}
+apiVersion: v1
+kind: Secret
+metadata:
+  name: {{ include "truvami-monitoring.fullname" . }}-alertmanager-config
+  namespace: {{ .Release.Namespace | quote }}
+  labels:
+    {{- include "truvami-monitoring.labels" . | nindent 4 }}
+type: Opaque
+stringData:
+  alertmanager.yml: |
+    global:
+      smtp_smarthost: {{ .Values.alertmanager.smtp.smarthost | default "localhost:587" | quote }}
+      smtp_from: {{ .Values.alertmanager.smtp.from | default "alertmanager@truvami.com" | quote }}
+      {{- if .Values.alertmanager.smtp.auth_username }}
+      smtp_auth_username: {{ .Values.alertmanager.smtp.auth_username | quote }}
+      {{- end }}
+      {{- if .Values.alertmanager.smtp.auth_password }}
+      smtp_auth_password: {{ .Values.alertmanager.smtp.auth_password | quote }}
+      {{- end }}
+
+    # Define templates for notifications
+    templates:
+      - '/etc/alertmanager/templates/*.tmpl'
+
+    # The directory from which notification templates are read.
+    route:
+      group_by: ['alertname', 'cluster', 'service']
+      group_wait: 10s
+      group_interval: 10s
+      repeat_interval: 1h
+      receiver: 'default'
+      routes:
+      # Watchdog alert route - send to UptimeRobot heartbeat
+      - match:
+          alertname: TruvamiWatchdog
+        receiver: 'watchdog-heartbeat'
+        group_wait: 0s
+        group_interval: 5m
+        repeat_interval: 5m
+      
+      # Dead man's switch route - critical alerts
+      - match:
+          alertname: TruvamiWatchdogDeadMansSwitch
+        receiver: 'critical-alerts'
+        group_wait: 0s
+        group_interval: 1m
+        repeat_interval: 5m
+      
+      # Critical alerts
+      - match:
+          severity: critical
+        receiver: 'critical-alerts'
+        group_wait: 30s
+        group_interval: 5m
+        repeat_interval: 30m
+      
+      # Major alerts
+      - match:
+          severity: major
+        receiver: 'major-alerts'
+        group_wait: 1m
+        group_interval: 10m
+        repeat_interval: 1h
+      
+      # Other severity levels
+      - match_re:
+          severity: ^(intermediate|warning|minor)$
+        receiver: 'default'
+
+    receivers:
+    # Watchdog heartbeat receiver - sends to configured webhook URL
+    - name: 'watchdog-heartbeat'
+      {{- if .Values.watchdog.webhookUrl }}
+      webhook_configs:
+      - url: {{ .Values.watchdog.webhookUrl | quote }}
+        send_resolved: false
+        http_config:
+          follow_redirects: true
+        title: 'Truvami Monitoring Watchdog'
+        text: 'Monitoring system is operational'
+      {{- end }}
+
+    # Critical alerts receiver
+    - name: 'critical-alerts'
+      {{- if .Values.alertmanager.receivers.slack.enabled }}
+      slack_configs:
+      - api_url: {{ .Values.alertmanager.receivers.slack.webhook_url | quote }}
+        channel: {{ .Values.alertmanager.receivers.slack.channel | default "#alerts-critical" | quote }}
+        title: 'CRITICAL: {{`{{ range .Alerts }}{{ .Annotations.summary }}{{ end }}`}}'
+        text: |
+          {{`{{ range .Alerts }}`}}
+          *Alert:* {{`{{ .Annotations.summary }}`}}
+          *Description:* {{`{{ .Annotations.description }}`}}
+          *Severity:* {{`{{ .Labels.severity }}`}}
+          *Service:* {{`{{ .Labels.service }}`}}
+          {{`{{ if .Labels.node }}`}}*Node:* {{`{{ .Labels.node }}`}}{{`{{ end }}`}}
+          {{`{{ end }}`}}
+        send_resolved: true
+      {{- end }}
+      {{- if .Values.alertmanager.receivers.email.enabled }}
+      email_configs:
+      - to: {{ .Values.alertmanager.receivers.email.to | quote }}
+        subject: 'CRITICAL Alert: {{`{{ range .Alerts }}{{ .Annotations.summary }}{{ end }}`}}'
+        body: |
+          {{`{{ range .Alerts }}`}}
+          Alert: {{`{{ .Annotations.summary }}`}}
+          Description: {{`{{ .Annotations.description }}`}}
+          Severity: {{`{{ .Labels.severity }}`}}
+          Service: {{`{{ .Labels.service }}`}}
+          {{`{{ if .Labels.node }}`}}Node: {{`{{ .Labels.node }}`}}{{`{{ end }}`}}
+          {{`{{ end }}`}}
+      {{- end }}
+
+    # Major alerts receiver
+    - name: 'major-alerts'
+      {{- if .Values.alertmanager.receivers.slack.enabled }}
+      slack_configs:
+      - api_url: {{ .Values.alertmanager.receivers.slack.webhook_url | quote }}
+        channel: {{ .Values.alertmanager.receivers.slack.channel | default "#alerts" | quote }}
+        title: 'MAJOR: {{`{{ range .Alerts }}{{ .Annotations.summary }}{{ end }}`}}'
+        text: |
+          {{`{{ range .Alerts }}`}}
+          *Alert:* {{`{{ .Annotations.summary }}`}}
+          *Description:* {{`{{ .Annotations.description }}`}}
+          *Severity:* {{`{{ .Labels.severity }}`}}
+          *Service:* {{`{{ .Labels.service }}`}}
+          {{`{{ if .Labels.node }}`}}*Node:* {{`{{ .Labels.node }}`}}{{`{{ end }}`}}
+          {{`{{ end }}`}}
+        send_resolved: true
+      {{- end }}
+
+    # Default receiver for other alerts
+    - name: 'default'
+      {{- if .Values.alertmanager.receivers.slack.enabled }}
+      slack_configs:
+      - api_url: {{ .Values.alertmanager.receivers.slack.webhook_url | quote }}
+        channel: {{ .Values.alertmanager.receivers.slack.channel | default "#alerts" | quote }}
+        title: '{{`{{ range .Alerts }}{{ .Annotations.summary }}{{ end }}`}}'
+        text: |
+          {{`{{ range .Alerts }}`}}
+          *Alert:* {{`{{ .Annotations.summary }}`}}
+          *Description:* {{`{{ .Annotations.description }}`}}
+          *Severity:* {{`{{ .Labels.severity }}`}}
+          *Service:* {{`{{ .Labels.service }}`}}
+          {{`{{ if .Labels.node }}`}}*Node:* {{`{{ .Labels.node }}`}}{{`{{ end }}`}}
+          {{`{{ end }}`}}
+        send_resolved: true
+      {{- end }}
+
+    # Inhibition rules
+    inhibit_rules:
+    # Inhibit lower severity alerts when critical alerts are firing for the same service
+    - source_match:
+        severity: 'critical'
+      target_match_re:
+        severity: '^(major|intermediate|warning|minor)$'
+      equal: ['service', 'alertname']
+
+    # Inhibit lower severity alerts when major alerts are firing for the same service  
+    - source_match:
+        severity: 'major'
+      target_match_re:
+        severity: '^(intermediate|warning|minor)$'
+      equal: ['service', 'alertname']
+
+{{- end }}

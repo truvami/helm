@@ -20,6 +20,41 @@ prometheus:
       cpu: "1"
       memory: "1Gi"
 
+# Prometheus Rule configuration
+prometheusRule:
+  enabled: true
+  interval: 30s
+  labels: {}
+  annotations: {}
+
+# Watchdog configuration
+watchdog:
+  # Webhook URL for watchdog heartbeat (e.g., UptimeRobot heartbeat URL)
+  # Set to empty string to disable webhook_url annotation
+  webhookUrl: ""
+
+# AlertManager configuration
+alertmanager:
+  enabled: true
+  
+  # SMTP configuration for email notifications
+  smtp:
+    smarthost: "localhost:587"
+    from: "alertmanager@truvami.com"
+    # auth_username: ""
+    # auth_password: ""
+  
+  # Notification receivers
+  receivers:
+    slack:
+      enabled: false
+      webhook_url: ""  # Set your Slack webhook URL here
+      channel: "#alerts"
+    
+    email:
+      enabled: false
+      to: "alerts@truvami.com"
+
 grafana:
   enabled: false
 

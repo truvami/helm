@@ -1,106 +1,83 @@
-apiVersion:        - alert: TruvamiWiFiSolverErrorRateMinor
-          annotations:
-            description: >
-              WiFi solver error rate is {{ "{{" }} $value | humanizePercentage }} over the last 5 minutes.
-            summary: >
-              Elevated Truvami WiFi solver error rate
-          expr: >
-            rate(truvami_wifi_solver_error_count[5m]) / 
-            (rate(truvami_wifi_solver_requests_count[5m]) + rate(truvami_wifi_solver_error_count[5m])) > 0.05
-          for: 10m
-          labels:
-            {{- range $key, $value := .Values.alertLabels }}
-            {{ $key }}: {{ $value | quote }}
-            {{- end }}
-            service: truvami-bridge
-            severity: minor
-        - alert: TruvamiWiFiSolverErrorRateWarning
-          annotations:
-            description: >
-              WiFi solver error rate is {{ "{{" }} $value | humanizePercentage }} over the last 5 minutes.
-            summary: >
-              High Truvami WiFi solver error rate
-          expr: >
-            rate(truvami_wifi_solver_error_count[5m]) / 
-            (rate(truvami_wifi_solver_requests_count[5m]) + rate(truvami_wifi_solver_error_count[5m])) > 0.15
-          for: 5m
-          labels:
-            {{- range $key, $value := .Values.alertLabels }}
-            {{ $key }}: {{ $value | quote }}
-            {{- end }}
-            service: truvami-bridge
-            severity: warning
-        - alert: TruvamiWiFiSolverErrorRateCritical
-          annotations:
-            description: >
-              WiFi solver error rate is {{ "{{" }} $value | humanizePercentage }} over the last 5 minutes. Immediate attention required.
-            summary: >
-              Critical Truvami WiFi solver error rate
-          expr: >
-            rate(truvami_wifi_solver_error_count[5m]) / 
-            (rate(truvami_wifi_solver_requests_count[5m]) + rate(truvami_wifi_solver_error_count[5m])) > 0.3
-          for: 2m
-          labels:
-            {{- range $key, $value := .Values.alertLabels }}
-            {{ $key }}: {{ $value | quote }}
-            {{- end }}
-            service: truvami-bridge
-            severity: criticalos.com/v1
+{{- if .Values.prometheusRule.enabled }}
+apiVersion: monitoring.coreos.com/v1
 kind: PrometheusRule
 metadata:
+  name: {{ include "truvami-monitoring.fullname" . }}-wifi-location
+  namespace: {{ .Release.Namespace | quote }}
   labels:
-    prometheus: kube-prometheus-stack-prometheus
-    role: alert-rules
-  name: truvami-wifi-location
+    {{- include "truvami-monitoring.labels" . | nindent 4 }}
+    {{- with .Values.prometheusRule.labels }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+  {{- with .Values.prometheusRule.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
 spec:
   groups:
-    - name: truvami-wifi-location
-      rules:
-        - alert: TruvamiWiFiSolverHighErrorRate
-          annotations:
-            description: >-
-              WiFi solver error rate is {{ "{{" }} $value | humanizePercentage }} over the last 5 minutes.
-            summary: >-
-              High Truvami WiFi solver error rate
-          expr: >-
-            rate(truvami_wifi_solver_error_count[5m]) / 
-            (rate(truvami_wifi_solver_requests_count[5m]) + rate(truvami_wifi_solver_error_count[5m])) > 0.1
-          for: 5m
-          labels:
-            {{- range $key, $value := .Values.alertLabels }}
-            {{ $key }}: {{ $value | quote }}
-            {{- end }}
-            service: truvami-bridge
-            severity: major
-        - alert: TruvamiWiFiSolverDown
-          annotations:
-            description: >-
-              No WiFi solver activity detected for 10 minutes.
-            summary: >-
-              Truvami WiFi solver appears to be down
-          expr: >-
-            rate(truvami_wifi_solver_requests_count[10m]) == 0 and 
-            rate(truvami_wifi_solver_success_count[10m]) == 0 and 
-            rate(truvami_wifi_solver_error_count[10m]) == 0
-          for: 10m
-          labels:
-            {{- range $key, $value := .Values.alertLabels }}
-            {{ $key }}: {{ $value | quote }}
-            {{- end }}
-            service: truvami-bridge
-            severity: critical
-        - alert: TruvamiHighWiFiZeroPositions
-          annotations:
-            description: >-
-              WiFi solver returning zero positions at {{ "{{" }} $value }} occurrences/sec with {{ "{{" }} $labels.accessPointCount }} access points.
-            summary: >-
-              High rate of Truvami WiFi zero positions
-          expr: >-
-            rate(truvami_wifi_zero_position_count[5m]) > 0.5
-          for: 5m
-          labels:
-            {{- range $key, $value := .Values.alertLabels }}
-            {{ $key }}: {{ $value | quote }}
-            {{- end }}
-            service: truvami-bridge
-            severity: warning
+  - name: truvami.wifi.location
+    interval: {{ .Values.prometheusRule.interval | default "30s" }}
+    rules:
+    # WiFi Solver Error Rate - Multi-level escalation
+    - alert: TruvamiWiFiSolverErrorRateMinor
+      expr: |
+        rate(truvami_wifi_solver_error_count[5m]) / 
+        (rate(truvami_wifi_solver_requests_count[5m]) + rate(truvami_wifi_solver_error_count[5m])) > 0.05
+      for: 10m
+      labels:
+        severity: minor
+        service: truvami-bridge
+        component: wifi-solver
+        {{- with .Values.alertLabels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+      annotations:
+        summary: "Elevated Truvami WiFi solver error rate"
+        description: |
+          WiFi solver error rate is {{ "{{" }} $value | humanizePercentage }} over the last 5 minutes.
+          
+          This indicates minor issues with WiFi positioning that may self-resolve.
+          
+    - alert: TruvamiWiFiSolverErrorRateWarning
+      expr: |
+        rate(truvami_wifi_solver_error_count[5m]) / 
+        (rate(truvami_wifi_solver_requests_count[5m]) + rate(truvami_wifi_solver_error_count[5m])) > 0.15
+      for: 5m
+      labels:
+        severity: warning
+        service: truvami-bridge
+        component: wifi-solver
+        {{- with .Values.alertLabels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+      annotations:
+        summary: "High Truvami WiFi solver error rate"
+        description: |
+          WiFi solver error rate is {{ "{{" }} $value | humanizePercentage }} over the last 5 minutes.
+          
+          This indicates degraded WiFi positioning performance requiring attention.
+          
+    - alert: TruvamiWiFiSolverErrorRateCritical
+      expr: |
+        rate(truvami_wifi_solver_error_count[5m]) / 
+        (rate(truvami_wifi_solver_requests_count[5m]) + rate(truvami_wifi_solver_error_count[5m])) > 0.30
+      for: 2m
+      labels:
+        severity: critical
+        service: truvami-bridge
+        component: wifi-solver
+        {{- with .Values.alertLabels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+      annotations:
+        summary: "Critical Truvami WiFi solver error rate"
+        description: |
+          WiFi solver error rate is {{ "{{" }} $value | humanizePercentage }} over the last 5 minutes.
+          
+          This indicates critical issues with WiFi positioning requiring immediate attention:
+          - WiFi database connectivity issues
+          - Solver service degradation
+          - Network connectivity problems
+          - High invalid WiFi signature rate
+
+{{- end }}
