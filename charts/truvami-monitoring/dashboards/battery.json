@@ -143,7 +143,7 @@
                     },
                     "disableTextWrap": false,
                     "editorMode": "builder",
-                    "expr": "sum by(__name__) (truvami_device_battery_status{devEui=\"$devices\"})",
+                    "expr": "sum by(__name__) (truvami_device_battery_status{namespace=\"$namespace\",devEui=\"$devices\"})",
                     "fullMetaSearch": false,
                     "includeNullMetadata": false,
                     "legendFormat": "Battery",
@@ -158,7 +158,7 @@
                     },
                     "disableTextWrap": false,
                     "editorMode": "builder",
-                    "expr": "sum by(devEui) (increase(truvami_device_uplink_count{devEui=~\"$devices\"}[$interval]))",
+                    "expr": "sum by(devEui) (increase(truvami_device_uplink_count{namespace=\"$namespace\",devEui=~\"$devices\"}[$interval]))",
                     "fullMetaSearch": false,
                     "hide": false,
                     "includeNullMetadata": false,
@@ -194,6 +194,22 @@
             },
             {
                 "current": {
+                    "text": "truvami-dev",
+                    "value": "truvami-dev"
+                },
+                "datasource": "$datasource",
+                "definition": "label_values(truvami_device_uplink_count, namespace)",
+                "includeAll": false,
+                "label": "Namespace",
+                "name": "namespace",
+                "options": [],
+                "query": "label_values(truvami_device_uplink_count, namespace)",
+                "refresh": 2,
+                "regex": "",
+                "type": "query"
+            },
+            {
+                "current": {
                     "text": [
                         "All"
                     ],
@@ -201,7 +217,7 @@
                         "$__all"
                     ]
                 },
-                "definition": "label_values(truvami_device_uplink_count,devEui)",
+                "definition": "label_values(truvami_device_uplink_count{namespace=\"$namespace\"},devEui)",
                 "description": "",
                 "includeAll": true,
                 "label": "Devices",
@@ -210,7 +226,7 @@
                 "options": [],
                 "query": {
                     "qryType": 1,
-                    "query": "label_values(truvami_device_uplink_count,devEui)",
+                    "query": "label_values(truvami_device_uplink_count{namespace=\"$namespace\"},devEui)",
                     "refId": "PrometheusVariableQueryEditor-VariableQuery"
                 },
                 "refresh": 1,

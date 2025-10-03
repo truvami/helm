@@ -219,7 +219,7 @@
             "uid": "PBFA97CFB590B2093"
           },
           "editorMode": "code",
-          "expr": "sum by(schema) (\n  increase(truvami_alerts_dispatch_count[5m])\n)",
+          "expr": "sum by(schema) (\n  increase(truvami_alerts_dispatch_count{namespace=\"$namespace\"}[5m])\n)",
           "hide": false,
           "instant": false,
           "legendFormat": "Dispatched alerts ({{schema}})",
@@ -232,7 +232,7 @@
             "uid": "PBFA97CFB590B2093"
           },
           "editorMode": "code",
-          "expr": "sum by(schema) (\n  increase(truvami_alerts_dispatch_errors_count[5m])\n)",
+          "expr": "sum by(schema) (\n  increase(truvami_alerts_dispatch_errors_count{namespace=\"$namespace\"}[5m])\n)",
           "hide": false,
           "instant": false,
           "legendFormat": "Errors during dispatch ({{schema}})",
@@ -248,7 +248,24 @@
   "schemaVersion": 41,
   "tags": [],
   "templating": {
-    "list": []
+    "list": [
+      {
+        "current": {
+          "text": "truvami-dev",
+          "value": "truvami-dev"
+        },
+        "datasource": "PBFA97CFB590B2093",
+        "definition": "label_values(truvami_alerts_dispatch_count, namespace)",
+        "includeAll": false,
+        "label": "Namespace",
+        "name": "namespace",
+        "options": [],
+        "query": "label_values(truvami_alerts_dispatch_count, namespace)",
+        "refresh": 2,
+        "regex": "",
+        "type": "query"
+      }
+    ]
   },
   "time": {
     "from": "now-12h",
