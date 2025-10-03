@@ -331,21 +331,22 @@ spec:
             service: truvami-api
             severity: intermediate
 
-        - alert: TruvamiEventCreationRateLow
+        - alert: TruvamiEventCreationRateToHigh
           annotations:
             description: >-
-              Low event creation rate at {{ "{{" }} $value }} events/sec for customer {{ "{{" }} $labels.customer }}.
+              High event creation rate: {{ "{{" }} $value }} events in 5 minutes for device {{ "{{" }} $labels.devEui }} (customer: {{ "{{" }} $labels.customer }}).
             summary: >-
-              Unusually low event creation rate - possible system issue
+              Device creating too many events - possible malfunction or spam
           expr: >-
-            rate(truvami_event_count[5m]) < 0.01
-          for: 10m
+            increase(truvami_event_count[5m]) > 10
+          for: 2m
           labels:
             {{- range $key, $value := .Values.alertLabels }}
             {{ $key }}: {{ $value | quote }}
             {{- end }}
             service: truvami-api
-            severity: major
+            severity: warning
+            node: "{{ "{{" }} $labels.devEui }}"
 
         - alert: TruvamiCustomerRequestRateHigh
           annotations:

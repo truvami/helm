@@ -12,12 +12,12 @@ spec:
         - alert: TruvamiLowGatewayRSSI
           annotations:
             description: >
-              Gateway {{ "{{" }} $labels.gatewayId }} receiving weak signal ({{ "{{" }} $value }} dBm) from device {{ "{{" }} $labels.devEui }}.
+              Gateway {{ "{{" }} $labels.gatewayId }} has average RSSI of {{ "{{" }} $value }} dBm over the last 24 hours, which is below the -120 dBm threshold.
             summary: >
-              Low Truvami gateway RSSI detected
+              Low Truvami gateway RSSI detected (24h average)
           expr: >
-            truvami_gateway_uplink_rssi < -120
-          for: 5m
+            avg by (gatewayId) (avg_over_time(truvami_gateway_uplink_rssi[1d])) < -120
+          for: 30m
           labels:
             {{- range $key, $value := .Values.alertLabels }}
             {{ $key }}: {{ $value | quote }}
@@ -28,12 +28,12 @@ spec:
         - alert: TruvamiLowGatewaySNR
           annotations:
             description: >
-              Gateway {{ "{{" }} $labels.gatewayId }} has low SNR ({{ "{{" }} $value }} dB) for device {{ "{{" }} $labels.devEui }}.
+              Gateway {{ "{{" }} $labels.gatewayId }} has average SNR of {{ "{{" }} $value }} dB over the last 24 hours, which is below the -10 dB threshold.
             summary: >
-              Low Truvami gateway SNR detected
+              Low Truvami gateway SNR detected (24h average)
           expr: >
-            truvami_gateway_uplink_snr < -10
-          for: 5m
+            avg by (gatewayId) (avg_over_time(truvami_gateway_uplink_snr[1d])) < -10
+          for: 30m
           labels:
             {{- range $key, $value := .Values.alertLabels }}
             {{ $key }}: {{ $value | quote }}
