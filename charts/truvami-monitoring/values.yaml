@@ -37,6 +37,15 @@ watchdog:
 alertmanager:
   enabled: true
   
+  # Resource configuration for Alertmanager
+  resources:
+    requests:
+      cpu: "50m"
+      memory: "128Mi"
+    limits:
+      cpu: "500m"
+      memory: "512Mi"
+  
   # SMTP configuration for email notifications
   smtp:
     smarthost: "localhost:587"

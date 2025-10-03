@@ -14,35 +14,35 @@ stringData:
 
     # Define templates for notifications
     templates:
-      - '/etc/alertmanager/config/*.tmpl'
+      - '/etc/alertmanager/templates/*.tmpl'
 
     # Routing configuration
     route:
-      group_by: ['namespace']
-      group_wait: 30s
-      group_interval: 5m
-      repeat_interval: 12h
+      group_by: ['alertname', 'cluster', 'service']
+      group_wait: 10s
+      group_interval: 10s
+      repeat_interval: 1h
       receiver: 'default'
       routes:
       # Watchdog alert route - send to configured webhook URL
-      - matchers:
-          - alertname = "Watchdog"
+      - match:
+          alertname: "Watchdog"
         receiver: 'watchdog-heartbeat'
         group_wait: 0s
         group_interval: 5m
         repeat_interval: 5m
       
       # TruvamiWatchdog alert route - send to UptimeRobot heartbeat  
-      - matchers:
-          - alertname = "TruvamiWatchdog"
+      - match:
+          alertname: "TruvamiWatchdog"
         receiver: 'watchdog-heartbeat'
         group_wait: 0s
         group_interval: 5m
         repeat_interval: 5m
       
       # Dead man's switch route - critical alerts
-      - matchers:
-          - alertname = "TruvamiWatchdogDeadMansSwitch"
+      - match:
+          alertname: "TruvamiWatchdogDeadMansSwitch"
         receiver: 'critical-alerts'
         group_wait: 0s
         group_interval: 1m
@@ -50,24 +50,24 @@ stringData:
       
 
       # Critical alerts
-      - matchers:
-          - severity = "critical"
+      - match:
+          severity: "critical"
         receiver: 'critical-alerts'
         group_wait: 30s
         group_interval: 5m
         repeat_interval: 30m
       
       # Major alerts
-      - matchers:
-          - severity = "major"
+      - match:
+          severity: "major"
         receiver: 'major-alerts'
         group_wait: 1m
         group_interval: 10m
         repeat_interval: 1h
       
       # Other severity levels
-      - matchers:
-          - severity =~ "intermediate|warning|minor"
+      - match_re:
+          severity: "^(intermediate|warning|minor)$"
         receiver: 'default'
 
     receivers:
@@ -97,27 +97,18 @@ stringData:
 
     # Inhibition rules
     inhibit_rules:
-    - equal:
-        - namespace
-        - alertname
-      source_matchers:
-        - severity = critical
-      target_matchers:
-        - severity =~ warning|info
-    - equal:
-        - namespace
-        - alertname
-      source_matchers:
-        - severity = warning
-      target_matchers:
-        - severity = info
-    - equal:
-        - namespace
-      source_matchers:
-        - alertname = InfoInhibitor
-      target_matchers:
-        - severity = info
-    - target_matchers:
-        - alertname = InfoInhibitor
+    # Inhibit lower severity alerts when critical alerts are firing for the same service
+    - source_match:
+        severity: 'critical'
+      target_match_re:
+        severity: '^(major|intermediate|warning|minor)$'
+      equal: ['service', 'alertname']
+
+    # Inhibit lower severity alerts when major alerts are firing for the same service  
+    - source_match:
+        severity: 'major'
+      target_match_re:
+        severity: '^(intermediate|warning|minor)$'
+      equal: ['service', 'alertname']
 
 {{- end }}

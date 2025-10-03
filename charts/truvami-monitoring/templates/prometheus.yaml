@@ -92,3 +92,5 @@ metadata:
   name: "{{ include "truvami-monitoring.fullname" . }}"
 spec:
   replicas: 2
+  configSecret: "{{ include "truvami-monitoring.fullname" . }}-alertmanager-config"
+  resources: {{ toYaml .Values.alertmanager.resources | default "{}" | nindent 4 }}
