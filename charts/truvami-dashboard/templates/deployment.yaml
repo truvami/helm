@@ -56,15 +56,15 @@ spec:
             - name: DB_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "truvami-dashboard.fullname" . }}-db-creds
+                  name: {{ .Release.Name }}-dashboard-db-app
                   key: password
             - name: DB_USER
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "truvami-dashboard.fullname" . }}-db-creds
+                  name: {{ .Release.Name }}-dashboard-db-app
                   key: username
             - name: DB_HOST
-              value: "{{ include "truvami-dashboard.fullname" . }}-db-rw"
+              value: "{{ .Release.Name }}-dashboard-db-rw"
             - name: DB_PORT
               value: "5432"
             - name: DB_NAME
@@ -91,7 +91,7 @@ spec:
         {{- if .Values.postgres.enabled }}
         - name: postgres-credentials
           secret:
-            secretName: {{ include "truvami-dashboard.fullname" . }}-db-creds
+            secretName: {{ .Release.Name }}-dashboard-db-app
         {{- end }}
         {{- with .Values.volumes }}
         {{- toYaml . | nindent 8 }}

@@ -2,7 +2,7 @@
 apiVersion: postgresql.cnpg.io/v1
 kind: Cluster
 metadata:
-  name: {{ include "truvami-dashboard.fullname" . }}-db
+  name: {{ .Release.Name }}-dashboard-db
   labels:
     {{- include "truvami-dashboard.labels" . | nindent 4 }}
 spec:
@@ -10,10 +10,8 @@ spec:
   imageName: "{{ .Values.postgres.image.repository }}:{{ .Values.postgres.image.tag }}"
   bootstrap:
     initdb:
-      database: dashboard
-      owner: dashboard
-      secret:
-        name: {{ include "truvami-dashboard.fullname" . }}-db-creds
+      database: app
+      owner: app
   storage: {{ .Values.postgres.storage | toYaml | nindent 4 }}
   postgresql:
     parameters:
@@ -26,21 +24,6 @@ spec:
   backup:
     barmanObjectStore: {{ .Values.postgres.backup.barmanObjectStore | toYaml | nindent 4 }}
     retentionPolicy: {{ .Values.postgres.backup.retentionPolicy | quote }}
-  {{- end }}
----
-apiVersion: v1
-kind: Secret
-metadata:
-  name: {{ include "truvami-dashboard.fullname" . }}-db-creds
-  labels:
-    {{- include "truvami-dashboard.labels" . | nindent 4 }}
-type: kubernetes.io/basic-auth
-data:
-  username: {{ "dashboard" | b64enc }}
-  password: {{- if (lookup "v1" "Secret" .Release.Namespace (printf "%s-db-creds" (include "truvami-dashboard.fullname" .))) }}
-    {{ (lookup "v1" "Secret" .Release.Namespace (printf "%s-db-creds" (include "truvami-dashboard.fullname" .))).data.password }}
-  {{- else }}
-    {{ (randAlphaNum 32) | b64enc }}
   {{- end }}
 {{- end }}
   
