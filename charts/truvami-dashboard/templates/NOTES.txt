@@ -20,3 +20,39 @@
   echo "Visit http://127.0.0.1:8080 to use your application"
   kubectl --namespace {{ .Release.Namespace }} port-forward $POD_NAME 8080:$CONTAINER_PORT
 {{- end }}
+
+{{- if .Values.postgres.enabled }}
+
+2. PostgreSQL Database Information:
+   The dashboard is configured with a managed PostgreSQL cluster using CloudNativePG.
+   
+   Database Connection Details:
+   - Host: {{ include "truvami-dashboard.fullname" . }}-postgres-rw
+   - Port: 5432
+   - Database: dashboard
+   - Username: dashboard
+   
+   To get the database password:
+   kubectl get secret {{ include "truvami-dashboard.fullname" . }}-postgres-credentials -o jsonpath="{.data.password}" | base64 --decode
+   
+   To connect to the database directly:
+   kubectl exec -it {{ include "truvami-dashboard.fullname" . }}-postgres-1 -- psql -U dashboard -d dashboard
+
+{{- else if not .Values.postgres.external.existingSecret }}
+
+2. PostgreSQL Database Information:
+   The dashboard is configured to use an external PostgreSQL database.
+   
+   External Database Configuration:
+   - Host: {{ .Values.postgres.external.host }}
+   - Port: {{ .Values.postgres.external.port }}
+   - Database: {{ .Values.postgres.external.database }}
+   - Username: {{ .Values.postgres.external.username }}
+
+{{- else }}
+
+2. PostgreSQL Database Information:
+   The dashboard is configured to use an external PostgreSQL database with credentials from an existing secret.
+   - Secret Name: {{ .Values.postgres.external.existingSecret }}
+
+{{- end }}

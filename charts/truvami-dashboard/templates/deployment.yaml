@@ -47,20 +47,44 @@ spec:
           envFrom:
             - secretRef:
                 name: {{ include "truvami-dashboard.fullname" . }}
+            {{- if .Values.postgres.external.existingSecret }}
+            - secretRef:
+                name: {{ .Values.postgres.external.existingSecret }}
+            {{- end }}
+          {{- if .Values.postgres.enabled }}
+          env:
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "truvami-dashboard.fullname" . }}-postgres-credentials
+                  key: password
+            - name: DATABASE_URL
+              value: "postgresql://dashboard:$(DB_PASSWORD)@{{ include "truvami-dashboard.fullname" . }}-postgres-rw:5432/dashboard"
+          {{- end }}
           livenessProbe:
             {{- toYaml .Values.livenessProbe | nindent 12 }}
           readinessProbe:
             {{- toYaml .Values.readinessProbe | nindent 12 }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
-          {{- with .Values.volumeMounts }}
           volumeMounts:
+            {{- if .Values.postgres.enabled }}
+            - name: postgres-credentials
+              mountPath: /var/secrets/postgres
+              readOnly: true
+            {{- end }}
+            {{- with .Values.volumeMounts }}
             {{- toYaml . | nindent 12 }}
-          {{- end }}
-      {{- with .Values.volumes }}
+            {{- end }}
       volumes:
+        {{- if .Values.postgres.enabled }}
+        - name: postgres-credentials
+          secret:
+            secretName: {{ include "truvami-dashboard.fullname" . }}-postgres-credentials
+        {{- end }}
+        {{- with .Values.volumes }}
         {{- toYaml . | nindent 8 }}
-      {{- end }}
+        {{- end }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}

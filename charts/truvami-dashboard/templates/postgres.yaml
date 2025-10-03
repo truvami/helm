@@ -1,0 +1,44 @@
+{{- if .Values.postgres.enabled }}
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: {{ include "truvami-dashboard.fullname" . }}-postgres
+  labels:
+    {{- include "truvami-dashboard.labels" . | nindent 4 }}
+spec:
+  instances: {{ .Values.postgres.replicaCount }}
+  imageName: "{{ .Values.postgres.image.repository }}:{{ .Values.postgres.image.tag }}"
+  bootstrap:
+    initdb:
+      database: dashboard
+      owner: dashboard
+      secret:
+        name: {{ include "truvami-dashboard.fullname" . }}-postgres-credentials
+      postInitTemplateSQL:
+        - CREATE EXTENSION IF NOT EXISTS postgis;
+  storage: {{ .Values.postgres.storage | toYaml | nindent 4 }}
+  postgresql:
+    parameters:
+      shared_buffers: {{ .Values.postgres.sharedBuffers }}
+  monitoring:
+    enablePodMonitor: true
+  resources: 
+    {{- toYaml .Values.postgres.resources | nindent 4 }}
+  {{- if .Values.postgres.backup.enable }}
+  backup:
+    barmanObjectStore: {{ .Values.postgres.backup.barmanObjectStore | toYaml | nindent 4 }}
+    retentionPolicy: {{ .Values.postgres.backup.retentionPolicy | quote }}
+  {{- end }}
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: {{ include "truvami-dashboard.fullname" . }}-postgres-credentials
+  labels:
+    {{- include "truvami-dashboard.labels" . | nindent 4 }}
+type: kubernetes.io/basic-auth
+data:
+  username: {{ "dashboard" | b64enc }}
+  password: {{ (randAlphaNum 32) | b64enc }}
+{{- end }}
+  
