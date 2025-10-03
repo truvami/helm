@@ -2093,6 +2093,17 @@ entries:
   truvami-siren:
   - apiVersion: v2
     appVersion: v1.0.1
+    created: "2025-10-03T09:33:58.06882063Z"
+    description: A Helm chart for Kubernetes
+    digest: fe4e2f145e8999a38464ad0839417129df0bae9cf6c5053ef76b33590fb3353f
+    icon: https://raw.githubusercontent.com/truvami/helm/main/assets/icon.svg
+    name: truvami-siren
+    type: application
+    urls:
+    - https://github.com/truvami/helm/releases/download/truvami-siren-0.2.3/truvami-siren-0.2.3.tgz
+    version: 0.2.3
+  - apiVersion: v2
+    appVersion: v1.0.1
     created: "2025-10-03T09:28:42.123120896Z"
     description: A Helm chart for Kubernetes
     digest: 93bf60c26ae46328123e363e31741a2d9d5da9a0d1bfaf2f4a5da40d88e6c418
@@ -2213,6 +2224,41 @@ entries:
     - https://github.com/truvami/helm/releases/download/truvami-siren-0.1.2/truvami-siren-0.1.2.tgz
     version: 0.1.2
   truvami-stack:
+  - apiVersion: v2
+    created: "2025-10-03T09:33:58.312308853Z"
+    dependencies:
+    - name: truvami-gateway
+      repository: file://../truvami-gateway/
+      version: 0.0.28
+    - name: truvami-bridge
+      repository: file://../truvami-bridge/
+      version: 0.1.35
+    - name: truvami-api
+      repository: file://../truvami-api/
+      version: 0.0.26
+    - name: truvami-decoder
+      repository: file://../truvami-decoder/
+      version: 0.0.20
+    - name: truvami-dashboard
+      repository: file://../truvami-dashboard/
+      version: 0.0.16
+    - name: truvami-monitoring
+      repository: file://../truvami-monitoring/
+      version: 0.1.59
+    - name: truvami-siren
+      repository: file://../truvami-siren/
+      version: 0.2.3
+    - condition: valkey.enabled
+      name: valkey
+      repository: https://charts.bitnami.com/bitnami
+      version: 3.0.9
+    description: A Helm chart for Kubernetes
+    digest: 60f7d5a7e6f574e0b0d77bab9780a586122f84505f432bb2bf134ffb28714330
+    name: truvami-stack
+    type: application
+    urls:
+    - https://github.com/truvami/helm/releases/download/truvami-stack-0.1.169/truvami-stack-0.1.169.tgz
+    version: 0.1.169
   - apiVersion: v2
     created: "2025-10-03T09:28:42.287565279Z"
     dependencies:
@@ -7053,4 +7099,4 @@ entries:
     urls:
     - https://github.com/truvami/helm/releases/download/truvami-stack-0.1.0/truvami-stack-0.1.0.tgz
     version: 0.1.0
-generated: "2025-10-03T09:28:42.289032621Z"
+generated: "2025-10-03T09:33:58.312971533Z"
