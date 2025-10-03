@@ -12,12 +12,12 @@ spec:
         - alert: SirenKafkaConsumerDown
           annotations:
             description: >-
-              Siren Kafka consumer has not consumed messages for more than 1 hour.
+              Siren Kafka consumer has not consumed any messages in the last 24 hours. Total messages consumed: {{ "{{" }} $value }}.
             summary: >-
               Siren Kafka consumer is down
           expr: >-
-            rate(truvami_kafka_alerts_messages_consumed_count[5m]) == 0
-          for: 1h
+            increase(truvami_kafka_alerts_messages_consumed_count[1d]) == 0
+          for: 5m
           labels:
             {{- range $key, $value := .Values.alertLabels }}
             {{ $key }}: {{ $value | quote }}

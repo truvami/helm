@@ -28,11 +28,11 @@ spec:
         - alert: TruvamiDeviceLowBattery
           annotations:
             description: >-
-              Device {{ "{{" }} $labels.devEui }} (customer: {{ "{{" }} $labels.customer }}) has low battery: {{ "{{" }} $value }}%.
+              Device {{ "{{" }} $labels.devEui }} (customer: {{ "{{" }} $labels.customer }}) has low battery voltage: {{ "{{" }} $value }}V (~20% battery level).
             summary: >-
               Truvami device battery low
           expr: >-
-            truvami_device_battery_status < 20
+            truvami_device_battery_status < 3.0
           for: 5m
           labels:
             {{- range $key, $value := .Values.alertLabels }}
@@ -44,11 +44,11 @@ spec:
         - alert: TruvamiDeviceCriticalBattery
           annotations:
             description: >-
-              Device {{ "{{" }} $labels.devEui }} (customer: {{ "{{" }} $labels.customer }}) has critically low battery: {{ "{{" }} $value }}%.
+              Device {{ "{{" }} $labels.devEui }} (customer: {{ "{{" }} $labels.customer }}) has critically low battery voltage: {{ "{{" }} $value }}V (~10% battery level).
             summary: >-
               Truvami device battery critically low
           expr: >-
-            truvami_device_battery_status < 10
+            truvami_device_battery_status < 2.7
           for: 1m
           labels:
             {{- range $key, $value := .Values.alertLabels }}
