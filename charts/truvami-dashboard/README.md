@@ -1,6 +1,28 @@
 # Truvami Dashboard Helm Chart
 
-This Helm chart deploys the Truvami Dashboard application with integrated PostgreSQL database support.
+This Helm chart deploys the Truvami Dashboard application with Better Auth authentication and integrated PostgreSQL database support.
+
+## 🚨 Migration Notice: v1.0.0 Breaking Changes
+
+**Version 1.0.0 introduces breaking changes due to migration from NextAuth.js to Better Auth.**
+
+### Required Actions for Existing Deployments:
+
+1. **Update configuration**: All environment variables have changed
+2. **Provide new secrets**: `BETTER_AUTH_SECRET`, `KEYCLOAK_CLIENT_SECRET`
+3. **Database migration**: Better Auth uses different tables
+4. **Test thoroughly**: Authentication flow has changed
+
+See the [Migration Guide](#migration-from-nextauthjs-to-better-auth) below for detailed instructions.
+
+## Configuration Overview
+
+The chart now uses Better Auth for authentication with the following key components:
+
+- **Better Auth**: Modern authentication library replacing NextAuth.js
+- **Keycloak OAuth**: Enterprise SSO integration
+- **PostgreSQL**: Database for Better Auth tables and application data
+- **API Proxy**: Internal/external API routing
 
 ## PostgreSQL Integration
 

@@ -56,10 +56,21 @@ spec:
             - name: DB_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "truvami-dashboard.fullname" . }}-postgres-credentials
+                  name: {{ include "truvami-dashboard.fullname" . }}-db-creds
                   key: password
+            - name: DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "truvami-dashboard.fullname" . }}-db-creds
+                  key: username
+            - name: DB_HOST
+              value: "{{ include "truvami-dashboard.fullname" . }}-db-rw"
+            - name: DB_PORT
+              value: "5432"
+            - name: DB_NAME
+              value: "dashboard"
             - name: DATABASE_URL
-              value: "postgresql://dashboard:$(DB_PASSWORD)@{{ include "truvami-dashboard.fullname" . }}-postgres-rw:5432/dashboard"
+              value: "postgresql://$(DB_USER):$(DB_PASSWORD)@$(DB_HOST):$(DB_PORT)/$(DB_NAME)"
           {{- end }}
           livenessProbe:
             {{- toYaml .Values.livenessProbe | nindent 12 }}
@@ -80,7 +91,7 @@ spec:
         {{- if .Values.postgres.enabled }}
         - name: postgres-credentials
           secret:
-            secretName: {{ include "truvami-dashboard.fullname" . }}-postgres-credentials
+            secretName: {{ include "truvami-dashboard.fullname" . }}-db-creds
         {{- end }}
         {{- with .Values.volumes }}
         {{- toYaml . | nindent 8 }}

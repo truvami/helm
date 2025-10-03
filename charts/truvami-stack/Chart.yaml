@@ -24,7 +24,7 @@ dependencies:
     version: 0.0.20
     repository: "file://../truvami-decoder/"
   - name: truvami-dashboard
-    version: 0.0.17
+    version: 1.0.0
     repository: "file://../truvami-dashboard/"
   - name: truvami-monitoring
     version: 0.1.67

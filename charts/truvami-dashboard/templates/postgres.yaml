@@ -2,7 +2,7 @@
 apiVersion: postgresql.cnpg.io/v1
 kind: Cluster
 metadata:
-  name: {{ include "truvami-dashboard.fullname" . }}-postgres
+  name: {{ include "truvami-dashboard.fullname" . }}-db
   labels:
     {{- include "truvami-dashboard.labels" . | nindent 4 }}
 spec:
@@ -13,9 +13,7 @@ spec:
       database: dashboard
       owner: dashboard
       secret:
-        name: {{ include "truvami-dashboard.fullname" . }}-postgres-credentials
-      postInitTemplateSQL:
-        - CREATE EXTENSION IF NOT EXISTS postgis;
+        name: {{ include "truvami-dashboard.fullname" . }}-db-creds
   storage: {{ .Values.postgres.storage | toYaml | nindent 4 }}
   postgresql:
     parameters:
@@ -33,12 +31,16 @@ spec:
 apiVersion: v1
 kind: Secret
 metadata:
-  name: {{ include "truvami-dashboard.fullname" . }}-postgres-credentials
+  name: {{ include "truvami-dashboard.fullname" . }}-db-creds
   labels:
     {{- include "truvami-dashboard.labels" . | nindent 4 }}
 type: kubernetes.io/basic-auth
 data:
   username: {{ "dashboard" | b64enc }}
-  password: {{ (randAlphaNum 32) | b64enc }}
+  password: {{- if (lookup "v1" "Secret" .Release.Namespace (printf "%s-db-creds" (include "truvami-dashboard.fullname" .))) }}
+    {{ (lookup "v1" "Secret" .Release.Namespace (printf "%s-db-creds" (include "truvami-dashboard.fullname" .))).data.password }}
+  {{- else }}
+    {{ (randAlphaNum 32) | b64enc }}
+  {{- end }}
 {{- end }}
   
