@@ -10,65 +10,70 @@ type: Opaque
 stringData:
   alertmanager.yml: |
     global:
-      smtp_smarthost: {{ .Values.alertmanager.smtp.smarthost | default "localhost:587" | quote }}
-      smtp_from: {{ .Values.alertmanager.smtp.from | default "alertmanager@truvami.com" | quote }}
-      {{- if .Values.alertmanager.smtp.auth_username }}
-      smtp_auth_username: {{ .Values.alertmanager.smtp.auth_username | quote }}
-      {{- end }}
-      {{- if .Values.alertmanager.smtp.auth_password }}
-      smtp_auth_password: {{ .Values.alertmanager.smtp.auth_password | quote }}
-      {{- end }}
+      resolve_timeout: 5m
 
     # Define templates for notifications
     templates:
-      - '/etc/alertmanager/templates/*.tmpl'
+      - '/etc/alertmanager/config/*.tmpl'
 
-    # The directory from which notification templates are read.
+    # Routing configuration
     route:
-      group_by: ['alertname', 'cluster', 'service']
-      group_wait: 10s
-      group_interval: 10s
-      repeat_interval: 1h
+      group_by: ['namespace']
+      group_wait: 30s
+      group_interval: 5m
+      repeat_interval: 12h
       receiver: 'default'
       routes:
-      # Watchdog alert route - send to UptimeRobot heartbeat
-      - match:
-          alertname: TruvamiWatchdog
+      # Watchdog alert route - send to configured webhook URL
+      - matchers:
+          - alertname = "Watchdog"
+        receiver: 'watchdog-heartbeat'
+        group_wait: 0s
+        group_interval: 5m
+        repeat_interval: 5m
+      
+      # TruvamiWatchdog alert route - send to UptimeRobot heartbeat  
+      - matchers:
+          - alertname = "TruvamiWatchdog"
         receiver: 'watchdog-heartbeat'
         group_wait: 0s
         group_interval: 5m
         repeat_interval: 5m
       
       # Dead man's switch route - critical alerts
-      - match:
-          alertname: TruvamiWatchdogDeadMansSwitch
+      - matchers:
+          - alertname = "TruvamiWatchdogDeadMansSwitch"
         receiver: 'critical-alerts'
         group_wait: 0s
         group_interval: 1m
         repeat_interval: 5m
       
+
       # Critical alerts
-      - match:
-          severity: critical
+      - matchers:
+          - severity = "critical"
         receiver: 'critical-alerts'
         group_wait: 30s
         group_interval: 5m
         repeat_interval: 30m
       
       # Major alerts
-      - match:
-          severity: major
+      - matchers:
+          - severity = "major"
         receiver: 'major-alerts'
         group_wait: 1m
         group_interval: 10m
         repeat_interval: 1h
       
       # Other severity levels
-      - match_re:
-          severity: ^(intermediate|warning|minor)$
+      - matchers:
+          - severity =~ "intermediate|warning|minor"
         receiver: 'default'
 
     receivers:
+    # Null receiver
+    - name: 'null'
+
     # Watchdog heartbeat receiver - sends to configured webhook URL
     - name: 'watchdog-heartbeat'
       {{- if .Values.watchdog.webhookUrl }}
@@ -83,85 +88,36 @@ stringData:
 
     # Critical alerts receiver
     - name: 'critical-alerts'
-      {{- if .Values.alertmanager.receivers.slack.enabled }}
-      slack_configs:
-      - api_url: {{ .Values.alertmanager.receivers.slack.webhook_url | quote }}
-        channel: {{ .Values.alertmanager.receivers.slack.channel | default "#alerts-critical" | quote }}
-        title: 'CRITICAL: {{`{{ range .Alerts }}{{ .Annotations.summary }}{{ end }}`}}'
-        text: |
-          {{`{{ range .Alerts }}`}}
-          *Alert:* {{`{{ .Annotations.summary }}`}}
-          *Description:* {{`{{ .Annotations.description }}`}}
-          *Severity:* {{`{{ .Labels.severity }}`}}
-          *Service:* {{`{{ .Labels.service }}`}}
-          {{`{{ if .Labels.node }}`}}*Node:* {{`{{ .Labels.node }}`}}{{`{{ end }}`}}
-          {{`{{ end }}`}}
-        send_resolved: true
-      {{- end }}
-      {{- if .Values.alertmanager.receivers.email.enabled }}
-      email_configs:
-      - to: {{ .Values.alertmanager.receivers.email.to | quote }}
-        subject: 'CRITICAL Alert: {{`{{ range .Alerts }}{{ .Annotations.summary }}{{ end }}`}}'
-        body: |
-          {{`{{ range .Alerts }}`}}
-          Alert: {{`{{ .Annotations.summary }}`}}
-          Description: {{`{{ .Annotations.description }}`}}
-          Severity: {{`{{ .Labels.severity }}`}}
-          Service: {{`{{ .Labels.service }}`}}
-          {{`{{ if .Labels.node }}`}}Node: {{`{{ .Labels.node }}`}}{{`{{ end }}`}}
-          {{`{{ end }}`}}
-      {{- end }}
 
     # Major alerts receiver
     - name: 'major-alerts'
-      {{- if .Values.alertmanager.receivers.slack.enabled }}
-      slack_configs:
-      - api_url: {{ .Values.alertmanager.receivers.slack.webhook_url | quote }}
-        channel: {{ .Values.alertmanager.receivers.slack.channel | default "#alerts" | quote }}
-        title: 'MAJOR: {{`{{ range .Alerts }}{{ .Annotations.summary }}{{ end }}`}}'
-        text: |
-          {{`{{ range .Alerts }}`}}
-          *Alert:* {{`{{ .Annotations.summary }}`}}
-          *Description:* {{`{{ .Annotations.description }}`}}
-          *Severity:* {{`{{ .Labels.severity }}`}}
-          *Service:* {{`{{ .Labels.service }}`}}
-          {{`{{ if .Labels.node }}`}}*Node:* {{`{{ .Labels.node }}`}}{{`{{ end }}`}}
-          {{`{{ end }}`}}
-        send_resolved: true
-      {{- end }}
 
     # Default receiver for other alerts
     - name: 'default'
-      {{- if .Values.alertmanager.receivers.slack.enabled }}
-      slack_configs:
-      - api_url: {{ .Values.alertmanager.receivers.slack.webhook_url | quote }}
-        channel: {{ .Values.alertmanager.receivers.slack.channel | default "#alerts" | quote }}
-        title: '{{`{{ range .Alerts }}{{ .Annotations.summary }}{{ end }}`}}'
-        text: |
-          {{`{{ range .Alerts }}`}}
-          *Alert:* {{`{{ .Annotations.summary }}`}}
-          *Description:* {{`{{ .Annotations.description }}`}}
-          *Severity:* {{`{{ .Labels.severity }}`}}
-          *Service:* {{`{{ .Labels.service }}`}}
-          {{`{{ if .Labels.node }}`}}*Node:* {{`{{ .Labels.node }}`}}{{`{{ end }}`}}
-          {{`{{ end }}`}}
-        send_resolved: true
-      {{- end }}
 
     # Inhibition rules
     inhibit_rules:
-    # Inhibit lower severity alerts when critical alerts are firing for the same service
-    - source_match:
-        severity: 'critical'
-      target_match_re:
-        severity: '^(major|intermediate|warning|minor)$'
-      equal: ['service', 'alertname']
-
-    # Inhibit lower severity alerts when major alerts are firing for the same service  
-    - source_match:
-        severity: 'major'
-      target_match_re:
-        severity: '^(intermediate|warning|minor)$'
-      equal: ['service', 'alertname']
+    - equal:
+        - namespace
+        - alertname
+      source_matchers:
+        - severity = critical
+      target_matchers:
+        - severity =~ warning|info
+    - equal:
+        - namespace
+        - alertname
+      source_matchers:
+        - severity = warning
+      target_matchers:
+        - severity = info
+    - equal:
+        - namespace
+      source_matchers:
+        - alertname = InfoInhibitor
+      target_matchers:
+        - severity = info
+    - target_matchers:
+        - alertname = InfoInhibitor
 
 {{- end }}
