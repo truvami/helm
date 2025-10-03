@@ -1,0 +1,496 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  labels:
+    prometheus: kube-prometheus-stack-prometheus
+    role: alert-rules
+  name: truvami-api-alerts
+spec:
+  groups:
+    - name: truvami-api-database-errors
+      rules:
+        - alert: TruvamiDatabaseErrorRateHigh
+          annotations:
+            description: >-
+              Database error rate is {{ "{{" }} $value }} errors/sec for subsystem {{ "{{" }} $labels.subsystem }} with error code {{ "{{" }} $labels.error_code }}.
+            summary: >-
+              High database error rate detected
+          expr: >-
+            (
+              rate(truvami_api_db_error_data_exception_total[5m]) +
+              rate(truvami_api_db_error_integrity_constraint_violation_total[5m]) +
+              rate(truvami_api_db_error_invalid_transaction_state_total[5m]) +
+              rate(truvami_api_db_error_savepoint_exception_total[5m]) +
+              rate(truvami_api_db_error_transaction_rollback_total[5m]) +
+              rate(truvami_api_db_error_syntax_error_or_access_rule_violation_total[5m]) +
+              rate(truvami_api_db_error_insufficient_resources_total[5m]) +
+              rate(truvami_api_db_error_program_limit_exceeded_total[5m]) +
+              rate(truvami_api_db_error_object_not_in_prerequisite_state_total[5m]) +
+              rate(truvami_api_db_error_operator_intervention_total[5m]) +
+              rate(truvami_api_db_error_system_error_total[5m]) +
+              rate(truvami_api_db_error_plpgsql_error_total[5m]) +
+              rate(truvami_api_db_error_internal_error_total[5m]) +
+              rate(truvami_api_db_error_other_total[5m])
+            ) > 0.1
+          for: 2m
+          labels:
+            {{- range $key, $value := .Values.alertLabels }}
+            {{ $key }}: {{ $value | quote }}
+            {{- end }}
+            service: truvami-api
+            severity: warning
+
+        - alert: TruvamiDatabaseIntegrityConstraintViolations
+          annotations:
+            description: >-
+              Database integrity constraint violations at {{ "{{" }} $value }} violations/sec for subsystem {{ "{{" }} $labels.subsystem }}.
+            summary: >-
+              High database integrity constraint violation rate
+          expr: >-
+            rate(truvami_api_db_error_integrity_constraint_violation_total[5m]) > 0.05
+          for: 1m
+          labels:
+            {{- range $key, $value := .Values.alertLabels }}
+            {{ $key }}: {{ $value | quote }}
+            {{- end }}
+            service: truvami-api
+            severity: critical
+
+        - alert: TruvamiDatabaseInsufficientResources
+          annotations:
+            description: >-
+              Database insufficient resources errors at {{ "{{" }} $value }} errors/sec for subsystem {{ "{{" }} $labels.subsystem }}.
+            summary: >-
+              Database insufficient resources errors detected
+          expr: >-
+            rate(truvami_api_db_error_insufficient_resources_total[5m]) > 0.01
+          for: 2m
+          labels:
+            {{- range $key, $value := .Values.alertLabels }}
+            {{ $key }}: {{ $value | quote }}
+            {{- end }}
+            service: truvami-api
+            severity: major
+
+    - name: truvami-api-grpc-validation-errors
+      rules:
+        - alert: TruvamiGrpcValidationErrorsHigh
+          annotations:
+            description: >-
+              High gRPC validation error rate at {{ "{{" }} $value }} errors/sec.
+            summary: >-
+              High gRPC validation error rate detected
+          expr: >-
+            (
+              rate(truvami_uplink_insert_validation_error_count[5m]) +
+              rate(truvami_position_insert_validation_error_count[5m]) +
+              rate(truvami_battery_status_insert_validation_error_count[5m]) +
+              rate(truvami_event_insert_validation_error_count[5m]) +
+              rate(truvami_rotation_status_insert_validation_error_count[5m])
+            ) > 0.1
+          for: 2m
+          labels:
+            {{- range $key, $value := .Values.alertLabels }}
+            {{ $key }}: {{ $value | quote }}
+            {{- end }}
+            service: truvami-api
+            severity: major
+
+        - alert: TruvamiUplinkValidationErrorsHigh
+          annotations:
+            description: >-
+              High uplink validation error rate at {{ "{{" }} $value }} errors/sec.
+            summary: >-
+              High uplink validation error rate
+          expr: >-
+            rate(truvami_uplink_insert_validation_error_count[5m]) > 0.05
+          for: 2m
+          labels:
+            {{- range $key, $value := .Values.alertLabels }}
+            {{ $key }}: {{ $value | quote }}
+            {{- end }}
+            service: truvami-api
+            severity: major
+
+    - name: truvami-api-device-errors
+      rules:
+        - alert: TruvamiDeviceNotFoundErrorsHigh
+          annotations:
+            description: >-
+              High device not found error rate at {{ "{{" }} $value }} errors/sec for device {{ "{{" }} $labels.devEui }}.
+            summary: >-
+              High device not found error rate
+          expr: >-
+            rate(truvami_device_not_found_error_count[5m]) > 0.1
+          for: 2m
+          labels:
+            {{- range $key, $value := .Values.alertLabels }}
+            {{ $key }}: {{ $value | quote }}
+            {{- end }}
+            service: truvami-api
+            severity: major
+            node: truvami-{{ "{{" }} $labels.devEui }}
+
+    - name: truvami-api-duplicate-data-errors
+      rules:
+        - alert: TruvamiDuplicateDataErrorsHigh
+          annotations:
+            description: >-
+              High duplicate data error rate at {{ "{{" }} $value }} errors/sec for device {{ "{{" }} $labels.devEui }}.
+            summary: >-
+              High duplicate data insertion error rate
+          expr: >-
+            (
+              rate(truvami_uplink_already_exists_error_count[5m]) +
+              rate(truvami_position_already_exists_error_count[5m]) +
+              rate(truvami_battery_status_already_exists_error_count[5m]) +
+              rate(truvami_event_already_exists_error_count[5m]) +
+              rate(truvami_rotation_status_already_exists_error_count[5m]) +
+              rate(truvami_alert_already_exists_error_count[5m])
+            ) > 0.2
+          for: 5m
+          labels:
+            {{- range $key, $value := .Values.alertLabels }}
+            {{ $key }}: {{ $value | quote }}
+            {{- end }}
+            service: truvami-api
+            severity: minor
+            node: truvami-{{ "{{" }} $labels.devEui }}
+
+    - name: truvami-api-webhook-errors
+      rules:
+        - alert: TruvamiWebhookUplinkDropsHigh
+          annotations:
+            description: >-
+              High webhook uplink drop rate at {{ "{{" }} $value }} drops/sec for feature {{ "{{" }} $labels.feature }}.
+            summary: >-
+              High webhook uplink drop rate due to channel overload
+          expr: >-
+            rate(truvami_webhook_uplink_drop_count[5m]) > 0.1
+          for: 2m
+          labels:
+            {{- range $key, $value := .Values.alertLabels }}
+            {{ $key }}: {{ $value | quote }}
+            {{- end }}
+            service: truvami-api
+            severity: major
+
+    - name: truvami-api-auth-errors
+      rules:
+        - alert: TruvamiOAuth2TokenExpiredHigh
+          annotations:
+            description: >-
+              High OAuth2 token expiry rate at {{ "{{" }} $value }} expired tokens/sec.
+            summary: >-
+              High OAuth2 token expiry rate
+          expr: >-
+            rate(truvami_oauth2_token_expired_total[5m]) > 0.5
+          for: 2m
+          labels:
+            {{- range $key, $value := .Values.alertLabels }}
+            {{ $key }}: {{ $value | quote }}
+            {{- end }}
+            service: truvami-api
+            severity: minor
+
+        - alert: TruvamiOAuth2PaymentExpiredHigh
+          annotations:
+            description: >-
+              High OAuth2 payment expiry rate at {{ "{{" }} $value }} expired payments/sec for customer {{ "{{" }} $labels.customer }}.
+            summary: >-
+              High OAuth2 payment expiry rate
+          expr: >-
+            rate(truvami_oauth2_payment_expired_total[5m]) > 0.1
+          for: 2m
+          labels:
+            {{- range $key, $value := .Values.alertLabels }}
+            {{ $key }}: {{ $value | quote }}
+            {{- end }}
+            service: truvami-api
+            severity: major
+
+        - alert: TruvamiOAuth2InvalidIssuerHigh
+          annotations:
+            description: >-
+              High OAuth2 invalid issuer rate at {{ "{{" }} $value }} invalid issuers/sec.
+            summary: >-
+              High OAuth2 invalid issuer rate
+          expr: >-
+            rate(truvami_oauth2_token_invalid_issuer_total[5m]) > 0.1
+          for: 2m
+          labels:
+            {{- range $key, $value := .Values.alertLabels }}
+            {{ $key }}: {{ $value | quote }}
+            {{- end }}
+            service: truvami-api
+            severity: major
+
+    - name: truvami-api-cache-performance
+      rules:
+        - alert: TruvamiOAuth2PublicKeyCacheMissRate
+          annotations:
+            description: >-
+              OAuth2 public key cache miss rate is {{ "{{" }} $value | humanizePercentage }} over the last 5 minutes.
+            summary: >-
+              High OAuth2 public key cache miss rate
+          expr: >-
+            rate(truvami_oauth2_public_key_refresh_total[5m]) / 
+            (rate(truvami_oauth2_public_key_cache_hit_total[5m]) + rate(truvami_oauth2_public_key_refresh_total[5m])) > 0.5
+          for: 5m
+          labels:
+            {{- range $key, $value := .Values.alertLabels }}
+            {{ $key }}: {{ $value | quote }}
+            {{- end }}
+            service: truvami-api
+            severity: minor
+
+        - alert: TruvamiAPIKeyCacheMissRate
+          annotations:
+            description: >-
+              API key cache miss rate is {{ "{{" }} $value | humanizePercentage }} over the last 5 minutes.
+            summary: >-
+              High API key cache miss rate
+          expr: >-
+            rate(truvami_api_key_cache_miss_total[5m]) / 
+            (rate(truvami_api_key_cache_hit_total[5m]) + rate(truvami_api_key_cache_miss_total[5m])) > 0.8
+          for: 5m
+          labels:
+            {{- range $key, $value := .Values.alertLabels }}
+            {{ $key }}: {{ $value | quote }}
+            {{- end }}
+            service: truvami-api
+            severity: minor
+
+    - name: truvami-api-security
+      rules:
+        - alert: TruvamiForbiddenAccessAttemptsHigh
+          annotations:
+            description: >-
+              High forbidden access attempt rate at {{ "{{" }} $value }} attempts/sec for operation {{ "{{" }} $labels.operation }}.
+            summary: >-
+              High forbidden access attempt rate detected
+          expr: >-
+            rate(truvami_forbidden_access_attempts_total[5m]) > 0.5
+          for: 1m
+          labels:
+            {{- range $key, $value := .Values.alertLabels }}
+            {{ $key }}: {{ $value | quote }}
+            {{- end }}
+            service: truvami-api
+            severity: major
+
+    - name: truvami-api-performance
+      rules:
+        - alert: TruvamiHealthCheckDurationHigh
+          annotations:
+            description: >-
+              Health check duration is {{ "{{" }} $value }}ms over the last 5 minutes.
+            summary: >-
+              High health check duration
+          expr: >-
+            histogram_quantile(0.95, rate(truvami_health_check_duration_milliseconds_bucket[5m])) > 1000
+          for: 5m
+          labels:
+            {{- range $key, $value := .Values.alertLabels }}
+            {{ $key }}: {{ $value | quote }}
+            {{- end }}
+            service: truvami-api
+            severity: minor
+
+        - alert: TruvamiOAuth2PublicKeyRefreshDurationHigh
+          annotations:
+            description: >-
+              OAuth2 public key refresh duration is {{ "{{" }} $value }}ms over the last 5 minutes.
+            summary: >-
+              High OAuth2 public key refresh duration
+          expr: >-
+            histogram_quantile(0.95, rate(truvami_oauth2_public_key_refresh_duration_milliseconds_bucket[5m])) > 5000
+          for: 5m
+          labels:
+            {{- range $key, $value := .Values.alertLabels }}
+            {{ $key }}: {{ $value | quote }}
+            {{- end }}
+            service: truvami-api
+            severity: minor
+
+    - name: truvami-api-business-metrics
+      rules:
+        - alert: TruvamiEventCreationRateHigh
+          annotations:
+            description: >-
+              High event creation rate at {{ "{{" }} $value }} events/sec for customer {{ "{{" }} $labels.customer }} and type {{ "{{" }} $labels.type }}.
+            summary: >-
+              Unusually high event creation rate
+          expr: >-
+            rate(truvami_event_count[5m]) > 10
+          for: 5m
+          labels:
+            {{- range $key, $value := .Values.alertLabels }}
+            {{ $key }}: {{ $value | quote }}
+            {{- end }}
+            service: truvami-api
+            severity: intermediate
+
+        - alert: TruvamiEventCreationRateLow
+          annotations:
+            description: >-
+              Low event creation rate at {{ "{{" }} $value }} events/sec for customer {{ "{{" }} $labels.customer }}.
+            summary: >-
+              Unusually low event creation rate - possible system issue
+          expr: >-
+            rate(truvami_event_count[5m]) < 0.01
+          for: 10m
+          labels:
+            {{- range $key, $value := .Values.alertLabels }}
+            {{ $key }}: {{ $value | quote }}
+            {{- end }}
+            service: truvami-api
+            severity: major
+
+        - alert: TruvamiCustomerRequestRateHigh
+          annotations:
+            description: >-
+              High customer request rate at {{ "{{" }} $value }} requests/sec for customer {{ "{{" }} $labels.customer }} using {{ "{{" }} $labels.auth_type }} authentication.
+            summary: >-
+              Unusually high customer request rate
+          expr: >-
+            rate(truvami_customer_requests_total[5m]) > 50
+          for: 5m
+          labels:
+            {{- range $key, $value := .Values.alertLabels }}
+            {{ $key }}: {{ $value | quote }}
+            {{- end }}
+            service: truvami-api
+            severity: intermediate
+
+    - name: truvami-api-grpc-database-errors
+      rules:
+        - alert: TruvamiGrpcDatabaseErrorRateHigh
+          annotations:
+            description: >-
+              gRPC subsystem database error rate is {{ "{{" }} $value }} errors/sec with error code {{ "{{" }} $labels.error_code }}.
+            summary: >-
+              High gRPC database error rate detected
+          expr: >-
+            (
+              rate(truvami_grpc_db_error_data_exception_total[5m]) +
+              rate(truvami_grpc_db_error_integrity_constraint_violation_total[5m]) +
+              rate(truvami_grpc_db_error_invalid_transaction_state_total[5m]) +
+              rate(truvami_grpc_db_error_savepoint_exception_total[5m]) +
+              rate(truvami_grpc_db_error_transaction_rollback_total[5m]) +
+              rate(truvami_grpc_db_error_syntax_error_or_access_rule_violation_total[5m]) +
+              rate(truvami_grpc_db_error_insufficient_resources_total[5m]) +
+              rate(truvami_grpc_db_error_program_limit_exceeded_total[5m]) +
+              rate(truvami_grpc_db_error_object_not_in_prerequisite_state_total[5m]) +
+              rate(truvami_grpc_db_error_operator_intervention_total[5m]) +
+              rate(truvami_grpc_db_error_system_error_total[5m]) +
+              rate(truvami_grpc_db_error_plpgsql_error_total[5m]) +
+              rate(truvami_grpc_db_error_internal_error_total[5m]) +
+              rate(truvami_grpc_db_error_other_total[5m])
+            ) > 0.1
+          for: 2m
+          labels:
+            {{- range $key, $value := .Values.alertLabels }}
+            {{ $key }}: {{ $value | quote }}
+            {{- end }}
+            service: truvami-api
+            severity: major
+
+    - name: truvami-api-webhook-database-errors
+      rules:
+        - alert: TruvamiWebhookDatabaseErrorRateHigh
+          annotations:
+            description: >-
+              Webhook subsystem database error rate is {{ "{{" }} $value }} errors/sec with error code {{ "{{" }} $labels.error_code }}.
+            summary: >-
+              High webhook database error rate detected
+          expr: >-
+            (
+              rate(truvami_webhook_db_error_data_exception_total[5m]) +
+              rate(truvami_webhook_db_error_integrity_constraint_violation_total[5m]) +
+              rate(truvami_webhook_db_error_invalid_transaction_state_total[5m]) +
+              rate(truvami_webhook_db_error_savepoint_exception_total[5m]) +
+              rate(truvami_webhook_db_error_transaction_rollback_total[5m]) +
+              rate(truvami_webhook_db_error_syntax_error_or_access_rule_violation_total[5m]) +
+              rate(truvami_webhook_db_error_insufficient_resources_total[5m]) +
+              rate(truvami_webhook_db_error_program_limit_exceeded_total[5m]) +
+              rate(truvami_webhook_db_error_object_not_in_prerequisite_state_total[5m]) +
+              rate(truvami_webhook_db_error_operator_intervention_total[5m]) +
+              rate(truvami_webhook_db_error_system_error_total[5m]) +
+              rate(truvami_webhook_db_error_plpgsql_error_total[5m]) +
+              rate(truvami_webhook_db_error_internal_error_total[5m]) +
+              rate(truvami_webhook_db_error_other_total[5m])
+            ) > 0.1
+          for: 2m
+          labels:
+            {{- range $key, $value := .Values.alertLabels }}
+            {{ $key }}: {{ $value | quote }}
+            {{- end }}
+            service: truvami-api
+            severity: major
+
+    - name: truvami-api-security-service-errors
+      rules:
+        - alert: TruvamiSecurityServiceDatabaseErrorRateHigh
+          annotations:
+            description: >-
+              Security service database error rate is {{ "{{" }} $value }} errors/sec with error code {{ "{{" }} $labels.error_code }}.
+            summary: >-
+              High security service database error rate detected
+          expr: >-
+            (
+              rate(truvami_security_service_db_error_data_exception_total[5m]) +
+              rate(truvami_security_service_db_error_integrity_constraint_violation_total[5m]) +
+              rate(truvami_security_service_db_error_invalid_transaction_state_total[5m]) +
+              rate(truvami_security_service_db_error_savepoint_exception_total[5m]) +
+              rate(truvami_security_service_db_error_transaction_rollback_total[5m]) +
+              rate(truvami_security_service_db_error_syntax_error_or_access_rule_violation_total[5m]) +
+              rate(truvami_security_service_db_error_insufficient_resources_total[5m]) +
+              rate(truvami_security_service_db_error_program_limit_exceeded_total[5m]) +
+              rate(truvami_security_service_db_error_object_not_in_prerequisite_state_total[5m]) +
+              rate(truvami_security_service_db_error_operator_intervention_total[5m]) +
+              rate(truvami_security_service_db_error_system_error_total[5m]) +
+              rate(truvami_security_service_db_error_plpgsql_error_total[5m]) +
+              rate(truvami_security_service_db_error_internal_error_total[5m]) +
+              rate(truvami_security_service_db_error_other_total[5m])
+            ) > 0.05
+          for: 2m
+          labels:
+            {{- range $key, $value := .Values.alertLabels }}
+            {{ $key }}: {{ $value | quote }}
+            {{- end }}
+            service: truvami-api
+            severity: critical
+
+    - name: truvami-api-api-key-store-errors
+      rules:
+        - alert: TruvamiAPIKeyStoreDatabaseErrorRateHigh
+          annotations:
+            description: >-
+              API key store database error rate is {{ "{{" }} $value }} errors/sec with error code {{ "{{" }} $labels.error_code }}.
+            summary: >-
+              High API key store database error rate detected
+          expr: >-
+            (
+              rate(truvami_api_key_store_db_error_data_exception_total[5m]) +
+              rate(truvami_api_key_store_db_error_integrity_constraint_violation_total[5m]) +
+              rate(truvami_api_key_store_db_error_invalid_transaction_state_total[5m]) +
+              rate(truvami_api_key_store_db_error_savepoint_exception_total[5m]) +
+              rate(truvami_api_key_store_db_error_transaction_rollback_total[5m]) +
+              rate(truvami_api_key_store_db_error_syntax_error_or_access_rule_violation_total[5m]) +
+              rate(truvami_api_key_store_db_error_insufficient_resources_total[5m]) +
+              rate(truvami_api_key_store_db_error_program_limit_exceeded_total[5m]) +
+              rate(truvami_api_key_store_db_error_object_not_in_prerequisite_state_total[5m]) +
+              rate(truvami_api_key_store_db_error_operator_intervention_total[5m]) +
+              rate(truvami_api_key_store_db_error_system_error_total[5m]) +
+              rate(truvami_api_key_store_db_error_plpgsql_error_total[5m]) +
+              rate(truvami_api_key_store_db_error_internal_error_total[5m]) +
+              rate(truvami_api_key_store_db_error_other_total[5m])
+            ) > 0.05
+          for: 2m
+          labels:
+            {{- range $key, $value := .Values.alertLabels }}
+            {{ $key }}: {{ $value | quote }}
+            {{- end }}
+            service: truvami-api
+            severity: critical
