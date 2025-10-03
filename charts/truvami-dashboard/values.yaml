@@ -127,6 +127,17 @@ autoscaling:
   targetCPUUtilizationPercentage: 80
   # targetMemoryUtilizationPercentage: 80
 
+# Database migration configuration
+migration:
+  # Resource limits for migration job
+  resources:
+    limits:
+      cpu: 500m
+      memory: 512Mi
+    requests:
+      cpu: 100m
+      memory: 256Mi
+
 # Additional volumes on the output Deployment definition.
 volumes: []
 # - name: foo

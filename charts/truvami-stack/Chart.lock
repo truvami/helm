@@ -13,7 +13,7 @@ dependencies:
   version: 0.0.20
 - name: truvami-dashboard
   repository: file://../truvami-dashboard/
-  version: 1.0.0
+  version: 1.0.1
 - name: truvami-monitoring
   repository: file://../truvami-monitoring/
   version: 0.1.67
@@ -23,5 +23,5 @@ dependencies:
 - name: valkey
   repository: https://charts.bitnami.com/bitnami
   version: 3.0.9
-digest: sha256:1438c9a86ae885649b497ecae00e54d7b303e7aedc9d36f7ab487717cd248277
-generated: "2025-10-03T18:34:35.986415+02:00"
+digest: sha256:bba188a197c58cabac5b66f5bb40398a440b5f5d9d404bd5e2efbe72c5119b73
+generated: "2025-10-03T19:36:26.758719+02:00"
