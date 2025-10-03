@@ -167,6 +167,11 @@ volumes:
       defaultMode: 420
       name: "siren-config"
       optional: false
+      items:
+        - key: config.yaml
+          path: config.yaml
+        - key: set-env.sh
+          path: set-env.sh
     name: config
   - name: kafka-credentials
     secret:
