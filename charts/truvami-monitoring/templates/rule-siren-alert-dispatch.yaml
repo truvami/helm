@@ -1,0 +1,118 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  labels:
+    prometheus: kube-prometheus-stack-prometheus
+    role: alert-rules
+  name: siren-alert-dispatch
+spec:
+  groups:
+    - name: siren-alert-dispatch
+      rules:
+        - alert: SirenAlertDispatchFailures
+          annotations:
+            description: >-
+              Siren alert dispatch failure rate is {{ "{{" }} $value }} failures/sec for device {{ "{{" }} $labels.devEui }} with schema {{ "{{" }} $labels.schema }}.
+            summary: >-
+              Critical Siren alert dispatch failure rate
+          expr: >-
+            rate(truvami_alerts_dispatch_errors_count[5m]) > 0.1
+          for: 1m
+          labels:
+            {{- range $key, $value := .Values.alertLabels }}
+            {{ $key }}: {{ $value | quote }}
+            {{- end }}
+            service: siren
+            severity: critical
+            node: siren-{{ "{{" }} $labels.devEui }}
+        - alert: SirenWebhookDispatchFailures
+          annotations:
+            description: >-
+              Siren webhook dispatch failure rate is {{ "{{" }} $value }} failures/sec for webhook type {{ "{{" }} $labels.webhook_type }}.
+            summary: >-
+              High Siren webhook dispatch failure rate
+          expr: >-
+            rate(truvami_alerts_webhook_dispatch_error_count[5m]) > 0.05
+          for: 2m
+          labels:
+            {{- range $key, $value := .Values.alertLabels }}
+            {{ $key }}: {{ $value | quote }}
+            {{- end }}
+            service: siren
+            severity: major
+        - alert: SirenSlackDispatchFailures
+          annotations:
+            description: >-
+              Siren Slack message dispatch failure rate is {{ "{{" }} $value }} failures/sec.
+            summary: >-
+              High Siren Slack dispatch failure rate
+          expr: >-
+            rate(truvami_alerts_slack_dispatch_error_count[5m]) > 0.05
+          for: 2m
+          labels:
+            {{- range $key, $value := .Values.alertLabels }}
+            {{ $key }}: {{ $value | quote }}
+            {{- end }}
+            service: siren
+            severity: major
+        - alert: SirenTeamsDispatchFailures
+          annotations:
+            description: >-
+              Siren Teams message dispatch failure rate is {{ "{{" }} $value }} failures/sec.
+            summary: >-
+              High Siren Teams dispatch failure rate
+          expr: >-
+            rate(truvami_alerts_teams_dispatch_error_count[5m]) > 0.05
+          for: 2m
+          labels:
+            {{- range $key, $value := .Values.alertLabels }}
+            {{ $key }}: {{ $value | quote }}
+            {{- end }}
+            service: siren
+            severity: major
+        - alert: SirenGrpcNotifyFailures
+          annotations:
+            description: >-
+              Siren gRPC notification failure rate is {{ "{{" }} $value }} failures/sec for device {{ "{{" }} $labels.devEui }}.
+            summary: >-
+              High Siren gRPC notification failure rate
+          expr: >-
+            rate(truvami_alerts_notify_grpc_errors_count[5m]) > 0.1
+          for: 2m
+          labels:
+            {{- range $key, $value := .Values.alertLabels }}
+            {{ $key }}: {{ $value | quote }}
+            {{- end }}
+            service: siren
+            severity: major
+            node: siren-{{ "{{" }} $labels.devEui }}
+        - alert: SirenDispatchQueueFull
+          annotations:
+            description: >-
+              Siren dispatch queue is full with {{ "{{" }} $value }} items - alerts may be dropped.
+            summary: >-
+              Siren dispatch queue is full
+          expr: >-
+            truvami_alerts_dispatch_queue_depth > 1000
+          for: 1m
+          labels:
+            {{- range $key, $value := .Values.alertLabels }}
+            {{ $key }}: {{ $value | quote }}
+            {{- end }}
+            service: siren
+            severity: critical
+        - alert: SirenDispatchWorkerPoolExhaustion
+          annotations:
+            description: >-
+              Siren dispatch worker pool is exhausted - all {{ "{{" }} $value }} workers are busy.
+            summary: >-
+              Siren dispatch worker pool exhausted
+          expr: >-
+            truvami_alerts_dispatch_workers_busy == truvami_alerts_dispatch_workers_total
+          for: 2m
+          labels:
+            {{- range $key, $value := .Values.alertLabels }}
+            {{ $key }}: {{ $value | quote }}
+            {{- end }}
+            service: siren
+            severity: major

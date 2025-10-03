@@ -1,0 +1,133 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  labels:
+    prometheus: kube-prometheus-stack-prometheus
+    role: alert-rules
+  name: siren-alert-processing
+spec:
+  groups:
+    - name: siren-alert-processing
+      rules:
+        - alert: SirenUplinkProcessingFailures
+          annotations:
+            description: >-
+              Siren uplink processing failure rate is {{ "{{" }} $value }} failures/sec for topic {{ "{{" }} $labels.topic }}.
+            summary: >-
+              High Siren uplink processing failure rate
+          expr: >-
+            rate(truvami_alerts_uplinks_processed_error_count[5m]) > 0.1
+          for: 2m
+          labels:
+            {{- range $key, $value := .Values.alertLabels }}
+            {{ $key }}: {{ $value | quote }}
+            {{- end }}
+            service: siren
+            severity: major
+            node: siren-{{ "{{" }} $labels.topic }}
+        - alert: SirenPositionProcessingFailures
+          annotations:
+            description: >-
+              Siren position processing failure rate is {{ "{{" }} $value }} failures/sec for topic {{ "{{" }} $labels.topic }}.
+            summary: >-
+              High Siren position processing failure rate
+          expr: >-
+            rate(truvami_alerts_positions_processed_error_count[5m]) > 0.1
+          for: 2m
+          labels:
+            {{- range $key, $value := .Values.alertLabels }}
+            {{ $key }}: {{ $value | quote }}
+            {{- end }}
+            service: siren
+            severity: major
+            node: siren-{{ "{{" }} $labels.topic }}
+        - alert: SirenBatteryStatusProcessingFailures
+          annotations:
+            description: >-
+              Siren battery status processing failure rate is {{ "{{" }} $value }} failures/sec for topic {{ "{{" }} $labels.topic }}.
+            summary: >-
+              High Siren battery status processing failure rate
+          expr: >-
+            rate(truvami_alerts_battery_statuses_processed_error_count[5m]) > 0.1
+          for: 2m
+          labels:
+            {{- range $key, $value := .Values.alertLabels }}
+            {{ $key }}: {{ $value | quote }}
+            {{- end }}
+            service: siren
+            severity: major
+            node: siren-{{ "{{" }} $labels.topic }}
+        - alert: SirenRotationStatusProcessingFailures
+          annotations:
+            description: >-
+              Siren rotation status processing failure rate is {{ "{{" }} $value }} failures/sec for topic {{ "{{" }} $labels.topic }}.
+            summary: >-
+              High Siren rotation status processing failure rate
+          expr: >-
+            rate(truvami_alerts_rotations_statuses_processed_error_count[5m]) > 0.1
+          for: 2m
+          labels:
+            {{- range $key, $value := .Values.alertLabels }}
+            {{ $key }}: {{ $value | quote }}
+            {{- end }}
+            service: siren
+            severity: major
+            node: siren-{{ "{{" }} $labels.topic }}
+        - alert: SirenEventProcessingFailures
+          annotations:
+            description: >-
+              Siren event processing failure rate is {{ "{{" }} $value }} failures/sec for topic {{ "{{" }} $labels.topic }}.
+            summary: >-
+              High Siren event processing failure rate
+          expr: >-
+            rate(truvami_alerts_events_processed_error_count[5m]) > 0.1
+          for: 2m
+          labels:
+            {{- range $key, $value := .Values.alertLabels }}
+            {{ $key }}: {{ $value | quote }}
+            {{- end }}
+            service: siren
+            severity: major
+            node: siren-{{ "{{" }} $labels.topic }}
+        - alert: SirenAlertProcessingRateHigh
+          annotations:
+            description: >-
+              Siren alert processing rate is unusually high at {{ "{{" }} $value }} alerts/sec.
+            summary: >-
+              Unusually high Siren alert processing rate
+          expr: >-
+            (
+              rate(truvami_alerts_uplinks_processed_count[5m]) +
+              rate(truvami_alerts_positions_processed_count[5m]) +
+              rate(truvami_alerts_battery_statuses_processed_count[5m]) +
+              rate(truvami_alerts_rotations_statuses_processed_count[5m]) +
+              rate(truvami_alerts_events_processed_count[5m])
+            ) > 50
+          for: 5m
+          labels:
+            {{- range $key, $value := .Values.alertLabels }}
+            {{ $key }}: {{ $value | quote }}
+            {{- end }}
+            service: siren
+            severity: intermediate
+        - alert: SirenAlertProcessingRateLow
+          annotations:
+            description: >-
+              Siren alert processing rate is unusually low at {{ "{{" }} $value }} alerts/sec - possible system issue.
+            summary: >-
+              Unusually low Siren alert processing rate
+          expr: >-
+            (
+              rate(truvami_alerts_uplinks_processed_count[5m]) +
+              rate(truvami_alerts_positions_processed_count[5m]) +
+              rate(truvami_alerts_battery_statuses_processed_count[5m]) +
+              rate(truvami_alerts_rotations_statuses_processed_count[5m]) +
+              rate(truvami_alerts_events_processed_count[5m])
+            ) < 0.01
+          for: 10m
+          labels:
+            {{- range $key, $value := .Values.alertLabels }}
+            {{ $key }}: {{ $value | quote }}
+            {{- end }}
+            service: siren
+            severity: warning

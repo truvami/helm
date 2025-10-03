@@ -1,0 +1,87 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  labels:
+    prometheus: kube-prometheus-stack-prometheus
+    role: alert-rules
+  name: siren-kafka-consumer
+spec:
+  groups:
+    - name: siren-kafka-consumer
+      rules:
+        - alert: SirenKafkaConsumerDown
+          annotations:
+            description: >-
+              Siren Kafka consumer has not consumed messages for more than 5 minutes.
+            summary: >-
+              Siren Kafka consumer is down
+          expr: >-
+            rate(truvami_kafka_alerts_messages_consumed_count[5m]) == 0
+          for: 5m
+          labels:
+            {{- range $key, $value := .Values.alertLabels }}
+            {{ $key }}: {{ $value | quote }}
+            {{- end }}
+            service: siren
+            severity: critical
+        - alert: SirenKafkaConsumerHighErrorRate
+          annotations:
+            description: >-
+              Siren Kafka consumer error rate is {{ "{{" }} $value }} errors/sec for error code {{ "{{" }} $labels.error_code }}.
+            summary: >-
+              High Siren Kafka consumer error rate
+          expr: >-
+            rate(truvami_kafka_alerts_messages_error_count[5m]) > 0.1
+          for: 2m
+          labels:
+            {{- range $key, $value := .Values.alertLabels }}
+            {{ $key }}: {{ $value | quote }}
+            {{- end }}
+            service: siren
+            severity: major
+        - alert: SirenKafkaConsumerLag
+          annotations:
+            description: >-
+              Siren Kafka consumer lag is high with {{ "{{" }} $value }} messages behind for topic {{ "{{" }} $labels.topic }}.
+            summary: >-
+              High Siren Kafka consumer lag
+          expr: >-
+            kafka_consumer_lag_sum{job="siren"} > 500
+          for: 5m
+          labels:
+            {{- range $key, $value := .Values.alertLabels }}
+            {{ $key }}: {{ $value | quote }}
+            {{- end }}
+            service: siren
+            severity: warning
+            node: siren-{{ "{{" }} $labels.topic }}
+        - alert: SirenKafkaConsumerIdleTooLong
+          annotations:
+            description: >-
+              Siren Kafka consumer has been idle for more than 15 minutes.
+            summary: >-
+              Siren Kafka consumer idle too long
+          expr: >-
+            time() - truvami_kafka_consumer_last_message_timestamp_seconds{job="siren"} > 900
+          for: 2m
+          labels:
+            {{- range $key, $value := .Values.alertLabels }}
+            {{ $key }}: {{ $value | quote }}
+            {{- end }}
+            service: siren
+            severity: major
+        - alert: SirenKafkaUnknownTopicMessages
+          annotations:
+            description: >-
+              Siren is receiving messages from unknown topic at {{ "{{" }} $value }} messages/sec.
+            summary: >-
+              Siren receiving messages from unknown topics
+          expr: >-
+            rate(truvami_alerts_consume_unknown_topic_count[5m]) > 0.01
+          for: 10m
+          labels:
+            {{- range $key, $value := .Values.alertLabels }}
+            {{ $key }}: {{ $value | quote }}
+            {{- end }}
+            service: siren
+            severity: minor

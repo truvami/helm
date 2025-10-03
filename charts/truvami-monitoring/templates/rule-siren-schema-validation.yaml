@@ -1,0 +1,86 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  labels:
+    prometheus: kube-prometheus-stack-prometheus
+    role: alert-rules
+  name: siren-schema-validation
+spec:
+  groups:
+    - name: siren-schema-validation
+      rules:
+        - alert: SirenUnsupportedAlertSchema
+          annotations:
+            description: >-
+              Siren received unsupported alert schema {{ "{{" }} $labels.schema }} at {{ "{{" }} $value }} occurrences/sec.
+            summary: >-
+              Siren unsupported alert schema detected
+          expr: >-
+            rate(truvami_alerts_unsupported_schema_count[5m]) > 0.01
+          for: 2m
+          labels:
+            {{- range $key, $value := .Values.alertLabels }}
+            {{ $key }}: {{ $value | quote }}
+            {{- end }}
+            service: siren
+            severity: major
+        - alert: SirenUnsupportedAlertVersion
+          annotations:
+            description: >-
+              Siren received unsupported alert version {{ "{{" }} $labels.version }} for schema {{ "{{" }} $labels.schema }} at {{ "{{" }} $value }} occurrences/sec.
+            summary: >-
+              Siren unsupported alert version detected
+          expr: >-
+            rate(truvami_alerts_unsupported_version_count[5m]) > 0.01
+          for: 2m
+          labels:
+            {{- range $key, $value := .Values.alertLabels }}
+            {{ $key }}: {{ $value | quote }}
+            {{- end }}
+            service: siren
+            severity: major
+        - alert: SirenMessageUnmarshalFailures
+          annotations:
+            description: >-
+              Siren message unmarshalling failure rate is {{ "{{" }} $value }} failures/sec.
+            summary: >-
+              High Siren message unmarshalling failure rate
+          expr: >-
+            rate(truvami_alerts_unmarshal_error_count[5m]) > 0.1
+          for: 2m
+          labels:
+            {{- range $key, $value := .Values.alertLabels }}
+            {{ $key }}: {{ $value | quote }}
+            {{- end }}
+            service: siren
+            severity: major
+        - alert: SirenInvalidCustomerData
+          annotations:
+            description: >-
+              Siren received invalid customer data at {{ "{{" }} $value }} occurrences/sec.
+            summary: >-
+              Siren invalid customer data detected
+          expr: >-
+            rate(truvami_alerts_invalid_customer_data_count[5m]) > 0.05
+          for: 2m
+          labels:
+            {{- range $key, $value := .Values.alertLabels }}
+            {{ $key }}: {{ $value | quote }}
+            {{- end }}
+            service: siren
+            severity: major
+        - alert: SirenInvalidDevEUIData
+          annotations:
+            description: >-
+              Siren received invalid device EUI data at {{ "{{" }} $value }} occurrences/sec.
+            summary: >-
+              Siren invalid device EUI data detected
+          expr: >-
+            rate(truvami_alerts_invalid_deveui_data_count[5m]) > 0.05
+          for: 2m
+          labels:
+            {{- range $key, $value := .Values.alertLabels }}
+            {{ $key }}: {{ $value | quote }}
+            {{- end }}
+            service: siren
+            severity: major

@@ -60,11 +60,11 @@ spec:
         - alert: TruvamiDeviceHighBufferLevel
           annotations:
             description: >-
-              Device {{ "{{" }} $labels.devEui }} (customer: {{ "{{" }} $labels.customer }}) has high buffer level: {{ "{{" }} $value }}%.
+              Device {{ "{{" }} $labels.devEui }} (customer: {{ "{{" }} $labels.customer }}) has high buffer level: {{ "{{" }} $value }} items (max ~1000).
             summary: >-
               Truvami device buffer level high
           expr: >-
-            truvami_device_buffer_level > 80
+            truvami_device_buffer_level > 800
           for: 5m
           labels:
             {{- range $key, $value := .Values.alertLabels }}

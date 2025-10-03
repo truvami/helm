@@ -1,0 +1,63 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  labels:
+    prometheus: kube-prometheus-stack-prometheus
+    role: alert-rules
+  name: siren-service-health
+spec:
+  groups:
+    - name: siren-service-health
+      rules:
+        - alert: SirenServiceDown
+          annotations:
+            description: >-
+              Siren service instance {{ "{{" }} $labels.instance }} has been down for more than 1 minute.
+            summary: >-
+              Siren service is down
+          expr: >-
+            up{job="siren"} == 0
+          for: 1m
+          labels:
+            {{- range $key, $value := .Values.alertLabels }}
+            {{ $key }}: {{ $value | quote }}
+            {{- end }}
+            service: siren
+            severity: critical
+        - alert: SirenServiceHighErrorRate
+          annotations:
+            description: >-
+              Siren service has high error rate at {{ "{{" }} $value }} errors/sec over the last 5 minutes.
+            summary: >-
+              High error rate in Siren service
+          expr: >-
+            (
+              rate(truvami_alerts_uplinks_processed_error_count[5m]) +
+              rate(truvami_alerts_positions_processed_error_count[5m]) +
+              rate(truvami_alerts_battery_statuses_processed_error_count[5m]) +
+              rate(truvami_alerts_rotations_statuses_processed_error_count[5m]) +
+              rate(truvami_alerts_events_processed_error_count[5m]) +
+              rate(truvami_alerts_dispatch_errors_count[5m])
+            ) > 0.25
+          for: 1m
+          labels:
+            {{- range $key, $value := .Values.alertLabels }}
+            {{ $key }}: {{ $value | quote }}
+            {{- end }}
+            service: siren
+            severity: critical
+        - alert: SirenHealthCheckFailures
+          annotations:
+            description: >-
+              Siren health check endpoint is failing for instance {{ "{{" }} $labels.instance }}.
+            summary: >-
+              Siren health check failures
+          expr: >-
+            rate(prometheus_http_requests_total{handler="/healthz", code!="200"}[5m]) > 0
+          for: 2m
+          labels:
+            {{- range $key, $value := .Values.alertLabels }}
+            {{ $key }}: {{ $value | quote }}
+            {{- end }}
+            service: siren
+            severity: major

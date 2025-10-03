@@ -1,0 +1,87 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  labels:
+    prometheus: kube-prometheus-stack-prometheus
+    role: alert-rules
+  name: siren-cache-storage
+spec:
+  groups:
+    - name: siren-cache-storage
+      rules:
+        - alert: SirenValkeyConnectionFailures
+          annotations:
+            description: >-
+              Siren Valkey cache connection failure rate is {{ "{{" }} $value }} failures/sec.
+            summary: >-
+              Siren Valkey cache connection failures
+          expr: >-
+            rate(truvami_alerts_valkey_connection_error_count[5m]) > 0
+          for: 1m
+          labels:
+            {{- range $key, $value := .Values.alertLabels }}
+            {{ $key }}: {{ $value | quote }}
+            {{- end }}
+            service: siren
+            severity: critical
+        - alert: SirenCacheMissRateHigh
+          annotations:
+            description: >-
+              Siren cache miss rate is {{ "{{" }} $value | humanizePercentage }} over the last 5 minutes.
+            summary: >-
+              High Siren cache miss rate
+          expr: >-
+            rate(truvami_alerts_cache_miss_count[5m]) / 
+            (rate(truvami_alerts_cache_hit_count[5m]) + rate(truvami_alerts_cache_miss_count[5m])) > 0.5
+          for: 5m
+          labels:
+            {{- range $key, $value := .Values.alertLabels }}
+            {{ $key }}: {{ $value | quote }}
+            {{- end }}
+            service: siren
+            severity: minor
+        - alert: SirenAlertConfigCacheFailures
+          annotations:
+            description: >-
+              Siren alert config cache failure rate is {{ "{{" }} $value }} failures/sec.
+            summary: >-
+              Siren alert config cache failures
+          expr: >-
+            rate(truvami_alerts_config_cache_error_count[5m]) > 0.01
+          for: 2m
+          labels:
+            {{- range $key, $value := .Values.alertLabels }}
+            {{ $key }}: {{ $value | quote }}
+            {{- end }}
+            service: siren
+            severity: major
+        - alert: SirenDeviceRepositoryErrors
+          annotations:
+            description: >-
+              Siren device repository error rate is {{ "{{" }} $value }} errors/sec.
+            summary: >-
+              Siren device repository errors
+          expr: >-
+            rate(truvami_alerts_device_repository_error_count[5m]) > 0.01
+          for: 2m
+          labels:
+            {{- range $key, $value := .Values.alertLabels }}
+            {{ $key }}: {{ $value | quote }}
+            {{- end }}
+            service: siren
+            severity: major
+        - alert: SirenGrpcClientErrors
+          annotations:
+            description: >-
+              Siren gRPC client error rate is {{ "{{" }} $value }} errors/sec for service {{ "{{" }} $labels.service }}.
+            summary: >-
+              Siren gRPC client connection errors
+          expr: >-
+            rate(truvami_alerts_grpc_client_error_count[5m]) > 0.01
+          for: 2m
+          labels:
+            {{- range $key, $value := .Values.alertLabels }}
+            {{ $key }}: {{ $value | quote }}
+            {{- end }}
+            service: siren
+            severity: major
