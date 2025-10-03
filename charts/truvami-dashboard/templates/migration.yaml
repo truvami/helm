@@ -44,7 +44,7 @@ spec:
                   name: {{ .Release.Name }}-dashboard-db-app
                   key: username
             - name: DATABASE_URL
-              value: "postgresql://$(DB_USER):$(DB_PASSWORD)@{{ .Release.Name }}-dashboard-db-rw:5432/dashboard"
+              value: "postgresql://$(DB_USER):$(DB_PASSWORD)@{{ .Release.Name }}-dashboard-db-rw:5432/app"
           {{- else if .Values.database.url }}
           env:
             - name: DATABASE_URL
