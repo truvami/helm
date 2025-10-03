@@ -30,7 +30,7 @@
                 "x": 0,
                 "y": 0
             },
-            "id": "valkey-alert-summary-row",
+            			"id": 1,
             "panels": [],
             "title": "Alert Summary - Valkey Cache",
             "type": "row"
@@ -69,11 +69,11 @@
             },
             "gridPos": {
                 "h": 4,
-                "w": 4,
+                "w": 6,
                 "x": 0,
                 "y": 1
             },
-            "id": "valkey-total-alerts",
+            			"id": 2,
             "options": {
                 "colorMode": "background",
                 "graphMode": "area",
@@ -138,11 +138,11 @@
             },
             "gridPos": {
                 "h": 4,
-                "w": 4,
-                "x": 4,
+                "w": 6,
+                "x": 6,
                 "y": 1
             },
-            "id": "valkey-critical-alerts",
+            			"id": 3,
             "options": {
                 "colorMode": "background",
                 "graphMode": "area",
@@ -207,11 +207,11 @@
             },
             "gridPos": {
                 "h": 4,
-                "w": 4,
-                "x": 8,
+                "w": 6,
+                "x": 12,
                 "y": 1
             },
-            "id": "valkey-major-alerts",
+            			"id": 4,
             "options": {
                 "colorMode": "background",
                 "graphMode": "area",
@@ -276,11 +276,11 @@
             },
             "gridPos": {
                 "h": 4,
-                "w": 4,
-                "x": 12,
+                "w": 6,
+                "x": 18,
                 "y": 1
             },
-            "id": "valkey-warning-alerts",
+            			"id": 5,
             "options": {
                 "colorMode": "background",
                 "graphMode": "area",
@@ -345,11 +345,11 @@
             },
             "gridPos": {
                 "h": 4,
-                "w": 4,
-                "x": 16,
-                "y": 1
+                "w": 6,
+                "x": 0,
+                "y": 5
             },
-            "id": "valkey-minor-alerts",
+            			"id": 6,
             "options": {
                 "colorMode": "background",
                 "graphMode": "area",
@@ -414,11 +414,11 @@
             },
             "gridPos": {
                 "h": 4,
-                "w": 4,
-                "x": 20,
-                "y": 1
+                "w": 6,
+                "x": 6,
+                "y": 5
             },
-            "id": "valkey-intermediate-alerts",
+            			"id": 7,
             "options": {
                 "colorMode": "background",
                 "graphMode": "area",
@@ -459,9 +459,9 @@
                 "h": 1,
                 "w": 24,
                 "x": 0,
-                "y": 5
+                "y": 9
             },
-            "id": "valkey-existing-metrics-row",
+            			"id": 8,
             "panels": [],
             "title": "Valkey Cache Metrics",
             "type": "row"
@@ -469,7 +469,7 @@
         {
             "datasource": {
                 "type": "prometheus",
-                "uid": "PBFA97CFB590B2093"
+                "uid": "${datasource}"
             },
             "fieldConfig": {
                 "defaults": {
@@ -509,7 +509,7 @@
                 "h": 7,
                 "w": 2,
                 "x": 0,
-                "y": 6
+                "y": 10
             },
             "id": 9,
             "maxDataPoints": 100,
@@ -535,7 +535,7 @@
                 {
                     "datasource": {
                         "type": "prometheus",
-                        "uid": "PBFA97CFB590B2093"
+                        "uid": "${datasource}"
                     },
                     "expr": "max(max_over_time(redis_uptime_in_seconds{instance=~\"$instance\"}[$__interval]))",
                     "format": "time_series",
@@ -553,7 +553,7 @@
         {
             "datasource": {
                 "type": "prometheus",
-                "uid": "PBFA97CFB590B2093"
+                "uid": "${datasource}"
             },
             "fieldConfig": {
                 "defaults": {
@@ -593,10 +593,10 @@
                 "h": 7,
                 "w": 2,
                 "x": 2,
-                "y": 0
+                "y": 10
             },
             "hideTimeOverride": true,
-            "id": 12,
+            "id": 21,
             "maxDataPoints": 100,
             "options": {
                 "colorMode": "none",
@@ -620,7 +620,7 @@
                 {
                     "datasource": {
                         "type": "prometheus",
-                        "uid": "PBFA97CFB590B2093"
+                        "uid": "${datasource}"
                     },
                     "expr": "redis_connected_clients{instance=~\"$instance\"}",
                     "format": "time_series",
@@ -638,7 +638,7 @@
         {
             "datasource": {
                 "type": "prometheus",
-                "uid": "PBFA97CFB590B2093"
+                "uid": "${datasource}"
             },
             "fieldConfig": {
                 "defaults": {
@@ -684,7 +684,7 @@
                 "h": 7,
                 "w": 4,
                 "x": 4,
-                "y": 0
+                "y": 10
             },
             "hideTimeOverride": true,
             "id": 11,
@@ -711,7 +711,7 @@
                 {
                     "datasource": {
                         "type": "prometheus",
-                        "uid": "PBFA97CFB590B2093"
+                        "uid": "${datasource}"
                     },
                     "expr": "100 * (redis_memory_used_bytes{instance=~\"$instance\"}  / redis_memory_max_bytes{instance=~\"$instance\"} )",
                     "format": "time_series",
@@ -729,7 +729,7 @@
         {
             "datasource": {
                 "type": "prometheus",
-                "uid": "PBFA97CFB590B2093"
+                "uid": "${datasource}"
             },
             "fieldConfig": {
                 "defaults": {
@@ -790,9 +790,9 @@
                 "h": 7,
                 "w": 8,
                 "x": 8,
-                "y": 0
+                "y": 10
             },
-            "id": 2,
+            "id": 15,
             "options": {
                 "dataLinks": [],
                 "legend": {
@@ -812,7 +812,7 @@
                 {
                     "datasource": {
                         "type": "prometheus",
-                        "uid": "PBFA97CFB590B2093"
+                        "uid": "${datasource}"
                     },
                     "expr": "rate(redis_commands_processed_total{instance=~\"$instance\"}[1m])",
                     "format": "time_series",
@@ -831,7 +831,7 @@
         {
             "datasource": {
                 "type": "prometheus",
-                "uid": "PBFA97CFB590B2093"
+                "uid": "${datasource}"
             },
             "fieldConfig": {
                 "defaults": {
@@ -893,9 +893,9 @@
                 "h": 7,
                 "w": 8,
                 "x": 16,
-                "y": 0
+                "y": 10
             },
-            "id": 1,
+            "id": 17,
             "options": {
                 "dataLinks": [],
                 "legend": {
@@ -915,7 +915,7 @@
                 {
                     "datasource": {
                         "type": "prometheus",
-                        "uid": "PBFA97CFB590B2093"
+                        "uid": "${datasource}"
                     },
                     "expr": "irate(redis_keyspace_hits_total{instance=~\"$instance\"}[5m])",
                     "format": "time_series",
@@ -931,7 +931,7 @@
                 {
                     "datasource": {
                         "type": "prometheus",
-                        "uid": "PBFA97CFB590B2093"
+                        "uid": "${datasource}"
                     },
                     "expr": "irate(redis_keyspace_misses_total{instance=~\"$instance\"}[5m])",
                     "format": "time_series",
@@ -951,7 +951,7 @@
         {
             "datasource": {
                 "type": "prometheus",
-                "uid": "PBFA97CFB590B2093"
+                "uid": "${datasource}"
             },
             "fieldConfig": {
                 "defaults": {
@@ -1029,9 +1029,9 @@
                 "h": 7,
                 "w": 12,
                 "x": 0,
-                "y": 7
+                "y": 11
             },
-            "id": 7,
+            "id": 18,
             "options": {
                 "dataLinks": [],
                 "legend": {
@@ -1051,7 +1051,7 @@
                 {
                     "datasource": {
                         "type": "prometheus",
-                        "uid": "PBFA97CFB590B2093"
+                        "uid": "${datasource}"
                     },
                     "expr": "redis_memory_used_bytes{instance=~\"$instance\"} ",
                     "format": "time_series",
@@ -1065,7 +1065,7 @@
                 {
                     "datasource": {
                         "type": "prometheus",
-                        "uid": "PBFA97CFB590B2093"
+                        "uid": "${datasource}"
                     },
                     "expr": "redis_memory_max_bytes{instance=~\"$instance\"} ",
                     "format": "time_series",
@@ -1082,7 +1082,7 @@
         {
             "datasource": {
                 "type": "prometheus",
-                "uid": "PBFA97CFB590B2093"
+                "uid": "${datasource}"
             },
             "fieldConfig": {
                 "defaults": {
@@ -1143,7 +1143,7 @@
                 "h": 7,
                 "w": 12,
                 "x": 12,
-                "y": 7
+                "y": 11
             },
             "id": 10,
             "options": {
@@ -1165,7 +1165,7 @@
                 {
                     "datasource": {
                         "type": "prometheus",
-                        "uid": "PBFA97CFB590B2093"
+                        "uid": "${datasource}"
                     },
                     "expr": "rate(redis_net_input_bytes_total{instance=~\"$instance\"}[5m])",
                     "format": "time_series",
@@ -1177,7 +1177,7 @@
                 {
                     "datasource": {
                         "type": "prometheus",
-                        "uid": "PBFA97CFB590B2093"
+                        "uid": "${datasource}"
                     },
                     "expr": "rate(redis_net_output_bytes_total{instance=~\"$instance\"}[5m])",
                     "format": "time_series",
@@ -1194,7 +1194,7 @@
         {
             "datasource": {
                 "type": "prometheus",
-                "uid": "PBFA97CFB590B2093"
+                "uid": "${datasource}"
             },
             "fieldConfig": {
                 "defaults": {
@@ -1255,9 +1255,9 @@
                 "h": 7,
                 "w": 12,
                 "x": 0,
-                "y": 14
+                "y": 18
             },
-            "id": 5,
+            "id": 19,
             "options": {
                 "dataLinks": [],
                 "legend": {
@@ -1279,7 +1279,7 @@
                 {
                     "datasource": {
                         "type": "prometheus",
-                        "uid": "PBFA97CFB590B2093"
+                        "uid": "${datasource}"
                     },
                     "expr": "sum (redis_db_keys{instance=~\"$instance\"}) by (db)",
                     "format": "time_series",
@@ -1297,7 +1297,7 @@
         {
             "datasource": {
                 "type": "prometheus",
-                "uid": "PBFA97CFB590B2093"
+                "uid": "${datasource}"
             },
             "fieldConfig": {
                 "defaults": {
@@ -1358,7 +1358,7 @@
                 "h": 7,
                 "w": 12,
                 "x": 12,
-                "y": 14
+                "y": 18
             },
             "id": 13,
             "options": {
@@ -1380,7 +1380,7 @@
                 {
                     "datasource": {
                         "type": "prometheus",
-                        "uid": "PBFA97CFB590B2093"
+                        "uid": "${datasource}"
                     },
                     "expr": "sum (redis_db_keys{instance=~\"$instance\"}) - sum (redis_db_keys_expiring{instance=~\"$instance\"}) ",
                     "format": "time_series",
@@ -1394,7 +1394,7 @@
                 {
                     "datasource": {
                         "type": "prometheus",
-                        "uid": "PBFA97CFB590B2093"
+                        "uid": "${datasource}"
                     },
                     "expr": "sum (redis_db_keys_expiring{instance=~\"$instance\"}) ",
                     "format": "time_series",
@@ -1412,7 +1412,7 @@
         {
             "datasource": {
                 "type": "prometheus",
-                "uid": "PBFA97CFB590B2093"
+                "uid": "${datasource}"
             },
             "fieldConfig": {
                 "defaults": {
@@ -1531,9 +1531,9 @@
                 "h": 7,
                 "w": 12,
                 "x": 0,
-                "y": 21
+                "y": 25
             },
-            "id": 8,
+            "id": 20,
             "options": {
                 "dataLinks": [],
                 "legend": {
@@ -1553,7 +1553,7 @@
                 {
                     "datasource": {
                         "type": "prometheus",
-                        "uid": "PBFA97CFB590B2093"
+                        "uid": "${datasource}"
                     },
                     "expr": "sum(rate(redis_expired_keys_total{instance=~\"$instance\"}[5m])) by (instance)",
                     "format": "time_series",
@@ -1569,7 +1569,7 @@
                 {
                     "datasource": {
                         "type": "prometheus",
-                        "uid": "PBFA97CFB590B2093"
+                        "uid": "${datasource}"
                     },
                     "expr": "sum(rate(redis_evicted_keys_total{instance=~\"$instance\"}[5m])) by (instance)",
                     "format": "time_series",
@@ -1586,7 +1586,7 @@
         {
             "datasource": {
                 "type": "prometheus",
-                "uid": "PBFA97CFB590B2093"
+                "uid": "${datasource}"
             },
             "fieldConfig": {
                 "defaults": {
@@ -1647,7 +1647,7 @@
                 "h": 7,
                 "w": 12,
                 "x": 12,
-                "y": 21
+                "y": 25
             },
             "id": 14,
             "options": {
@@ -1669,7 +1669,7 @@
                 {
                     "datasource": {
                         "type": "prometheus",
-                        "uid": "PBFA97CFB590B2093"
+                        "uid": "${datasource}"
                     },
                     "expr": "topk(5, irate(redis_commands_total{instance=~\"$instance\"} [1m]))",
                     "format": "time_series",
@@ -1687,7 +1687,7 @@
         {
             "datasource": {
                 "type": "prometheus",
-                "uid": "PBFA97CFB590B2093"
+                "uid": "${datasource}"
             },
             "fieldConfig": {
                 "defaults": {
@@ -1748,7 +1748,7 @@
                 "h": 7,
                 "w": 12,
                 "x": 0,
-                "y": 28
+                "y": 32
             },
             "id": 16,
             "options": {
@@ -1770,7 +1770,7 @@
                 {
                     "datasource": {
                         "type": "prometheus",
-                        "uid": "PBFA97CFB590B2093"
+                        "uid": "${datasource}"
                     },
                     "expr": "redis_connected_clients{instance=\"$instance\"}",
                     "format": "time_series",
@@ -1790,9 +1790,9 @@
                 "h": 8,
                 "w": 24,
                 "x": 0,
-                "y": 30
+                "y": 34
             },
-            "id": "valkey-alerts-list",
+            			"id": 23,
             "options": {
                 "alertInstanceLabelFilter": "service=\"valkey\"",
                 "alertName": "",
@@ -1829,7 +1829,7 @@
             {
                 "current": {
                     "text": "Prometheus",
-                    "value": "PBFA97CFB590B2093"
+                    "value": "${datasource}"
                 },
                 "includeAll": false,
                 "label": "Prometheus",

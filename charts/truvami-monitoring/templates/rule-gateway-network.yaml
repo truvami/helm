@@ -9,12 +9,12 @@ spec:
   groups:
     - name: truvami-gateway-network
       rules:
-        - alert: TruvamiLowGatewayRSSI
+        - alert: TruvamiBadGatewayRSSI
           annotations:
             description: >
               Gateway {{ "{{" }} $labels.gatewayId }} has average RSSI of {{ "{{" }} $value }} dBm over the last 24 hours, which is below the -120 dBm threshold.
             summary: >
-              Low Truvami gateway RSSI detected (24h average)
+              Bad Truvami gateway RSSI detected (24h average)
           expr: >
             avg by (gatewayId) (avg_over_time(truvami_gateway_uplink_rssi[1d])) < -120
           for: 30m
@@ -25,12 +25,12 @@ spec:
             service: truvami-bridge
             severity: minor
             node: truvami-gateway-{{ "{{" }} $labels.gatewayId }}
-        - alert: TruvamiLowGatewaySNR
+        - alert: TruvamiBadGatewaySNR
           annotations:
             description: >
               Gateway {{ "{{" }} $labels.gatewayId }} has average SNR of {{ "{{" }} $value }} dB over the last 24 hours, which is below the -10 dB threshold.
             summary: >
-              Low Truvami gateway SNR detected (24h average)
+              Bad Truvami gateway SNR detected (24h average)
           expr: >
             avg by (gatewayId) (avg_over_time(truvami_gateway_uplink_snr[1d])) < -10
           for: 30m

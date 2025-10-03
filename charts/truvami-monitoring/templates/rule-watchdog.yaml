@@ -15,7 +15,7 @@ metadata:
   {{- end }}
 spec:
   groups:
-  - name: truvami.watchdog
+  - name: truvami-watchdog
     interval: 5m
     rules:
     # Watchdog Alert - Always Firing
