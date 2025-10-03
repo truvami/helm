@@ -30,7 +30,7 @@
                 "x": 0,
                 "y": 0
             },
-            "id": "truvami-api-alert-summary-row",
+            "id": 1,
             "panels": [],
             "title": "Alert Summary - Truvami API",
             "type": "row"
@@ -73,7 +73,7 @@
                 "x": 0,
                 "y": 1
             },
-            "id": "truvami-api-total-alerts",
+            "id": 2,
             "options": {
                 "colorMode": "background",
                 "graphMode": "area",
@@ -142,7 +142,7 @@
                 "x": 4,
                 "y": 1
             },
-            "id": "truvami-api-critical-alerts",
+            "id": 3,
             "options": {
                 "colorMode": "background",
                 "graphMode": "area",
@@ -211,7 +211,7 @@
                 "x": 8,
                 "y": 1
             },
-            "id": "truvami-api-major-alerts",
+            "id": 4,
             "options": {
                 "colorMode": "background",
                 "graphMode": "area",
@@ -280,7 +280,7 @@
                 "x": 12,
                 "y": 1
             },
-            "id": "truvami-api-warning-alerts",
+            "id": 5,
             "options": {
                 "colorMode": "background",
                 "graphMode": "area",
@@ -349,7 +349,7 @@
                 "x": 16,
                 "y": 1
             },
-            "id": "truvami-api-minor-alerts",
+            "id": 6,
             "options": {
                 "colorMode": "background",
                 "graphMode": "area",
@@ -418,7 +418,7 @@
                 "x": 20,
                 "y": 1
             },
-            "id": "truvami-api-intermediate-alerts",
+            "id": 7,
             "options": {
                 "colorMode": "background",
                 "graphMode": "area",
@@ -461,7 +461,7 @@
                 "x": 0,
                 "y": 5
             },
-            "id": "truvami-api-service-metrics-row",
+            "id": 8,
             "panels": [],
             "title": "Service Metrics - Truvami API",
             "type": "row"
@@ -528,7 +528,7 @@
                 "x": 0,
                 "y": 6
             },
-            "id": "truvami-api-http-requests",
+            "id": 9,
             "options": {
                 "legend": {
                     "calcs": [],
@@ -551,16 +551,16 @@
                     },
                     "disableTextWrap": false,
                     "editorMode": "code",
-                    "expr": "rate(http_requests_total{namespace=~\"^($namespace)$\", pod=~\"^($pod)$\", service=~\".*truvami-api\"}[$interval])",
+                    "expr": "rate(promhttp_metric_handler_requests_total{namespace=~\"^($namespace)$\", pod=~\"^($pod)$\", service=~\".*truvami-api\"}[$interval])",
                     "fullMetaSearch": false,
                     "includeNullMetadata": false,
-                    "legendFormat": "{{method}} {{code}}",
+                    "legendFormat": "{{code}} - {{pod}}",
                     "range": true,
                     "refId": "A",
                     "useBackend": false
                 }
             ],
-            "title": "HTTP Requests Rate",
+            "title": "Prometheus Handler Requests Rate",
             "type": "timeseries"
         },
         {
@@ -625,7 +625,7 @@
                 "x": 12,
                 "y": 6
             },
-            "id": "truvami-api-response-time",
+            "id": 10,
             "options": {
                 "legend": {
                     "calcs": [],
@@ -648,10 +648,10 @@
                     },
                     "disableTextWrap": false,
                     "editorMode": "code",
-                    "expr": "histogram_quantile(0.95, rate(http_request_duration_seconds_bucket{namespace=~\"^($namespace)$\", pod=~\"^($pod)$\", service=~\".*truvami-api\"}[$interval]))",
+                    "expr": "go_gc_duration_seconds{namespace=~\"^($namespace)$\", pod=~\"^($pod)$\", service=~\".*truvami-api\", quantile=\"0.95\"}",
                     "fullMetaSearch": false,
                     "includeNullMetadata": false,
-                    "legendFormat": "95th percentile",
+                    "legendFormat": "95th percentile - {{pod}}",
                     "range": true,
                     "refId": "A",
                     "useBackend": false
@@ -663,21 +663,72 @@
                     },
                     "disableTextWrap": false,
                     "editorMode": "code",
-                    "expr": "histogram_quantile(0.50, rate(http_request_duration_seconds_bucket{namespace=~\"^($namespace)$\", pod=~\"^($pod)$\", service=~\".*truvami-api\"}[$interval]))",
+                    "expr": "go_gc_duration_seconds{namespace=~\"^($namespace)$\", pod=~\"^($pod)$\", service=~\".*truvami-api\", quantile=\"0.5\"}",
                     "fullMetaSearch": false,
                     "includeNullMetadata": false,
-                    "legendFormat": "50th percentile",
+                    "legendFormat": "50th percentile - {{pod}}",
                     "range": true,
                     "refId": "B",
                     "useBackend": false
                 }
             ],
-            "title": "HTTP Response Time",
+            "title": "Go GC Duration Quantiles",
             "type": "timeseries"
         },
         {
+            "datasource": {
+                "type": "prometheus",
+                "uid": "${datasource}"
+            },
             "fieldConfig": {
-                "defaults": {},
+                "defaults": {
+                    "color": {
+                        "mode": "palette-classic"
+                    },
+                    "custom": {
+                        "axisBorderShow": false,
+                        "axisCenteredZero": false,
+                        "axisColorMode": "text",
+                        "axisLabel": "",
+                        "axisPlacement": "auto",
+                        "barAlignment": 0,
+                        "barWidthFactor": 0.6,
+                        "drawStyle": "line",
+                        "fillOpacity": 10,
+                        "gradientMode": "none",
+                        "hideFrom": {
+                            "legend": false,
+                            "tooltip": false,
+                            "viz": false
+                        },
+                        "insertNulls": false,
+                        "lineInterpolation": "linear",
+                        "lineWidth": 2,
+                        "pointSize": 5,
+                        "scaleDistribution": {
+                            "type": "linear"
+                        },
+                        "showPoints": "auto",
+                        "spanNulls": false,
+                        "stacking": {
+                            "group": "A",
+                            "mode": "none"
+                        },
+                        "thresholdsStyle": {
+                            "mode": "off"
+                        }
+                    },
+                    "mappings": [],
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "green"
+                            }
+                        ]
+                    },
+                    "unit": "short"
+                },
                 "overrides": []
             },
             "gridPos": {
@@ -686,7 +737,296 @@
                 "x": 0,
                 "y": 14
             },
-            "id": "truvami-api-alerts-list",
+            "id": 19,
+            "options": {
+                "legend": {
+                    "calcs": [],
+                    "displayMode": "list",
+                    "placement": "bottom",
+                    "showLegend": true
+                },
+                "tooltip": {
+                    "hideZeros": false,
+                    "mode": "single",
+                    "sort": "none"
+                }
+            },
+            "pluginVersion": "12.1.1",
+            "targets": [
+                {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "${datasource}"
+                    },
+                    "disableTextWrap": false,
+                    "editorMode": "code",
+                    "expr": "rate(truvami_uplink_insert_validation_error_count{namespace=~\"^($namespace)$\", service=~\".*truvami-api\"}[$interval])",
+                    "fullMetaSearch": false,
+                    "includeNullMetadata": false,
+                    "legendFormat": "Uplink Errors - {{pod}}",
+                    "range": true,
+                    "refId": "A",
+                    "useBackend": false
+                },
+                {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "${datasource}"
+                    },
+                    "disableTextWrap": false,
+                    "editorMode": "code",
+                    "expr": "rate(truvami_position_insert_validation_error_count{namespace=~\"^($namespace)$\", service=~\".*truvami-api\"}[$interval])",
+                    "fullMetaSearch": false,
+                    "includeNullMetadata": false,
+                    "legendFormat": "Position Errors - {{pod}}",
+                    "range": true,
+                    "refId": "B",
+                    "useBackend": false
+                },
+                {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "${datasource}"
+                    },
+                    "disableTextWrap": false,
+                    "editorMode": "code",
+                    "expr": "rate(truvami_event_insert_validation_error_count{namespace=~\"^($namespace)$\", service=~\".*truvami-api\"}[$interval])",
+                    "fullMetaSearch": false,
+                    "includeNullMetadata": false,
+                    "legendFormat": "Event Errors - {{pod}}",
+                    "range": true,
+                    "refId": "C",
+                    "useBackend": false
+                }
+            ],
+            "title": "gRPC Validation Errors by Type",
+            "type": "timeseries"
+        },
+        {
+            "datasource": {
+                "type": "prometheus",
+                "uid": "${datasource}"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "color": {
+                        "mode": "palette-classic"
+                    },
+                    "custom": {
+                        "axisBorderShow": false,
+                        "axisCenteredZero": false,
+                        "axisColorMode": "text",
+                        "axisLabel": "",
+                        "axisPlacement": "auto",
+                        "barAlignment": 0,
+                        "barWidthFactor": 0.6,
+                        "drawStyle": "line",
+                        "fillOpacity": 10,
+                        "gradientMode": "none",
+                        "hideFrom": {
+                            "legend": false,
+                            "tooltip": false,
+                            "viz": false
+                        },
+                        "insertNulls": false,
+                        "lineInterpolation": "linear",
+                        "lineWidth": 2,
+                        "pointSize": 5,
+                        "scaleDistribution": {
+                            "type": "linear"
+                        },
+                        "showPoints": "auto",
+                        "spanNulls": false,
+                        "stacking": {
+                            "group": "A",
+                            "mode": "none"
+                        },
+                        "thresholdsStyle": {
+                            "mode": "off"
+                        }
+                    },
+                    "mappings": [],
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "green"
+                            }
+                        ]
+                    },
+                    "unit": "short"
+                },
+                "overrides": []
+            },
+            "gridPos": {
+                "h": 8,
+                "w": 12,
+                "x": 0,
+                "y": 22
+            },
+            "id": 17,
+            "options": {
+                "legend": {
+                    "calcs": [],
+                    "displayMode": "list",
+                    "placement": "bottom",
+                    "showLegend": true
+                },
+                "tooltip": {
+                    "hideZeros": false,
+                    "mode": "single",
+                    "sort": "none"
+                }
+            },
+            "pluginVersion": "12.1.1",
+            "targets": [
+                {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "${datasource}"
+                    },
+                    "disableTextWrap": false,
+                    "editorMode": "code",
+                    "expr": "rate(truvami_api_key_cache_hit_total{namespace=~\"^($namespace)$\", service=~\".*truvami-api\"}[$interval])",
+                    "fullMetaSearch": false,
+                    "includeNullMetadata": false,
+                    "legendFormat": "Cache Hits",
+                    "range": true,
+                    "refId": "A",
+                    "useBackend": false
+                },
+                {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "${datasource}"
+                    },
+                    "disableTextWrap": false,
+                    "editorMode": "code",
+                    "expr": "rate(truvami_api_key_cache_miss_total{namespace=~\"^($namespace)$\", service=~\".*truvami-api\"}[$interval])",
+                    "fullMetaSearch": false,
+                    "includeNullMetadata": false,
+                    "legendFormat": "Cache Misses",
+                    "range": true,
+                    "refId": "B",
+                    "useBackend": false
+                }
+            ],
+            "title": "API Key Cache Performance",
+            "type": "timeseries"
+        },
+        {
+            "datasource": {
+                "type": "prometheus",
+                "uid": "${datasource}"
+            },
+            "fieldConfig": {
+                "defaults": {
+                    "color": {
+                        "mode": "palette-classic"
+                    },
+                    "custom": {
+                        "axisBorderShow": false,
+                        "axisCenteredZero": false,
+                        "axisColorMode": "text",
+                        "axisLabel": "",
+                        "axisPlacement": "auto",
+                        "barAlignment": 0,
+                        "barWidthFactor": 0.6,
+                        "drawStyle": "line",
+                        "fillOpacity": 10,
+                        "gradientMode": "none",
+                        "hideFrom": {
+                            "legend": false,
+                            "tooltip": false,
+                            "viz": false
+                        },
+                        "insertNulls": false,
+                        "lineInterpolation": "linear",
+                        "lineWidth": 2,
+                        "pointSize": 5,
+                        "scaleDistribution": {
+                            "type": "linear"
+                        },
+                        "showPoints": "auto",
+                        "spanNulls": false,
+                        "stacking": {
+                            "group": "A",
+                            "mode": "none"
+                        },
+                        "thresholdsStyle": {
+                            "mode": "off"
+                        }
+                    },
+                    "mappings": [],
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "green"
+                            }
+                        ]
+                    },
+                    "unit": "short"
+                },
+                "overrides": []
+            },
+            "gridPos": {
+                "h": 8,
+                "w": 12,
+                "x": 12,
+                "y": 22
+            },
+            "id": 18,
+            "options": {
+                "legend": {
+                    "calcs": [],
+                    "displayMode": "list",
+                    "placement": "bottom",
+                    "showLegend": true
+                },
+                "tooltip": {
+                    "hideZeros": false,
+                    "mode": "single",
+                    "sort": "none"
+                }
+            },
+            "pluginVersion": "12.1.1",
+            "targets": [
+                {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "${datasource}"
+                    },
+                    "disableTextWrap": false,
+                    "editorMode": "code",
+                    "expr": "rate(truvami_battery_status_insert_validation_error_count{namespace=~\"^($namespace)$\", service=~\".*truvami-api\"}[$interval])",
+                    "fullMetaSearch": false,
+                    "includeNullMetadata": false,
+                    "legendFormat": "Validation Errors",
+                    "range": true,
+                    "refId": "A",
+                    "useBackend": false
+                }
+            ],
+            "title": "Battery Status Validation Errors",
+            "type": "timeseries"
+        },
+        {
+            "datasource": {
+                "type": "prometheus",
+                "uid": "${DS_PROMETHEUS}"
+            },
+            "fieldConfig": {
+                "defaults": {},
+                "overrides": []
+            },
+            "gridPos": {
+                "h": 8,
+                "w": 24,
+                "x": 0,
+                "y": 30
+            },
+            "id": 11,
             "options": {
                 "alertInstanceLabelFilter": "service=\"truvami-api\"",
                 "alertName": "",
@@ -694,15 +1034,15 @@
                 "groupBy": [],
                 "groupMode": "default",
                 "maxItems": 20,
-                "showInactiveAlerts": true,
-                "sortOrder": 3,
+                "showInactiveAlerts": false,
+                "sortOrder": 1,
                 "stateFilter": {
                     "error": true,
                     "firing": true,
-                    "noData": true,
-                    "normal": false,
+                    "noData": false,
+                    "normal": false,  
                     "pending": true,
-                    "recovering": true
+                    "recovering": false
                 },
                 "viewMode": "list"
             },
@@ -716,9 +1056,9 @@
                 "h": 1,
                 "w": 24,
                 "x": 0,
-                "y": 22
+                "y": 38
             },
-            "id": "truvami-api-go-metrics-row",
+            "id": 12,
             "panels": [],
             "title": "Go Metrics - Truvami API",
             "type": "row"
@@ -783,9 +1123,9 @@
                 "h": 8,
                 "w": 12,
                 "x": 0,
-                "y": 23
+                "y": 39
             },
-            "id": "truvami-api-process-memory",
+            "id": 13,
             "options": {
                 "legend": {
                     "calcs": [],
@@ -894,9 +1234,9 @@
                 "h": 8,
                 "w": 12,
                 "x": 12,
-                "y": 23
+                "y": 39
             },
-            "id": "truvami-api-goroutines",
+            "id": 14,
             "options": {
                 "legend": {
                     "calcs": [],
@@ -991,9 +1331,9 @@
                 "h": 8,
                 "w": 12,
                 "x": 0,
-                "y": 31
+                "y": 47
             },
-            "id": "truvami-api-gc-memory",
+            "id": 15,
             "options": {
                 "legend": {
                     "calcs": [],
@@ -1103,9 +1443,9 @@
                 "h": 8,
                 "w": 12,
                 "x": 12,
-                "y": 31
+                "y": 47
             },
-            "id": "truvami-api-gc-duration",
+            "id": 16,
             "options": {
                 "legend": {
                     "calcs": [],
