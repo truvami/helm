@@ -9,12 +9,12 @@ spec:
   groups:
     - name: truvami-kafka-consumer
       rules:
-        - alert: KafkaConsumerStalled
+        - alert: TruvamiKafkaConsumerLag
           annotations:
             description: >-
-              Kafka consumer stalled - no messages processed for more than 15 minutes. Please check the consumer health and Kafka connectivity.
+              No messages consumed for more than 15 minutes. Last message was {{ "{{" }} $value | humanizeDuration }} ago.
             summary: >-
-              Kafka consumer stalled - no messages processed
+              Truvami Kafka consumer lag detected
           expr: >-
             time() - truvami_kafka_consumer_last_message_timestamp_seconds > 900
           for: 1m
@@ -23,7 +23,7 @@ spec:
             {{ $key }}: {{ $value | quote }}
             {{- end }}
             service: truvami-bridge
-            severity: major
+            severity: warning
         - alert: KafkaConsumerBlocked
           annotations:
             description: >-

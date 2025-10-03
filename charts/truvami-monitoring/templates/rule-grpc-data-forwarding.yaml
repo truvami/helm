@@ -1,0 +1,91 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  labels:
+    prometheus: kube-prometheus-stack-prometheus
+    role: alert-rules
+  name: truvami-grpc-data-forwarding
+spec:
+  groups:
+    - name: truvami-grpc-data-forwarding
+      rules:
+        - alert: TruvamiGRPCUplinkFailures
+          annotations:
+            description: >-
+              Failed to create uplinks via gRPC at {{ "{{" }} $value }} failures/sec for device {{ "{{" }} $labels.devEui }}.
+            summary: >-
+              High Truvami gRPC uplink failure rate
+          expr: >-
+            rate(truvami_failed_to_create_uplink_through_grpc_count[5m]) > 0.05
+          for: 2m
+          labels:
+            {{- range $key, $value := .Values.alertLabels }}
+            {{ $key }}: {{ $value | quote }}
+            {{- end }}
+            service: truvami-bridge
+            severity: major
+            node: truvami-{{ "{{" }} $labels.devEui }}
+        - alert: TruvamiGRPCPositionFailures
+          annotations:
+            description: >-
+              Failed to create positions via gRPC at {{ "{{" }} $value }} failures/sec for device {{ "{{" }} $labels.devEui }}.
+            summary: >-
+              High Truvami gRPC position failure rate
+          expr: >-
+            rate(truvami_failed_to_create_position_through_grpc_count[5m]) > 0.05
+          for: 2m
+          labels:
+            {{- range $key, $value := .Values.alertLabels }}
+            {{ $key }}: {{ $value | quote }}
+            {{- end }}
+            service: truvami-bridge
+            severity: major
+            node: truvami-{{ "{{" }} $labels.devEui }}
+        - alert: TruvamiGRPCBatteryStatusFailures
+          annotations:
+            description: >-
+              Failed to create battery statuses via gRPC at {{ "{{" }} $value }} failures/sec for device {{ "{{" }} $labels.devEui }}.
+            summary: >-
+              High Truvami gRPC battery status failure rate
+          expr: >-
+            rate(truvami_failed_to_create_battery_status_through_grpc_count[5m]) > 0.05
+          for: 2m
+          labels:
+            {{- range $key, $value := .Values.alertLabels }}
+            {{ $key }}: {{ $value | quote }}
+            {{- end }}
+            service: truvami-bridge
+            severity: major
+            node: truvami-{{ "{{" }} $labels.devEui }}
+        - alert: TruvamiGRPCRotationStatusFailures
+          annotations:
+            description: >-
+              Failed to create rotation statuses via gRPC at {{ "{{" }} $value }} failures/sec for device {{ "{{" }} $labels.devEui }}.
+            summary: >-
+              High Truvami gRPC rotation status failure rate
+          expr: >-
+            rate(truvami_failed_to_create_rotation_status_through_grpc_count[5m]) > 0.05
+          for: 2m
+          labels:
+            {{- range $key, $value := .Values.alertLabels }}
+            {{ $key }}: {{ $value | quote }}
+            {{- end }}
+            service: truvami-bridge
+            severity: major
+            node: truvami-{{ "{{" }} $labels.devEui }}
+        - alert: TruvamiGRPCEventFailures
+          annotations:
+            description: >-
+              Failed to create events via gRPC at {{ "{{" }} $value }} failures/sec for device {{ "{{" }} $labels.devEui }}.
+            summary: >-
+              High Truvami gRPC event failure rate
+          expr: >-
+            rate(truvami_failed_to_create_event_through_grpc_count[5m]) > 0.05
+          for: 2m
+          labels:
+            {{- range $key, $value := .Values.alertLabels }}
+            {{ $key }}: {{ $value | quote }}
+            {{- end }}
+            service: truvami-bridge
+            severity: major
+            node: truvami-{{ "{{" }} $labels.devEui }}

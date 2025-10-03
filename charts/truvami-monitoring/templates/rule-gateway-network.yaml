@@ -4,40 +4,40 @@ metadata:
   labels:
     prometheus: kube-prometheus-stack-prometheus
     role: alert-rules
-  name: truvami-bridge
+  name: truvami-gateway-network
 spec:
   groups:
-    - name: truvami-bridge
+    - name: truvami-gateway-network
       rules:
-        - alert: TruvamiDeviceNoUplink24h
+        - alert: TruvamiLowGatewayRSSI
           annotations:
             description: >-
-              Device {{ "{{" }} $labels.devEui }} has not sent any uplinks within the last 24 hours.
+              Gateway {{ "{{" }} $labels.gatewayId }} receiving weak signal ({{ "{{" }} $value }} dBm) from device {{ "{{" }} $labels.devEui }}.
             summary: >-
-              Device {{ "{{" }} $labels.devEui }} no uplinks in 24h.
+              Low Truvami gateway RSSI detected
           expr: >-
-            sum by(devEui) (increase(truvami_device_uplink_count[24h])) == 0
+            truvami_gateway_uplink_rssi < -120
           for: 5m
           labels:
             {{- range $key, $value := .Values.alertLabels }}
             {{ $key }}: {{ $value | quote }}
             {{- end }}
             service: truvami-bridge
-            severity: intermediate
+            severity: minor
             node: truvami-{{ "{{" }} $labels.devEui }}
-        - alert: TruvamiDeviceNoUplink72h
+        - alert: TruvamiLowGatewaySNR
           annotations:
             description: >-
-              Device {{ "{{" }} $labels.devEui }} has not sent any uplinks within the last 72 hours.
+              Gateway {{ "{{" }} $labels.gatewayId }} has low SNR ({{ "{{" }} $value }} dB) for device {{ "{{" }} $labels.devEui }}.
             summary: >-
-              Device {{ "{{" }} $labels.devEui }} no uplinks in 72h.
+              Low Truvami gateway SNR detected
           expr: >-
-            sum by(devEui) (increase(truvami_device_uplink_count[72h])) == 0
+            truvami_gateway_uplink_snr < -10
           for: 5m
           labels:
             {{- range $key, $value := .Values.alertLabels }}
             {{ $key }}: {{ $value | quote }}
             {{- end }}
             service: truvami-bridge
-            severity: warning
+            severity: minor
             node: truvami-{{ "{{" }} $labels.devEui }}

@@ -1,0 +1,56 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  labels:
+    prometheus: kube-prometheus-stack-prometheus
+    role: alert-rules
+  name: truvami-consumer-processing
+spec:
+  groups:
+    - name: truvami-consumer-processing
+      rules:
+        - alert: TruvamiKafkaConsumerIdleTooLong
+          annotations:
+            description: >-
+              Consumer has been idle for {{ "{{" }} $value | humanizeDuration }}, exceeding the 1-hour threshold.
+            summary: >-
+              Truvami consumer has been idle too long
+          expr: >-
+            truvami_consumer_idle_time > 3600
+          for: 1m
+          labels:
+            {{- range $key, $value := .Values.alertLabels }}
+            {{ $key }}: {{ $value | quote }}
+            {{- end }}
+            service: truvami-bridge
+            severity: critical
+        - alert: TruvamiKafkaConsumerErrors
+          annotations:
+            description: >-
+              Kafka consumer error rate is {{ "{{" }} $value }} errors/sec for error_code {{ "{{" }} $labels.error_code }}.
+            summary: >-
+              High Truvami Kafka consumer error rate
+          expr: >-
+            rate(truvami_kafka_consumer_messages_error_count[5m]) > 0.05
+          for: 2m
+          labels:
+            {{- range $key, $value := .Values.alertLabels }}
+            {{ $key }}: {{ $value | quote }}
+            {{- end }}
+            service: truvami-bridge
+            severity: major
+        - alert: TruvamiFrequentPartitionRebalances
+          annotations:
+            description: >-
+              Partition rebalances happening at {{ "{{" }} $value }} rebalances/sec for type {{ "{{" }} $labels.type }}.
+            summary: >-
+              Frequent Truvami Kafka partition rebalances
+          expr: >-
+            rate(truvami_kafka_consumer_partition_rebalances_total[10m]) > 0.1
+          for: 5m
+          labels:
+            {{- range $key, $value := .Values.alertLabels }}
+            {{ $key }}: {{ $value | quote }}
+            {{- end }}
+            service: truvami-bridge
+            severity: minor

@@ -1,0 +1,107 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  labels:
+    prometheus: kube-prometheus-stack-prometheus
+    role: alert-rules
+  name: truvami-device-health
+spec:
+  groups:
+    - name: truvami-device-health
+      rules:
+        - alert: TruvamiDevicePayloadDecodingFailures
+          annotations:
+            description: >-
+              Device {{ "{{" }} $labels.devEui }} on port {{ "{{" }} $labels.port }} has {{ "{{" }} $value }} decoding failures/sec.
+            summary: >-
+              High Truvami device payload decoding failure rate
+          expr: >-
+            rate(truvami_failed_to_decode_payload_count[5m]) > 0.1
+          for: 2m
+          labels:
+            {{- range $key, $value := .Values.alertLabels }}
+            {{ $key }}: {{ $value | quote }}
+            {{- end }}
+            service: truvami-bridge
+            severity: major
+            node: truvami-{{ "{{" }} $labels.devEui }}
+        - alert: TruvamiDeviceLowBattery
+          annotations:
+            description: >-
+              Device {{ "{{" }} $labels.devEui }} (customer: {{ "{{" }} $labels.customer }}) has low battery: {{ "{{" }} $value }}%.
+            summary: >-
+              Truvami device battery low
+          expr: >-
+            truvami_device_battery_status < 20
+          for: 5m
+          labels:
+            {{- range $key, $value := .Values.alertLabels }}
+            {{ $key }}: {{ $value | quote }}
+            {{- end }}
+            service: truvami-bridge
+            severity: warning
+            node: truvami-{{ "{{" }} $labels.devEui }}
+        - alert: TruvamiDeviceCriticalBattery
+          annotations:
+            description: >-
+              Device {{ "{{" }} $labels.devEui }} (customer: {{ "{{" }} $labels.customer }}) has critically low battery: {{ "{{" }} $value }}%.
+            summary: >-
+              Truvami device battery critically low
+          expr: >-
+            truvami_device_battery_status < 10
+          for: 1m
+          labels:
+            {{- range $key, $value := .Values.alertLabels }}
+            {{ $key }}: {{ $value | quote }}
+            {{- end }}
+            service: truvami-bridge
+            severity: critical
+            node: truvami-{{ "{{" }} $labels.devEui }}
+        - alert: TruvamiDeviceHighBufferLevel
+          annotations:
+            description: >-
+              Device {{ "{{" }} $labels.devEui }} (customer: {{ "{{" }} $labels.customer }}) has high buffer level: {{ "{{" }} $value }}%.
+            summary: >-
+              Truvami device buffer level high
+          expr: >-
+            truvami_device_buffer_level > 80
+          for: 5m
+          labels:
+            {{- range $key, $value := .Values.alertLabels }}
+            {{ $key }}: {{ $value | quote }}
+            {{- end }}
+            service: truvami-bridge
+            severity: minor
+            node: truvami-{{ "{{" }} $labels.devEui }}
+        - alert: TruvamiDeviceNoGPSFix
+          annotations:
+            description: >-
+              Device {{ "{{" }} $labels.devEui }} (customer: {{ "{{" }} $labels.customer }}) has only {{ "{{" }} $value }} satellites, needs at least 4 for GPS fix.
+            summary: >-
+              Truvami device has insufficient GPS satellites
+          expr: >-
+            truvami_device_gnss_satellites_value < 4
+          for: 10m
+          labels:
+            {{- range $key, $value := .Values.alertLabels }}
+            {{ $key }}: {{ $value | quote }}
+            {{- end }}
+            service: truvami-bridge
+            severity: warning
+            node: truvami-{{ "{{" }} $labels.devEui }}
+        - alert: TruvamiDeviceFrequentResets
+          annotations:
+            description: >-
+              Device {{ "{{" }} $labels.devEui }} (customer: {{ "{{" }} $labels.customer }}) is resetting frequently due to {{ "{{" }} $labels.reason }}.
+            summary: >-
+              Truvami device experiencing frequent resets
+          expr: >-
+            rate(truvami_device_reset_count[1h]) > 0.1
+          for: 5m
+          labels:
+            {{- range $key, $value := .Values.alertLabels }}
+            {{ $key }}: {{ $value | quote }}
+            {{- end }}
+            service: truvami-bridge
+            severity: major
+            node: truvami-{{ "{{" }} $labels.devEui }}

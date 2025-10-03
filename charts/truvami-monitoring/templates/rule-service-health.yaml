@@ -1,0 +1,45 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  labels:
+    prometheus: kube-prometheus-stack-prometheus
+    role: alert-rules
+  name: truvami-service-health
+spec:
+  groups:
+    - name: truvami-service-health
+      rules:
+        - alert: TruvamiBridgeDown
+          annotations:
+            description: >-
+              Truvami Bridge instance {{ "{{" }} $labels.instance }} has been down for more than 1 minute.
+            summary: >-
+              Truvami Bridge is down
+          expr: >-
+            up{job="truvami-bridge"} == 0
+          for: 1m
+          labels:
+            {{- range $key, $value := .Values.alertLabels }}
+            {{ $key }}: {{ $value | quote }}
+            {{- end }}
+            service: truvami-bridge
+            severity: critical
+        - alert: TruvamiBridgeHighErrorRate
+          annotations:
+            description: >-
+              Error rate is {{ "{{" }} $value }} errors/sec over the last 5 minutes.
+            summary: >-
+              High error rate in Truvami Bridge
+          expr: >-
+            (
+              rate(truvami_failed_to_decode_payload_count[5m]) +
+              rate(truvami_failed_to_create_uplink_through_grpc_count[5m]) +
+              rate(truvami_failed_to_fetch_device_metadata_count[5m])
+            ) > 0.1
+          for: 2m
+          labels:
+            {{- range $key, $value := .Values.alertLabels }}
+            {{ $key }}: {{ $value | quote }}
+            {{- end }}
+            service: truvami-bridge
+            severity: major

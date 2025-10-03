@@ -1,0 +1,114 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  labels:
+    prometheus: kube-prometheus-stack-prometheus
+    role: alert-rules
+  name: truvami-kafka-integrations
+spec:
+  groups:
+    - name: truvami-kafka-integrations
+      rules:
+        - alert: TruvamiKafkaIntegrationProducerFailures
+          annotations:
+            description: >-
+              Failed to create Kafka integration producer at {{ "{{" }} $value }} failures/sec for UUID {{ "{{" }} $labels.uuid }}.
+            summary: >-
+              Truvami Kafka integration producer failures
+          expr: >-
+            rate(truvami_kafka_integration_failed_to_create_producer[5m]) > 0.01
+          for: 2m
+          labels:
+            {{- range $key, $value := .Values.alertLabels }}
+            {{ $key }}: {{ $value | quote }}
+            {{- end }}
+            service: truvami-bridge
+            severity: major
+        - alert: TruvamiKafkaIntegrationDeliveryFailures
+          annotations:
+            description: >-
+              Failed to deliver Kafka integration messages at {{ "{{" }} $value }} failures/sec for UUID {{ "{{" }} $labels.uuid }}.
+            summary: >-
+              Truvami Kafka integration message delivery failures
+          expr: >-
+            rate(truvami_kafka_integration_failed_to_deliver_message[5m]) > 0.05
+          for: 2m
+          labels:
+            {{- range $key, $value := .Values.alertLabels }}
+            {{ $key }}: {{ $value | quote }}
+            {{- end }}
+            service: truvami-bridge
+            severity: major
+        - alert: TruvamiKafkaIntegrationProduceFailures
+          annotations:
+            description: >-
+              Failed to produce Kafka integration messages at {{ "{{" }} $value }} failures/sec for UUID {{ "{{" }} $labels.uuid }}.
+            summary: >-
+              Truvami Kafka integration message produce failures
+          expr: >-
+            rate(truvami_kafka_integration_failed_to_produce_message[5m]) > 0.05
+          for: 2m
+          labels:
+            {{- range $key, $value := .Values.alertLabels }}
+            {{ $key }}: {{ $value | quote }}
+            {{- end }}
+            service: truvami-bridge
+            severity: major
+        - alert: TruvamiAlertsQueuePublishFailures
+          annotations:
+            description: >-
+              Failed to publish messages to alerts queue at {{ "{{" }} $value }} failures/sec.
+            summary: >-
+              High Truvami alerts queue publish failure rate
+          expr: >-
+            (
+              rate(truvami_failed_to_publish_uplink_to_alerts_queue_count[5m]) +
+              rate(truvami_failed_to_publish_position_to_alerts_queue_count[5m]) +
+              rate(truvami_failed_to_publish_battery_status_to_alerts_queue_count[5m]) +
+              rate(truvami_failed_to_publish_rotation_status_to_alerts_queue_count[5m]) +
+              rate(truvami_failed_to_publish_event_to_alerts_queue_count[5m])
+            ) > 0.05
+          for: 2m
+          labels:
+            {{- range $key, $value := .Values.alertLabels }}
+            {{ $key }}: {{ $value | quote }}
+            {{- end }}
+            service: truvami-bridge
+            severity: major
+        - alert: TruvamiKafkaIntegrationCacheMissRate
+          annotations:
+            description: >-
+              Cache miss rate is {{ "{{" }} $value | humanizePercentage }} over the last 5 minutes.
+            summary: >-
+              High Truvami Kafka integrations cache miss rate
+          expr: >-
+            rate(truvami_kafka_integrations_cache_miss_count[5m]) / 
+            (rate(truvami_kafka_integrations_cache_hit_count[5m]) + rate(truvami_kafka_integrations_cache_miss_count[5m])) > 0.8
+          for: 5m
+          labels:
+            {{- range $key, $value := .Values.alertLabels }}
+            {{ $key }}: {{ $value | quote }}
+            {{- end }}
+            service: truvami-bridge
+            severity: minor
+        - alert: TruvamiKafkaIntegrationMarshalFailures
+          annotations:
+            description: >-
+              Failed to marshal Kafka integration messages at {{ "{{" }} $value }} failures/sec for customer {{ "{{" }} $labels.customer }}.
+            summary: >-
+              High Truvami Kafka integration marshal failure rate
+          expr: >-
+            (
+              rate(truvami_kafka_integration_failed_to_marshal_uplink_message[5m]) +
+              rate(truvami_kafka_integration_failed_to_marshal_position_message[5m]) +
+              rate(truvami_kafka_integration_failed_to_marshal_battery_status_message[5m]) +
+              rate(truvami_kafka_integration_failed_to_marshal_rotation_message[5m]) +
+              rate(truvami_kafka_integration_failed_to_marshal_event_message[5m])
+            ) > 0.05
+          for: 2m
+          labels:
+            {{- range $key, $value := .Values.alertLabels }}
+            {{ $key }}: {{ $value | quote }}
+            {{- end }}
+            service: truvami-bridge
+            severity: major

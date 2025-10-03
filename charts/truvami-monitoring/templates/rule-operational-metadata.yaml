@@ -1,0 +1,90 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  labels:
+    prometheus: kube-prometheus-stack-prometheus
+    role: alert-rules
+  name: truvami-operational-metadata
+spec:
+  groups:
+    - name: truvami-operational-metadata
+      rules:
+        - alert: TruvamiMetadataFetchFailures
+          annotations:
+            description: >-
+              Failed to fetch device metadata at {{ "{{" }} $value }} failures/sec.
+            summary: >-
+              Truvami device metadata fetch failures
+          expr: >-
+            rate(truvami_failed_to_fetch_device_metadata_count[5m]) > 0.01
+          for: 2m
+          labels:
+            {{- range $key, $value := .Values.alertLabels }}
+            {{ $key }}: {{ $value | quote }}
+            {{- end }}
+            service: truvami-bridge
+            severity: major
+        - alert: TruvamiDecoderWarnings
+          annotations:
+            description: >-
+              Decoder warnings for device {{ "{{" }} $labels.devEui }} on port {{ "{{" }} $labels.port }} at {{ "{{" }} $value }} warnings/sec.
+            summary: >-
+              Truvami decoder warnings detected
+          expr: >-
+            rate(truvami_uplink_created_but_decoder_warn_count[5m]) > 0.1
+          for: 5m
+          labels:
+            {{- range $key, $value := .Values.alertLabels }}
+            {{ $key }}: {{ $value | quote }}
+            {{- end }}
+            service: truvami-bridge
+            severity: intermediate
+            node: truvami-{{ "{{" }} $labels.devEui }}
+        - alert: TruvamiDecoderErrors
+          annotations:
+            description: >-
+              Decoder errors for device {{ "{{" }} $labels.devEui }} on port {{ "{{" }} $labels.port }} at {{ "{{" }} $value }} errors/sec.
+            summary: >-
+              Truvami decoder errors detected
+          expr: >-
+            rate(truvami_uplink_created_but_decoder_err_count[5m]) > 0.05
+          for: 2m
+          labels:
+            {{- range $key, $value := .Values.alertLabels }}
+            {{ $key }}: {{ $value | quote }}
+            {{- end }}
+            service: truvami-bridge
+            severity: major
+            node: truvami-{{ "{{" }} $labels.devEui }}
+        - alert: TruvamiInvalidLoraLocationErrors
+          annotations:
+            description: >-
+              Invalid LoRa location errors for device {{ "{{" }} $labels.devEui }} on port {{ "{{" }} $labels.port }} at {{ "{{" }} $value }} errors/sec.
+            summary: >-
+              Truvami invalid LoRa location errors
+          expr: >-
+            rate(truvami_invalid_lora_location_count[5m]) > 0.05
+          for: 2m
+          labels:
+            {{- range $key, $value := .Values.alertLabels }}
+            {{ $key }}: {{ $value | quote }}
+            {{- end }}
+            service: truvami-bridge
+            severity: warning
+            node: truvami-{{ "{{" }} $labels.devEui }}
+        - alert: TruvamiFeatureCastingErrors
+          annotations:
+            description: >-
+              Failed to cast feature {{ "{{" }} $labels.feature }} for device {{ "{{" }} $labels.devEui }} on port {{ "{{" }} $labels.port }} at {{ "{{" }} $value }} errors/sec.
+            summary: >-
+              Truvami feature casting errors
+          expr: >-
+            rate(truvami_failed_to_cast_feature_count[5m]) > 0.05
+          for: 2m
+          labels:
+            {{- range $key, $value := .Values.alertLabels }}
+            {{ $key }}: {{ $value | quote }}
+            {{- end }}
+            service: truvami-bridge
+            severity: warning
+            node: truvami-{{ "{{" }} $labels.devEui }}
