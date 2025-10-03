@@ -23,11 +23,12 @@ spec:
             {{ $key }}: {{ $value | quote }}
             {{- end }}
             service: truvami-bridge
-            severity: warning
+            severity: major
         - alert: KafkaConsumerBlocked
           annotations:
             description: >-
               Kafka consumer appears blocked or in infinite loop - no messages processed for more than 30 minutes. Immediate attention required.
+              Check the consumer health, Kafka connectivity, and system resources.
             summary: >-
               Kafka consumer appears blocked or in infinite loop
           expr: >-
