@@ -30,15 +30,7 @@ spec:
             {{- toYaml .Values.securityContext | nindent 12 }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
-          command: ["npm"]
-          args: ["run", "db:migrate"]
-          envFrom:
-            - secretRef:
-                name: {{ include "truvami-dashboard.fullname" . }}
-            {{- if .Values.postgres.external.existingSecret }}
-            - secretRef:
-                name: {{ .Values.postgres.external.existingSecret }}
-            {{- end }}
+          args: ["migrate"]
           {{- if .Values.postgres.enabled }}
           env:
             - name: DB_PASSWORD
@@ -51,14 +43,20 @@ spec:
                 secretKeyRef:
                   name: {{ include "truvami-dashboard.fullname" . }}-db-creds
                   key: username
-            - name: DB_HOST
-              value: "{{ include "truvami-dashboard.fullname" . }}-db-rw"
-            - name: DB_PORT
-              value: "5432"
-            - name: DB_NAME
-              value: "dashboard"
             - name: DATABASE_URL
-              value: "postgresql://$(DB_USER):$(DB_PASSWORD)@$(DB_HOST):$(DB_PORT)/$(DB_NAME)"
+              value: "postgresql://$(DB_USER):$(DB_PASSWORD)@{{ include "truvami-dashboard.fullname" . }}-db-rw:5432/dashboard"
+          {{- else if .Values.database.url }}
+          env:
+            - name: DATABASE_URL
+              value: {{ .Values.database.url | quote }}
+          {{- else if not .Values.postgres.external.existingSecret }}
+          env:
+            - name: DATABASE_URL
+              value: "postgresql://{{ .Values.postgres.external.username }}:{{ .Values.postgres.external.password }}@{{ .Values.postgres.external.host }}:{{ .Values.postgres.external.port }}/{{ .Values.postgres.external.database }}"
+          {{- else }}
+          envFrom:
+            - secretRef:
+                name: {{ .Values.postgres.external.existingSecret }}
           {{- end }}
           resources:
             {{- toYaml .Values.migration.resources | nindent 12 }}
