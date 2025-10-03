@@ -1,4 +1,10 @@
-apiVersion: monitoring.coreos.com/v1
+apiVersion: monitoring.cor        - alert: TruvamiKafkaConsumerBlocked
+          annotations:
+            description: >
+              Kafka consumer appears blocked or in infinite loop - no messages processed for more than 30 minutes. Immediate attention required.
+              Check the consumer health, Kafka connectivity, and system resources.
+            summary: >
+              Truvami Kafka consumer appears blocked or in infinite loop/v1
 kind: PrometheusRule
 metadata:
   labels:

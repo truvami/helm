@@ -55,7 +55,7 @@ spec:
             {{ $key }}: {{ $value | quote }}
             {{- end }}
             service: truvami-bridge
-            severity: critical
+            severity: minor
             node: truvami-{{ "{{" }} $labels.devEui }}
         - alert: TruvamiDeviceHighBufferLevel
           annotations:

@@ -11,11 +11,11 @@ spec:
       rules:
         - alert: TruvamiLowGatewayRSSI
           annotations:
-            description: >-
+            description: >
               Gateway {{ "{{" }} $labels.gatewayId }} receiving weak signal ({{ "{{" }} $value }} dBm) from device {{ "{{" }} $labels.devEui }}.
-            summary: >-
+            summary: >
               Low Truvami gateway RSSI detected
-          expr: >-
+          expr: >
             truvami_gateway_uplink_rssi < -120
           for: 5m
           labels:
@@ -24,14 +24,14 @@ spec:
             {{- end }}
             service: truvami-bridge
             severity: minor
-            node: truvami-{{ "{{" }} $labels.devEui }}
+            node: truvami-gateway-{{ "{{" }} $labels.gatewayId }}
         - alert: TruvamiLowGatewaySNR
           annotations:
-            description: >-
+            description: >
               Gateway {{ "{{" }} $labels.gatewayId }} has low SNR ({{ "{{" }} $value }} dB) for device {{ "{{" }} $labels.devEui }}.
-            summary: >-
+            summary: >
               Low Truvami gateway SNR detected
-          expr: >-
+          expr: >
             truvami_gateway_uplink_snr < -10
           for: 5m
           labels:
@@ -40,4 +40,4 @@ spec:
             {{- end }}
             service: truvami-bridge
             severity: minor
-            node: truvami-{{ "{{" }} $labels.devEui }}
+            node: truvami-gateway-{{ "{{" }} $labels.gatewayId }}

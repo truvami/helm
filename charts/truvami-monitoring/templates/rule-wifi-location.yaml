@@ -1,4 +1,51 @@
-apiVersion: monitoring.coreos.com/v1
+apiVersion:        - alert: TruvamiWiFiSolverErrorRateMinor
+          annotations:
+            description: >
+              WiFi solver error rate is {{ "{{" }} $value | humanizePercentage }} over the last 5 minutes.
+            summary: >
+              Elevated Truvami WiFi solver error rate
+          expr: >
+            rate(truvami_wifi_solver_error_count[5m]) / 
+            (rate(truvami_wifi_solver_requests_count[5m]) + rate(truvami_wifi_solver_error_count[5m])) > 0.05
+          for: 10m
+          labels:
+            {{- range $key, $value := .Values.alertLabels }}
+            {{ $key }}: {{ $value | quote }}
+            {{- end }}
+            service: truvami-bridge
+            severity: minor
+        - alert: TruvamiWiFiSolverErrorRateWarning
+          annotations:
+            description: >
+              WiFi solver error rate is {{ "{{" }} $value | humanizePercentage }} over the last 5 minutes.
+            summary: >
+              High Truvami WiFi solver error rate
+          expr: >
+            rate(truvami_wifi_solver_error_count[5m]) / 
+            (rate(truvami_wifi_solver_requests_count[5m]) + rate(truvami_wifi_solver_error_count[5m])) > 0.15
+          for: 5m
+          labels:
+            {{- range $key, $value := .Values.alertLabels }}
+            {{ $key }}: {{ $value | quote }}
+            {{- end }}
+            service: truvami-bridge
+            severity: warning
+        - alert: TruvamiWiFiSolverErrorRateCritical
+          annotations:
+            description: >
+              WiFi solver error rate is {{ "{{" }} $value | humanizePercentage }} over the last 5 minutes. Immediate attention required.
+            summary: >
+              Critical Truvami WiFi solver error rate
+          expr: >
+            rate(truvami_wifi_solver_error_count[5m]) / 
+            (rate(truvami_wifi_solver_requests_count[5m]) + rate(truvami_wifi_solver_error_count[5m])) > 0.3
+          for: 2m
+          labels:
+            {{- range $key, $value := .Values.alertLabels }}
+            {{ $key }}: {{ $value | quote }}
+            {{- end }}
+            service: truvami-bridge
+            severity: criticalos.com/v1
 kind: PrometheusRule
 metadata:
   labels:

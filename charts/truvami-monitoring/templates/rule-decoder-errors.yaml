@@ -1,5 +1,48 @@
-apiVersion: monitoring.coreos.com/v1
-kind: PrometheusRule
+apiVersion: monitoring.core        - alert: TruvamiPositionEstimationErrorMinor
+          annotations:
+            description: >
+              Position estimation success rate is {{ "{{" }} $value | humanizePercentage }} within the last 2h. Consider checking solver configuration.
+            summary: >
+              Truvami position estimation success rate below optimal
+          expr: >
+            (sum by(namespace) (increase(truvami_aws_position_estimates_success_total{namespace="truvami-dev"}[2h])) / sum by(namespace) (increase(truvami_aws_position_estimates_total{namespace="truvami-dev"}[2h]))) * 100 < 85
+          for: 10m
+          labels:
+            {{- range $key, $value := .Values.alertLabels }}
+            {{ $key }}: {{ $value | quote }}
+            {{- end }}
+            service: truvami-bridge
+            severity: minor
+        - alert: TruvamiPositionEstimationErrorWarning
+          annotations:
+            description: >
+              Position estimation success rate is {{ "{{" }} $value | humanizePercentage }} within the last 2h. Please check the solver configuration.
+            summary: >
+              Truvami position estimation success rate degraded
+          expr: >
+            (sum by(namespace) (increase(truvami_aws_position_estimates_success_total{namespace="truvami-dev"}[2h])) / sum by(namespace) (increase(truvami_aws_position_estimates_total{namespace="truvami-dev"}[2h]))) * 100 < 75
+          for: 5m
+          labels:
+            {{- range $key, $value := .Values.alertLabels }}
+            {{ $key }}: {{ $value | quote }}
+            {{- end }}
+            service: truvami-bridge
+            severity: warning
+        - alert: TruvamiPositionEstimationErrorCritical
+          annotations:
+            description: >
+              Position estimation success rate is {{ "{{" }} $value | humanizePercentage }} within the last 2h. Immediate attention required - check solver configuration and AWS positioning service.
+            summary: >
+              Critical Truvami position estimation failure rate
+          expr: >
+            (sum by(namespace) (increase(truvami_aws_position_estimates_success_total{namespace="truvami-dev"}[2h])) / sum by(namespace) (increase(truvami_aws_position_estimates_total{namespace="truvami-dev"}[2h]))) * 100 < 60
+          for: 2m
+          labels:
+            {{- range $key, $value := .Values.alertLabels }}
+            {{ $key }}: {{ $value | quote }}
+            {{- end }}
+            service: truvami-bridge
+            severity: critical PrometheusRule
 metadata:
   labels:
     prometheus: kube-prometheus-stack-prometheus
