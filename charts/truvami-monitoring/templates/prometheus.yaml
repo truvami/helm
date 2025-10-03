@@ -53,7 +53,7 @@ spec:
     matchLabels:
       kubernetes.io/metadata.name : {{ .Release.Namespace }}
   logFormat: "json"
-  retention: 10d
+  retention: {{ .Values.prometheus.retention | default "10d" }}
   resources: {{ toYaml .Values.prometheus.resources | nindent 4 }}
   securityContext:
     fsGroup: 0
@@ -69,11 +69,17 @@ spec:
           requests:
             storage: {{ .Values.prometheus.storageSize | default "10Gi" }}
   ruleSelector: {}
-  ruleNamespaceSelector: {}
+  ruleNamespaceSelector:
+    matchLabels:
+      kubernetes.io/metadata.name: {{ .Release.Namespace }}
   scrapeConfigSelector: {}
-  scrapeConfigNamespaceSelector: {}
+  scrapeConfigNamespaceSelector:
+    matchLabels:
+      kubernetes.io/metadata.name: {{ .Release.Namespace }}
   serviceMonitorSelector: {}
-  serviceMonitorNamespaceSelector: {}
+  serviceMonitorNamespaceSelector:
+    matchLabels:
+      kubernetes.io/metadata.name: {{ .Release.Namespace }}
   alerting:
     alertmanagers:
     - namespace: {{ .Release.Namespace }}

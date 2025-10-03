@@ -1,0 +1,41 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  labels:
+    prometheus: kube-prometheus-stack-prometheus
+    role: alert-rules
+  name: truvami-kafka-consumer
+spec:
+  groups:
+    - name: truvami-kafka-consumer
+      rules:
+        - alert: KafkaConsumerStalled
+          annotations:
+            description: >-
+              Kafka consumer stalled - no messages processed for more than 15 minutes. Please check the consumer health and Kafka connectivity.
+            summary: >-
+              Kafka consumer stalled - no messages processed
+          expr: >-
+            time() - truvami_kafka_consumer_last_message_timestamp_seconds > 900
+          for: 1m
+          labels:
+            {{- range $key, $value := .Values.alertLabels }}
+            {{ $key }}: {{ $value | quote }}
+            {{- end }}
+            service: truvami-bridge
+            severity: warning
+        - alert: KafkaConsumerBlocked
+          annotations:
+            description: >-
+              Kafka consumer appears blocked or in infinite loop - no messages processed for more than 30 minutes. Immediate attention required.
+            summary: >-
+              Kafka consumer appears blocked or in infinite loop
+          expr: >-
+            time() - truvami_kafka_consumer_last_message_timestamp_seconds > 1800
+          for: 2m
+          labels:
+            {{- range $key, $value := .Values.alertLabels }}
+            {{ $key }}: {{ $value | quote }}
+            {{- end }}
+            service: truvami-bridge
+            severity: critical

@@ -1,8 +1,17 @@
 nameOverride: ""
 fullnameOverride: ""
 
+# Default labels to be applied to all alerts
+alertLabels:
+  altravis_prod: "false"
+  altravis_test: "true"
+  code: "SBCC"
+  customer: "truvami"
+  node: "sbcc-cluster-7401-truvami-bridge"
+
 prometheus:
   storageSize: "10Gi"
+  retention: "10d"
   resources:
     requests:
       cpu: "100m"

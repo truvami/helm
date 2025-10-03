@@ -18,12 +18,11 @@ spec:
           expr: >-
             sum by(devEui) (increase(truvami_device_uplink_count[24h])) == 0
           labels:
-            altravis_prod: "false"
-            altravis_test: "true"
+            {{- range $key, $value := .Values.alertLabels }}
+            {{ $key }}: {{ $value | quote }}
+            {{- end }}
             service: truvami-bridge
             severity: info
-            code: SBCC
-            customer: truvami
             node: truvami-{{ "{{" }} $labels.devEui }}
         - alert: TruvamiDeviceNoUplink72h
           annotations:
@@ -34,10 +33,9 @@ spec:
           expr: >-
             sum by(devEui) (increase(truvami_device_uplink_count[72h])) == 0
           labels:
-            altravis_prod: "false"
-            altravis_test: "true"
+            {{- range $key, $value := .Values.alertLabels }}
+            {{ $key }}: {{ $value | quote }}
+            {{- end }}
             service: truvami-bridge
             severity: warning
-            code: SBCC
-            customer: truvami
             node: truvami-{{ "{{" }} $labels.devEui }}

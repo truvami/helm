@@ -1,6 +1,18 @@
-apiVersion: monitoring.coreos.com/v1
-kind: PrometheusRule
-metadata:
+apiVersion: monitoring.coreos.co          expr: >
+            (sum by(namespace) (increase(truvami_aws_position_estimates_success_total{namespace="truvami-dev"}[2h])) / sum by(namespace) (increase(truvami_aws_position_estimates_total{namespace="truvami-dev"}[2h]))) * 100 < 70
+          labels:
+            {{- range $key, $value := .Values.alertLabels }}
+            {{ $key }}: {{ $value | quote }}
+            {{- end }}
+            service: truvami-bridge
+            severity: critical Prome          expr: >
+            rate(truvami_wifi_solver_error_count[1h]) > 0
+          labels:
+            {{- range $key, $value := .Values.alertLabels }}
+            {{ $key }}: {{ $value | quote }}
+            {{- end }}
+            service: truvami-bridge
+            severity: criticalmetadata:
   labels:
     prometheus: kube-prometheus-stack-prometheus
     role: alert-rules
@@ -18,12 +30,11 @@ spec:
           expr: >-
             sum by(devEui) (increase(truvami_failed_to_decode_payload_count[2h])) > 0
           labels:
-            altravis_prod: "false"
-            altravis_test: "true"
+            {{- range $key, $value := .Values.alertLabels }}
+            {{ $key }}: {{ $value | quote }}
+            {{- end }}
             service: truvami-bridge
             severity: warning
-            code: SBCC
-            customer: truvami
             node: truvami-{{ "{{" }} $labels.devEui }}
         - alert: TruvamiPositionEstimationError
           annotations:
