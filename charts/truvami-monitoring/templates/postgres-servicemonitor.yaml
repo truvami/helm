@@ -1,0 +1,14 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: postgres-cnpg
+  labels:
+    {{- include "truvami-monitoring.labels" . | nindent 4 }}
+spec:
+  selector:
+    matchLabels:
+      cnpg.io/cluster: {{ include "truvami-stack.fullname" . }}
+  endpoints:
+  - port: metrics
+    interval: 30s
+    path: /metrics

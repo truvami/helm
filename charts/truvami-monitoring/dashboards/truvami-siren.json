@@ -15,7 +15,7 @@
 			}
 		]
 	},
-	"description": "Process status published by Go Prometheus client library, e.g. memory used, fds open, GC details",
+	"description": "Truvami Siren notification service monitoring dashboard with alerts and notification metrics",
 	"editable": true,
 	"fiscalYearStartMonth": 0,
 	"graphTooltip": 0,
@@ -32,7 +32,7 @@
 			},
 			"id": "truvami-bridge-alert-summary-row",
 			"panels": [],
-			"title": "Alert Summary - Truvami Bridge",
+			"title": "Alert Summary - Truvami Siren",
 			"type": "row"
 		},
 		{
@@ -463,7 +463,7 @@
 			},
 			"id": "truvami-bridge-service-metrics-row",
 			"panels": [],
-			"title": "Service Metrics - Truvami Bridge",
+			"title": "Alert Processing - Truvami Siren",
 			"type": "row"
 		},
 		{
@@ -1995,7 +1995,7 @@
 	},
 	"timepicker": {},
 	"timezone": "browser",
-	"title": "Truvami Bridge Service",
-	"uid": "truvami-bridge-dashboard",
+	"title": "Truvami Siren Service",
+	"uid": "truvami-siren-dashboard",
 	"version": 2
 }
