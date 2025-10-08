@@ -112,3 +112,39 @@ spec:
             {{- end }}
             service: truvami-bridge
             severity: major
+        - alert: TruvamiKafkaIntegrationConsumerLag
+          annotations:
+            description: >-
+              Customer Kafka integration consumer lag detected. No messages consumed for more than 30 minutes. 
+              Last message was {{ "{{" }} $value | humanizeDuration }} ago for consumer group {{ "{{" }} $labels.consumergroup }} on topic {{ "{{" }} $labels.topic }}.
+            summary: >-
+              Truvami Kafka integration consumer lag detected on topic {{ "{{" }} $labels.topic }}
+          expr: >-
+            time() - truvami_kafka_consumer_last_message_timestamp_seconds{cluster="customer"} > 1800
+          for: 5m
+          labels:
+            {{- range $key, $value := .Values.alertLabels }}
+            {{ $key }}: {{ $value | quote }}
+            {{- end }}
+            service: truvami-bridge
+            component: kafka-integration
+            severity: minor
+        - alert: TruvamiKafkaIntegrationConsumerBlocked
+          annotations:
+            description: >-
+              Customer Kafka integration consumer appears blocked - no messages processed for more than 2 hours.
+              Consumer group {{ "{{" }} $labels.consumergroup }} on topic {{ "{{" }} $labels.topic }} may need attention.
+              
+              This is less critical than internal consumers but should be investigated if persistent.
+            summary: >-
+              Truvami Kafka integration consumer appears blocked on topic {{ "{{" }} $labels.topic }}
+          expr: >-
+            time() - truvami_kafka_consumer_last_message_timestamp_seconds{cluster="customer"} > 7200
+          for: 10m
+          labels:
+            {{- range $key, $value := .Values.alertLabels }}
+            {{ $key }}: {{ $value | quote }}
+            {{- end }}
+            service: truvami-bridge
+            component: kafka-integration
+            severity: minor

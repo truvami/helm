@@ -19,7 +19,7 @@ spec:
     interval: {{ .Values.prometheusRule.interval | default "30s" }}
     rules:
     - alert: TruvamiKafkaConsumerLag
-      expr: time() - truvami_kafka_consumer_last_message_timestamp_seconds > 900
+      expr: time() - truvami_kafka_consumer_last_message_timestamp_seconds{cluster!="customer"} > 900
       for: 1m
       labels:
         severity: warning
@@ -39,7 +39,7 @@ spec:
           - Kafka connectivity issues
           
     - alert: TruvamiKafkaConsumerBlocked
-      expr: time() - truvami_kafka_consumer_last_message_timestamp_seconds > 1800
+      expr: time() - truvami_kafka_consumer_last_message_timestamp_seconds{cluster!="customer"} > 1800
       for: 2m
       labels:
         severity: critical
