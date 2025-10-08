@@ -1,114 +1,30 @@
 {{- if .Values.alertmanager.enabled }}
-apiVersion: v1
-kind: Secret
+apiVersion: monitoring.coreos.com/v1alpha1
+kind: AlertmanagerConfig
 metadata:
-  name: {{ include "truvami-monitoring.fullname" . }}-alertmanager-config
+  name: {{ include "truvami-monitoring.fullname" . }}-config
   namespace: {{ .Release.Namespace | quote }}
   labels:
     {{- include "truvami-monitoring.labels" . | nindent 4 }}
-type: Opaque
-stringData:
-  alertmanager.yml: |
-    global:
-      resolve_timeout: 5m
+spec:
+  route:
+    groupBy: ['alertname']
+    groupWait: 0s
+    groupInterval: 5m
+    repeatInterval: 5m
+    receiver: 'watchdog-heartbeat'
 
-    # Define templates for notifications
-    templates:
-      - '/etc/alertmanager/templates/*.tmpl'
-
-    # Routing configuration
-    route:
-      group_by: ['alertname', 'cluster', 'service']
-      group_wait: 10s
-      group_interval: 10s
-      repeat_interval: 1h
-      receiver: 'default'
-      routes:
-      # Watchdog alert route - send to configured webhook URL
-      - match:
-          alertname: "Watchdog"
-        receiver: 'watchdog-heartbeat'
-        group_wait: 0s
-        group_interval: 5m
-        repeat_interval: 5m
-      
-      # TruvamiWatchdog alert route - send to UptimeRobot heartbeat  
-      - match:
-          alertname: "TruvamiWatchdog"
-        receiver: 'watchdog-heartbeat'
-        group_wait: 0s
-        group_interval: 5m
-        repeat_interval: 5m
-      
-      # Dead man's switch route - critical alerts
-      - match:
-          alertname: "TruvamiWatchdogDeadMansSwitch"
-        receiver: 'critical-alerts'
-        group_wait: 0s
-        group_interval: 1m
-        repeat_interval: 5m
-      
-
-      # Critical alerts
-      - match:
-          severity: "critical"
-        receiver: 'critical-alerts'
-        group_wait: 30s
-        group_interval: 5m
-        repeat_interval: 30m
-      
-      # Major alerts
-      - match:
-          severity: "major"
-        receiver: 'major-alerts'
-        group_wait: 1m
-        group_interval: 10m
-        repeat_interval: 1h
-      
-      # Other severity levels
-      - match_re:
-          severity: "^(intermediate|warning|minor)$"
-        receiver: 'default'
-
-    receivers:
-    # Null receiver
-    - name: 'null'
-
-    # Watchdog heartbeat receiver - sends to configured webhook URL
-    - name: 'watchdog-heartbeat'
-      {{- if .Values.watchdog.webhookUrl }}
-      webhook_configs:
-      - url: {{ .Values.watchdog.webhookUrl | quote }}
-        send_resolved: false
-        http_config:
-          follow_redirects: true
-        title: 'Truvami Monitoring Watchdog'
-        text: 'Monitoring system is operational'
-      {{- end }}
-
-    # Critical alerts receiver
-    - name: 'critical-alerts'
-
-    # Major alerts receiver
-    - name: 'major-alerts'
-
-    # Default receiver for other alerts
-    - name: 'default'
-
-    # Inhibition rules
-    inhibit_rules:
-    # Inhibit lower severity alerts when critical alerts are firing for the same service
-    - source_match:
-        severity: 'critical'
-      target_match_re:
-        severity: '^(major|intermediate|warning|minor)$'
-      equal: ['service', 'alertname']
-
-    # Inhibit lower severity alerts when major alerts are firing for the same service  
-    - source_match:
-        severity: 'major'
-      target_match_re:
-        severity: '^(intermediate|warning|minor)$'
-      equal: ['service', 'alertname']
+  receivers:
+  # Watchdog heartbeat receiver - sends to configured webhook URL
+  - name: 'watchdog-heartbeat'
+    {{- if .Values.watchdog.webhookUrl }}
+    webhookConfigs:
+    - url: {{ .Values.watchdog.webhookUrl | quote }}
+      sendResolved: false
+      httpConfig:
+        followRedirects: true
+      title: 'Truvami Monitoring Watchdog'
+      text: 'Monitoring system is operational'
+    {{- end }}
 
 {{- end }}
