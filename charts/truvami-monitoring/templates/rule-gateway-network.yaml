@@ -9,35 +9,67 @@ spec:
   groups:
     - name: truvami-gateway-network
       rules:
-        - alert: TruvamiBadGatewayRSSI
+        - alert: TruvamiPoorGatewayRSSI
           annotations:
             description: >
-              Gateway {{ "{{" }} $labels.gatewayId }} has average RSSI of {{ "{{" }} $value }} dBm over the last 24 hours, which is below the -120 dBm threshold.
+              Gateway {{ "{{" }} $labels.gatewayId }} has average RSSI of {{ "{{" }} $value }} dBm over the last 24 hours, which is poor (≤-89 dBm).
             summary: >
-              Bad Truvami gateway RSSI detected (24h average)
+              Poor Truvami gateway RSSI detected (24h average)
           expr: >
-            avg by (gatewayId) (avg_over_time(truvami_gateway_uplink_rssi[1d])) < -120
-          for: 30m
+            avg by (gatewayId) (avg_over_time(truvami_gateway_uplink_rssi[1d])) <= -89
+          for: 2h
           labels:
             {{- range $key, $value := .Values.alertLabels }}
             {{ $key }}: {{ $value | quote }}
             {{- end }}
             service: truvami-bridge
-            severity: minor
+            severity: warning
             node: truvami-gateway-{{ "{{" }} $labels.gatewayId }}
-        - alert: TruvamiBadGatewaySNR
+        - alert: TruvamiFairGatewayRSSI
           annotations:
             description: >
-              Gateway {{ "{{" }} $labels.gatewayId }} has average SNR of {{ "{{" }} $value }} dB over the last 24 hours, which is below the -10 dB threshold.
+              Gateway {{ "{{" }} $labels.gatewayId }} has average RSSI of {{ "{{" }} $value }} dBm over the last 24 hours, which is fair (-89 to -79 dBm).
             summary: >
-              Bad Truvami gateway SNR detected (24h average)
+              Fair Truvami gateway RSSI detected (24h average)
           expr: >
-            avg by (gatewayId) (avg_over_time(truvami_gateway_uplink_snr[1d])) < -10
-          for: 30m
+            avg by (gatewayId) (avg_over_time(truvami_gateway_uplink_rssi[1d])) > -89 and avg by (gatewayId) (avg_over_time(truvami_gateway_uplink_rssi[1d])) <= -79
+          for: 1h
           labels:
             {{- range $key, $value := .Values.alertLabels }}
             {{ $key }}: {{ $value | quote }}
             {{- end }}
             service: truvami-bridge
-            severity: minor
+            severity: intermediate
+            node: truvami-gateway-{{ "{{" }} $labels.gatewayId }}
+        - alert: TruvamiPoorGatewaySNR
+          annotations:
+            description: >
+              Gateway {{ "{{" }} $labels.gatewayId }} has average SNR of {{ "{{" }} $value }} dB over the last 24 hours, which is poor (≤8 dB).
+            summary: >
+              Poor Truvami gateway SNR detected (24h average)
+          expr: >
+            avg by (gatewayId) (avg_over_time(truvami_gateway_uplink_snr[1d])) <= 8
+          for: 2h
+          labels:
+            {{- range $key, $value := .Values.alertLabels }}
+            {{ $key }}: {{ $value | quote }}
+            {{- end }}
+            service: truvami-bridge
+            severity: warning
+            node: truvami-gateway-{{ "{{" }} $labels.gatewayId }}
+        - alert: TruvamiFairGatewaySNR
+          annotations:
+            description: >
+              Gateway {{ "{{" }} $labels.gatewayId }} has average SNR of {{ "{{" }} $value }} dB over the last 24 hours, which is fair (8-10 dB).
+            summary: >
+              Fair Truvami gateway SNR detected (24h average)
+          expr: >
+            avg by (gatewayId) (avg_over_time(truvami_gateway_uplink_snr[1d])) > 8 and avg by (gatewayId) (avg_over_time(truvami_gateway_uplink_snr[1d])) <= 10
+          for: 1h
+          labels:
+            {{- range $key, $value := .Values.alertLabels }}
+            {{ $key }}: {{ $value | quote }}
+            {{- end }}
+            service: truvami-bridge
+            severity: intermediate
             node: truvami-gateway-{{ "{{" }} $labels.gatewayId }}
