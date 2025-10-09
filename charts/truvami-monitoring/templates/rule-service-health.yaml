@@ -27,9 +27,9 @@ spec:
         - alert: TruvamiBridgeHighErrorRate
           annotations:
             description: >-
-              Error rate is {{ "{{" }} $value }} errors/sec over the last 5 minutes.
+              High error rate detected over the last 5 minutes.
             summary: >-
-              High error rate in Truvami Bridge
+              High error rate in Truvami Bridge (>0.1 errors/sec over 5min, alert after 2min)
           expr: >-
             (
               rate(truvami_failed_to_decode_payload_count[5m]) +

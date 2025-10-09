@@ -12,9 +12,11 @@ spec:
         - alert: TruvamiPoorGatewayRSSI
           annotations:
             description: >
-              Gateway {{ "{{" }} $labels.gatewayId }} has average RSSI of {{ "{{" }} $value }} dBm over the last 24 hours, which is poor (≤-89 dBm).
+              Gateway {{ "{{" }} $labels.gatewayId }} has weak signal strength (RSSI ≤-89 dBm over 24h). 
+              This indicates poor wireless connectivity that may cause packet loss or connection drops.
+              Check antenna positioning, cable connections, or environmental interference.
             summary: >
-              Poor Truvami gateway RSSI detected (24h average)
+              Poor gateway signal strength - RSSI ≤-89 dBm (weak signal, connectivity issues likely)
           expr: >
             avg by (gatewayId) (avg_over_time(truvami_gateway_uplink_rssi[1d])) <= -89
           for: 2h
@@ -28,9 +30,10 @@ spec:
         - alert: TruvamiFairGatewayRSSI
           annotations:
             description: >
-              Gateway {{ "{{" }} $labels.gatewayId }} has average RSSI of {{ "{{" }} $value }} dBm over the last 24 hours, which is fair (-89 to -79 dBm).
+              Gateway {{ "{{" }} $labels.gatewayId }} has marginal signal strength (RSSI -89 to -79 dBm over 24h).
+              Signal is functional but not optimal. Monitor for further degradation that could impact reliability.
             summary: >
-              Fair Truvami gateway RSSI detected (24h average)
+              Fair gateway signal strength - RSSI -89 to -79 dBm (marginal signal, monitor closely)
           expr: >
             avg by (gatewayId) (avg_over_time(truvami_gateway_uplink_rssi[1d])) > -89 and avg by (gatewayId) (avg_over_time(truvami_gateway_uplink_rssi[1d])) <= -79
           for: 1h
@@ -44,9 +47,11 @@ spec:
         - alert: TruvamiPoorGatewaySNR
           annotations:
             description: >
-              Gateway {{ "{{" }} $labels.gatewayId }} has average SNR of {{ "{{" }} $value }} dB over the last 24 hours, which is poor (≤8 dB).
+              Gateway {{ "{{" }} $labels.gatewayId }} has poor signal quality (SNR ≤8 dB over 24h).
+              Signal is barely above noise floor, making demodulation difficult and unreliable.
+              Check for interference sources or improve signal path quality.
             summary: >
-              Poor Truvami gateway SNR detected (24h average)
+              Poor gateway signal quality - SNR ≤8 dB (signal barely above noise, demodulation issues)
           expr: >
             avg by (gatewayId) (avg_over_time(truvami_gateway_uplink_snr[1d])) <= 8
           for: 2h
@@ -60,9 +65,11 @@ spec:
         - alert: TruvamiFairGatewaySNR
           annotations:
             description: >
-              Gateway {{ "{{" }} $labels.gatewayId }} has average SNR of {{ "{{" }} $value }} dB over the last 24 hours, which is fair (8-10 dB).
+              Gateway {{ "{{" }} $labels.gatewayId }} has marginal signal quality (SNR 8-10 dB over 24h).
+              Signal quality is acceptable but not optimal. Monitor for trends toward degradation
+              that could affect LoRa demodulation reliability.
             summary: >
-              Fair Truvami gateway SNR detected (24h average)
+              Fair gateway signal quality - SNR 8-10 dB (marginal signal quality, monitor for degradation)
           expr: >
             avg by (gatewayId) (avg_over_time(truvami_gateway_uplink_snr[1d])) > 8 and avg by (gatewayId) (avg_over_time(truvami_gateway_uplink_snr[1d])) <= 10
           for: 1h

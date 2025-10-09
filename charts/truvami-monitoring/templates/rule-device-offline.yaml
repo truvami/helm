@@ -14,7 +14,7 @@ spec:
             description: >-
               Device {{ "{{" }} $labels.devEui }} has not sent any uplinks within the last 24 hours.
             summary: >-
-              Device {{ "{{" }} $labels.devEui }} no uplinks in 24h.
+              Device {{ "{{" }} $labels.devEui }} no uplinks in 24h (sum=0, alert after 5min).
           expr: >-
             sum by(devEui) (increase(truvami_device_uplink_count[24h])) == 0
           for: 5m
@@ -30,7 +30,7 @@ spec:
             description: >-
               Device {{ "{{" }} $labels.devEui }} has not sent any uplinks within the last 72 hours.
             summary: >-
-              Device {{ "{{" }} $labels.devEui }} no uplinks in 72h.
+              Device {{ "{{" }} $labels.devEui }} no uplinks in 72h (sum=0, alert after 5min).
           expr: >-
             sum by(devEui) (increase(truvami_device_uplink_count[72h])) == 0
           for: 5m
