@@ -12,9 +12,34 @@ spec:
         - alert: TruvamiBridgeDown
           annotations:
             description: >-
-              Truvami Bridge instance {{ "{{" }} $labels.instance }} has been down for more than 1 minute.
+              **What's happening:** Truvami Bridge instance {{ "{{" }} $labels.instance }} is completely down and unresponsive for over 1 minute. CRITICAL SERVICE FAILURE.
+              
+              **Why this occurred:** The system monitors service availability using up{job="truvami-bridge"} == 0
+              which indicates the service failed health checks. Truvami Bridge is critical infrastructure that processes all device data. Failure causes include:
+              - Service crash or unexpected termination
+              - System resource exhaustion (out of memory, CPU overload)
+              - Database connectivity failure preventing startup
+              - Configuration errors or missing dependencies
+              - Network connectivity issues
+              - Host system failure or maintenance
+              
+              **Business Impact:**
+              - **COMPLETE SERVICE OUTAGE:** No device data processing
+              - All device communications blocked
+              - Real-time alerts and monitoring stopped
+              - Customer data collection halted
+              - API services may be affected
+              
+              **What to do IMMEDIATELY:**
+              1. **ESCALATE TO ON-CALL IMMEDIATELY** - this is a P1 incident
+              2. **Check service status** and restart if possible
+              3. **Verify system resources** and host health
+              4. **Check database connectivity** and dependencies
+              5. **Review service logs** for crash details
+              6. **Prepare customer communications** about service impact
+              7. **Monitor for data loss** during outage period
             summary: >-
-              Truvami Bridge is down
+              Truvami Bridge is down - CRITICAL SERVICE OUTAGE
           expr: >-
             up{job="truvami-bridge"} == 0
           for: 1m

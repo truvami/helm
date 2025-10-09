@@ -12,9 +12,28 @@ spec:
         - alert: TruvamiDatabaseErrorRateHigh
           annotations:
             description: >-
-              Database error rate is {{ "{{" }} $value }} errors/sec for subsystem {{ "{{" }} $labels.subsystem }} with error code {{ "{{" }} $labels.error_code }}.
+              **What's happening:** Database errors are occurring at a high rate (>0.1 errors/sec over 5 minutes) in subsystem {{ "{{" }} $labels.subsystem }}.
+              
+              **Why this occurred:** The system aggregates all database error types using rate() functions across multiple error categories:
+              data exceptions, constraint violations, transaction errors, syntax errors, resource issues, system errors, and internal errors.
+              High error rates typically indicate:
+              - Database connectivity or timeout issues
+              - Invalid data being inserted/updated (constraint violations)
+              - Database resource exhaustion (connections, memory, disk)
+              - Corrupted queries or SQL syntax problems
+              - Database server performance degradation
+              - Application logic errors causing database conflicts
+              
+              **What to do:**
+              1. Check database server health and resource utilization
+              2. Review database connection pool status and settings
+              3. Examine recent database queries for syntax or logic errors
+              4. Validate data integrity and constraint compliance
+              5. Monitor database performance metrics (CPU, memory, I/O)
+              6. Check application logs for specific error details
+              7. Review recent database schema or configuration changes
             summary: >-
-              High database error rate detected
+              High database error rate detected (>0.1 errors/sec over 5min)
           expr: >-
             (
               rate(truvami_api_db_error_data_exception_total[5m]) +
@@ -43,9 +62,26 @@ spec:
         - alert: TruvamiDatabaseIntegrityConstraintViolations
           annotations:
             description: >-
-              Database integrity constraint violations at {{ "{{" }} $value }} violations/sec for subsystem {{ "{{" }} $labels.subsystem }}.
+              **What's happening:** Database integrity constraint violations are occurring frequently (>0.05 violations/sec over 5 minutes) in subsystem {{ "{{" }} $labels.subsystem }}.
+              
+              **Why this occurred:** The system tracks constraint violations using rate(truvami_api_db_error_integrity_constraint_violation_total[5m]).
+              Constraint violations happen when data doesn't meet database rules, such as:
+              - Duplicate primary key or unique constraint violations
+              - Foreign key constraint failures (referencing non-existent records)
+              - Check constraint violations (data doesn't meet validation rules)
+              - Not-null constraint violations (missing required fields)
+              - Data type or format validation failures
+              
+              **What to do:**
+              1. Review recent data insertion/update operations for duplicates
+              2. Check for missing or invalid foreign key references
+              3. Validate input data against database schema constraints
+              4. Examine application logic for proper data validation
+              5. Review database constraint definitions for accuracy
+              6. Check for race conditions in concurrent data operations
+              7. Monitor for patterns indicating systematic data quality issues
             summary: >-
-              High database integrity constraint violation rate
+              High database integrity constraint violation rate (>0.05/sec over 5min)
           expr: >-
             rate(truvami_api_db_error_integrity_constraint_violation_total[5m]) > 0.05
           for: 1m

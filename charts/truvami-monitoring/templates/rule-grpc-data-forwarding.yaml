@@ -12,9 +12,24 @@ spec:
         - alert: TruvamiGRPCUplinkFailures
           annotations:
             description: >-
-              Failed to create uplinks via gRPC at {{ "{{" }} $value }} failures/sec for device {{ "{{" }} $labels.devEui }}.
+              **What's happening:** Device {{ "{{" }} $labels.devEui }} is experiencing high gRPC uplink failures (>0.05 failures/sec over 5 minutes).
+              
+              **Why this occurred:** The system calculates failure rate using rate(truvami_failed_to_create_uplink_through_grpc_count[5m]) 
+              which measures how many uplink creation attempts via gRPC are failing per second. This typically indicates:
+              - gRPC service connectivity issues
+              - Authentication/authorization problems with the gRPC endpoint
+              - Network latency or timeouts
+              - Downstream API service unavailability
+              
+              **What to do:**
+              1. Check gRPC service health and connectivity
+              2. Verify authentication credentials and certificates
+              3. Check network connectivity between bridge and gRPC services
+              4. Review gRPC service logs for specific error details
+              5. Monitor downstream API services for availability
+              6. Check for any recent configuration changes
             summary: >-
-              High Truvami gRPC uplink failure rate
+              High Truvami gRPC uplink failure rate (>0.05/sec over 5min)
           expr: >-
             rate(truvami_failed_to_create_uplink_through_grpc_count[5m]) > 0.05
           for: 2m
@@ -28,9 +43,25 @@ spec:
         - alert: TruvamiGRPCPositionFailures
           annotations:
             description: >-
-              Failed to create positions via gRPC at {{ "{{" }} $value }} failures/sec for device {{ "{{" }} $labels.devEui }}.
+              **What's happening:** Device {{ "{{" }} $labels.devEui }} is experiencing high gRPC position creation failures (>0.05 failures/sec over 5 minutes).
+              
+              **Why this occurred:** The system measures position forwarding failures using rate(truvami_failed_to_create_position_through_grpc_count[5m])
+              which tracks failed attempts to send position data via gRPC. Common causes include:
+              - Position API service unavailability or overload
+              - Invalid or malformed position data from device
+              - gRPC connection timeouts or network issues
+              - Authentication failures with position services
+              - Rate limiting on the receiving endpoint
+              
+              **What to do:**
+              1. Verify position API service status and performance
+              2. Check gRPC connection health to position services
+              3. Validate position data format and completeness
+              4. Review authentication and authorization settings
+              5. Check for rate limiting or quota issues
+              6. Examine device positioning accuracy and data quality
             summary: >-
-              High Truvami gRPC position failure rate
+              High Truvami gRPC position failure rate (>0.05/sec over 5min)
           expr: >-
             rate(truvami_failed_to_create_position_through_grpc_count[5m]) > 0.05
           for: 2m
@@ -44,9 +75,25 @@ spec:
         - alert: TruvamiGRPCBatteryStatusFailures
           annotations:
             description: >-
-              Failed to create battery statuses via gRPC at {{ "{{" }} $value }} failures/sec for device {{ "{{" }} $labels.devEui }}.
+              **What's happening:** Device {{ "{{" }} $labels.devEui }} is experiencing high gRPC battery status failures (>0.05 failures/sec over 5 minutes).
+              
+              **Why this occurred:** The system tracks battery status forwarding failures using rate(truvami_failed_to_create_battery_status_through_grpc_count[5m])
+              which measures failed attempts to send battery information via gRPC. This usually indicates:
+              - Battery monitoring API service issues
+              - Invalid battery data format or missing fields
+              - gRPC service connectivity problems
+              - Authentication issues with battery monitoring services
+              - Device battery sensor malfunction affecting data quality
+              
+              **What to do:**
+              1. Check battery monitoring API service availability
+              2. Verify gRPC connectivity to battery services
+              3. Validate battery data format and sensor readings
+              4. Review authentication credentials for battery services
+              5. Check device battery sensor functionality
+              6. Monitor for patterns indicating device hardware issues
             summary: >-
-              High Truvami gRPC battery status failure rate
+              High Truvami gRPC battery status failure rate (>0.05/sec over 5min)
           expr: >-
             rate(truvami_failed_to_create_battery_status_through_grpc_count[5m]) > 0.05
           for: 2m
@@ -60,9 +107,25 @@ spec:
         - alert: TruvamiGRPCRotationStatusFailures
           annotations:
             description: >-
-              Failed to create rotation statuses via gRPC at {{ "{{" }} $value }} failures/sec for device {{ "{{" }} $labels.devEui }}.
+              **What's happening:** Device {{ "{{" }} $labels.devEui }} is experiencing high gRPC rotation status failures (>0.05 failures/sec over 5 minutes).
+              
+              **Why this occurred:** The system monitors rotation data forwarding using rate(truvami_failed_to_create_rotation_status_through_grpc_count[5m])
+              which tracks failed attempts to send device rotation/orientation data via gRPC. Common causes include:
+              - Rotation monitoring API service downtime or errors
+              - Invalid gyroscope/accelerometer data from device
+              - gRPC connection issues to rotation services
+              - Authentication problems with rotation monitoring endpoints
+              - Device orientation sensor calibration issues
+              
+              **What to do:**
+              1. Verify rotation monitoring API service health
+              2. Check gRPC connectivity to rotation services
+              3. Validate device orientation sensor data quality
+              4. Review authentication settings for rotation endpoints
+              5. Check device gyroscope/accelerometer calibration
+              6. Monitor for device mounting or physical orientation issues
             summary: >-
-              High Truvami gRPC rotation status failure rate
+              High Truvami gRPC rotation status failure rate (>0.05/sec over 5min)
           expr: >-
             rate(truvami_failed_to_create_rotation_status_through_grpc_count[5m]) > 0.05
           for: 2m

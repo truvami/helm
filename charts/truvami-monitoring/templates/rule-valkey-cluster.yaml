@@ -31,16 +31,34 @@ spec:
         {{- toYaml . | nindent 8 }}
         {{- end }}
       annotations:
-        summary: "Valkey instance is down"
+        summary: "Valkey instance is down - CRITICAL"
         description: |
-          Valkey instance {{ "{{" }} $labels.instance }} is not responding.
+          **What's happening:** Valkey instance {{ "{{" }} $labels.instance }} is completely down and not responding to health checks.
           
-          This affects:
-          - Application caching performance
-          - Session storage functionality
-          - Real-time data access
+          **Why this occurred:** The system monitors Valkey availability using redis_up == 0
+          which indicates the instance failed to respond to connection attempts. Common causes include:
+          - Valkey process crash or kill
+          - System resource exhaustion (out of memory, disk full)
+          - Network connectivity issues
+          - Configuration errors preventing startup
+          - Host system failure or reboot
+          - Port binding conflicts
           
-          Immediate investigation required to restore service.
+          **Business Impact:**
+          - **CRITICAL:** Application caching completely unavailable
+          - Session storage functionality lost (user logouts)
+          - Real-time data access severely degraded
+          - Application performance significantly reduced
+          - Potential data loss if persistence not configured
+          
+          **What to do IMMEDIATELY:**
+          1. **Check Valkey process status** and restart if necessary
+          2. **Verify system resources** (memory, disk space, CPU)
+          3. **Check Valkey logs** for crash reasons or errors
+          4. **Test network connectivity** to Valkey port
+          5. **Validate configuration files** for syntax errors
+          6. **Monitor application impact** and consider emergency scaling
+          7. **Escalate immediately** if unable to restore within 5 minutes
 
     # Memory limit alerts removed - redis_memory_max_bytes not available when memory limits are unknown
 

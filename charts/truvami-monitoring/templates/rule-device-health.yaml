@@ -12,9 +12,27 @@ spec:
         - alert: TruvamiDevicePayloadDecodingFailures
           annotations:
             description: >-
-              Device {{ "{{" }} $labels.devEui }} on port {{ "{{" }} $labels.port }} has {{ "{{" }} $value }} decoding failures/sec.
+              **What's happening:** Device {{ "{{" }} $labels.devEui }} on port {{ "{{" }} $labels.port }} is experiencing high payload decoding failures (>0.1 failures/sec over 5 minutes).
+              
+              **Why this occurred:** The system tracks decoding failures using rate(truvami_failed_to_decode_payload_count[5m])
+              which measures how often received device payloads cannot be properly decoded. Common causes include:
+              - Device firmware changes affecting payload format
+              - Corrupted or incomplete data transmission
+              - Decoder configuration mismatch with device version
+              - Device hardware malfunction affecting data encoding
+              - Network interference causing data corruption
+              - Device battery issues affecting transmission quality
+              
+              **What to do:**
+              1. Check device firmware version and decoder compatibility
+              2. Verify device hardware health and battery status
+              3. Review recent decoder configuration changes
+              4. Check network signal quality (RSSI/SNR) for this device
+              5. Examine raw payload data for corruption patterns
+              6. Consider device replacement if hardware failure suspected
+              7. Update decoder if device firmware was recently changed
             summary: >-
-              High Truvami device payload decoding failure rate
+              High Truvami device payload decoding failure rate (>0.1/sec over 5min)
           expr: >-
             rate(truvami_failed_to_decode_payload_count[5m]) > 0.1
           for: 2m
@@ -28,9 +46,22 @@ spec:
         - alert: TruvamiDeviceLowBattery
           annotations:
             description: >-
-              Device {{ "{{" }} $labels.devEui }} (customer: {{ "{{" }} $labels.customer }}) has low battery voltage: {{ "{{" }} $value }}V (~20% battery level).
+              **What's happening:** Device {{ "{{" }} $labels.devEui }} (customer: {{ "{{" }} $labels.customer }}) has low battery voltage (~20% battery level remaining).
+              
+              **Why this occurred:** The system monitors battery voltage using truvami_device_battery_status < 3.0
+              which triggers when battery voltage drops below 3.0V, indicating approximately 20% battery remaining.
+              This is normal battery depletion over time, but requires attention to prevent service interruption.
+              
+              **What to do:**
+              1. **Schedule battery replacement** within next 2-4 weeks
+              2. Contact customer {{ "{{" }} $labels.customer }} to arrange maintenance
+              3. Monitor device for further battery degradation
+              4. Check if device location is accessible for maintenance
+              5. Verify customer maintenance contract and procedures
+              6. Document maintenance schedule to prevent service interruption
+              7. Consider proactive replacement if device is in critical location
             summary: >-
-              Truvami device battery low
+              Truvami device battery low (<3.0V, ~20% remaining)
           expr: >-
             truvami_device_battery_status < 3.0
           for: 5m
@@ -44,9 +75,23 @@ spec:
         - alert: TruvamiDeviceCriticalBattery
           annotations:
             description: >-
-              Device {{ "{{" }} $labels.devEui }} (customer: {{ "{{" }} $labels.customer }}) has critically low battery voltage: {{ "{{" }} $value }}V (~10% battery level).
+              **What's happening:** Device {{ "{{" }} $labels.devEui }} (customer: {{ "{{" }} $labels.customer }}) has CRITICALLY low battery voltage (~10% battery level remaining). IMMEDIATE ACTION REQUIRED.
+              
+              **Why this occurred:** The system monitors critical battery levels using truvami_device_battery_status < 2.7
+              which triggers when battery voltage drops below 2.7V, indicating approximately 10% battery remaining.
+              Device will likely stop functioning within days or hours, causing service disruption.
+              
+              **What to do IMMEDIATELY:**
+              1. **URGENT:** Schedule emergency battery replacement within 24-48 hours
+              2. **Contact customer immediately** to arrange urgent maintenance access
+              3. **Escalate to field service team** for priority dispatch
+              4. Monitor device for complete power failure
+              5. Prepare backup communication methods if device fails
+              6. Document incident for customer service follow-up
+              7. Review why earlier low battery alerts weren't addressed
+              8. Consider temporary service arrangements if replacement delayed
             summary: >-
-              Truvami device battery critically low
+              Truvami device battery critically low (<2.7V, ~10% remaining) - URGENT
           expr: >-
             truvami_device_battery_status < 2.7
           for: 1m

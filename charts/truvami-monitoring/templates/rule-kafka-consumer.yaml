@@ -29,14 +29,27 @@ spec:
         {{- toYaml . | nindent 8 }}
         {{- end }}
       annotations:
-        summary: "Truvami Kafka consumer lag detected"
+        summary: "Truvami Kafka consumer lag detected (no messages >15min)"
         description: |
-          No messages consumed for more than 15 minutes. Last message was {{ "{{" }} $value | humanizeDuration }} ago.
+          **What's happening:** Kafka consumer hasn't processed any messages for over 15 minutes.
           
-          This may indicate:
-          - Low message volume (normal during quiet periods)
-          - Consumer processing delays
-          - Kafka connectivity issues
+          **Why this occurred:** The system checks consumer activity using time() - truvami_kafka_consumer_last_message_timestamp_seconds{cluster!="customer"} > 900
+          which calculates the time difference since the last processed message. This could indicate:
+          - Normal quiet period with low message volume (expected during off-hours)
+          - Consumer processing delays or performance issues
+          - Kafka broker connectivity problems
+          - Consumer group rebalancing issues
+          - Topic partition assignment problems
+          - Network connectivity issues between consumer and Kafka cluster
+          
+          **What to do:**
+          1. Check if this aligns with expected quiet periods
+          2. Verify Kafka broker health and accessibility
+          3. Review consumer group status and partition assignments
+          4. Check consumer application logs for errors or delays
+          5. Monitor Kafka topic message production rates
+          6. Verify network connectivity to Kafka cluster
+          7. Check consumer group rebalancing activity
           
     - alert: TruvamiKafkaConsumerBlocked
       expr: time() - truvami_kafka_consumer_last_message_timestamp_seconds{cluster!="customer"} > 1800
@@ -49,15 +62,27 @@ spec:
         {{- toYaml . | nindent 8 }}
         {{- end }}
       annotations:
-        summary: "Truvami Kafka consumer appears blocked"
+        summary: "Truvami Kafka consumer appears blocked (no messages >30min)"
         description: |
-          Kafka consumer appears blocked or in infinite loop - no messages processed for more than 30 minutes. Immediate attention required.
+          **What's happening:** Kafka consumer appears completely blocked - no messages processed for over 30 minutes. CRITICAL ISSUE requiring immediate attention.
           
-          Check the following:
-          - Consumer health and status
-          - Kafka connectivity and broker health
-          - System resources (CPU, memory)
-          - Network connectivity to Kafka cluster
-          - Consumer group rebalancing issues
+          **Why this occurred:** The system uses time() - truvami_kafka_consumer_last_message_timestamp_seconds{cluster!="customer"} > 1800
+          to detect consumers that haven't processed messages for over 30 minutes. This is critical because it indicates:
+          - Consumer application crash or infinite loop
+          - Complete Kafka connectivity failure
+          - Consumer deadlock or thread blocking
+          - System resource exhaustion preventing processing
+          - Critical consumer group issues
+          - Database or downstream service complete failure
+          
+          **What to do IMMEDIATELY:**
+          1. **URGENT:** Check consumer application health and restart if necessary
+          2. Verify Kafka broker accessibility and cluster health
+          3. Check system resources (CPU, memory, disk) on consumer hosts
+          4. Review consumer application logs for errors, exceptions, or hangs
+          5. Verify database and downstream service availability
+          6. Check consumer group status and rebalancing issues
+          7. Monitor message backlog and consider scaling consumers
+          8. Escalate to on-call engineer if unable to resolve quickly
 
 {{- end }}
