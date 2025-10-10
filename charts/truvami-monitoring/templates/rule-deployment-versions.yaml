@@ -35,13 +35,7 @@ spec:
             summary: >-
               Multiple versions of {{ "{{" }} $labels.container }} running (rolling upgrade or deployment issue)
           expr: >-
-            (
-              count by (job) (count by (job, commit) (truvami_bridge_info)) > 1 or
-              count by (job) (count by (job, commit) (truvami_gateway_info)) > 1 or
-              count by (job) (count by (job, commit) (truvami_siren_info)) > 1 or
-              count by (job) (count by (job, commit) (truvami_api_info)) > 1 or
-              count by (job) (count by (job, commit) (truvami_decoder_info)) > 1
-            )
+            count by (job) (count by (job, commit) ({__name__=~"truvami_(bridge|gateway|siren|api|decoder)_info"})) > 1
           for: 5m
           labels:
             {{- range $key, $value := .Values.alertLabels }}
@@ -78,13 +72,7 @@ spec:
             summary: >-
               STUCK DEPLOYMENT: Multiple versions of {{ "{{" }} $labels.container }} running >15min - immediate action required
           expr: >-
-            (
-              count by (job) (count by (job, commit) (truvami_bridge_info)) > 1 or
-              count by (job) (count by (job, commit) (truvami_gateway_info)) > 1 or
-              count by (job) (count by (job, commit) (truvami_siren_info)) > 1 or
-              count by (job) (count by (job, commit) (truvami_api_info)) > 1 or
-              count by (job) (count by (job, commit) (truvami_decoder_info)) > 1
-            )
+            count by (job) (count by (job, commit) ({__name__=~"truvami_(bridge|gateway|siren|api|decoder)_info"})) > 1
           for: 15m
           labels:
             {{- range $key, $value := .Values.alertLabels }}
@@ -107,15 +95,9 @@ spec:
               This is an informational alert that fires when service version information is available.
               Use this to track deployments and version changes across the environment.
             summary: >-
-              {{ "{{" }} $labels.container }} running version {{ "{{" }} $labels.version }} ({{ "{{" }} $labels.commit | truncate 8 }})
+              {{ "{{" }} $labels.container }} running version {{ "{{" }} $labels.version }} (commit: {{ "{{" }} $labels.commit }})
           expr: >-
-            (
-              truvami_bridge_info or
-              truvami_gateway_info or
-              truvami_siren_info or
-              truvami_api_info or
-              truvami_decoder_info
-            )
+            {__name__=~"truvami_(bridge|gateway|siren|api|decoder)_info"}
           for: 1m
           labels:
             {{- range $key, $value := .Values.alertLabels }}
