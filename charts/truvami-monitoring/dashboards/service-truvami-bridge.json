@@ -702,7 +702,7 @@
       },
       "id": 8,
       "options": {
-        "alertInstanceLabelFilter": "{container=\"$service\",severity!=\"info\"}",
+        "alertInstanceLabelFilter": "{service=\"$service\",namespace=\"$namespace\"}",
         "alertName": "",
         "dashboardAlerts": false,
         "groupBy": [],
