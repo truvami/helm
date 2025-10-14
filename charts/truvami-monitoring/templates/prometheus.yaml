@@ -49,6 +49,7 @@ metadata:
 spec:
   serviceAccountName: "{{ include "truvami-monitoring.fullname" . }}"
   replicas: 2
+  podMonitorSelector: {}
   podMonitorNamespaceSelector:
     matchLabels:
       kubernetes.io/metadata.name : {{ .Release.Namespace }}
