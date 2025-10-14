@@ -22,10 +22,11 @@ spec:
       expr: time() - truvami_kafka_consumer_last_message_timestamp_seconds{cluster!="customer"} > 900
       for: 1m
       labels:
+        namespace: {{ .Release.Namespace }}
         severity: warning
+        node: truvami-bridge
         service: truvami-bridge
         component: kafka-consumer
-        node: truvami-bridge
         {{- with .Values.alertLabels }}
         {{- toYaml . | nindent 8 }}
         {{- end }}
@@ -56,10 +57,11 @@ spec:
       expr: time() - truvami_kafka_consumer_last_message_timestamp_seconds{cluster!="customer"} > 1800
       for: 2m
       labels:
+        namespace: {{ .Release.Namespace }}
         severity: critical
+        node: truvami-bridge
         service: truvami-bridge
         component: kafka-consumer
-        node: truvami-bridge
         {{- with .Values.alertLabels }}
         {{- toYaml . | nindent 8 }}
         {{- end }}

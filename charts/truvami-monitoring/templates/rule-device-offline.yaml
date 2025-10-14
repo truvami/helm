@@ -19,12 +19,13 @@ spec:
             sum by(devEui) (increase(truvami_device_uplink_count[24h])) == 0
           for: 5m
           labels:
-            {{- range $key, $value := .Values.alertLabels }}
-            {{ $key }}: {{ $value | quote }}
-            {{- end }}
-            service: truvami-bridge
+            namespace: {{ .Release.Namespace }}
             severity: intermediate
-            node: truvami-{{ "{{" }} $labels.devEui }}
+            node: "{{ "{{" }} $labels.devEui }}"
+            service: truvami-device
+            {{- with .Values.alertLabels }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
         - alert: TruvamiDeviceNoUplink72h
           annotations:
             description: >-
@@ -35,9 +36,10 @@ spec:
             sum by(devEui) (increase(truvami_device_uplink_count[72h])) == 0
           for: 5m
           labels:
-            {{- range $key, $value := .Values.alertLabels }}
-            {{ $key }}: {{ $value | quote }}
-            {{- end }}
-            service: truvami-bridge
+            namespace: {{ .Release.Namespace }}
             severity: warning
-            node: truvami-{{ "{{" }} $labels.devEui }}
+            node: "{{ "{{" }} $labels.devEui }}"
+            service: truvami-device
+            {{- with .Values.alertLabels }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}

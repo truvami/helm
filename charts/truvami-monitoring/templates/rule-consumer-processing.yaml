@@ -37,12 +37,14 @@ spec:
             truvami_consumer_idle_time > 3600
           for: 1m
           labels:
-            {{- range $key, $value := .Values.alertLabels }}
-            {{ $key }}: {{ $value | quote }}
-            {{- end }}
-            service: truvami-bridge
+            namespace: {{ .Release.Namespace }}
             severity: critical
             node: truvami-bridge
+            service: truvami-bridge
+            component: consumer
+            {{- with .Values.alertLabels }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
         - alert: TruvamiKafkaConsumerErrors
           annotations:
             description: >-
@@ -71,12 +73,14 @@ spec:
             rate(truvami_kafka_consumer_messages_error_count[5m]) > 0.05
           for: 2m
           labels:
-            {{- range $key, $value := .Values.alertLabels }}
-            {{ $key }}: {{ $value | quote }}
-            {{- end }}
-            service: truvami-bridge
+            namespace: {{ .Release.Namespace }}
             severity: major
             node: truvami-bridge
+            service: truvami-bridge
+            component: consumer
+            {{- with .Values.alertLabels }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
         - alert: TruvamiFrequentPartitionRebalances
           annotations:
             description: >-
@@ -87,9 +91,12 @@ spec:
             rate(truvami_kafka_consumer_partition_rebalances_total[10m]) > 0.1
           for: 5m
           labels:
-            {{- range $key, $value := .Values.alertLabels }}
-            {{ $key }}: {{ $value | quote }}
-            {{- end }}
-            service: truvami-bridge
+            namespace: {{ .Release.Namespace }}
             severity: minor
             node: truvami-bridge
+            service: truvami-bridge
+            component: consumer
+            {{- with .Values.alertLabels }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
+            namespace: {{ .Release.Namespace }}

@@ -34,12 +34,14 @@ spec:
             rate(truvami_failed_to_create_uplink_through_grpc_count[5m]) > 0.05
           for: 2m
           labels:
-            {{- range $key, $value := .Values.alertLabels }}
-            {{ $key }}: {{ $value | quote }}
-            {{- end }}
-            service: truvami-bridge
+            namespace: {{ .Release.Namespace }}
             severity: major
-            node: truvami-{{ "{{" }} $labels.devEui }}
+            node: "{{ "{{" }} $labels.devEui }}"
+            service: truvami-bridge
+            component: grpc
+            {{- with .Values.alertLabels }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
         - alert: TruvamiGRPCPositionFailures
           annotations:
             description: >-
@@ -66,12 +68,14 @@ spec:
             rate(truvami_failed_to_create_position_through_grpc_count[5m]) > 0.05
           for: 2m
           labels:
-            {{- range $key, $value := .Values.alertLabels }}
-            {{ $key }}: {{ $value | quote }}
-            {{- end }}
-            service: truvami-bridge
+            namespace: {{ .Release.Namespace }}
             severity: major
-            node: truvami-{{ "{{" }} $labels.devEui }}
+            node: "{{ "{{" }} $labels.devEui }}"
+            service: truvami-bridge
+            component: grpc
+            {{- with .Values.alertLabels }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
         - alert: TruvamiGRPCBatteryStatusFailures
           annotations:
             description: >-
@@ -98,12 +102,14 @@ spec:
             rate(truvami_failed_to_create_battery_status_through_grpc_count[5m]) > 0.05
           for: 2m
           labels:
-            {{- range $key, $value := .Values.alertLabels }}
-            {{ $key }}: {{ $value | quote }}
-            {{- end }}
-            service: truvami-bridge
+            namespace: {{ .Release.Namespace }}
             severity: major
-            node: truvami-{{ "{{" }} $labels.devEui }}
+            node: "{{ "{{" }} $labels.devEui }}"
+            service: truvami-bridge
+            component: grpc
+            {{- with .Values.alertLabels }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
         - alert: TruvamiGRPCRotationStatusFailures
           annotations:
             description: >-
@@ -130,12 +136,14 @@ spec:
             rate(truvami_failed_to_create_rotation_status_through_grpc_count[5m]) > 0.05
           for: 2m
           labels:
-            {{- range $key, $value := .Values.alertLabels }}
-            {{ $key }}: {{ $value | quote }}
-            {{- end }}
-            service: truvami-bridge
+            namespace: {{ .Release.Namespace }}
             severity: major
-            node: truvami-{{ "{{" }} $labels.devEui }}
+            node: "{{ "{{" }} $labels.devEui }}"
+            service: truvami-bridge
+            component: grpc
+            {{- with .Values.alertLabels }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
         - alert: TruvamiGRPCEventFailures
           annotations:
             description: >-
@@ -146,9 +154,12 @@ spec:
             rate(truvami_failed_to_create_event_through_grpc_count[5m]) > 0.05
           for: 2m
           labels:
-            {{- range $key, $value := .Values.alertLabels }}
-            {{ $key }}: {{ $value | quote }}
-            {{- end }}
-            service: truvami-bridge
+            namespace: {{ .Release.Namespace }}
             severity: major
-            node: truvami-{{ "{{" }} $labels.devEui }}
+            node: "{{ "{{" }} $labels.devEui }}"
+            service: truvami-bridge
+            component: grpc
+            {{- with .Values.alertLabels }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
+            namespace: {{ .Release.Namespace }}

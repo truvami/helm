@@ -19,12 +19,11 @@ spec:
             rate(truvami_alerts_valkey_connection_error_count[5m]) > 0
           for: 1m
           labels:
-            {{- range $key, $value := .Values.alertLabels }}
-            {{ $key }}: {{ $value | quote }}
-            {{- end }}
-            service: truvami-siren
-            node: truvami-siren
+            namespace: {{ .Release.Namespace }}
             severity: critical
+            node: truvami-siren
+            service: truvami-siren
+            component: cache-storage
         - alert: SirenCacheMissRateHigh
           annotations:
             description: >-
@@ -36,12 +35,11 @@ spec:
             (rate(truvami_alerts_cache_hit_count[5m]) + rate(truvami_alerts_cache_miss_count[5m])) > 0.5
           for: 5m
           labels:
-            {{- range $key, $value := .Values.alertLabels }}
-            {{ $key }}: {{ $value | quote }}
-            {{- end }}
-            service: truvami-siren
-            node: truvami-siren
+            namespace: {{ .Release.Namespace }}
             severity: minor
+            node: truvami-siren
+            service: truvami-siren
+            component: cache-storage
         - alert: SirenAlertConfigCacheFailures
           annotations:
             description: >-
@@ -52,12 +50,11 @@ spec:
             rate(truvami_alerts_config_cache_error_count[5m]) > 0.01
           for: 2m
           labels:
-            {{- range $key, $value := .Values.alertLabels }}
-            {{ $key }}: {{ $value | quote }}
-            {{- end }}
-            service: truvami-siren
-            node: truvami-siren
+            namespace: {{ .Release.Namespace }}
             severity: major
+            node: truvami-siren
+            service: truvami-siren
+            component: cache-storage
         - alert: SirenDeviceRepositoryErrors
           annotations:
             description: >-
@@ -68,12 +65,11 @@ spec:
             rate(truvami_alerts_device_repository_error_count[5m]) > 0.01
           for: 2m
           labels:
-            {{- range $key, $value := .Values.alertLabels }}
-            {{ $key }}: {{ $value | quote }}
-            {{- end }}
-            service: truvami-siren
-            node: truvami-siren
+            namespace: {{ .Release.Namespace }}
             severity: major
+            node: truvami-siren
+            service: truvami-siren
+            component: cache-storage
         - alert: SirenGrpcClientErrors
           annotations:
             description: >-
@@ -84,9 +80,8 @@ spec:
             rate(truvami_alerts_grpc_client_error_count[5m]) > 0.01
           for: 2m
           labels:
-            {{- range $key, $value := .Values.alertLabels }}
-            {{ $key }}: {{ $value | quote }}
-            {{- end }}
-            service: truvami-siren
-            node: truvami-siren
+            namespace: {{ .Release.Namespace }}
             severity: major
+            node: truvami-siren
+            service: truvami-siren
+            component: cache-storage

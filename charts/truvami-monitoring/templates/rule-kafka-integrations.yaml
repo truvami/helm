@@ -19,12 +19,14 @@ spec:
             rate(truvami_kafka_integration_failed_to_create_producer[5m]) > 0.01
           for: 2m
           labels:
-            {{- range $key, $value := .Values.alertLabels }}
-            {{ $key }}: {{ $value | quote }}
-            {{- end }}
-            service: truvami-bridge
+            namespace: {{ .Release.Namespace }}
             severity: major
             node: truvami-bridge-{{ "{{" }} $labels.uuid }}
+            service: truvami-bridge
+            component: kafka-integration
+            {{- with .Values.alertLabels }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
         - alert: TruvamiKafkaIntegrationDeliveryFailures
           annotations:
             description: >-
@@ -35,12 +37,14 @@ spec:
             rate(truvami_kafka_integration_failed_to_deliver_message[5m]) > 0.05
           for: 2m
           labels:
-            {{- range $key, $value := .Values.alertLabels }}
-            {{ $key }}: {{ $value | quote }}
-            {{- end }}
-            service: truvami-bridge
+            namespace: {{ .Release.Namespace }}
             severity: major
             node: truvami-bridge-{{ "{{" }} $labels.uuid }}
+            service: truvami-bridge
+            component: kafka-integration
+            {{- with .Values.alertLabels }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
         - alert: TruvamiKafkaIntegrationProduceFailures
           annotations:
             description: >-
@@ -51,12 +55,11 @@ spec:
             rate(truvami_kafka_integration_failed_to_produce_message[5m]) > 0.05
           for: 2m
           labels:
-            {{- range $key, $value := .Values.alertLabels }}
-            {{ $key }}: {{ $value | quote }}
-            {{- end }}
-            service: truvami-bridge
+            namespace: {{ .Release.Namespace }}
             severity: major
             node: truvami-bridge-{{ "{{" }} $labels.uuid }}
+            service: truvami-bridge
+            component: kafka-integration
         - alert: TruvamiAlertsQueuePublishFailures
           annotations:
             description: >-
@@ -73,12 +76,11 @@ spec:
             ) > 0.05
           for: 2m
           labels:
-            {{- range $key, $value := .Values.alertLabels }}
-            {{ $key }}: {{ $value | quote }}
-            {{- end }}
-            service: truvami-bridge
+            namespace: {{ .Release.Namespace }}
             severity: major
             node: truvami-bridge
+            service: truvami-bridge
+            component: kafka-integration
         - alert: TruvamiKafkaIntegrationCacheMissRate
           annotations:
             description: >-
@@ -90,12 +92,11 @@ spec:
             (rate(truvami_kafka_integrations_cache_hit_count[5m]) + rate(truvami_kafka_integrations_cache_miss_count[5m])) > 0.8
           for: 5m
           labels:
-            {{- range $key, $value := .Values.alertLabels }}
-            {{ $key }}: {{ $value | quote }}
-            {{- end }}
-            service: truvami-bridge
+            namespace: {{ .Release.Namespace }}
             severity: minor
             node: truvami-bridge
+            service: truvami-bridge
+            component: kafka-integration
         - alert: TruvamiKafkaIntegrationMarshalFailures
           annotations:
             description: >-
@@ -112,12 +113,11 @@ spec:
             ) > 0.05
           for: 2m
           labels:
-            {{- range $key, $value := .Values.alertLabels }}
-            {{ $key }}: {{ $value | quote }}
-            {{- end }}
-            service: truvami-bridge
+            namespace: {{ .Release.Namespace }}
             severity: major
             node: truvami-bridge-{{ "{{" }} $labels.customer }}
+            service: truvami-bridge
+            component: kafka-integration
         - alert: TruvamiKafkaIntegrationConsumerLag
           annotations:
             description: >-
@@ -129,14 +129,11 @@ spec:
             time() - truvami_kafka_consumer_last_message_timestamp_seconds{cluster="customer"} > 1800
           for: 5m
           labels:
-            {{- range $key, $value := .Values.alertLabels }}
-            {{ $key }}: {{ $value | quote }}
-            {{- end }}
-            service: truvami-bridge
-            component: kafka-integration
+            namespace: {{ .Release.Namespace }}
             severity: minor
             node: truvami-bridge-{{ "{{" }} $labels.topic }}
-            node: truvami-bridge-{{ "{{" }} $labels.topic }}
+            service: truvami-bridge
+            component: kafka-integration
         - alert: TruvamiKafkaIntegrationConsumerBlocked
           annotations:
             description: >-
@@ -150,11 +147,8 @@ spec:
             time() - truvami_kafka_consumer_last_message_timestamp_seconds{cluster="customer"} > 7200
           for: 10m
           labels:
-            {{- range $key, $value := .Values.alertLabels }}
-            {{ $key }}: {{ $value | quote }}
-            {{- end }}
-            service: truvami-bridge
-            component: kafka-integration
+            namespace: {{ .Release.Namespace }}
             severity: minor
             node: truvami-bridge-{{ "{{" }} $labels.topic }}
-            node: truvami-bridge-{{ "{{" }} $labels.topic }}
+            service: truvami-bridge
+            component: kafka-integration

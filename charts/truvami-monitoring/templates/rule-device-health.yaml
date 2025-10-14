@@ -37,12 +37,14 @@ spec:
             rate(truvami_failed_to_decode_payload_count[5m]) > 0.1
           for: 2m
           labels:
-            {{- range $key, $value := .Values.alertLabels }}
-            {{ $key }}: {{ $value | quote }}
-            {{- end }}
-            service: truvami-bridge
+            namespace: {{ .Release.Namespace }}
             severity: major
-            node: truvami-{{ "{{" }} $labels.devEui }}
+            node: "{{ "{{" }} $labels.devEui }}"
+            service: truvami-device
+            component: decoder
+            {{- with .Values.alertLabels }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
         - alert: TruvamiDeviceLowBattery
           annotations:
             description: >-
@@ -66,12 +68,14 @@ spec:
             truvami_device_battery_status < 3.0
           for: 5m
           labels:
-            {{- range $key, $value := .Values.alertLabels }}
-            {{ $key }}: {{ $value | quote }}
-            {{- end }}
-            service: truvami-bridge
+            namespace: {{ .Release.Namespace }}
             severity: warning
-            node: truvami-{{ "{{" }} $labels.devEui }}
+            node: "{{ "{{" }} $labels.devEui }}"
+            service: truvami-device
+            component: battery
+            {{- with .Values.alertLabels }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
         - alert: TruvamiDeviceCriticalBattery
           annotations:
             description: >-
@@ -96,12 +100,14 @@ spec:
             truvami_device_battery_status < 2.7
           for: 1m
           labels:
-            {{- range $key, $value := .Values.alertLabels }}
-            {{ $key }}: {{ $value | quote }}
+            namespace: {{ .Release.Namespace }}
+            severity: critical
+            node: "{{ "{{" }} $labels.devEui }}"
+            service: truvami-device
+            component: battery
+            {{- with .Values.alertLabels }}
+            {{- toYaml . | nindent 12 }}
             {{- end }}
-            service: truvami-bridge
-            severity: minor
-            node: truvami-{{ "{{" }} $labels.devEui }}
         - alert: TruvamiDeviceHighBufferLevel
           annotations:
             description: >-
@@ -112,12 +118,14 @@ spec:
             truvami_device_buffer_level > 800
           for: 5m
           labels:
-            {{- range $key, $value := .Values.alertLabels }}
-            {{ $key }}: {{ $value | quote }}
-            {{- end }}
-            service: truvami-bridge
+            namespace: {{ .Release.Namespace }}
             severity: minor
-            node: truvami-{{ "{{" }} $labels.devEui }}
+            node: "{{ "{{" }} $labels.devEui }}"
+            service: truvami-device
+            component: buffer
+            {{- with .Values.alertLabels }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
         - alert: TruvamiDeviceNoGPSFix
           annotations:
             description: >-
@@ -128,12 +136,14 @@ spec:
             truvami_device_gnss_satellites_value < 4
           for: 10m
           labels:
-            {{- range $key, $value := .Values.alertLabels }}
-            {{ $key }}: {{ $value | quote }}
-            {{- end }}
-            service: truvami-bridge
+            namespace: {{ .Release.Namespace }}
             severity: warning
-            node: truvami-{{ "{{" }} $labels.devEui }}
+            node: "{{ "{{" }} $labels.devEui }}"
+            service: truvami-device
+            component: gps
+            {{- with .Values.alertLabels }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
         - alert: TruvamiDeviceFrequentResets
           annotations:
             description: >-
@@ -144,12 +154,14 @@ spec:
             rate(truvami_device_reset_count[1h]) > 0.1
           for: 5m
           labels:
-            {{- range $key, $value := .Values.alertLabels }}
-            {{ $key }}: {{ $value | quote }}
-            {{- end }}
-            service: truvami-bridge
+            namespace: {{ .Release.Namespace }}
             severity: major
-            node: truvami-{{ "{{" }} $labels.devEui }}
+            node: "{{ "{{" }} $labels.devEui }}"
+            service: truvami-device
+            component: system
+            {{- with .Values.alertLabels }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
         - alert: TruvamiDeviceMultiNetworkProvisioning
           annotations:
             description: >-
@@ -190,9 +202,12 @@ spec:
             )
           for: 10m
           labels:
-            {{- range $key, $value := .Values.alertLabels }}
-            {{ $key }}: {{ $value | quote }}
-            {{- end }}
-            service: truvami-bridge
+            namespace: {{ .Release.Namespace }}
             severity: major
-            node: truvami-{{ "{{" }} $labels.devEui }}
+            node: "{{ "{{" }} $labels.devEui }}"
+            service: truvami-device
+            component: network
+            {{- with .Values.alertLabels }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
+            namespace: {{ .Release.Namespace }}

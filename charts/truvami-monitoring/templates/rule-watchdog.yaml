@@ -24,9 +24,10 @@ spec:
       expr: vector(1)
       for: 0s
       labels:
+        namespace: {{ .Release.Namespace }}
         severity: none
-        service: monitoring
         node: truvami-monitoring
+        service: truvami-monitoring
         component: watchdog
       annotations:
         summary: "Truvami monitoring system watchdog"
@@ -49,9 +50,10 @@ spec:
       expr: absent_over_time(ALERTS{alertname="TruvamiWatchdog"}[5m])
       for: 1m
       labels:
+        namespace: {{ .Release.Namespace }}
         severity: critical
-        service: monitoring
         node: truvami-monitoring
+        service: truvami-monitoring
         component: watchdog
       annotations:
         summary: "Truvami monitoring watchdog has stopped firing"

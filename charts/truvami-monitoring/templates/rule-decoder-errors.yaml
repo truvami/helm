@@ -22,10 +22,11 @@ spec:
       expr: rate(truvami_payloadparser_error_total[5m]) > 0.1
       for: 2m
       labels:
+        namespace: {{ .Release.Namespace }}
         severity: major
+        node: "{{ "{{" }} $labels.devEui }}"
         service: truvami-bridge
         component: decoder
-        node: "{{ "{{" }} $labels.devEui }}"
         {{- with .Values.alertLabels }}
         {{- toYaml . | nindent 8 }}
         {{- end }}
@@ -43,10 +44,11 @@ spec:
       expr: rate(truvami_payloadparser_error_total[5m]) > 1
       for: 1m
       labels:
+        namespace: {{ .Release.Namespace }}
         severity: critical
+        node: "{{ "{{" }} $labels.devEui }}"
         service: truvami-bridge
         component: decoder
-        node: "{{ "{{" }} $labels.devEui }}"
         {{- with .Values.alertLabels }}
         {{- toYaml . | nindent 8 }}
         {{- end }}

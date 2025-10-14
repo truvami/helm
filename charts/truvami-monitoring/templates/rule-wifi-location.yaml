@@ -25,9 +25,10 @@ spec:
         (rate(truvami_wifi_solver_requests_count[5m]) + rate(truvami_wifi_solver_error_count[5m])) > 0.05
       for: 10m
       labels:
+        namespace: {{ .Release.Namespace }}
         severity: minor
-        service: truvami-bridge
         node: truvami-bridge
+        service: truvami-bridge
         component: wifi-solver
         {{- with .Values.alertLabels }}
         {{- toYaml . | nindent 8 }}
@@ -45,9 +46,10 @@ spec:
         (rate(truvami_wifi_solver_requests_count[5m]) + rate(truvami_wifi_solver_error_count[5m])) > 0.15
       for: 5m
       labels:
+        namespace: {{ .Release.Namespace }}
         severity: warning
-        service: truvami-bridge
         node: truvami-bridge
+        service: truvami-bridge
         component: wifi-solver
         {{- with .Values.alertLabels }}
         {{- toYaml . | nindent 8 }}
@@ -65,9 +67,10 @@ spec:
         (rate(truvami_wifi_solver_requests_count[5m]) + rate(truvami_wifi_solver_error_count[5m])) > 0.30
       for: 2m
       labels:
+        namespace: {{ .Release.Namespace }}
         severity: critical
-        service: truvami-bridge
         node: truvami-bridge
+        service: truvami-bridge
         component: wifi-solver
         {{- with .Values.alertLabels }}
         {{- toYaml . | nindent 8 }}

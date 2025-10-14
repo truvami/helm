@@ -19,12 +19,11 @@ spec:
             rate(truvami_alerts_device_inactive_processing_error_count[5m]) > 0.05
           for: 2m
           labels:
-            {{- range $key, $value := .Values.alertLabels }}
-            {{ $key }}: {{ $value | quote }}
-            {{- end }}
-            service: truvami-siren
+            namespace: {{ .Release.Namespace }}
             severity: major
             node: siren-{{ "{{" }} $labels.devEui }}
+            service: truvami-siren
+            component: device-alerts
         - alert: SirenDeviceActiveProcessingFailures
           annotations:
             description: >-
@@ -35,12 +34,11 @@ spec:
             rate(truvami_alerts_device_active_processing_error_count[5m]) > 0.05
           for: 2m
           labels:
-            {{- range $key, $value := .Values.alertLabels }}
-            {{ $key }}: {{ $value | quote }}
-            {{- end }}
-            service: truvami-siren
+            namespace: {{ .Release.Namespace }}
             severity: major
             node: siren-{{ "{{" }} $labels.devEui }}
+            service: truvami-siren
+            component: device-alerts
         - alert: SirenBatteryLowAlertFailures
           annotations:
             description: >-
@@ -51,12 +49,11 @@ spec:
             rate(truvami_alerts_battery_low_processing_error_count[5m]) > 0.05
           for: 2m
           labels:
-            {{- range $key, $value := .Values.alertLabels }}
-            {{ $key }}: {{ $value | quote }}
-            {{- end }}
-            service: truvami-siren
+            namespace: {{ .Release.Namespace }}
             severity: major
             node: siren-{{ "{{" }} $labels.devEui }}
+            service: truvami-siren
+            component: device-alerts
         - alert: SirenButtonPressAlertFailures
           annotations:
             description: >-
@@ -67,12 +64,11 @@ spec:
             rate(truvami_alerts_button_press_processing_error_count[5m]) > 0.05
           for: 2m
           labels:
-            {{- range $key, $value := .Values.alertLabels }}
-            {{ $key }}: {{ $value | quote }}
-            {{- end }}
-            service: truvami-siren
+            namespace: {{ .Release.Namespace }}
             severity: major
             node: siren-{{ "{{" }} $labels.devEui }}
+            service: truvami-siren
+            component: device-alerts
         - alert: SirenConfigChangeAlertFailures
           annotations:
             description: >-
@@ -83,12 +79,11 @@ spec:
             rate(truvami_alerts_config_change_processing_error_count[5m]) > 0.05
           for: 2m
           labels:
-            {{- range $key, $value := .Values.alertLabels }}
-            {{ $key }}: {{ $value | quote }}
-            {{- end }}
-            service: truvami-siren
+            namespace: {{ .Release.Namespace }}
             severity: major
             node: siren-{{ "{{" }} $labels.devEui }}
+            service: truvami-siren
+            component: device-alerts
         - alert: SirenFirmwareChangeAlertFailures
           annotations:
             description: >-
@@ -99,12 +94,11 @@ spec:
             rate(truvami_alerts_firmware_change_processing_error_count[5m]) > 0.05
           for: 2m
           labels:
-            {{- range $key, $value := .Values.alertLabels }}
-            {{ $key }}: {{ $value | quote }}
-            {{- end }}
-            service: truvami-siren
+            namespace: {{ .Release.Namespace }}
             severity: major
             node: siren-{{ "{{" }} $labels.devEui }}
+            service: truvami-siren
+            component: device-alerts
         - alert: SirenDeviceResetAlertFailures
           annotations:
             description: >-
@@ -115,12 +109,11 @@ spec:
             rate(truvami_alerts_device_reset_processing_error_count[5m]) > 0.05
           for: 2m
           labels:
-            {{- range $key, $value := .Values.alertLabels }}
-            {{ $key }}: {{ $value | quote }}
-            {{- end }}
-            service: truvami-siren
+            namespace: {{ .Release.Namespace }}
             severity: major
             node: siren-{{ "{{" }} $labels.devEui }}
+            service: truvami-siren
+            component: device-alerts
         - alert: SirenDutyCycleAlertFailures
           annotations:
             description: >-
@@ -131,9 +124,8 @@ spec:
             rate(truvami_alerts_duty_cycle_processing_error_count[5m]) > 0.05
           for: 2m
           labels:
-            {{- range $key, $value := .Values.alertLabels }}
-            {{ $key }}: {{ $value | quote }}
-            {{- end }}
-            service: truvami-siren
+            namespace: {{ .Release.Namespace }}
             severity: major
             node: siren-{{ "{{" }} $labels.devEui }}
+            service: truvami-siren
+            component: device-alerts

@@ -23,10 +23,11 @@ spec:
       expr: redis_up == 0
       for: 2m
       labels:
+        namespace: {{ .Release.Namespace }}
         severity: critical
-        service: valkey
-        component: instance
         node: "{{ "{{" }} $labels.instance }}"
+        service: truvami-valkey
+        component: instance
         {{- with .Values.alertLabels }}
         {{- toYaml . | nindent 8 }}
         {{- end }}
@@ -67,10 +68,11 @@ spec:
       expr: redis_mem_fragmentation_ratio > 1.5
       for: 15m
       labels:
+        namespace: {{ .Release.Namespace }}
         severity: warning
-        service: valkey
-        component: memory
         node: "{{ "{{" }} $labels.instance }}"
+        service: truvami-valkey
+        component: memory
         {{- with .Values.alertLabels }}
         {{- toYaml . | nindent 8 }}
         {{- end }}

@@ -19,12 +19,11 @@ spec:
             rate(truvami_alerts_dispatch_errors_count[5m]) > 0.1
           for: 1m
           labels:
-            {{- range $key, $value := .Values.alertLabels }}
-            {{ $key }}: {{ $value | quote }}
-            {{- end }}
-            service: truvami-siren
+            namespace: {{ .Release.Namespace }}
             severity: critical
             node: siren-{{ "{{" }} $labels.devEui }}
+            service: truvami-siren
+            component: alert-dispatch
         - alert: SirenWebhookDispatchFailures
           annotations:
             description: >-
@@ -35,11 +34,11 @@ spec:
             rate(truvami_alerts_webhook_dispatch_error_count[5m]) > 0.05
           for: 2m
           labels:
-            {{- range $key, $value := .Values.alertLabels }}
-            {{ $key }}: {{ $value | quote }}
-            {{- end }}
-            service: truvami-siren
+            namespace: {{ .Release.Namespace }}
             severity: major
+            node: truvami-siren
+            service: truvami-siren
+            component: alert-dispatch
         - alert: SirenSlackDispatchFailures
           annotations:
             description: >-
@@ -50,11 +49,11 @@ spec:
             rate(truvami_alerts_slack_dispatch_error_count[5m]) > 0.05
           for: 2m
           labels:
-            {{- range $key, $value := .Values.alertLabels }}
-            {{ $key }}: {{ $value | quote }}
-            {{- end }}
-            service: truvami-siren
+            namespace: {{ .Release.Namespace }}
             severity: major
+            node: truvami-siren
+            service: truvami-siren
+            component: alert-dispatch
         - alert: SirenTeamsDispatchFailures
           annotations:
             description: >-
@@ -65,11 +64,11 @@ spec:
             rate(truvami_alerts_teams_dispatch_error_count[5m]) > 0.05
           for: 2m
           labels:
-            {{- range $key, $value := .Values.alertLabels }}
-            {{ $key }}: {{ $value | quote }}
-            {{- end }}
-            service: truvami-siren
+            namespace: {{ .Release.Namespace }}
             severity: major
+            node: truvami-siren
+            service: truvami-siren
+            component: alert-dispatch
         - alert: SirenGrpcNotifyFailures
           annotations:
             description: >-
@@ -80,12 +79,11 @@ spec:
             rate(truvami_alerts_notify_grpc_errors_count[5m]) > 0.1
           for: 2m
           labels:
-            {{- range $key, $value := .Values.alertLabels }}
-            {{ $key }}: {{ $value | quote }}
-            {{- end }}
-            service: truvami-siren
+            namespace: {{ .Release.Namespace }}
             severity: major
             node: siren-{{ "{{" }} $labels.devEui }}
+            service: truvami-siren
+            component: alert-dispatch
         - alert: SirenDispatchQueueFull
           annotations:
             description: >-
@@ -96,11 +94,11 @@ spec:
             truvami_alerts_dispatch_queue_depth > 1000
           for: 1m
           labels:
-            {{- range $key, $value := .Values.alertLabels }}
-            {{ $key }}: {{ $value | quote }}
-            {{- end }}
-            service: truvami-siren
+            namespace: {{ .Release.Namespace }}
             severity: critical
+            node: truvami-siren
+            service: truvami-siren
+            component: alert-dispatch
         - alert: SirenDispatchWorkerPoolExhaustion
           annotations:
             description: >-
@@ -111,8 +109,8 @@ spec:
             truvami_alerts_dispatch_workers_busy == truvami_alerts_dispatch_workers_total
           for: 2m
           labels:
-            {{- range $key, $value := .Values.alertLabels }}
-            {{ $key }}: {{ $value | quote }}
-            {{- end }}
-            service: truvami-siren
+            namespace: {{ .Release.Namespace }}
             severity: major
+            node: truvami-siren
+            service: truvami-siren
+            component: alert-dispatch

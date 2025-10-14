@@ -38,14 +38,14 @@ spec:
             count by (job) (count by (job, commit) ({__name__=~"truvami_(bridge|gateway|siren|api|decoder)_info"})) > 1
           for: 5m
           labels:
-            {{- range $key, $value := .Values.alertLabels }}
-            {{ $key }}: {{ $value | quote }}
-            {{- end }}
-            service: "{{ "{{" }} $labels.container }}"
+            namespace: {{ .Release.Namespace }}
             severity: warning
-            alert_type: deployment
+            node: truvami-{{ "{{" }} $labels.job }}
+            service: truvami-{{ "{{" }} $labels.job }}
             component: version-control
-            node: truvami-{{ "{{" }} $labels.container }}
+            {{- with .Values.alertLabels }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
 
         - alert: TruvamiLongRunningVersionMismatch
           annotations:
@@ -76,14 +76,14 @@ spec:
             count by (job) (count by (job, commit) ({__name__=~"truvami_(bridge|gateway|siren|api|decoder)_info"})) > 1
           for: 15m
           labels:
-            {{- range $key, $value := .Values.alertLabels }}
-            {{ $key }}: {{ $value | quote }}
-            {{- end }}
-            service: "{{ "{{" }} $labels.container }}"
+            namespace: {{ .Release.Namespace }}
             severity: critical
-            alert_type: deployment
+            node: truvami-{{ "{{" }} $labels.job }}
+            service: truvami-{{ "{{" }} $labels.job }}
             component: version-control
-            node: truvami-{{ "{{" }} $labels.container }}
+            {{- with .Values.alertLabels }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
 
         - alert: TruvamiServiceVersionInfo
           annotations:
@@ -102,11 +102,11 @@ spec:
             {__name__=~"truvami_(bridge|gateway|siren|api|decoder)_info"}
           for: 1m
           labels:
-            {{- range $key, $value := .Values.alertLabels }}
-            {{ $key }}: {{ $value | quote }}
-            {{- end }}
-            service: "{{ "{{" }} $labels.container }}"
+            namespace: {{ .Release.Namespace }}
             severity: info
-            alert_type: deployment
+            node: truvami-{{ "{{" }} $labels.job }}
+            service: truvami-{{ "{{" }} $labels.job }}
             component: version-info
-            node: truvami-{{ "{{" }} $labels.container }}
+            {{- with .Values.alertLabels }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}

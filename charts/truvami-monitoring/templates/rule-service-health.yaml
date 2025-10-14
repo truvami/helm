@@ -44,12 +44,13 @@ spec:
             up{job="truvami-bridge"} == 0
           for: 1m
           labels:
-            {{- range $key, $value := .Values.alertLabels }}
-            {{ $key }}: {{ $value | quote }}
-            {{- end }}
-            service: truvami-bridge
+            namespace: {{ .Release.Namespace }}
             severity: critical
             node: truvami-bridge
+            service: truvami-bridge
+            {{- with .Values.alertLabels }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
         - alert: TruvamiBridgeHighErrorRate
           annotations:
             description: >-
@@ -64,9 +65,10 @@ spec:
             ) > 0.1
           for: 2m
           labels:
-            {{- range $key, $value := .Values.alertLabels }}
-            {{ $key }}: {{ $value | quote }}
-            {{- end }}
-            service: truvami-bridge
+            namespace: {{ .Release.Namespace }}
             severity: major
             node: truvami-bridge
+            service: truvami-bridge
+            {{- with .Values.alertLabels }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}

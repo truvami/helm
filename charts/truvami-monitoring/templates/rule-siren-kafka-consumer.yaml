@@ -19,12 +19,11 @@ spec:
             increase(truvami_kafka_alerts_messages_consumed_count[1d]) == 0
           for: 5m
           labels:
-            {{- range $key, $value := .Values.alertLabels }}
-            {{ $key }}: {{ $value | quote }}
-            {{- end }}
-            service: truvami-siren
-            node: truvami-siren-{{ "{{" }} $labels.topic }}
+            namespace: {{ .Release.Namespace }}
             severity: critical
+            node: truvami-siren-{{ "{{" }} $labels.topic }}
+            service: truvami-siren
+            component: kafka-consumer
         - alert: SirenKafkaConsumerHighErrorRate
           annotations:
             description: >-
@@ -35,12 +34,11 @@ spec:
             rate(truvami_kafka_alerts_messages_error_count[5m]) > 0.1
           for: 2m
           labels:
-            {{- range $key, $value := .Values.alertLabels }}
-            {{ $key }}: {{ $value | quote }}
-            {{- end }}
-            service: truvami-siren
-            node: truvami-siren-{{ "{{" }} $labels.topic }}
+            namespace: {{ .Release.Namespace }}
             severity: major
+            node: truvami-siren-{{ "{{" }} $labels.topic }}
+            service: truvami-siren
+            component: kafka-consumer
         - alert: SirenKafkaConsumerLag
           annotations:
             description: >-
@@ -51,12 +49,11 @@ spec:
             kafka_consumer_lag_sum{job="siren"} > 500
           for: 5m
           labels:
-            {{- range $key, $value := .Values.alertLabels }}
-            {{ $key }}: {{ $value | quote }}
-            {{- end }}
-            service: truvami-siren
+            namespace: {{ .Release.Namespace }}
             severity: warning
             node: truvami-siren-{{ "{{" }} $labels.topic }}
+            service: truvami-siren
+            component: kafka-consumer
         - alert: SirenKafkaConsumerIdleTooLong
           annotations:
             description: >-
@@ -67,12 +64,11 @@ spec:
             time() - truvami_kafka_consumer_last_message_timestamp_seconds{job="siren"} > 900
           for: 2m
           labels:
-            {{- range $key, $value := .Values.alertLabels }}
-            {{ $key }}: {{ $value | quote }}
-            {{- end }}
-            service: truvami-siren
-            node: truvami-siren-{{ "{{" }} $labels.topic }}
+            namespace: {{ .Release.Namespace }}
             severity: major
+            node: truvami-siren-{{ "{{" }} $labels.topic }}
+            service: truvami-siren
+            component: kafka-consumer
         - alert: SirenKafkaUnknownTopicMessages
           annotations:
             description: >-
@@ -83,9 +79,8 @@ spec:
             rate(truvami_alerts_consume_unknown_topic_count[5m]) > 0.01
           for: 10m
           labels:
-            {{- range $key, $value := .Values.alertLabels }}
-            {{ $key }}: {{ $value | quote }}
-            {{- end }}
-            service: truvami-siren
-            node: truvami-siren-{{ "{{" }} $labels.topic }}
+            namespace: {{ .Release.Namespace }}
             severity: minor
+            node: truvami-siren-{{ "{{" }} $labels.topic }}
+            service: truvami-siren
+            component: kafka-consumer

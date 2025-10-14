@@ -19,11 +19,14 @@ spec:
             rate(truvami_failed_to_fetch_device_metadata_count[5m]) > 0.01
           for: 2m
           labels:
-            {{- range $key, $value := .Values.alertLabels }}
-            {{ $key }}: {{ $value | quote }}
-            {{- end }}
-            service: truvami-bridge
+            namespace: {{ .Release.Namespace }}
             severity: major
+            node: truvami-bridge
+            service: truvami-bridge
+            component: metadata
+            {{- with .Values.alertLabels }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
         - alert: TruvamiDecoderWarnings
           annotations:
             description: >-
@@ -34,12 +37,14 @@ spec:
             rate(truvami_uplink_created_but_decoder_warn_count[5m]) > 0.1
           for: 5m
           labels:
-            {{- range $key, $value := .Values.alertLabels }}
-            {{ $key }}: {{ $value | quote }}
-            {{- end }}
-            service: truvami-bridge
+            namespace: {{ .Release.Namespace }}
             severity: intermediate
-            node: truvami-{{ "{{" }} $labels.devEui }}
+            node: "{{ "{{" }} $labels.devEui }}"
+            service: truvami-bridge
+            component: decoder
+            {{- with .Values.alertLabels }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
         - alert: TruvamiDecoderErrors
           annotations:
             description: >-
@@ -50,12 +55,14 @@ spec:
             rate(truvami_uplink_created_but_decoder_err_count[5m]) > 0.05
           for: 2m
           labels:
-            {{- range $key, $value := .Values.alertLabels }}
-            {{ $key }}: {{ $value | quote }}
-            {{- end }}
-            service: truvami-bridge
+            namespace: {{ .Release.Namespace }}
             severity: major
-            node: truvami-{{ "{{" }} $labels.devEui }}
+            node: "{{ "{{" }} $labels.devEui }}"
+            service: truvami-bridge
+            component: decoder
+            {{- with .Values.alertLabels }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
         - alert: TruvamiInvalidLoraLocationErrors
           annotations:
             description: >-
@@ -66,12 +73,14 @@ spec:
             rate(truvami_invalid_lora_location_count[5m]) > 0.05
           for: 2m
           labels:
-            {{- range $key, $value := .Values.alertLabels }}
-            {{ $key }}: {{ $value | quote }}
-            {{- end }}
-            service: truvami-bridge
+            namespace: {{ .Release.Namespace }}
             severity: warning
-            node: truvami-{{ "{{" }} $labels.devEui }}
+            node: "{{ "{{" }} $labels.devEui }}"
+            service: truvami-bridge
+            component: location
+            {{- with .Values.alertLabels }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
         - alert: TruvamiFeatureCastingErrors
           annotations:
             description: >-
@@ -82,9 +91,11 @@ spec:
             rate(truvami_failed_to_cast_feature_count[5m]) > 0.05
           for: 2m
           labels:
-            {{- range $key, $value := .Values.alertLabels }}
-            {{ $key }}: {{ $value | quote }}
-            {{- end }}
-            service: truvami-bridge
+            namespace: {{ .Release.Namespace }}
             severity: warning
-            node: truvami-{{ "{{" }} $labels.devEui }}
+            node: "{{ "{{" }} $labels.devEui }}"
+            service: truvami-bridge
+            component: feature-casting
+            {{- with .Values.alertLabels }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}

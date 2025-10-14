@@ -19,12 +19,13 @@ spec:
             up{job="siren"} == 0
           for: 1m
           labels:
-            {{- range $key, $value := .Values.alertLabels }}
-            {{ $key }}: {{ $value | quote }}
-            {{- end }}
-            service: truvami-siren
-            node: truvami-siren
+            namespace: {{ .Release.Namespace }}
             severity: critical
+            node: truvami-siren
+            service: truvami-siren
+            {{- with .Values.alertLabels }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
         - alert: SirenServiceHighErrorRate
           annotations:
             description: >-
@@ -42,12 +43,13 @@ spec:
             ) > 0.25
           for: 1m
           labels:
-            {{- range $key, $value := .Values.alertLabels }}
-            {{ $key }}: {{ $value | quote }}
-            {{- end }}
-            service: truvami-siren
-            node: truvami-siren
+            namespace: {{ .Release.Namespace }}
             severity: critical
+            node: truvami-siren
+            service: truvami-siren
+            {{- with .Values.alertLabels }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
         - alert: SirenHealthCheckFailures
           annotations:
             description: >-
@@ -58,9 +60,11 @@ spec:
             rate(prometheus_http_requests_total{handler="/healthz", code!="200"}[5m]) > 0
           for: 2m
           labels:
-            {{- range $key, $value := .Values.alertLabels }}
-            {{ $key }}: {{ $value | quote }}
-            {{- end }}
-            service: truvami-siren
+            namespace: {{ .Release.Namespace }}
+            severity: warning
             node: truvami-siren
+            service: truvami-siren
+            {{- with .Values.alertLabels }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
             severity: major

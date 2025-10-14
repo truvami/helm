@@ -19,12 +19,11 @@ spec:
             rate(truvami_alerts_unsupported_schema_count[5m]) > 0.01
           for: 2m
           labels:
-            {{- range $key, $value := .Values.alertLabels }}
-            {{ $key }}: {{ $value | quote }}
-            {{- end }}
-            service: truvami-siren
-            node: truvami-siren
+            namespace: {{ .Release.Namespace }}
             severity: major
+            node: truvami-siren
+            service: truvami-siren
+            component: schema-validation
         - alert: SirenUnsupportedAlertVersion
           annotations:
             description: >-
@@ -35,12 +34,11 @@ spec:
             rate(truvami_alerts_unsupported_version_count[5m]) > 0.01
           for: 2m
           labels:
-            {{- range $key, $value := .Values.alertLabels }}
-            {{ $key }}: {{ $value | quote }}
-            {{- end }}
-            service: truvami-siren
-            node: truvami-siren
+            namespace: {{ .Release.Namespace }}
             severity: major
+            node: truvami-siren
+            service: truvami-siren
+            component: schema-validation
         - alert: SirenMessageUnmarshalFailures
           annotations:
             description: >-
@@ -51,12 +49,11 @@ spec:
             rate(truvami_alerts_unmarshal_error_count[5m]) > 0.1
           for: 2m
           labels:
-            {{- range $key, $value := .Values.alertLabels }}
-            {{ $key }}: {{ $value | quote }}
-            {{- end }}
-            service: truvami-siren
-            node: truvami-siren
+            namespace: {{ .Release.Namespace }}
             severity: major
+            node: truvami-siren
+            service: truvami-siren
+            component: schema-validation
         - alert: SirenInvalidCustomerData
           annotations:
             description: >-
@@ -67,12 +64,11 @@ spec:
             rate(truvami_alerts_invalid_customer_data_count[5m]) > 0.05
           for: 2m
           labels:
-            {{- range $key, $value := .Values.alertLabels }}
-            {{ $key }}: {{ $value | quote }}
-            {{- end }}
-            service: truvami-siren
-            node: truvami-siren
+            namespace: {{ .Release.Namespace }}
             severity: major
+            node: truvami-siren
+            service: truvami-siren
+            component: schema-validation
         - alert: SirenInvalidDevEUIData
           annotations:
             description: >-
@@ -83,9 +79,8 @@ spec:
             rate(truvami_alerts_invalid_deveui_data_count[5m]) > 0.05
           for: 2m
           labels:
-            {{- range $key, $value := .Values.alertLabels }}
-            {{ $key }}: {{ $value | quote }}
-            {{- end }}
-            service: truvami-siren
-            node: truvami-siren
+            namespace: {{ .Release.Namespace }}
             severity: major
+            node: truvami-siren
+            service: truvami-siren
+            component: schema-validation

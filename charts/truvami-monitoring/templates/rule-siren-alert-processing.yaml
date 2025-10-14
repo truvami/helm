@@ -19,12 +19,11 @@ spec:
             rate(truvami_alerts_uplinks_processed_error_count[5m]) > 0.1
           for: 2m
           labels:
-            {{- range $key, $value := .Values.alertLabels }}
-            {{ $key }}: {{ $value | quote }}
-            {{- end }}
-            service: truvami-siren
+            namespace: {{ .Release.Namespace }}
             severity: major
             node: siren-{{ "{{" }} $labels.topic }}
+            service: truvami-siren
+            component: alert-processing
         - alert: SirenPositionProcessingFailures
           annotations:
             description: >-
@@ -35,12 +34,11 @@ spec:
             rate(truvami_alerts_positions_processed_error_count[5m]) > 0.1
           for: 2m
           labels:
-            {{- range $key, $value := .Values.alertLabels }}
-            {{ $key }}: {{ $value | quote }}
-            {{- end }}
-            service: truvami-siren
+            namespace: {{ .Release.Namespace }}
             severity: major
             node: siren-{{ "{{" }} $labels.topic }}
+            service: truvami-siren
+            component: alert-processing
         - alert: SirenBatteryStatusProcessingFailures
           annotations:
             description: >-
@@ -51,12 +49,11 @@ spec:
             rate(truvami_alerts_battery_statuses_processed_error_count[5m]) > 0.1
           for: 2m
           labels:
-            {{- range $key, $value := .Values.alertLabels }}
-            {{ $key }}: {{ $value | quote }}
-            {{- end }}
-            service: truvami-siren
+            namespace: {{ .Release.Namespace }}
             severity: major
             node: siren-{{ "{{" }} $labels.topic }}
+            service: truvami-siren
+            component: alert-processing
         - alert: SirenRotationStatusProcessingFailures
           annotations:
             description: >-
@@ -67,12 +64,11 @@ spec:
             rate(truvami_alerts_rotations_statuses_processed_error_count[5m]) > 0.1
           for: 2m
           labels:
-            {{- range $key, $value := .Values.alertLabels }}
-            {{ $key }}: {{ $value | quote }}
-            {{- end }}
-            service: truvami-siren
+            namespace: {{ .Release.Namespace }}
             severity: major
             node: siren-{{ "{{" }} $labels.topic }}
+            service: truvami-siren
+            component: alert-processing
         - alert: SirenEventProcessingFailures
           annotations:
             description: >-
@@ -83,12 +79,11 @@ spec:
             rate(truvami_alerts_events_processed_error_count[5m]) > 0.1
           for: 2m
           labels:
-            {{- range $key, $value := .Values.alertLabels }}
-            {{ $key }}: {{ $value | quote }}
-            {{- end }}
-            service: truvami-siren
+            namespace: {{ .Release.Namespace }}
             severity: major
             node: siren-{{ "{{" }} $labels.topic }}
+            service: truvami-siren
+            component: alert-processing
         - alert: SirenAlertProcessingRateHigh
           annotations:
             description: >-
@@ -105,11 +100,11 @@ spec:
             ) > 50
           for: 5m
           labels:
-            {{- range $key, $value := .Values.alertLabels }}
-            {{ $key }}: {{ $value | quote }}
-            {{- end }}
-            service: truvami-siren
+            namespace: {{ .Release.Namespace }}
             severity: intermediate
+            node: truvami-siren
+            service: truvami-siren
+            component: alert-processing
         - alert: SirenAlertProcessingRateLow
           annotations:
             description: >-
@@ -126,8 +121,8 @@ spec:
             ) < 0.01
           for: 10m
           labels:
-            {{- range $key, $value := .Values.alertLabels }}
-            {{ $key }}: {{ $value | quote }}
-            {{- end }}
-            service: truvami-siren
+            namespace: {{ .Release.Namespace }}
             severity: warning
+            node: truvami-siren
+            service: truvami-siren
+            component: alert-processing

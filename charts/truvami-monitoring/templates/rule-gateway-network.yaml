@@ -21,12 +21,13 @@ spec:
             avg by (gatewayId) (avg_over_time(truvami_gateway_uplink_rssi[7d])) <= -89
           for: 2h
           labels:
-            {{- range $key, $value := .Values.alertLabels }}
-            {{ $key }}: {{ $value | quote }}
-            {{- end }}
-            service: truvami-bridge
+            namespace: {{ .Release.Namespace }}
             severity: warning
-            node: truvami-gateway-{{ "{{" }} $labels.gatewayId }}
+            node: "{{ "{{" }} $labels.gatewayId }}"
+            service: truvami-gateway
+            {{- with .Values.alertLabels }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
         - alert: TruvamiFairGatewayRSSI
           annotations:
             description: >
@@ -38,12 +39,13 @@ spec:
             avg by (gatewayId) (avg_over_time(truvami_gateway_uplink_rssi[7d])) > -89 and avg by (gatewayId) (avg_over_time(truvami_gateway_uplink_rssi[7d])) <= -79
           for: 1h
           labels:
-            {{- range $key, $value := .Values.alertLabels }}
-            {{ $key }}: {{ $value | quote }}
-            {{- end }}
-            service: truvami-bridge
+            namespace: {{ .Release.Namespace }}
             severity: intermediate
-            node: truvami-gateway-{{ "{{" }} $labels.gatewayId }}
+            node: "{{ "{{" }} $labels.gatewayId }}"
+            service: truvami-gateway
+            {{- with .Values.alertLabels }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
         - alert: TruvamiPoorGatewaySNR
           annotations:
             description: >
@@ -56,12 +58,13 @@ spec:
             avg by (gatewayId) (avg_over_time(truvami_gateway_uplink_snr[7d])) <= 8
           for: 2h
           labels:
-            {{- range $key, $value := .Values.alertLabels }}
-            {{ $key }}: {{ $value | quote }}
-            {{- end }}
-            service: truvami-bridge
+            namespace: {{ .Release.Namespace }}
             severity: warning
-            node: truvami-gateway-{{ "{{" }} $labels.gatewayId }}
+            node: "{{ "{{" }} $labels.gatewayId }}"
+            service: truvami-gateway
+            {{- with .Values.alertLabels }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
         - alert: TruvamiFairGatewaySNR
           annotations:
             description: >
@@ -74,9 +77,10 @@ spec:
             avg by (gatewayId) (avg_over_time(truvami_gateway_uplink_snr[7d])) > 8 and avg by (gatewayId) (avg_over_time(truvami_gateway_uplink_snr[7d])) <= 10
           for: 1h
           labels:
-            {{- range $key, $value := .Values.alertLabels }}
-            {{ $key }}: {{ $value | quote }}
-            {{- end }}
-            service: truvami-bridge
+            namespace: {{ .Release.Namespace }}
             severity: intermediate
-            node: truvami-gateway-{{ "{{" }} $labels.gatewayId }}
+            node: "{{ "{{" }} $labels.gatewayId }}"
+            service: truvami-gateway
+            {{- with .Values.alertLabels }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}

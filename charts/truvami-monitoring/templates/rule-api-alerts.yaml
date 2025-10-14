@@ -53,11 +53,13 @@ spec:
             ) > 0.1
           for: 2m
           labels:
-            {{- range $key, $value := .Values.alertLabels }}
-            {{ $key }}: {{ $value | quote }}
-            {{- end }}
-            service: truvami-api
+            namespace: {{ .Release.Namespace }}
             severity: warning
+            node: truvami-api
+            service: truvami-api
+            {{- with .Values.alertLabels }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
 
         - alert: TruvamiDatabaseIntegrityConstraintViolations
           annotations:
@@ -86,11 +88,13 @@ spec:
             rate(truvami_api_db_error_integrity_constraint_violation_total[5m]) > 0.05
           for: 1m
           labels:
-            {{- range $key, $value := .Values.alertLabels }}
-            {{ $key }}: {{ $value | quote }}
-            {{- end }}
-            service: truvami-api
+            namespace: {{ .Release.Namespace }}
             severity: critical
+            node: truvami-api
+            service: truvami-api
+            {{- with .Values.alertLabels }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
 
         - alert: TruvamiDatabaseInsufficientResources
           annotations:
@@ -102,11 +106,14 @@ spec:
             rate(truvami_api_db_error_insufficient_resources_total[5m]) > 0.01
           for: 2m
           labels:
-            {{- range $key, $value := .Values.alertLabels }}
-            {{ $key }}: {{ $value | quote }}
-            {{- end }}
-            service: truvami-api
+            namespace: {{ .Release.Namespace }}
             severity: major
+            node: truvami-api
+            service: truvami-api
+            component: database
+            {{- with .Values.alertLabels }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
 
     - name: truvami-api-grpc-validation-errors
       rules:
@@ -126,11 +133,14 @@ spec:
             ) > 0.1
           for: 2m
           labels:
-            {{- range $key, $value := .Values.alertLabels }}
-            {{ $key }}: {{ $value | quote }}
-            {{- end }}
-            service: truvami-api
+            namespace: {{ .Release.Namespace }}
             severity: major
+            node: truvami-api
+            service: truvami-api
+            component: grpc-validation
+            {{- with .Values.alertLabels }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
 
         - alert: TruvamiUplinkValidationErrorsHigh
           annotations:
@@ -147,6 +157,8 @@ spec:
             {{- end }}
             service: truvami-api
             severity: major
+            node: truvami-api
+            namespace: {{ .Release.Namespace }}
 
     - name: truvami-api-device-errors
       rules:
@@ -166,6 +178,7 @@ spec:
             service: truvami-api
             severity: major
             node: truvami-{{ "{{" }} $labels.devEui }}
+            namespace: {{ .Release.Namespace }}
 
     - name: truvami-api-duplicate-data-errors
       rules:
@@ -192,6 +205,7 @@ spec:
             service: truvami-api
             severity: minor
             node: truvami-{{ "{{" }} $labels.devEui }}
+            namespace: {{ .Release.Namespace }}
 
     - name: truvami-api-webhook-errors
       rules:
@@ -210,6 +224,8 @@ spec:
             {{- end }}
             service: truvami-api
             severity: major
+            namespace: {{ .Release.Namespace }}
+            node: truvami-api
 
     - name: truvami-api-auth-errors
       rules:
@@ -228,6 +244,8 @@ spec:
             {{- end }}
             service: truvami-api
             severity: minor
+            namespace: {{ .Release.Namespace }}
+            node: truvami-api
 
         - alert: TruvamiOAuth2PaymentExpiredHigh
           annotations:
@@ -244,6 +262,8 @@ spec:
             {{- end }}
             service: truvami-api
             severity: major
+            node: truvami-api
+            namespace: {{ .Release.Namespace }}
 
         - alert: TruvamiOAuth2InvalidIssuerHigh
           annotations:
@@ -260,6 +280,8 @@ spec:
             {{- end }}
             service: truvami-api
             severity: major
+            node: truvami-api
+            namespace: {{ .Release.Namespace }}namespace: {{ .Release.Namespace }}
 
     - name: truvami-api-cache-performance
       rules:
@@ -279,6 +301,8 @@ spec:
             {{- end }}
             service: truvami-api
             severity: minor
+            node: truvami-api
+            namespace: {{ .Release.Namespace }}
 
         - alert: TruvamiAPIKeyCacheMissRate
           annotations:
@@ -296,6 +320,8 @@ spec:
             {{- end }}
             service: truvami-api
             severity: minor
+            node: truvami-api
+            namespace: {{ .Release.Namespace }}
 
     - name: truvami-api-security
       rules:
@@ -314,6 +340,8 @@ spec:
             {{- end }}
             service: truvami-api
             severity: major
+            node: truvami-api
+            namespace: {{ .Release.Namespace }}
 
     - name: truvami-api-performance
       rules:
@@ -332,6 +360,8 @@ spec:
             {{- end }}
             service: truvami-api
             severity: minor
+            node: truvami-api
+            namespace: {{ .Release.Namespace }}
 
         - alert: TruvamiOAuth2PublicKeyRefreshDurationHigh
           annotations:
@@ -348,6 +378,8 @@ spec:
             {{- end }}
             service: truvami-api
             severity: minor
+            node: truvami-api
+            namespace: {{ .Release.Namespace }}
 
     - name: truvami-api-business-metrics
       rules:
@@ -366,6 +398,8 @@ spec:
             {{- end }}
             service: truvami-api
             severity: intermediate
+            node: truvami-api
+            namespace: {{ .Release.Namespace }}
 
         - alert: TruvamiEventCreationRateToHigh
           annotations:
@@ -383,6 +417,7 @@ spec:
             service: truvami-api
             severity: warning
             node: "{{ "{{" }} $labels.devEui }}"
+            namespace: {{ .Release.Namespace }}
 
         - alert: TruvamiCustomerRequestRateHigh
           annotations:
@@ -399,6 +434,8 @@ spec:
             {{- end }}
             service: truvami-api
             severity: intermediate
+            node: truvami-api
+            namespace: {{ .Release.Namespace }}
 
     - name: truvami-api-grpc-database-errors
       rules:
@@ -432,6 +469,8 @@ spec:
             {{- end }}
             service: truvami-api
             severity: major
+            node: truvami-api
+            namespace: {{ .Release.Namespace }}
 
     - name: truvami-api-webhook-database-errors
       rules:
@@ -465,6 +504,8 @@ spec:
             {{- end }}
             service: truvami-api
             severity: major
+            node: truvami-api
+            namespace: {{ .Release.Namespace }}
 
     - name: truvami-api-security-service-errors
       rules:
@@ -498,6 +539,8 @@ spec:
             {{- end }}
             service: truvami-api
             severity: critical
+            node: truvami-api
+            namespace: {{ .Release.Namespace }}
 
     - name: truvami-api-api-key-store-errors
       rules:
@@ -531,3 +574,5 @@ spec:
             {{- end }}
             service: truvami-api
             severity: critical
+            node: truvami-api
+            namespace: {{ .Release.Namespace }}

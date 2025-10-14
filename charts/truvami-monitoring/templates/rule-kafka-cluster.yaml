@@ -23,7 +23,9 @@ spec:
       expr: kafka_brokers < 3
       for: 2m
       labels:
+        namespace: {{ .Release.Namespace }}
         severity: critical
+        node: truvami-kafka
         service: truvami-kafka
         component: broker
         {{- with .Values.alertLabels }}
@@ -46,7 +48,9 @@ spec:
       expr: sum(kafka_topic_partition_under_replicated_partition) > 0
       for: 5m
       labels:
+        namespace: {{ .Release.Namespace }}
         severity: major
+        node: truvami-kafka
         service: truvami-kafka
         component: replication
         {{- with .Values.alertLabels }}
@@ -70,10 +74,11 @@ spec:
         sum by (consumergroup, topic) (kafka_consumergroup_lag) > 10000
       for: 5m
       labels:
+        namespace: {{ .Release.Namespace }}
         severity: critical
+        node: "truvami-kafka-{{ "{{" }} $labels.consumergroup }}"
         service: truvami-kafka
         component: consumer
-        node: "{{ "{{" }} $labels.consumergroup }}"
         {{- with .Values.alertLabels }}
         {{- toYaml . | nindent 8 }}
         {{- end }}
@@ -95,10 +100,11 @@ spec:
         sum by (consumergroup, topic) (kafka_consumergroup_lag) > 5000
       for: 10m
       labels:
+        namespace: {{ .Release.Namespace }}
         severity: major
+        node: "truvami-kafka-{{ "{{" }} $labels.consumergroup }}"
         service: truvami-kafka
         component: consumer
-        node: "{{ "{{" }} $labels.consumergroup }}"
         {{- with .Values.alertLabels }}
         {{- toYaml . | nindent 8 }}
         {{- end }}
@@ -119,7 +125,9 @@ spec:
       expr: sum(kafka_topic_partition_leader == -1) > 0
       for: 2m
       labels:
+        namespace: {{ .Release.Namespace }}
         severity: critical
+        node: truvami-kafka
         service: truvami-kafka
         component: partition
         {{- with .Values.alertLabels }}
@@ -142,10 +150,11 @@ spec:
       expr: kafka_consumergroup_members == 0
       for: 10m
       labels:
+        namespace: {{ .Release.Namespace }}
         severity: warning
+        node: "truvami-kafka-{{ "{{" }} $labels.consumergroup }}"
         service: truvami-kafka
         component: consumer
-        node: "{{ "{{" }} $labels.consumergroup }}"
         {{- with .Values.alertLabels }}
         {{- toYaml . | nindent 8 }}
         {{- end }}
@@ -167,10 +176,11 @@ spec:
         sum by (consumergroup, topic) (kafka_consumergroup_lag{topic=~"alerts\\.(positions|uplinks|battery-statuses|events|rotations)"}) > 1000
       for: 5m
       labels:
+        namespace: {{ .Release.Namespace }}
         severity: major
+        node: "{{ "{{" }} $labels.topic }}"
         service: truvami-kafka
         component: consumer
-        node: "{{ "{{" }} $labels.topic }}"
         {{- with .Values.alertLabels }}
         {{- toYaml . | nindent 8 }}
         {{- end }}
