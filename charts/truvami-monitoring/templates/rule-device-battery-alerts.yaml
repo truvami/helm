@@ -35,7 +35,7 @@ spec:
           labels:
             namespace: {{ .Release.Namespace }}
             severity: critical
-            node: "{{ "{{" }} $labels.devEui }}"
+            node: truvami-device
             service: truvami-device
             component: battery
             customer: "{{ "{{" }} $labels.customer }}"
@@ -65,7 +65,7 @@ spec:
           labels:
             namespace: {{ .Release.Namespace }}
             severity: major
-            node: "{{ "{{" }} $labels.devEui }}"
+            node: truvami-device
             service: truvami-device
             component: battery
             customer: "{{ "{{" }} $labels.customer }}"
@@ -93,7 +93,7 @@ spec:
           labels:
             namespace: {{ .Release.Namespace }}
             severity: minor
-            node: "{{ "{{" }} $labels.devEui }}"
+            node: truvami-device
             service: truvami-device
             component: battery
             customer: "{{ "{{" }} $labels.customer }}"

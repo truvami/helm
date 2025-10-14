@@ -44,30 +44,3 @@ spec:
             {{- toYaml . | nindent 12 }}
             {{- end }}
 
-        - alert: TruvamiBridgeKafkaConsumerLag
-          annotations:
-            description: >-
-              **What's happening:** Bridge Kafka consumer has been idle for {{ "{{" }} $value }}s (>5 minutes), indicating potential message processing delays.
-              
-              **Why this occurred:** Short idle periods may indicate temporary processing delays or low message volume periods.
-              This is a warning-level alert for early detection of potential issues before they become critical.
-              
-              **What to do:**
-              1. Monitor if idle time continues to increase
-              2. Check recent Kafka message production rates
-              3. Verify consumer processing performance
-              4. Review bridge service resource utilization
-            summary: >-
-              Bridge consumer idle time elevated (>5min)
-          expr: >-
-            truvami_consumer_idle_time > 300
-          for: 5m
-          labels:
-            namespace: {{ .Release.Namespace }}
-            severity: warning
-            node: truvami-bridge
-            service: truvami-bridge
-            component: kafka-consumer
-            {{- with .Values.alertLabels }}
-            {{- toYaml . | nindent 12 }}
-            {{- end }}

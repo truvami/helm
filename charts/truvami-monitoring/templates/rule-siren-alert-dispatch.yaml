@@ -1,229 +1,67 @@
-apiVersion: monitoring.coreos.com/v1apiVersion: monitoring.coreos.com/v1
-
-kind: PrometheusRulekind: PrometheusRule
-
-metadata:metadata:
-
-  labels:  labels:
-
-    prometheus: kube-prometheus-stack-prometheus    prometheus: kube-prometheus-stack-prometheus
-
-    role: alert-rules    role: alert-rules
-
-  name: truvami-siren-alert-dispatch  name: siren-alert-dispatch
-
-spec:spec:
-
-  groups:  groups:
-
-    - name: truvami-siren-alert-dispatch    - name: siren-alert-dispatch
-
-      rules:      rules:
-
-        - alert: TruvamySirenAlertDispatchStalled        - alert: SirenAlertDispatchFailures
-
-          annotations:          annotations:
-
-            description: >-            description: >-
-
-              **What's happening:** Siren alert dispatch has been inactive for >10 minutes - no alerts being sent.              Siren alert dispatch failure rate is {{ "{{" }} $value }} failures/sec for device {{ "{{" }} $labels.devEui }} with schema {{ "{{" }} $labels.schema }}.
-
-                          summary: >-
-
-              **Why this occurred:** The `truvami_alerts_dispatch_count` metric shows no recent alert dispatches.              Critical Siren alert dispatch failure rate
-
-              This could indicate:          expr: >-
-
-              - Siren service is not processing alert conditions            rate(truvami_alerts_dispatch_errors_count[5m]) > 0.1
-
-              - No qualifying alert conditions are being triggered          for: 1m
-
-              - Alert dispatch mechanism is failing          labels:
-
-              - Kafka message processing issues in siren            namespace: {{ .Release.Namespace }}
-
-              - Siren service connectivity problems            severity: critical
-
-                          node: siren-{{ "{{" }} $labels.devEui }}
-
-              **What to do:**            service: truvami-siren
-
-              1. Check if siren service is running and healthy            component: alert-dispatch
-
-              2. Verify siren is consuming Kafka alert messages        - alert: SirenWebhookDispatchFailures
-
-              3. Review alert condition configurations          annotations:
-
-              4. Check siren service logs for dispatch errors            description: >-
-
-              5. Verify external notification service connectivity              Siren webhook dispatch failure rate is {{ "{{" }} $value }} failures/sec for webhook type {{ "{{" }} $labels.webhook_type }}.
-
-            summary: >-            summary: >-
-
-              Siren alert dispatch inactive for >10 minutes              High Siren webhook dispatch failure rate
-
-          expr: >-          expr: >-
-
-            increase(truvami_alerts_dispatch_count[10m]) == 0            rate(truvami_alerts_webhook_dispatch_error_count[5m]) > 0.05
-
-          for: 2m          for: 2m
-
-          labels:          labels:
-
-            namespace: {{ .Release.Namespace }}            namespace: {{ .Release.Namespace }}
-
-            severity: warning            severity: major
-
-            node: truvami-siren            node: truvami-siren
-
-            service: truvami-siren            service: truvami-siren
-
-            component: alert-dispatch            component: alert-dispatch
-
-            {{- with .Values.alertLabels }}        - alert: SirenSlackDispatchFailures
-
-            {{- toYaml . | nindent 12 }}          annotations:
-
-            {{- end }}            description: >-
-
-              Siren Slack message dispatch failure rate is {{ "{{" }} $value }} failures/sec.
-
-        - alert: TruvamySirenHighAlertVolumeByDevice            summary: >-
-
-          annotations:              High Siren Slack dispatch failure rate
-
-            description: >-          expr: >-
-
-              **What's happening:** Device {{ "{{" }} $labels.dev_eui }} is generating high volume of {{ "{{" }} $labels.schema }} alerts (>{{ "{{" }} $value }} alerts/min).            rate(truvami_alerts_slack_dispatch_error_count[5m]) > 0.05
-
-                        for: 2m
-
-              **Why this occurred:** A single device is triggering many alerts, which could indicate:          labels:
-
-              - Device malfunction causing repeated alert conditions            namespace: {{ .Release.Namespace }}
-
-              - Overly sensitive alert thresholds for this device            severity: major
-
-              - Device is in an unusual environment triggering alerts            node: truvami-siren
-
-              - Alert condition not properly debounced            service: truvami-siren
-
-                          component: alert-dispatch
-
-              **What to do:**        - alert: SirenTeamsDispatchFailures
-
-              1. Investigate device {{ "{{" }} $labels.dev_eui }} behavior and recent data          annotations:
-
-              2. Review alert threshold configuration for {{ "{{" }} $labels.schema }} alerts            description: >-
-
-              3. Check if device requires different alert parameters              Siren Teams message dispatch failure rate is {{ "{{" }} $value }} failures/sec.
-
-              4. Consider temporary alert suppression if device is known faulty            summary: >-
-
-              5. Analyze device location and operational context              High Siren Teams dispatch failure rate
-
-            summary: >-          expr: >-
-
-              High alert volume from device {{ "{{" }} $labels.dev_eui }} ({{ "{{" }} $labels.schema }})            rate(truvami_alerts_teams_dispatch_error_count[5m]) > 0.05
-
-          expr: >-          for: 2m
-
-            rate(truvami_alerts_dispatch_count[5m]) * 60 > 5          labels:
-
-          for: 3m            namespace: {{ .Release.Namespace }}
-
-          labels:            severity: major
-
-            namespace: {{ .Release.Namespace }}            node: truvami-siren
-
-            severity: minor            service: truvami-siren
-
-            node: truvami-siren            component: alert-dispatch
-
-            service: truvami-siren        - alert: SirenGrpcNotifyFailures
-
-            component: alert-dispatch          annotations:
-
-            dev_eui: "{{ "{{" }} $labels.dev_eui }}"            description: >-
-
-            schema: "{{ "{{" }} $labels.schema }}"              Siren gRPC notification failure rate is {{ "{{" }} $value }} failures/sec for device {{ "{{" }} $labels.devEui }}.
-
-            {{- with .Values.alertLabels }}            summary: >-
-
-            {{- toYaml . | nindent 12 }}              High Siren gRPC notification failure rate
-
-            {{- end }}          expr: >-
-
-            rate(truvami_alerts_notify_grpc_errors_count[5m]) > 0.1
-
-        - alert: TruvamySirenKafkaMessageProcessingLag          for: 2m
-
-          annotations:          labels:
-
-            description: >-            namespace: {{ .Release.Namespace }}
-
-              **What's happening:** Siren is processing {{ "{{" }} $labels.topic }} messages slowly - processing {{ "{{" }} $value }} messages/sec.            severity: major
-
-                          node: siren-{{ "{{" }} $labels.devEui }}
-
-              **Why this occurred:** The `truvami_alerts_*_processed_count` metrics show message processing rates.            service: truvami-siren
-
-              Low processing rates on topic {{ "{{" }} $labels.topic }} may indicate:            component: alert-dispatch
-
-              - High message volume overwhelming siren capacity        - alert: SirenDispatchQueueFull
-
-              - Siren service performance degradation          annotations:
-
-              - Database connectivity issues slowing processing            description: >-
-
-              - Resource constraints (CPU, memory) on siren service              Siren dispatch queue is full with {{ "{{" }} $value }} items - alerts may be dropped.
-
-                          summary: >-
-
-              **What to do:**              Siren dispatch queue is full
-
-              1. Check siren service resource utilization          expr: >-
-
-              2. Monitor Kafka consumer lag for topic {{ "{{" }} $labels.topic }}            truvami_alerts_dispatch_queue_depth > 1000
-
-              3. Review siren service performance metrics          for: 1m
-
-              4. Check database connectivity and performance          labels:
-
-              5. Consider scaling siren service if needed            namespace: {{ .Release.Namespace }}
-
-            summary: >-            severity: critical
-
-              Siren slow message processing on {{ "{{" }} $labels.topic }}            node: truvami-siren
-
-          expr: >-            service: truvami-siren
-
-            rate(truvami_alerts_battery_statuses_processed_count[5m]) < 0.1 or            component: alert-dispatch
-
-            rate(truvami_alerts_events_processed_count[5m]) < 0.1 or          - alert: SirenDispatchWorkerPoolExhaustion
-
-            rate(truvami_alerts_positions_processed_count[5m]) < 0.1 or          annotations:
-
-            rate(truvami_alerts_uplinks_processed_count[5m]) < 0.1            description: >-
-
-          for: 5m              Siren dispatch worker pool is exhausted - all {{ "{{" }} $value }} workers are busy.
-
-          labels:            summary: >-
-
-            namespace: {{ .Release.Namespace }}              Siren dispatch worker pool exhausted
-
-            severity: warning          expr: >-
-
-            node: truvami-siren            truvami_alerts_dispatch_workers_busy == truvami_alerts_dispatch_workers_total
-
-            service: truvami-siren          for: 2m
-
-            component: kafka-processing          labels:
-
-            {{- with .Values.alertLabels }}            namespace: {{ .Release.Namespace }}
-
-            {{- toYaml . | nindent 12 }}            severity: major
-
-            {{- end }}            node: truvami-siren
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  labels:
+    prometheus: kube-prometheus-stack-prometheus
+    role: alert-rules
+  name: siren-alert-dispatch
+spec:
+  groups:
+    - name: siren-alert-dispatch
+      rules:
+        - alert: SirenAlertDispatchFailures
+          annotations:
+            description: >-
+              Siren alert dispatch failure rate is {{ "{{" }} $value }} failures/sec for device {{ "{{" }} $labels.devEui }} with schema {{ "{{" }} $labels.schema }}.
+            summary: >-
+              Critical Siren alert dispatch failure rate
+          expr: >-
+            rate(truvami_alerts_dispatch_errors_count[5m]) > 0.1
+          for: 1m
+          labels:
+            namespace: {{ .Release.Namespace }}
+            severity: critical
+            node: truvami-siren
             service: truvami-siren
             component: alert-dispatch
+            {{- with .Values.alertLabels }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
+
+        - alert: SirenWebhookDispatchFailures
+          annotations:
+            description: >-
+              Siren webhook dispatch failure rate is {{ "{{" }} $value }} failures/sec for webhook type {{ "{{" }} $labels.webhook_type }}.
+            summary: >-
+              High Siren webhook dispatch failure rate
+          expr: >-
+            rate(truvami_alerts_webhook_dispatch_error_count[5m]) > 0.05
+          for: 2m
+          labels:
+            namespace: {{ .Release.Namespace }}
+            severity: major
+            node: truvami-siren
+            service: truvami-siren
+            component: alert-dispatch
+            {{- with .Values.alertLabels }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
+
+        - alert: SirenDispatchWorkerPoolExhaustion
+          annotations:
+            description: >-
+              Siren dispatch worker pool is exhausted - all {{ "{{" }} $value }} workers are busy.
+            summary: >-
+              Siren dispatch worker pool exhausted
+          expr: >-
+            truvami_alerts_dispatch_workers_busy == truvami_alerts_dispatch_workers_total
+          for: 2m
+          labels:
+            namespace: {{ .Release.Namespace }}
+            severity: major
+            node: truvami-siren
+            service: truvami-siren
+            component: alert-dispatch
+            {{- with .Values.alertLabels }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
