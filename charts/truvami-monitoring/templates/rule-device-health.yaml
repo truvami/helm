@@ -91,7 +91,7 @@ spec:
               7. Review why earlier low battery alerts weren't addressed
               8. Consider temporary service arrangements if replacement delayed
             summary: >-
-              Truvami device battery critically low (<2.7V, ~10% remaining) - URGENT
+              Truvami device battery critically low (<2.7V, ~10% remaining)
           expr: >-
             truvami_device_battery_status < 2.7
           for: 1m
