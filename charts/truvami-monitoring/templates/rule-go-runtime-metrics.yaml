@@ -1,0 +1,347 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  labels:
+    prometheus: kube-prometheus-stack-prometheus
+    role: alert-rules
+  name: truvami-go-runtime-metrics
+spec:
+  groups:
+    - name: truvami-go-runtime-metrics
+      rules:
+        # Memory Usage Alerts
+        - alert: TruvamiGoMemoryUsageHigh
+          annotations:
+            description: >-
+              **What's happening:** Go service {{ "{{" }} $labels.job }} memory usage is {{ "{{" }} $value | humanizePercentage }} (>80% of available memory).
+              
+              **Why this occurred:** High memory usage can indicate:
+              - Memory leaks in application code
+              - Excessive object allocation without garbage collection
+              - Large data structures being held in memory
+              - Insufficient garbage collection tuning
+              - Memory-intensive operations or caching
+              
+              **What to do:**
+              1. Monitor garbage collection frequency and duration
+              2. Check for memory leaks in application logs
+              3. Review recent deployments for memory-intensive changes
+              4. Consider increasing memory limits if legitimate usage
+              5. Analyze heap dumps if available
+            summary: >-
+              Go service {{ "{{" }} $labels.job }} memory usage high ({{ "{{" }} $value | humanizePercentage }})
+          expr: >-
+            (
+              go_memstats_alloc_bytes{job=~"truvami-.*"} / 
+              go_memstats_sys_bytes{job=~"truvami-.*"}
+            ) > 0.8
+          for: 5m
+          labels:
+            namespace: {{ .Release.Namespace }}
+            severity: warning
+            node: truvami-{{ "{{" }} $labels.job }}
+            service: truvami-{{ "{{" }} $labels.job }}
+            component: go-runtime
+            {{- with .Values.alertLabels }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
+
+        - alert: TruvamiGoMemoryUsageCritical
+          annotations:
+            description: >-
+              **What's happening:** Go service {{ "{{" }} $labels.job }} memory usage is critically high at {{ "{{" }} $value | humanizePercentage }} (>95%).
+              
+              **IMMEDIATE ACTION REQUIRED:** Service may crash due to out-of-memory conditions.
+              
+              **What to do IMMEDIATELY:**
+              1. **URGENT:** Check if service is still responding
+              2. **Consider restarting the service** if unresponsive
+              3. **Scale up memory resources** if possible
+              4. **Monitor for service crashes** and restart loops
+              5. **Review recent changes** that might cause memory spikes
+            summary: >-
+              Go service {{ "{{" }} $labels.job }} memory usage CRITICAL ({{ "{{" }} $value | humanizePercentage }})
+          expr: >-
+            (
+              go_memstats_alloc_bytes{job=~"truvami-.*"} / 
+              go_memstats_sys_bytes{job=~"truvami-.*"}
+            ) > 0.95
+          for: 1m
+          labels:
+            namespace: {{ .Release.Namespace }}
+            severity: critical
+            node: truvami-{{ "{{" }} $labels.job }}
+            service: truvami-{{ "{{" }} $labels.job }}
+            component: go-runtime
+            {{- with .Values.alertLabels }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
+
+        # Garbage Collection Alerts
+        - alert: TruvamiGoGCDurationHigh
+          annotations:
+            description: >-
+              **What's happening:** Go service {{ "{{" }} $labels.job }} garbage collection is taking {{ "{{" }} $value }}s (>100ms average over 5min).
+              
+              **Why this occurred:** Long GC pauses indicate:
+              - Large heap sizes requiring more time to collect
+              - Inefficient memory allocation patterns
+              - Too many objects being created and destroyed
+              - Suboptimal GC tuning parameters
+              - Memory pressure causing frequent collections
+              
+              **What to do:**
+              1. Monitor GC frequency and identify if collections are too frequent
+              2. Review application memory allocation patterns
+              3. Consider GC tuning parameters (GOGC environment variable)
+              4. Check for memory leaks causing heap growth
+              5. Optimize object creation/destruction patterns
+            summary: >-
+              Go service {{ "{{" }} $labels.job }} GC duration high ({{ "{{" }} $value }}s avg)
+          expr: >-
+            rate(go_gc_duration_seconds_sum{job=~"truvami-.*"}[5m]) / 
+            rate(go_gc_duration_seconds_count{job=~"truvami-.*"}[5m]) > 0.1
+          for: 5m
+          labels:
+            namespace: {{ .Release.Namespace }}
+            severity: warning
+            node: truvami-{{ "{{" }} $labels.job }}
+            service: truvami-{{ "{{" }} $labels.job }}
+            component: go-runtime
+            {{- with .Values.alertLabels }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
+
+        - alert: TruvamiGoGCFrequencyHigh
+          annotations:
+            description: >-
+              **What's happening:** Go service {{ "{{" }} $labels.job }} is running garbage collection {{ "{{" }} $value }} times/sec (>2/sec).
+              
+              **Why this occurred:** Frequent GC indicates:
+              - High memory allocation rate
+              - Memory pressure from insufficient heap size
+              - Memory leaks causing constant allocation
+              - Inefficient object lifecycle management
+              
+              **What to do:**
+              1. Check memory allocation rate trends
+              2. Review recent code changes for memory leaks
+              3. Consider increasing heap size limits
+              4. Optimize object pooling and reuse patterns
+              5. Monitor heap growth between collections
+            summary: >-
+              Go service {{ "{{" }} $labels.job }} GC frequency high ({{ "{{" }} $value }}/sec)
+          expr: >-
+            rate(go_gc_duration_seconds_count{job=~"truvami-.*"}[5m]) > 2
+          for: 5m
+          labels:
+            namespace: {{ .Release.Namespace }}
+            severity: warning
+            node: truvami-{{ "{{" }} $labels.job }}
+            service: truvami-{{ "{{" }} $labels.job }}
+            component: go-runtime
+            {{- with .Values.alertLabels }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
+
+        # Goroutine Alerts
+        - alert: TruvamiGoGoroutineCountHigh
+          annotations:
+            description: >-
+              **What's happening:** Go service {{ "{{" }} $labels.job }} has {{ "{{" }} $value }} goroutines running (>1000).
+              
+              **Why this occurred:** High goroutine count can indicate:
+              - Goroutine leaks from not properly closing channels
+              - Blocked goroutines waiting on I/O or locks
+              - Inefficient concurrency patterns
+              - Resource contention causing goroutine buildup
+              - Application logic creating too many concurrent operations
+              
+              **What to do:**
+              1. Check for goroutine leaks using pprof endpoints
+              2. Review channel usage and ensure proper closing
+              3. Monitor for blocked goroutines in deadlock situations
+              4. Check for excessive concurrent operations
+              5. Review goroutine creation patterns in recent changes
+            summary: >-
+              Go service {{ "{{" }} $labels.job }} goroutine count high ({{ "{{" }} $value }})
+          expr: >-
+            go_goroutines{job=~"truvami-.*"} > 1000
+          for: 5m
+          labels:
+            namespace: {{ .Release.Namespace }}
+            severity: warning
+            node: truvami-{{ "{{" }} $labels.job }}
+            service: truvami-{{ "{{" }} $labels.job }}
+            component: go-runtime
+            {{- with .Values.alertLabels }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
+
+        - alert: TruvamiGoGoroutineCountCritical
+          annotations:
+            description: >-
+              **What's happening:** Go service {{ "{{" }} $labels.job }} has {{ "{{" }} $value }} goroutines (>5000) - CRITICAL LEAK DETECTED.
+              
+              **IMMEDIATE ACTION REQUIRED:** This indicates a severe goroutine leak that will crash the service.
+              
+              **What to do IMMEDIATELY:**
+              1. **URGENT:** Prepare to restart the service
+              2. **Capture pprof data** if endpoints are accessible
+              3. **Check for infinite loops** or blocked channels
+              4. **Review recent deployments** for goroutine leak sources
+              5. **Monitor service stability** and restart if necessary
+            summary: >-
+              Go service {{ "{{" }} $labels.job }} goroutine count CRITICAL ({{ "{{" }} $value }})
+          expr: >-
+            go_goroutines{job=~"truvami-.*"} > 5000
+          for: 1m
+          labels:
+            namespace: {{ .Release.Namespace }}
+            severity: critical
+            node: truvami-{{ "{{" }} $labels.job }}
+            service: truvami-{{ "{{" }} $labels.job }}
+            component: go-runtime
+            {{- with .Values.alertLabels }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
+
+        # Thread Alerts
+        - alert: TruvamiGoThreadCountHigh
+          annotations:
+            description: >-
+              **What's happening:** Go service {{ "{{" }} $labels.job }} is using {{ "{{" }} $value }} OS threads (>50).
+              
+              **Why this occurred:** High thread count can indicate:
+              - CGO calls blocking OS threads
+              - Excessive syscalls requiring thread creation
+              - Runtime.LockOSThread() calls not properly released
+              - High concurrent I/O operations
+              
+              **What to do:**
+              1. Check for CGO usage and blocking calls
+              2. Review syscall patterns and I/O operations
+              3. Monitor thread creation trends over time
+              4. Check for LockOSThread usage in code
+              5. Consider if high concurrency is legitimate for workload
+            summary: >-
+              Go service {{ "{{" }} $labels.job }} thread count high ({{ "{{" }} $value }})
+          expr: >-
+            go_threads{job=~"truvami-.*"} > 50
+          for: 5m
+          labels:
+            namespace: {{ .Release.Namespace }}
+            severity: warning
+            node: truvami-{{ "{{" }} $labels.job }}
+            service: truvami-{{ "{{" }} $labels.job }}
+            component: go-runtime
+            {{- with .Values.alertLabels }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
+
+        # File Descriptor Alerts
+        - alert: TruvamiGoFileDescriptorUsageHigh
+          annotations:
+            description: >-
+              **What's happening:** Go service {{ "{{" }} $labels.job }} is using {{ "{{" }} $value | humanizePercentage }} of available file descriptors.
+              
+              **Why this occurred:** High FD usage indicates:
+              - File descriptor leaks (not closing files/connections)
+              - Too many concurrent network connections
+              - Large number of open log files
+              - Database connection pool leaks
+              - Socket connections not properly closed
+              
+              **What to do:**
+              1. Check for file descriptor leaks in application code
+              2. Review connection pool configurations
+              3. Ensure proper closing of files and network connections
+              4. Monitor FD usage trends and growth patterns
+              5. Consider increasing FD limits if usage is legitimate
+            summary: >-
+              Go service {{ "{{" }} $labels.job }} file descriptor usage high ({{ "{{" }} $value | humanizePercentage }})
+          expr: >-
+            (
+              process_open_fds{job=~"truvami-.*"} / 
+              process_max_fds{job=~"truvami-.*"}
+            ) > 0.8
+          for: 5m
+          labels:
+            namespace: {{ .Release.Namespace }}
+            severity: warning
+            node: truvami-{{ "{{" }} $labels.job }}
+            service: truvami-{{ "{{" }} $labels.job }}
+            component: go-runtime
+            {{- with .Values.alertLabels }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
+
+        - alert: TruvamiGoFileDescriptorUsageCritical
+          annotations:
+            description: >-
+              **What's happening:** Go service {{ "{{" }} $labels.job }} is using {{ "{{" }} $value | humanizePercentage }} of file descriptors (>95%).
+              
+              **IMMEDIATE ACTION REQUIRED:** Service will fail to open new files/connections.
+              
+              **What to do IMMEDIATELY:**
+              1. **URGENT:** Service may become unresponsive
+              2. **Check for FD leaks** and restart service if necessary
+              3. **Increase FD limits** temporarily if possible
+              4. **Monitor service health** for connection failures
+              5. **Review connection cleanup** in application code
+            summary: >-
+              Go service {{ "{{" }} $labels.job }} file descriptor usage CRITICAL ({{ "{{" }} $value | humanizePercentage }})
+          expr: >-
+            (
+              process_open_fds{job=~"truvami-.*"} / 
+              process_max_fds{job=~"truvami-.*"}
+            ) > 0.95
+          for: 1m
+          labels:
+            namespace: {{ .Release.Namespace }}
+            severity: critical
+            node: truvami-{{ "{{" }} $labels.job }}
+            service: truvami-{{ "{{" }} $labels.job }}
+            component: go-runtime
+            {{- with .Values.alertLabels }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
+
+        # Heap Size Growth Alert
+        - alert: TruvamiGoHeapSizeGrowthHigh
+          annotations:
+            description: >-
+              **What's happening:** Go service {{ "{{" }} $labels.job }} heap size has grown {{ "{{" }} $value | humanizePercentage }} over the last hour.
+              
+              **Why this occurred:** Rapid heap growth indicates:
+              - Memory leaks in application code
+              - Caching without proper eviction policies
+              - Large data structures being accumulated
+              - Inefficient garbage collection
+              
+              **What to do:**
+              1. Monitor heap size trends and identify growth patterns
+              2. Check for memory leaks in recent code changes
+              3. Review caching strategies and eviction policies
+              4. Analyze object allocation patterns
+              5. Consider heap profiling to identify hot spots
+            summary: >-
+              Go service {{ "{{" }} $labels.job }} heap size growth high ({{ "{{" }} $value | humanizePercentage }}/hour)
+          expr: >-
+            (
+              (
+                go_memstats_heap_alloc_bytes{job=~"truvami-.*"} - 
+                go_memstats_heap_alloc_bytes{job=~"truvami-.*"} offset 1h
+              ) / 
+              go_memstats_heap_alloc_bytes{job=~"truvami-.*"} offset 1h
+            ) > 0.5
+          for: 5m
+          labels:
+            namespace: {{ .Release.Namespace }}
+            severity: warning
+            node: truvami-{{ "{{" }} $labels.job }}
+            service: truvami-{{ "{{" }} $labels.job }}
+            component: go-runtime
+            {{- with .Values.alertLabels }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
