@@ -76,14 +76,14 @@ spec:
       labels:
         namespace: {{ .Release.Namespace }}
         severity: critical
-        node: "truvami-kafka-{{ "{{" }} $labels.consumergroup }}"
+        node: truvami-kafka
         service: truvami-kafka
         component: consumer
         {{- with .Values.alertLabels }}
         {{- toYaml . | nindent 8 }}
         {{- end }}
       annotations:
-        summary: "Critical Kafka consumer lag detected"
+        summary: "Critical Kafka consumer lag detected for group {{ "{{" }} $labels.consumergroup }}"
         description: |
           Consumer group {{ "{{" }} $labels.consumergroup }} has {{ "{{" }} $value }} messages lag on topic {{ "{{" }} $labels.topic }}.
           
@@ -102,14 +102,14 @@ spec:
       labels:
         namespace: {{ .Release.Namespace }}
         severity: major
-        node: "truvami-kafka-{{ "{{" }} $labels.consumergroup }}"
+        node: truvami-kafka
         service: truvami-kafka
         component: consumer
         {{- with .Values.alertLabels }}
         {{- toYaml . | nindent 8 }}
         {{- end }}
       annotations:
-        summary: "High Kafka consumer lag detected"
+        summary: "High Kafka consumer lag detected for group {{ "{{" }} $labels.consumergroup }}"
         description: |
           Consumer group {{ "{{" }} $labels.consumergroup }} has {{ "{{" }} $value }} messages lag on topic {{ "{{" }} $labels.topic }}.
           
@@ -152,14 +152,14 @@ spec:
       labels:
         namespace: {{ .Release.Namespace }}
         severity: warning
-        node: "truvami-kafka-{{ "{{" }} $labels.consumergroup }}"
+        node: truvami-kafka
         service: truvami-kafka
         component: consumer
         {{- with .Values.alertLabels }}
         {{- toYaml . | nindent 8 }}
         {{- end }}
       annotations:
-        summary: "Kafka consumer group has no active members"
+        summary: "Kafka consumer group {{ "{{" }} $labels.consumergroup }} has no active members"
         description: |
           Consumer group {{ "{{" }} $labels.consumergroup }} has no active consumer members.
           
@@ -178,14 +178,14 @@ spec:
       labels:
         namespace: {{ .Release.Namespace }}
         severity: major
-        node: "{{ "{{" }} $labels.topic }}"
+        node: truvami-kafka
         service: truvami-kafka
         component: consumer
         {{- with .Values.alertLabels }}
         {{- toYaml . | nindent 8 }}
         {{- end }}
       annotations:
-        summary: "High lag on critical alerts topic"
+        summary: "High lag on critical alerts topic {{ "{{" }} $labels.topic }}"
         description: |
           Critical alerts topic {{ "{{" }} $labels.topic }} has {{ "{{" }} $value }} messages lag for consumer group {{ "{{" }} $labels.consumergroup }}.
           

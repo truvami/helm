@@ -14,14 +14,14 @@ spec:
             description: >-
               Siren uplink processing failure rate is {{ "{{" }} $value }} failures/sec for topic {{ "{{" }} $labels.topic }}.
             summary: >-
-              High Siren uplink processing failure rate
+              High Siren uplink processing failure rate (topic: {{ "{{" }} $labels.topic }})
           expr: >-
             rate(truvami_alerts_uplinks_processed_error_count[5m]) > 0.1
           for: 2m
           labels:
             namespace: {{ .Release.Namespace }}
             severity: major
-            node: siren-{{ "{{" }} $labels.topic }}
+            node: truvami-siren
             service: truvami-siren
             component: alert-processing
         - alert: SirenPositionProcessingFailures
@@ -29,14 +29,14 @@ spec:
             description: >-
               Siren position processing failure rate is {{ "{{" }} $value }} failures/sec for topic {{ "{{" }} $labels.topic }}.
             summary: >-
-              High Siren position processing failure rate
+              High Siren position processing failure rate (topic: {{ "{{" }} $labels.topic }})
           expr: >-
             rate(truvami_alerts_positions_processed_error_count[5m]) > 0.1
           for: 2m
           labels:
             namespace: {{ .Release.Namespace }}
             severity: major
-            node: siren-{{ "{{" }} $labels.topic }}
+            node: truvami-siren
             service: truvami-siren
             component: alert-processing
         - alert: SirenBatteryStatusProcessingFailures
@@ -44,14 +44,14 @@ spec:
             description: >-
               Siren battery status processing failure rate is {{ "{{" }} $value }} failures/sec for topic {{ "{{" }} $labels.topic }}.
             summary: >-
-              High Siren battery status processing failure rate
+              High Siren battery status processing failure rate (topic: {{ "{{" }} $labels.topic }})
           expr: >-
             rate(truvami_alerts_battery_statuses_processed_error_count[5m]) > 0.1
           for: 2m
           labels:
             namespace: {{ .Release.Namespace }}
             severity: major
-            node: siren-{{ "{{" }} $labels.topic }}
+            node: truvami-siren
             service: truvami-siren
             component: alert-processing
         - alert: SirenRotationStatusProcessingFailures
@@ -59,14 +59,14 @@ spec:
             description: >-
               Siren rotation status processing failure rate is {{ "{{" }} $value }} failures/sec for topic {{ "{{" }} $labels.topic }}.
             summary: >-
-              High Siren rotation status processing failure rate
+              High Siren rotation status processing failure rate (topic: {{ "{{" }} $labels.topic }})
           expr: >-
             rate(truvami_alerts_rotations_statuses_processed_error_count[5m]) > 0.1
           for: 2m
           labels:
             namespace: {{ .Release.Namespace }}
             severity: major
-            node: siren-{{ "{{" }} $labels.topic }}
+            node: truvami-siren
             service: truvami-siren
             component: alert-processing
         - alert: SirenEventProcessingFailures
@@ -74,14 +74,14 @@ spec:
             description: >-
               Siren event processing failure rate is {{ "{{" }} $value }} failures/sec for topic {{ "{{" }} $labels.topic }}.
             summary: >-
-              High Siren event processing failure rate
+              High Siren event processing failure rate (topic: {{ "{{" }} $labels.topic }})
           expr: >-
             rate(truvami_alerts_events_processed_error_count[5m]) > 0.1
           for: 2m
           labels:
             namespace: {{ .Release.Namespace }}
             severity: major
-            node: siren-{{ "{{" }} $labels.topic }}
+            node: truvami-siren
             service: truvami-siren
             component: alert-processing
         - alert: SirenAlertProcessingRateHigh

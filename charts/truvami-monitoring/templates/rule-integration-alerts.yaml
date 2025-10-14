@@ -66,31 +66,13 @@ spec:
             namespace: {{ .Release.Namespace }}
             component: integrations
 
-    - name: truvami-bridge-wifi-solver-alerts
+    - name: truvami-bridge-wifi-solver-timeouts
       rules:
-        - alert: TruvamiWiFiSolverErrorsHigh
-          annotations:
-            description: >-
-              High WiFi solver error rate at {{ "{{" }} $value }} errors/sec.
-            summary: >-
-              WiFi solver errors detected
-          expr: >-
-            rate(truvami_wifi_solver_error_count[5m]) > 0.1
-          for: 2m
-          labels:
-            {{- range $key, $value := .Values.alertLabels }}
-            {{ $key }}: {{ $value | quote }}
-            {{- end }}
-            service: truvami-bridge
-            severity: major
-            node: truvami-bridge
-            namespace: {{ .Release.Namespace }}
-            component: wifi-solver
-
         - alert: TruvamiWiFiSolverTimeoutErrorsHigh
           annotations:
             description: >-
               High WiFi solver timeout error rate at {{ "{{" }} $value }} errors/sec.
+              This indicates connectivity or performance issues with the WiFi positioning service.
             summary: >-
               WiFi solver timeout errors detected
           expr: >-
@@ -102,26 +84,6 @@ spec:
             {{- end }}
             service: truvami-bridge
             severity: major
-            node: truvami-bridge
-            namespace: {{ .Release.Namespace }}
-            component: wifi-solver
-
-        - alert: TruvamiWiFiSolverResponseTimeSlow
-          annotations:
-            description: >-
-              WiFi solver response time is slow: {{ "{{" }} $value }}ms average over 5 minutes.
-            summary: >-
-              WiFi solver response time degraded
-          expr: >-
-            rate(truvami_wifi_solver_response_time_seconds_sum[5m]) / 
-            rate(truvami_wifi_solver_response_time_seconds_count[5m]) * 1000 > 5000
-          for: 5m
-          labels:
-            {{- range $key, $value := .Values.alertLabels }}
-            {{ $key }}: {{ $value | quote }}
-            {{- end }}
-            service: truvami-bridge
-            severity: minor
             node: truvami-bridge
             namespace: {{ .Release.Namespace }}
             component: wifi-solver

@@ -14,14 +14,14 @@ spec:
             description: >-
               Failed to create Kafka integration producer at {{ "{{" }} $value }} failures/sec for UUID {{ "{{" }} $labels.uuid }}.
             summary: >-
-              Truvami Kafka integration producer failures
+              Truvami Kafka integration producer failures (UUID: {{ "{{" }} $labels.uuid }})
           expr: >-
             rate(truvami_kafka_integration_failed_to_create_producer[5m]) > 0.01
           for: 2m
           labels:
             namespace: {{ .Release.Namespace }}
             severity: major
-            node: truvami-bridge-{{ "{{" }} $labels.uuid }}
+            node: truvami-bridge
             service: truvami-bridge
             component: kafka-integration
             {{- with .Values.alertLabels }}
@@ -32,14 +32,14 @@ spec:
             description: >-
               Failed to deliver Kafka integration messages at {{ "{{" }} $value }} failures/sec for UUID {{ "{{" }} $labels.uuid }}.
             summary: >-
-              Truvami Kafka integration message delivery failures
+              Truvami Kafka integration message delivery failures (UUID: {{ "{{" }} $labels.uuid }})
           expr: >-
             rate(truvami_kafka_integration_failed_to_deliver_message[5m]) > 0.05
           for: 2m
           labels:
             namespace: {{ .Release.Namespace }}
             severity: major
-            node: truvami-bridge-{{ "{{" }} $labels.uuid }}
+            node: truvami-bridge
             service: truvami-bridge
             component: kafka-integration
             {{- with .Values.alertLabels }}
@@ -50,14 +50,14 @@ spec:
             description: >-
               Failed to produce Kafka integration messages at {{ "{{" }} $value }} failures/sec for UUID {{ "{{" }} $labels.uuid }}.
             summary: >-
-              Truvami Kafka integration message produce failures
+              Truvami Kafka integration message produce failures (UUID: {{ "{{" }} $labels.uuid }})
           expr: >-
             rate(truvami_kafka_integration_failed_to_produce_message[5m]) > 0.05
           for: 2m
           labels:
             namespace: {{ .Release.Namespace }}
             severity: major
-            node: truvami-bridge-{{ "{{" }} $labels.uuid }}
+            node: truvami-bridge
             service: truvami-bridge
             component: kafka-integration
         - alert: TruvamiAlertsQueuePublishFailures
@@ -102,7 +102,7 @@ spec:
             description: >-
               Failed to marshal Kafka integration messages at {{ "{{" }} $value }} failures/sec for customer {{ "{{" }} $labels.customer }}.
             summary: >-
-              High Truvami Kafka integration marshal failure rate
+              High Truvami Kafka integration marshal failure rate (customer: {{ "{{" }} $labels.customer }})
           expr: >-
             (
               rate(truvami_kafka_integration_failed_to_marshal_uplink_message[5m]) +
@@ -115,7 +115,7 @@ spec:
           labels:
             namespace: {{ .Release.Namespace }}
             severity: major
-            node: truvami-bridge-{{ "{{" }} $labels.customer }}
+            node: truvami-bridge
             service: truvami-bridge
             component: kafka-integration
         - alert: TruvamiKafkaIntegrationConsumerLag
@@ -124,14 +124,14 @@ spec:
               Customer Kafka integration consumer lag detected. No messages consumed for more than 30 minutes. 
               Last message was {{ "{{" }} $value | humanizeDuration }} ago for consumer group {{ "{{" }} $labels.consumergroup }} on topic {{ "{{" }} $labels.topic }}.
             summary: >-
-              Truvami Kafka integration consumer lag detected on topic {{ "{{" }} $labels.topic }}
+              Truvami Kafka integration consumer lag detected on topic {{ "{{" }} $labels.topic }} (consumer group: {{ "{{" }} $labels.consumergroup }})
           expr: >-
             time() - truvami_kafka_consumer_last_message_timestamp_seconds{cluster="customer"} > 1800
           for: 5m
           labels:
             namespace: {{ .Release.Namespace }}
             severity: minor
-            node: truvami-bridge-{{ "{{" }} $labels.topic }}
+            node: truvami-bridge
             service: truvami-bridge
             component: kafka-integration
         - alert: TruvamiKafkaIntegrationConsumerBlocked
@@ -142,13 +142,13 @@ spec:
               
               This is less critical than internal consumers but should be investigated if persistent.
             summary: >-
-              Truvami Kafka integration consumer appears blocked on topic {{ "{{" }} $labels.topic }}
+              Truvami Kafka integration consumer appears blocked on topic {{ "{{" }} $labels.topic }} (consumer group: {{ "{{" }} $labels.consumergroup }})
           expr: >-
             time() - truvami_kafka_consumer_last_message_timestamp_seconds{cluster="customer"} > 7200
           for: 10m
           labels:
             namespace: {{ .Release.Namespace }}
             severity: minor
-            node: truvami-bridge-{{ "{{" }} $labels.topic }}
+            node: truvami-bridge
             service: truvami-bridge
             component: kafka-integration

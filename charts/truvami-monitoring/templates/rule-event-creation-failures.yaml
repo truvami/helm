@@ -38,7 +38,7 @@ spec:
           labels:
             namespace: {{ .Release.Namespace }}
             severity: major
-            node: "device-{{ "{{" }} $labels.devEui }}"
+            node: "{{ "{{" }} $labels.devEui }}"
             service: truvami-bridge
             component: event-creation
             devEui: "{{ "{{" }} $labels.devEui }}"
@@ -71,7 +71,7 @@ spec:
           labels:
             namespace: {{ .Release.Namespace }}
             severity: warning
-            node: "device-{{ "{{" }} $labels.devEui }}"
+            node: "{{ "{{" }} $labels.devEui }}"
             service: truvami-bridge
             component: event-creation
             devEui: "{{ "{{" }} $labels.devEui }}"

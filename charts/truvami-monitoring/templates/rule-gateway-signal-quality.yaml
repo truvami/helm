@@ -37,7 +37,7 @@ spec:
           labels:
             namespace: {{ .Release.Namespace }}
             severity: minor
-            node: "gateway-{{ "{{" }} $labels.gatewayId }}"
+            node: "{{ "{{" }} $labels.gatewayId }}"
             service: truvami-device
             component: signal-quality
             gatewayId: "{{ "{{" }} $labels.gatewayId }}"
@@ -70,7 +70,7 @@ spec:
           labels:
             namespace: {{ .Release.Namespace }}
             severity: major
-            node: "gateway-{{ "{{" }} $labels.gatewayId }}"
+            node: "{{ "{{" }} $labels.gatewayId }}"
             service: truvami-device
             component: signal-quality
             gatewayId: "{{ "{{" }} $labels.gatewayId }}"
@@ -105,7 +105,7 @@ spec:
           labels:
             namespace: {{ .Release.Namespace }}
             severity: minor
-            node: "gateway-{{ "{{" }} $labels.gatewayId }}"
+            node: "{{ "{{" }} $labels.gatewayId }}"
             service: truvami-device
             component: signal-quality
             gatewayId: "{{ "{{" }} $labels.gatewayId }}"

@@ -4,7 +4,7 @@ metadata:
   labels:
     prometheus: kube-prometheus-stack-prometheus
     role: alert-rules
-  name: truvami-device-connectivity-alerts
+  name: truvami-gateway-device-count
 spec:
   groups:
     - name: truvami-gateway-device-monitoring

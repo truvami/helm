@@ -12,31 +12,31 @@ spec:
         - alert: SirenKafkaConsumerDown
           annotations:
             description: >-
-              Siren Kafka consumer has not consumed any messages in the last 24 hours. Total messages consumed: {{ "{{" }} $value }}.
+              Siren Kafka consumer has not consumed any messages in the last 24 hours. Total messages consumed: {{ "{{" }} $value }} for topic {{ "{{" }} $labels.topic }}.
             summary: >-
-              Siren Kafka consumer is down
+              Siren Kafka consumer is down (topic: {{ "{{" }} $labels.topic }})
           expr: >-
             increase(truvami_kafka_alerts_messages_consumed_count[1d]) == 0
           for: 5m
           labels:
             namespace: {{ .Release.Namespace }}
             severity: critical
-            node: truvami-siren-{{ "{{" }} $labels.topic }}
+            node: truvami-siren
             service: truvami-siren
             component: kafka-consumer
         - alert: SirenKafkaConsumerHighErrorRate
           annotations:
             description: >-
-              Siren Kafka consumer error rate is {{ "{{" }} $value }} errors/sec for error code {{ "{{" }} $labels.error_code }}.
+              Siren Kafka consumer error rate is {{ "{{" }} $value }} errors/sec for error code {{ "{{" }} $labels.error_code }} on topic {{ "{{" }} $labels.topic }}.
             summary: >-
-              High Siren Kafka consumer error rate
+              High Siren Kafka consumer error rate (topic: {{ "{{" }} $labels.topic }})
           expr: >-
             rate(truvami_kafka_alerts_messages_error_count[5m]) > 0.1
           for: 2m
           labels:
             namespace: {{ .Release.Namespace }}
             severity: major
-            node: truvami-siren-{{ "{{" }} $labels.topic }}
+            node: truvami-siren
             service: truvami-siren
             component: kafka-consumer
         - alert: SirenKafkaConsumerLag
@@ -44,43 +44,43 @@ spec:
             description: >-
               Siren Kafka consumer lag is high with {{ "{{" }} $value }} messages behind for topic {{ "{{" }} $labels.topic }}.
             summary: >-
-              High Siren Kafka consumer lag
+              High Siren Kafka consumer lag (topic: {{ "{{" }} $labels.topic }})
           expr: >-
             kafka_consumer_lag_sum{job="siren"} > 500
           for: 5m
           labels:
             namespace: {{ .Release.Namespace }}
             severity: warning
-            node: truvami-siren-{{ "{{" }} $labels.topic }}
+            node: truvami-siren
             service: truvami-siren
             component: kafka-consumer
         - alert: SirenKafkaConsumerIdleTooLong
           annotations:
             description: >-
-              Siren Kafka consumer has been idle for more than 15 minutes.
+              Siren Kafka consumer has been idle for more than 15 minutes on topic {{ "{{" }} $labels.topic }}.
             summary: >-
-              Siren Kafka consumer idle too long
+              Siren Kafka consumer idle too long (topic: {{ "{{" }} $labels.topic }})
           expr: >-
             time() - truvami_kafka_consumer_last_message_timestamp_seconds{job="siren"} > 900
           for: 2m
           labels:
             namespace: {{ .Release.Namespace }}
             severity: major
-            node: truvami-siren-{{ "{{" }} $labels.topic }}
+            node: truvami-siren
             service: truvami-siren
             component: kafka-consumer
         - alert: SirenKafkaUnknownTopicMessages
           annotations:
             description: >-
-              Siren is receiving messages from unknown topic at {{ "{{" }} $value }} messages/sec.
+              Siren is receiving messages from unknown topic {{ "{{" }} $labels.topic }} at {{ "{{" }} $value }} messages/sec.
             summary: >-
-              Siren receiving messages from unknown topics
+              Siren receiving messages from unknown topics (topic: {{ "{{" }} $labels.topic }})
           expr: >-
             rate(truvami_alerts_consume_unknown_topic_count[5m]) > 0.01
           for: 10m
           labels:
             namespace: {{ .Release.Namespace }}
             severity: minor
-            node: truvami-siren-{{ "{{" }} $labels.topic }}
+            node: truvami-siren
             service: truvami-siren
             component: kafka-consumer
