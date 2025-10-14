@@ -21,7 +21,7 @@ spec:
           labels:
             namespace: {{ .Release.Namespace }}
             severity: intermediate
-            node: truvami-device
+            node: "{{ "{{" }} $labels.devEui }}"
             service: truvami-device
             {{- with .Values.alertLabels }}
             {{- toYaml . | nindent 12 }}
@@ -38,7 +38,7 @@ spec:
           labels:
             namespace: {{ .Release.Namespace }}
             severity: warning
-            node: truvami-device
+            node: "{{ "{{" }} $labels.devEui }}"
             service: truvami-device
             {{- with .Values.alertLabels }}
             {{- toYaml . | nindent 12 }}

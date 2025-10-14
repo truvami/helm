@@ -12,13 +12,78 @@
         "iconColor": "rgba(0, 211, 255, 1)",
         "name": "Annotations & Alerts",
         "type": "dashboard"
+      },
+      {
+        "datasource": {
+          "type": "prometheus",
+          "uid": "${datasource}"
+        },
+        "enable": true,
+        "hide": false,
+        "iconColor": "red",
+        "name": "Critical Alerts",
+        "target": {
+          "expr": "ALERTS{alertstate=\"firing\",service=\"$service\",namespace=\"$namespace\",severity=\"cirtical\"}",
+          "interval": "",
+          "refId": "Anno"
+        },
+        "titleFormat": "{{alertname}}"
+      },
+      {
+        "datasource": {
+          "type": "prometheus",
+          "uid": "${datasource}"
+        },
+        "enable": true,
+        "hide": false,
+        "iconColor": "orange",
+        "name": "Major Alerts",
+        "target": {
+          "expr": "ALERTS{alertstate=\"firing\",service=\"$service\",namespace=\"$namespace\",severity=\"major\"}",
+          "interval": "",
+          "refId": "Anno"
+        },
+        "titleFormat": "{{alertname}}"
+      },
+      {
+        "datasource": {
+          "type": "prometheus",
+          "uid": "PBFA97CFB590B2093"
+        },
+        "enable": true,
+        "hide": false,
+        "iconColor": "light-orange",
+        "name": "Minor Alerts",
+        "target": {
+          "expr": "ALERTS{alertstate=\"firing\",service=\"$service\",namespace=\"$namespace\",severity=\"minor\"}",
+          "interval": "",
+          "refId": "Anno"
+        },
+        "titleFormat": "{{alertname}}"
+      },
+      {
+        "datasource": {
+          "type": "prometheus",
+          "uid": "${datasource}"
+        },
+        "enable": true,
+        "hide": false,
+        "iconColor": "yellow",
+        "name": "Warning Alerts",
+        "target": {
+          "expr": "ALERTS{alertstate=\"firing\",service=\"$service\",namespace=\"$namespace\",severity=\"warning\"}",
+          "interval": "",
+          "refId": "Anno"
+        },
+        "textFormat": "",
+        "titleFormat": "{{alertname}}"
       }
     ]
   },
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 1,
-  "id": 22,
+  "id": 12,
   "links": [],
   "panels": [
     {
@@ -293,7 +358,6 @@
         "wideLayout": true
       },
       "pluginVersion": "12.1.1",
-      "repeatDirection": "h",
       "targets": [
         {
           "datasource": {
@@ -368,7 +432,6 @@
         "wideLayout": true
       },
       "pluginVersion": "12.1.1",
-      "repeatDirection": "h",
       "targets": [
         {
           "datasource": {
@@ -443,7 +506,6 @@
         "wideLayout": true
       },
       "pluginVersion": "12.1.1",
-      "repeatDirection": "h",
       "targets": [
         {
           "datasource": {
@@ -518,7 +580,6 @@
         "wideLayout": true
       },
       "pluginVersion": "12.1.1",
-      "repeatDirection": "h",
       "targets": [
         {
           "datasource": {
@@ -593,7 +654,6 @@
         "wideLayout": true
       },
       "pluginVersion": "12.1.1",
-      "repeatDirection": "h",
       "targets": [
         {
           "datasource": {
@@ -668,7 +728,6 @@
         "wideLayout": true
       },
       "pluginVersion": "12.1.1",
-      "repeatDirection": "h",
       "targets": [
         {
           "datasource": {
@@ -858,7 +917,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "builder",
-          "expr": "go_info{namespace=\"$namespace\", container=\"$service\"}",
+          "expr": "sum by(version) (go_info{namespace=\"$namespace\", container=\"$service\"})",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
           "legendFormat": "{{version}}",
@@ -960,13 +1019,13 @@
           "expr": "avg_over_time(go_memstats_heap_alloc_bytes{namespace=\"$namespace\", container=\"$service\"}[$__interval])",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
-          "legendFormat": "Threads",
+          "legendFormat": "Heap",
           "range": true,
           "refId": "A",
           "useBackend": false
         }
       ],
-      "title": "Threads",
+      "title": "Heap",
       "type": "timeseries"
     },
     {
@@ -1132,5 +1191,5 @@
   "timezone": "browser",
   "title": "Service - truvami-gateway",
   "uid": "truvami-gateway",
-  "version": 9
+  "version": 2
 }

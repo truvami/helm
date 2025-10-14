@@ -63,24 +63,6 @@ spec:
             {{- with .Values.alertLabels }}
             {{- toYaml . | nindent 12 }}
             {{- end }}
-        - alert: TruvamiDeviceNoGPSFix
-          annotations:
-            description: >-
-              Device {{ "{{" }} $labels.devEui }} (customer: {{ "{{" }} $labels.customer }}) has only {{ "{{" }} $value }} satellites, needs at least 4 for GPS fix.
-            summary: >-
-              Truvami device has insufficient GPS satellites
-          expr: >-
-            truvami_device_gnss_satellites_value < 4
-          for: 10m
-          labels:
-            namespace: {{ .Release.Namespace }}
-            severity: warning
-            node: "{{ "{{" }} $labels.devEui }}"
-            service: truvami-device
-            component: gps
-            {{- with .Values.alertLabels }}
-            {{- toYaml . | nindent 12 }}
-            {{- end }}
         - alert: TruvamiDeviceFrequentResets
           annotations:
             description: >-

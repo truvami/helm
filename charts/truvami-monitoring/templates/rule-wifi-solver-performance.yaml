@@ -69,7 +69,7 @@ spec:
           for: 5m
           labels:
             namespace: {{ .Release.Namespace }}
-            severity: warning
+            severity: minor
             node: truvami-bridge
             service: truvami-bridge
             component: wifi-solver

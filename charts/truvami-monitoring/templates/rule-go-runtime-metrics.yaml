@@ -29,7 +29,7 @@ spec:
               4. Consider increasing memory limits if legitimate usage
               5. Analyze heap dumps if available
             summary: >-
-              Go service {{ "{{" }} $labels.job }} memory usage high ({{ "{{" }} $value | humanizePercentage }})
+              Go service {{ "{{" }} $labels.job }} memory usage high
           expr: >-
             (
               go_memstats_alloc_bytes{job=~"truvami-.*"} / 
@@ -60,7 +60,7 @@ spec:
               4. **Monitor for service crashes** and restart loops
               5. **Review recent changes** that might cause memory spikes
             summary: >-
-              Go service {{ "{{" }} $labels.job }} memory usage CRITICAL ({{ "{{" }} $value | humanizePercentage }})
+              Go service {{ "{{" }} $labels.job }} memory usage CRITICAL
           expr: >-
             (
               go_memstats_alloc_bytes{job=~"truvami-.*"} / 
@@ -97,7 +97,7 @@ spec:
               4. Check for memory leaks causing heap growth
               5. Optimize object creation/destruction patterns
             summary: >-
-              Go service {{ "{{" }} $labels.job }} GC duration high ({{ "{{" }} $value }}s avg)
+              Go service {{ "{{" }} $labels.job }} GC duration high
           expr: >-
             rate(go_gc_duration_seconds_sum{job=~"truvami-.*"}[5m]) / 
             rate(go_gc_duration_seconds_count{job=~"truvami-.*"}[5m]) > 0.1
@@ -130,7 +130,7 @@ spec:
               4. Optimize object pooling and reuse patterns
               5. Monitor heap growth between collections
             summary: >-
-              Go service {{ "{{" }} $labels.job }} GC frequency high ({{ "{{" }} $value }}/sec)
+              Go service {{ "{{" }} $labels.job }} GC frequency high
           expr: >-
             rate(go_gc_duration_seconds_count{job=~"truvami-.*"}[5m]) > 2
           for: 5m
@@ -164,7 +164,7 @@ spec:
               4. Check for excessive concurrent operations
               5. Review goroutine creation patterns in recent changes
             summary: >-
-              Go service {{ "{{" }} $labels.job }} goroutine count high ({{ "{{" }} $value }})
+              Go service {{ "{{" }} $labels.job }} goroutine count high
           expr: >-
             go_goroutines{job=~"truvami-.*"} > 1000
           for: 5m
@@ -192,7 +192,7 @@ spec:
               4. **Review recent deployments** for goroutine leak sources
               5. **Monitor service stability** and restart if necessary
             summary: >-
-              Go service {{ "{{" }} $labels.job }} goroutine count CRITICAL ({{ "{{" }} $value }})
+              Go service {{ "{{" }} $labels.job }} goroutine count CRITICAL
           expr: >-
             go_goroutines{job=~"truvami-.*"} > 5000
           for: 1m
@@ -225,7 +225,7 @@ spec:
               4. Check for LockOSThread usage in code
               5. Consider if high concurrency is legitimate for workload
             summary: >-
-              Go service {{ "{{" }} $labels.job }} thread count high ({{ "{{" }} $value }})
+              Go service {{ "{{" }} $labels.job }} thread count high
           expr: >-
             go_threads{job=~"truvami-.*"} > 50
           for: 5m
@@ -259,7 +259,7 @@ spec:
               4. Monitor FD usage trends and growth patterns
               5. Consider increasing FD limits if usage is legitimate
             summary: >-
-              Go service {{ "{{" }} $labels.job }} file descriptor usage high ({{ "{{" }} $value | humanizePercentage }})
+              Go service {{ "{{" }} $labels.job }} file descriptor usage high
           expr: >-
             (
               process_open_fds{job=~"truvami-.*"} / 
@@ -290,7 +290,7 @@ spec:
               4. **Monitor service health** for connection failures
               5. **Review connection cleanup** in application code
             summary: >-
-              Go service {{ "{{" }} $labels.job }} file descriptor usage CRITICAL ({{ "{{" }} $value | humanizePercentage }})
+              Go service {{ "{{" }} $labels.job }} file descriptor usage CRITICAL
           expr: >-
             (
               process_open_fds{job=~"truvami-.*"} / 
@@ -326,7 +326,7 @@ spec:
               4. Analyze object allocation patterns
               5. Consider heap profiling to identify hot spots
             summary: >-
-              Go service {{ "{{" }} $labels.job }} heap size growth high ({{ "{{" }} $value | humanizePercentage }}/hour)
+              Go service {{ "{{" }} $labels.job }} heap size growth high
           expr: >-
             (
               (

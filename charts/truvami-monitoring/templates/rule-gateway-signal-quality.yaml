@@ -30,7 +30,7 @@ spec:
               5. Monitor device antenna orientation and installation
               6. Verify gateway receiver health and antenna connections
             summary: >-
-              Poor signal quality: Gateway {{ "{{" }} $labels.gatewayId }} <- Device {{ "{{" }} $labels.devEui }} ({{ "{{" }} $value }}dBm)
+              Poor signal quality: Gateway {{ "{{" }} $labels.gatewayId }} <-120dBm
           expr: >-
             truvami_gateway_uplink_rssi < -120
           for: 5m
@@ -58,18 +58,18 @@ spec:
               - Potential complete communication loss
               
               **What to do:**
-              1. **URGENT**: Investigate device {{ "{{" }} $labels.devEui }} connectivity immediately
+              1. Investigate device {{ "{{" }} $labels.gatewayId }} connectivity immediately
               2. Check if device is moving out of gateway range
               3. Plan device relocation or add gateway coverage
               4. Verify device is still operational and accessible
             summary: >-
-              Critical signal quality: Gateway {{ "{{" }} $labels.gatewayId }} <- Device {{ "{{" }} $labels.devEui }} ({{ "{{" }} $value }}dBm)
+              Critical signal quality: Gateway {{ "{{" }} $labels.gatewayId }} <-125dBm
           expr: >-
             truvami_gateway_uplink_rssi < -125
           for: 2m
           labels:
             namespace: {{ .Release.Namespace }}
-            severity: major
+            severity: minor
             node: "{{ "{{" }} $labels.gatewayId }}"
             service: truvami-device
             component: signal-quality
@@ -98,13 +98,13 @@ spec:
               4. Consider increasing device transmission power if possible
               5. Evaluate need for additional gateway coverage
             summary: >-
-              Low SNR: Gateway {{ "{{" }} $labels.gatewayId }} <- Device {{ "{{" }} $labels.devEui }} ({{ "{{" }} $value }}dB)
+              Low SNR: Gateway {{ "{{" }} $labels.gatewayId }} <-15dB
           expr: >-
             truvami_gateway_uplink_snr < -15
           for: 10m
           labels:
             namespace: {{ .Release.Namespace }}
-            severity: minor
+            severity: warning
             node: "{{ "{{" }} $labels.gatewayId }}"
             service: truvami-device
             component: signal-quality
