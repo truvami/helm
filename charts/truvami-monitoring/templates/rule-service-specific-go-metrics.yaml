@@ -29,8 +29,7 @@ spec:
               5. Consider restarting bridge service if leak is severe
             summary: >-
               Truvami Bridge goroutine leak detected ({{ "{{" }} $value }} goroutines)
-          expr: >-
-            go_goroutines{job="truvami-bridge"} > 2000
+          expr: go_goroutines{job="truvami-bridge"} > 2000
           for: 3m
           labels:
             namespace: {{ .Release.Namespace }}
@@ -63,8 +62,7 @@ spec:
               5. Analyze recent API usage patterns for changes
             summary: >-
               Truvami API memory usage growing rapidly ({{ "{{" }} $value | humanizeBytes }})
-          expr: >-
-            go_memstats_alloc_bytes{job="truvami-api"} > 500 * 1024 * 1024
+          expr: go_memstats_alloc_bytes{job="truvami-api"} > 500 * 1024 * 1024
           for: 5m
           labels:
             namespace: {{ .Release.Namespace }}
@@ -97,8 +95,7 @@ spec:
               5. Analyze alert history retention settings
             summary: >-
               Truvami Siren GC pressure high ({{ "{{" }} $value }}/sec)
-          expr: >-
-            rate(go_gc_duration_seconds_count{job="truvami-siren"}[5m]) > 3
+          expr: rate(go_gc_duration_seconds_count{job="truvami-siren"}[5m]) > 3
           for: 5m
           labels:
             namespace: {{ .Release.Namespace }}
@@ -130,8 +127,7 @@ spec:
               5. Verify connection timeout and cleanup settings
             summary: >-
               Truvami Gateway file descriptor usage high ({{ "{{" }} $value }})
-          expr: >-
-            process_open_fds{job="truvami-gateway"} > 200
+          expr: process_open_fds{job="truvami-gateway"} > 200
           for: 5m
           labels:
             namespace: {{ .Release.Namespace }}
@@ -163,8 +159,7 @@ spec:
               5. Analyze recent payload types for processing changes
             summary: >-
               Truvami Decoder goroutine bottleneck ({{ "{{" }} $value }} goroutines)
-          expr: >-
-            go_goroutines{job="truvami-decoder"} > 500
+          expr: go_goroutines{job="truvami-decoder"} > 500
           for: 5m
           labels:
             namespace: {{ .Release.Namespace }}
@@ -197,8 +192,7 @@ spec:
               5. Verify session cleanup and garbage collection
             summary: >-
               Truvami Dashboard HTTP goroutine growth ({{ "{{" }} $value }})
-          expr: >-
-            go_goroutines{job="truvami-dashboard"} > 800
+          expr: go_goroutines{job="truvami-dashboard"} > 800
           for: 5m
           labels:
             namespace: {{ .Release.Namespace }}
@@ -230,7 +224,7 @@ spec:
               5. **Consider service restarts** if memory leaks confirmed
             summary: >-
               Multiple Truvami services under memory pressure
-          expr: >-
+          expr: |
             count(
               (go_memstats_alloc_bytes{job=~"truvami-.*"} / go_memstats_sys_bytes{job=~"truvami-.*"}) > 0.8
             ) >= 3
