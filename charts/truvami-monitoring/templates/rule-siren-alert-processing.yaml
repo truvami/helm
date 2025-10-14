@@ -22,7 +22,7 @@ spec:
             {{- range $key, $value := .Values.alertLabels }}
             {{ $key }}: {{ $value | quote }}
             {{- end }}
-            service: siren
+            service: truvami-siren
             severity: major
             node: siren-{{ "{{" }} $labels.topic }}
         - alert: SirenPositionProcessingFailures
@@ -38,7 +38,7 @@ spec:
             {{- range $key, $value := .Values.alertLabels }}
             {{ $key }}: {{ $value | quote }}
             {{- end }}
-            service: siren
+            service: truvami-siren
             severity: major
             node: siren-{{ "{{" }} $labels.topic }}
         - alert: SirenBatteryStatusProcessingFailures
@@ -54,7 +54,7 @@ spec:
             {{- range $key, $value := .Values.alertLabels }}
             {{ $key }}: {{ $value | quote }}
             {{- end }}
-            service: siren
+            service: truvami-siren
             severity: major
             node: siren-{{ "{{" }} $labels.topic }}
         - alert: SirenRotationStatusProcessingFailures
@@ -70,7 +70,7 @@ spec:
             {{- range $key, $value := .Values.alertLabels }}
             {{ $key }}: {{ $value | quote }}
             {{- end }}
-            service: siren
+            service: truvami-siren
             severity: major
             node: siren-{{ "{{" }} $labels.topic }}
         - alert: SirenEventProcessingFailures
@@ -86,7 +86,7 @@ spec:
             {{- range $key, $value := .Values.alertLabels }}
             {{ $key }}: {{ $value | quote }}
             {{- end }}
-            service: siren
+            service: truvami-siren
             severity: major
             node: siren-{{ "{{" }} $labels.topic }}
         - alert: SirenAlertProcessingRateHigh
@@ -108,7 +108,7 @@ spec:
             {{- range $key, $value := .Values.alertLabels }}
             {{ $key }}: {{ $value | quote }}
             {{- end }}
-            service: siren
+            service: truvami-siren
             severity: intermediate
         - alert: SirenAlertProcessingRateLow
           annotations:
@@ -129,5 +129,5 @@ spec:
             {{- range $key, $value := .Values.alertLabels }}
             {{ $key }}: {{ $value | quote }}
             {{- end }}
-            service: siren
+            service: truvami-siren
             severity: warning

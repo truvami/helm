@@ -24,7 +24,7 @@ spec:
       for: 2m
       labels:
         severity: critical
-        service: kafka
+        service: truvami-kafka
         component: broker
         {{- with .Values.alertLabels }}
         {{- toYaml . | nindent 8 }}
@@ -47,7 +47,7 @@ spec:
       for: 5m
       labels:
         severity: major
-        service: kafka
+        service: truvami-kafka
         component: replication
         {{- with .Values.alertLabels }}
         {{- toYaml . | nindent 8 }}
@@ -71,7 +71,7 @@ spec:
       for: 5m
       labels:
         severity: critical
-        service: kafka
+        service: truvami-kafka
         component: consumer
         node: "{{ "{{" }} $labels.consumergroup }}"
         {{- with .Values.alertLabels }}
@@ -96,7 +96,7 @@ spec:
       for: 10m
       labels:
         severity: major
-        service: kafka
+        service: truvami-kafka
         component: consumer
         node: "{{ "{{" }} $labels.consumergroup }}"
         {{- with .Values.alertLabels }}
@@ -120,7 +120,7 @@ spec:
       for: 2m
       labels:
         severity: critical
-        service: kafka
+        service: truvami-kafka
         component: partition
         {{- with .Values.alertLabels }}
         {{- toYaml . | nindent 8 }}
@@ -143,7 +143,7 @@ spec:
       for: 10m
       labels:
         severity: warning
-        service: kafka
+        service: truvami-kafka
         component: consumer
         node: "{{ "{{" }} $labels.consumergroup }}"
         {{- with .Values.alertLabels }}
@@ -168,7 +168,7 @@ spec:
       for: 5m
       labels:
         severity: major
-        service: kafka
+        service: truvami-kafka
         component: consumer
         node: "{{ "{{" }} $labels.topic }}"
         {{- with .Values.alertLabels }}

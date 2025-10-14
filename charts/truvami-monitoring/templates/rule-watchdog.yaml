@@ -26,6 +26,7 @@ spec:
       labels:
         severity: none
         service: monitoring
+        node: truvami-monitoring
         component: watchdog
       annotations:
         summary: "Truvami monitoring system watchdog"
@@ -50,6 +51,7 @@ spec:
       labels:
         severity: critical
         service: monitoring
+        node: truvami-monitoring
         component: watchdog
       annotations:
         summary: "Truvami monitoring watchdog has stopped firing"

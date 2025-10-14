@@ -42,6 +42,7 @@ spec:
             {{- end }}
             service: truvami-bridge
             severity: critical
+            node: truvami-bridge
         - alert: TruvamiKafkaConsumerErrors
           annotations:
             description: >-
@@ -75,6 +76,7 @@ spec:
             {{- end }}
             service: truvami-bridge
             severity: major
+            node: truvami-bridge
         - alert: TruvamiFrequentPartitionRebalances
           annotations:
             description: >-
@@ -90,3 +92,4 @@ spec:
             {{- end }}
             service: truvami-bridge
             severity: minor
+            node: truvami-bridge

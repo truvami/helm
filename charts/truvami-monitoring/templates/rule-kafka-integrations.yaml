@@ -24,6 +24,7 @@ spec:
             {{- end }}
             service: truvami-bridge
             severity: major
+            node: truvami-bridge-{{ "{{" }} $labels.uuid }}
         - alert: TruvamiKafkaIntegrationDeliveryFailures
           annotations:
             description: >-
@@ -39,6 +40,7 @@ spec:
             {{- end }}
             service: truvami-bridge
             severity: major
+            node: truvami-bridge-{{ "{{" }} $labels.uuid }}
         - alert: TruvamiKafkaIntegrationProduceFailures
           annotations:
             description: >-
@@ -54,6 +56,7 @@ spec:
             {{- end }}
             service: truvami-bridge
             severity: major
+            node: truvami-bridge-{{ "{{" }} $labels.uuid }}
         - alert: TruvamiAlertsQueuePublishFailures
           annotations:
             description: >-
@@ -75,6 +78,7 @@ spec:
             {{- end }}
             service: truvami-bridge
             severity: major
+            node: truvami-bridge
         - alert: TruvamiKafkaIntegrationCacheMissRate
           annotations:
             description: >-
@@ -91,6 +95,7 @@ spec:
             {{- end }}
             service: truvami-bridge
             severity: minor
+            node: truvami-bridge
         - alert: TruvamiKafkaIntegrationMarshalFailures
           annotations:
             description: >-
@@ -112,6 +117,7 @@ spec:
             {{- end }}
             service: truvami-bridge
             severity: major
+            node: truvami-bridge-{{ "{{" }} $labels.customer }}
         - alert: TruvamiKafkaIntegrationConsumerLag
           annotations:
             description: >-
@@ -129,6 +135,8 @@ spec:
             service: truvami-bridge
             component: kafka-integration
             severity: minor
+            node: truvami-bridge-{{ "{{" }} $labels.topic }}
+            node: truvami-bridge-{{ "{{" }} $labels.topic }}
         - alert: TruvamiKafkaIntegrationConsumerBlocked
           annotations:
             description: >-
@@ -148,3 +156,5 @@ spec:
             service: truvami-bridge
             component: kafka-integration
             severity: minor
+            node: truvami-bridge-{{ "{{" }} $labels.topic }}
+            node: truvami-bridge-{{ "{{" }} $labels.topic }}

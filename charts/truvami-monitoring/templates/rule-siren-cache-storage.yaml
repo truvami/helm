@@ -22,7 +22,8 @@ spec:
             {{- range $key, $value := .Values.alertLabels }}
             {{ $key }}: {{ $value | quote }}
             {{- end }}
-            service: siren
+            service: truvami-siren
+            node: truvami-siren
             severity: critical
         - alert: SirenCacheMissRateHigh
           annotations:
@@ -38,7 +39,8 @@ spec:
             {{- range $key, $value := .Values.alertLabels }}
             {{ $key }}: {{ $value | quote }}
             {{- end }}
-            service: siren
+            service: truvami-siren
+            node: truvami-siren
             severity: minor
         - alert: SirenAlertConfigCacheFailures
           annotations:
@@ -53,7 +55,8 @@ spec:
             {{- range $key, $value := .Values.alertLabels }}
             {{ $key }}: {{ $value | quote }}
             {{- end }}
-            service: siren
+            service: truvami-siren
+            node: truvami-siren
             severity: major
         - alert: SirenDeviceRepositoryErrors
           annotations:
@@ -68,7 +71,8 @@ spec:
             {{- range $key, $value := .Values.alertLabels }}
             {{ $key }}: {{ $value | quote }}
             {{- end }}
-            service: siren
+            service: truvami-siren
+            node: truvami-siren
             severity: major
         - alert: SirenGrpcClientErrors
           annotations:
@@ -83,5 +87,6 @@ spec:
             {{- range $key, $value := .Values.alertLabels }}
             {{ $key }}: {{ $value | quote }}
             {{- end }}
-            service: siren
+            service: truvami-siren
+            node: truvami-siren
             severity: major

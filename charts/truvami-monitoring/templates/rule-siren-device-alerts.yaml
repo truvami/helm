@@ -22,7 +22,7 @@ spec:
             {{- range $key, $value := .Values.alertLabels }}
             {{ $key }}: {{ $value | quote }}
             {{- end }}
-            service: siren
+            service: truvami-siren
             severity: major
             node: siren-{{ "{{" }} $labels.devEui }}
         - alert: SirenDeviceActiveProcessingFailures
@@ -38,7 +38,7 @@ spec:
             {{- range $key, $value := .Values.alertLabels }}
             {{ $key }}: {{ $value | quote }}
             {{- end }}
-            service: siren
+            service: truvami-siren
             severity: major
             node: siren-{{ "{{" }} $labels.devEui }}
         - alert: SirenBatteryLowAlertFailures
@@ -54,7 +54,7 @@ spec:
             {{- range $key, $value := .Values.alertLabels }}
             {{ $key }}: {{ $value | quote }}
             {{- end }}
-            service: siren
+            service: truvami-siren
             severity: major
             node: siren-{{ "{{" }} $labels.devEui }}
         - alert: SirenButtonPressAlertFailures
@@ -70,7 +70,7 @@ spec:
             {{- range $key, $value := .Values.alertLabels }}
             {{ $key }}: {{ $value | quote }}
             {{- end }}
-            service: siren
+            service: truvami-siren
             severity: major
             node: siren-{{ "{{" }} $labels.devEui }}
         - alert: SirenConfigChangeAlertFailures
@@ -86,7 +86,7 @@ spec:
             {{- range $key, $value := .Values.alertLabels }}
             {{ $key }}: {{ $value | quote }}
             {{- end }}
-            service: siren
+            service: truvami-siren
             severity: major
             node: siren-{{ "{{" }} $labels.devEui }}
         - alert: SirenFirmwareChangeAlertFailures
@@ -102,7 +102,7 @@ spec:
             {{- range $key, $value := .Values.alertLabels }}
             {{ $key }}: {{ $value | quote }}
             {{- end }}
-            service: siren
+            service: truvami-siren
             severity: major
             node: siren-{{ "{{" }} $labels.devEui }}
         - alert: SirenDeviceResetAlertFailures
@@ -118,7 +118,7 @@ spec:
             {{- range $key, $value := .Values.alertLabels }}
             {{ $key }}: {{ $value | quote }}
             {{- end }}
-            service: siren
+            service: truvami-siren
             severity: major
             node: siren-{{ "{{" }} $labels.devEui }}
         - alert: SirenDutyCycleAlertFailures
@@ -134,6 +134,6 @@ spec:
             {{- range $key, $value := .Values.alertLabels }}
             {{ $key }}: {{ $value | quote }}
             {{- end }}
-            service: siren
+            service: truvami-siren
             severity: major
             node: siren-{{ "{{" }} $labels.devEui }}

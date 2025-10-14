@@ -27,6 +27,7 @@ spec:
       labels:
         severity: minor
         service: truvami-bridge
+        node: truvami-bridge
         component: wifi-solver
         {{- with .Values.alertLabels }}
         {{- toYaml . | nindent 8 }}
@@ -46,6 +47,7 @@ spec:
       labels:
         severity: warning
         service: truvami-bridge
+        node: truvami-bridge
         component: wifi-solver
         {{- with .Values.alertLabels }}
         {{- toYaml . | nindent 8 }}
@@ -65,6 +67,7 @@ spec:
       labels:
         severity: critical
         service: truvami-bridge
+        node: truvami-bridge
         component: wifi-solver
         {{- with .Values.alertLabels }}
         {{- toYaml . | nindent 8 }}

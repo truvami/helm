@@ -49,6 +49,7 @@ spec:
             {{- end }}
             service: truvami-bridge
             severity: critical
+            node: truvami-bridge
         - alert: TruvamiBridgeHighErrorRate
           annotations:
             description: >-
@@ -68,3 +69,4 @@ spec:
             {{- end }}
             service: truvami-bridge
             severity: major
+            node: truvami-bridge

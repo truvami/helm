@@ -45,6 +45,7 @@ spec:
             severity: warning
             alert_type: deployment
             component: version-control
+            node: truvami-{{ "{{" }} $labels.container }}
 
         - alert: TruvamiLongRunningVersionMismatch
           annotations:
@@ -82,6 +83,7 @@ spec:
             severity: critical
             alert_type: deployment
             component: version-control
+            node: truvami-{{ "{{" }} $labels.container }}
 
         - alert: TruvamiServiceVersionInfo
           annotations:
@@ -107,3 +109,4 @@ spec:
             severity: info
             alert_type: deployment
             component: version-info
+            node: truvami-{{ "{{" }} $labels.container }}

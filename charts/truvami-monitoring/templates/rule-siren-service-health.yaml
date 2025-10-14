@@ -22,7 +22,8 @@ spec:
             {{- range $key, $value := .Values.alertLabels }}
             {{ $key }}: {{ $value | quote }}
             {{- end }}
-            service: siren
+            service: truvami-siren
+            node: truvami-siren
             severity: critical
         - alert: SirenServiceHighErrorRate
           annotations:
@@ -44,7 +45,8 @@ spec:
             {{- range $key, $value := .Values.alertLabels }}
             {{ $key }}: {{ $value | quote }}
             {{- end }}
-            service: siren
+            service: truvami-siren
+            node: truvami-siren
             severity: critical
         - alert: SirenHealthCheckFailures
           annotations:
@@ -59,5 +61,6 @@ spec:
             {{- range $key, $value := .Values.alertLabels }}
             {{ $key }}: {{ $value | quote }}
             {{- end }}
-            service: siren
+            service: truvami-siren
+            node: truvami-siren
             severity: major

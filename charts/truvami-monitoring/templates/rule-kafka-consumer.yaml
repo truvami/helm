@@ -25,6 +25,7 @@ spec:
         severity: warning
         service: truvami-bridge
         component: kafka-consumer
+        node: truvami-bridge
         {{- with .Values.alertLabels }}
         {{- toYaml . | nindent 8 }}
         {{- end }}
@@ -58,6 +59,7 @@ spec:
         severity: critical
         service: truvami-bridge
         component: kafka-consumer
+        node: truvami-bridge
         {{- with .Values.alertLabels }}
         {{- toYaml . | nindent 8 }}
         {{- end }}

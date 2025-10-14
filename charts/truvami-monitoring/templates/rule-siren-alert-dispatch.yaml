@@ -22,7 +22,7 @@ spec:
             {{- range $key, $value := .Values.alertLabels }}
             {{ $key }}: {{ $value | quote }}
             {{- end }}
-            service: siren
+            service: truvami-siren
             severity: critical
             node: siren-{{ "{{" }} $labels.devEui }}
         - alert: SirenWebhookDispatchFailures
@@ -38,7 +38,7 @@ spec:
             {{- range $key, $value := .Values.alertLabels }}
             {{ $key }}: {{ $value | quote }}
             {{- end }}
-            service: siren
+            service: truvami-siren
             severity: major
         - alert: SirenSlackDispatchFailures
           annotations:
@@ -53,7 +53,7 @@ spec:
             {{- range $key, $value := .Values.alertLabels }}
             {{ $key }}: {{ $value | quote }}
             {{- end }}
-            service: siren
+            service: truvami-siren
             severity: major
         - alert: SirenTeamsDispatchFailures
           annotations:
@@ -68,7 +68,7 @@ spec:
             {{- range $key, $value := .Values.alertLabels }}
             {{ $key }}: {{ $value | quote }}
             {{- end }}
-            service: siren
+            service: truvami-siren
             severity: major
         - alert: SirenGrpcNotifyFailures
           annotations:
@@ -83,7 +83,7 @@ spec:
             {{- range $key, $value := .Values.alertLabels }}
             {{ $key }}: {{ $value | quote }}
             {{- end }}
-            service: siren
+            service: truvami-siren
             severity: major
             node: siren-{{ "{{" }} $labels.devEui }}
         - alert: SirenDispatchQueueFull
@@ -99,7 +99,7 @@ spec:
             {{- range $key, $value := .Values.alertLabels }}
             {{ $key }}: {{ $value | quote }}
             {{- end }}
-            service: siren
+            service: truvami-siren
             severity: critical
         - alert: SirenDispatchWorkerPoolExhaustion
           annotations:
@@ -114,5 +114,5 @@ spec:
             {{- range $key, $value := .Values.alertLabels }}
             {{ $key }}: {{ $value | quote }}
             {{- end }}
-            service: siren
+            service: truvami-siren
             severity: major

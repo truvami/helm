@@ -22,7 +22,8 @@ spec:
             {{- range $key, $value := .Values.alertLabels }}
             {{ $key }}: {{ $value | quote }}
             {{- end }}
-            service: siren
+            service: truvami-siren
+            node: truvami-siren
             severity: major
         - alert: SirenUnsupportedAlertVersion
           annotations:
@@ -37,7 +38,8 @@ spec:
             {{- range $key, $value := .Values.alertLabels }}
             {{ $key }}: {{ $value | quote }}
             {{- end }}
-            service: siren
+            service: truvami-siren
+            node: truvami-siren
             severity: major
         - alert: SirenMessageUnmarshalFailures
           annotations:
@@ -52,7 +54,8 @@ spec:
             {{- range $key, $value := .Values.alertLabels }}
             {{ $key }}: {{ $value | quote }}
             {{- end }}
-            service: siren
+            service: truvami-siren
+            node: truvami-siren
             severity: major
         - alert: SirenInvalidCustomerData
           annotations:
@@ -67,7 +70,8 @@ spec:
             {{- range $key, $value := .Values.alertLabels }}
             {{ $key }}: {{ $value | quote }}
             {{- end }}
-            service: siren
+            service: truvami-siren
+            node: truvami-siren
             severity: major
         - alert: SirenInvalidDevEUIData
           annotations:
@@ -82,5 +86,6 @@ spec:
             {{- range $key, $value := .Values.alertLabels }}
             {{ $key }}: {{ $value | quote }}
             {{- end }}
-            service: siren
+            service: truvami-siren
+            node: truvami-siren
             severity: major

@@ -22,7 +22,8 @@ spec:
             {{- range $key, $value := .Values.alertLabels }}
             {{ $key }}: {{ $value | quote }}
             {{- end }}
-            service: siren
+            service: truvami-siren
+            node: truvami-siren
             severity: warning
         - alert: SirenWebhookTimeoutHigh
           annotations:
@@ -38,7 +39,8 @@ spec:
             {{- range $key, $value := .Values.alertLabels }}
             {{ $key }}: {{ $value | quote }}
             {{- end }}
-            service: siren
+            service: truvami-siren
+            node: truvami-siren
             severity: major
         - alert: SirenRetryQueueBuildup
           annotations:
@@ -53,7 +55,8 @@ spec:
             {{- range $key, $value := .Values.alertLabels }}
             {{ $key }}: {{ $value | quote }}
             {{- end }}
-            service: siren
+            service: truvami-siren
+            node: truvami-siren
             severity: warning
         - alert: SirenDLQMessageRateHigh
           annotations:
@@ -68,7 +71,8 @@ spec:
             {{- range $key, $value := .Values.alertLabels }}
             {{ $key }}: {{ $value | quote }}
             {{- end }}
-            service: siren
+            service: truvami-siren
+            node: truvami-siren
             severity: major
         - alert: SirenMemoryUsageHigh
           annotations:
@@ -83,7 +87,8 @@ spec:
             {{- range $key, $value := .Values.alertLabels }}
             {{ $key }}: {{ $value | quote }}
             {{- end }}
-            service: siren
+            service: truvami-siren
+            node: truvami-siren
             severity: warning
         - alert: SirenCPUUsageHigh
           annotations:
@@ -98,5 +103,6 @@ spec:
             {{- range $key, $value := .Values.alertLabels }}
             {{ $key }}: {{ $value | quote }}
             {{- end }}
-            service: siren
+            service: truvami-siren
+            node: truvami-siren
             severity: warning

@@ -22,7 +22,8 @@ spec:
             {{- range $key, $value := .Values.alertLabels }}
             {{ $key }}: {{ $value | quote }}
             {{- end }}
-            service: siren
+            service: truvami-siren
+            node: truvami-siren-{{ "{{" }} $labels.topic }}
             severity: critical
         - alert: SirenKafkaConsumerHighErrorRate
           annotations:
@@ -37,7 +38,8 @@ spec:
             {{- range $key, $value := .Values.alertLabels }}
             {{ $key }}: {{ $value | quote }}
             {{- end }}
-            service: siren
+            service: truvami-siren
+            node: truvami-siren-{{ "{{" }} $labels.topic }}
             severity: major
         - alert: SirenKafkaConsumerLag
           annotations:
@@ -52,9 +54,9 @@ spec:
             {{- range $key, $value := .Values.alertLabels }}
             {{ $key }}: {{ $value | quote }}
             {{- end }}
-            service: siren
+            service: truvami-siren
             severity: warning
-            node: siren-{{ "{{" }} $labels.topic }}
+            node: truvami-siren-{{ "{{" }} $labels.topic }}
         - alert: SirenKafkaConsumerIdleTooLong
           annotations:
             description: >-
@@ -68,7 +70,8 @@ spec:
             {{- range $key, $value := .Values.alertLabels }}
             {{ $key }}: {{ $value | quote }}
             {{- end }}
-            service: siren
+            service: truvami-siren
+            node: truvami-siren-{{ "{{" }} $labels.topic }}
             severity: major
         - alert: SirenKafkaUnknownTopicMessages
           annotations:
@@ -83,5 +86,6 @@ spec:
             {{- range $key, $value := .Values.alertLabels }}
             {{ $key }}: {{ $value | quote }}
             {{- end }}
-            service: siren
+            service: truvami-siren
+            node: truvami-siren-{{ "{{" }} $labels.topic }}
             severity: minor
