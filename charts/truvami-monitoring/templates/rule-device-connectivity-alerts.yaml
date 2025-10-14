@@ -1,0 +1,50 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  labels:
+    prometheus: kube-prometheus-stack-prometheus
+    role: alert-rules
+  name: truvami-device-connectivity-alerts
+spec:
+  groups:
+    - name: truvami-device-connectivity-metrics
+      rules:
+
+
+        - alert: TruvamiDeviceInactive
+          annotations:
+            description: >-
+              Device {{ "{{" }} $labels.devEui }} has been inactive for more than 2 hours.
+            summary: >-
+              Device inactive for extended period
+          expr: >-
+            (time() - truvami_device_last_seen_timestamp) > 7200
+          for: 10m
+          labels:
+            {{- range $key, $value := .Values.alertLabels }}
+            {{ $key }}: {{ $value | quote }}
+            {{- end }}
+            service: truvami-bridge
+            severity: major
+            node: "{{ "{{" }} $labels.devEui }}"
+            namespace: {{ .Release.Namespace }}
+            component: device-monitoring
+
+        - alert: TruvamiGatewayDeviceCountLow
+          annotations:
+            description: >-
+              Gateway {{ "{{" }} $labels.gatewayId }} active device count is low: {{ "{{" }} $value }} devices.
+            summary: >-
+              Gateway active device count low
+          expr: >-
+            truvami_gateway_active_device_count < 5
+          for: 30m
+          labels:
+            {{- range $key, $value := .Values.alertLabels }}
+            {{ $key }}: {{ $value | quote }}
+            {{- end }}
+            service: truvami-bridge
+            severity: minor
+            node: "{{ "{{" }} $labels.gatewayId }}"
+            namespace: {{ .Release.Namespace }}
+            component: gateway-monitoring

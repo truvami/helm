@@ -1,0 +1,90 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  labels:
+    prometheus: kube-prometheus-stack-prometheus
+    role: alert-rules
+  name: truvami-database-errors
+spec:
+  groups:
+    - name: truvami-database-error-alerts
+      rules:
+        - alert: TruvamiDatabaseConnectionErrorsHigh
+          annotations:
+            description: >-
+              High database connection error rate at {{ "{{" }} $value }} errors/sec.
+              Error class: {{ "{{" }} $labels.error_class }}.
+            summary: >-
+              Database connection errors detected
+          expr: >-
+            rate(truvami_database_error_count{error_class=~"08.*"}[5m]) > 0.01
+          for: 2m
+          labels:
+            {{- range $key, $value := .Values.alertLabels }}
+            {{ $key }}: {{ $value | quote }}
+            {{- end }}
+            service: truvami-api
+            severity: critical
+            node: truvami-api
+            namespace: {{ .Release.Namespace }}
+            component: database
+
+        - alert: TruvamiDatabaseTransactionErrorsHigh
+          annotations:
+            description: >-
+              High database transaction error rate at {{ "{{" }} $value }} errors/sec.
+              Error class: {{ "{{" }} $labels.error_class }}.
+            summary: >-
+              Database transaction errors detected
+          expr: >-
+            rate(truvami_database_error_count{error_class=~"25.*|40.*"}[5m]) > 0.05
+          for: 2m
+          labels:
+            {{- range $key, $value := .Values.alertLabels }}
+            {{ $key }}: {{ $value | quote }}
+            {{- end }}
+            service: truvami-api
+            severity: major
+            node: truvami-api
+            namespace: {{ .Release.Namespace }}
+            component: database
+
+        - alert: TruvamiDatabaseIntegrityErrorsHigh
+          annotations:
+            description: >-
+              High database integrity constraint error rate at {{ "{{" }} $value }} errors/sec.
+              Error class: {{ "{{" }} $labels.error_class }}.
+            summary: >-
+              Database integrity constraint violations detected
+          expr: >-
+            rate(truvami_database_error_count{error_class=~"23.*"}[5m]) > 0.02
+          for: 2m
+          labels:
+            {{- range $key, $value := .Values.alertLabels }}
+            {{ $key }}: {{ $value | quote }}
+            {{- end }}
+            service: truvami-api
+            severity: major
+            node: truvami-api
+            namespace: {{ .Release.Namespace }}
+            component: database
+
+        - alert: TruvamiDatabaseUnknownErrorsHigh
+          annotations:
+            description: >-
+              High database unknown error rate at {{ "{{" }} $value }} errors/sec.
+              Error class: {{ "{{" }} $labels.error_class }}.
+            summary: >-
+              Database unknown errors detected
+          expr: >-
+            rate(truvami_database_error_count{error_class="unknown"}[5m]) > 0.01
+          for: 2m
+          labels:
+            {{- range $key, $value := .Values.alertLabels }}
+            {{ $key }}: {{ $value | quote }}
+            {{- end }}
+            service: truvami-api
+            severity: major
+            node: truvami-api
+            namespace: {{ .Release.Namespace }}
+            component: database

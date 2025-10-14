@@ -1,0 +1,107 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  labels:
+    prometheus: kube-prometheus-stack-prometheus
+    role: alert-rules
+  name: truvami-siren-alerts
+spec:
+  groups:
+    - name: truvami-siren-dispatch-alerts
+      rules:
+        - alert: TruvamiAlertDispatchErrorsHigh
+          annotations:
+            description: >-
+              High alert dispatch error rate at {{ "{{" }} $value }} errors/sec for dispatcher {{ "{{" }} $labels.dispatcher }}.
+            summary: >-
+              Alert dispatch errors detected
+          expr: >-
+            rate(truvami_alert_dispatch_error_count[5m]) > 0.05
+          for: 2m
+          labels:
+            {{- range $key, $value := .Values.alertLabels }}
+            {{ $key }}: {{ $value | quote }}
+            {{- end }}
+            service: truvami-siren
+            severity: major
+            node: truvami-siren
+            namespace: {{ .Release.Namespace }}
+            component: alert-dispatch
+
+        - alert: TruvamiAlertDispatchFailuresHigh
+          annotations:
+            description: >-
+              High alert dispatch failure rate at {{ "{{" }} $value }} failures/sec for dispatcher {{ "{{" }} $labels.dispatcher }}.
+            summary: >-
+              Alert dispatch failures detected
+          expr: >-
+            rate(truvami_alert_dispatch_failure_count[5m]) > 0.02
+          for: 2m
+          labels:
+            {{- range $key, $value := .Values.alertLabels }}
+            {{ $key }}: {{ $value | quote }}
+            {{- end }}
+            service: truvami-siren
+            severity: critical
+            node: truvami-siren
+            namespace: {{ .Release.Namespace }}
+            component: alert-dispatch
+
+        - alert: TruvamiAlertDispatchTimeoutErrorsHigh
+          annotations:
+            description: >-
+              High alert dispatch timeout error rate at {{ "{{" }} $value }} errors/sec for dispatcher {{ "{{" }} $labels.dispatcher }}.
+            summary: >-
+              Alert dispatch timeout errors detected
+          expr: >-
+            rate(truvami_alert_dispatch_timeout_error_count[5m]) > 0.01
+          for: 2m
+          labels:
+            {{- range $key, $value := .Values.alertLabels }}
+            {{ $key }}: {{ $value | quote }}
+            {{- end }}
+            service: truvami-siren
+            severity: major
+            node: truvami-siren
+            namespace: {{ .Release.Namespace }}
+            component: alert-dispatch
+
+    - name: truvami-siren-processing-alerts
+      rules:
+        - alert: TruvamiAlertProcessingErrorsHigh
+          annotations:
+            description: >-
+              High alert processing error rate at {{ "{{" }} $value }} errors/sec.
+            summary: >-
+              Alert processing errors detected
+          expr: >-
+            rate(truvami_alert_processing_error_count[5m]) > 0.1
+          for: 2m
+          labels:
+            {{- range $key, $value := .Values.alertLabels }}
+            {{ $key }}: {{ $value | quote }}
+            {{- end }}
+            service: truvami-siren
+            severity: major
+            node: truvami-siren
+            namespace: {{ .Release.Namespace }}
+            component: alert-processing
+
+        - alert: TruvamiAlertValidationErrorsHigh
+          annotations:
+            description: >-
+              High alert validation error rate at {{ "{{" }} $value }} errors/sec.
+            summary: >-
+              Alert validation errors detected
+          expr: >-
+            rate(truvami_alert_validation_error_count[5m]) > 0.05
+          for: 2m
+          labels:
+            {{- range $key, $value := .Values.alertLabels }}
+            {{ $key }}: {{ $value | quote }}
+            {{- end }}
+            service: truvami-siren
+            severity: major
+            node: truvami-siren
+            namespace: {{ .Release.Namespace }}
+            component: alert-processing

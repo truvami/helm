@@ -1,0 +1,78 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  labels:
+    prometheus: kube-prometheus-stack-prometheus
+    role: alert-rules
+  name: truvami-siren-dispatch-health
+spec:
+  groups:
+    - name: truvami-siren-dispatch-health
+      rules:
+        - alert: TruvamySirenAlertDispatchStalled
+          annotations:
+            description: >-
+              **What's happening:** Siren alert dispatch has been inactive for >10 minutes - no alerts being sent.
+              
+              **Why this occurred:** The `truvami_alerts_dispatch_count` metric shows no recent alert dispatches.
+              This could indicate:
+              - Siren service is not processing alert conditions
+              - No qualifying alert conditions are being triggered
+              - Alert dispatch mechanism is failing
+              - Kafka message processing issues in siren
+              - Siren service connectivity problems
+              
+              **What to do:**
+              1. Check if siren service is running and healthy
+              2. Verify siren is consuming Kafka alert messages
+              3. Review alert condition configurations
+              4. Check siren service logs for dispatch errors
+              5. Verify external notification service connectivity
+            summary: >-
+              Siren alert dispatch inactive for >10 minutes
+          expr: >-
+            increase(truvami_alerts_dispatch_count[10m]) == 0
+          for: 2m
+          labels:
+            namespace: {{ .Release.Namespace }}
+            severity: warning
+            node: truvami-siren
+            service: truvami-siren
+            component: alert-dispatch
+            {{- with .Values.alertLabels }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
+
+        - alert: TruvamySirenHighAlertVolumeByDevice
+          annotations:
+            description: >-
+              **What's happening:** Device {{ "{{" }} $labels.dev_eui }} is generating high volume of {{ "{{" }} $labels.schema }} alerts (>{{ "{{" }} $value }} alerts/min).
+              
+              **Why this occurred:** A single device is triggering many alerts, which could indicate:
+              - Device malfunction causing repeated alert conditions
+              - Overly sensitive alert thresholds for this device
+              - Device is in an unusual environment triggering alerts
+              - Alert condition not properly debounced
+              
+              **What to do:**
+              1. Investigate device {{ "{{" }} $labels.dev_eui }} behavior and recent data
+              2. Review alert threshold configuration for {{ "{{" }} $labels.schema }} alerts
+              3. Check if device requires different alert parameters
+              4. Consider temporary alert suppression if device is known faulty
+              5. Analyze device location and operational context
+            summary: >-
+              High alert volume from device {{ "{{" }} $labels.dev_eui }} ({{ "{{" }} $labels.schema }})
+          expr: >-
+            rate(truvami_alerts_dispatch_count[5m]) * 60 > 5
+          for: 3m
+          labels:
+            namespace: {{ .Release.Namespace }}
+            severity: minor
+            node: truvami-siren
+            service: truvami-siren
+            component: alert-dispatch
+            dev_eui: "{{ "{{" }} $labels.dev_eui }}"
+            schema: "{{ "{{" }} $labels.schema }}"
+            {{- with .Values.alertLabels }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}

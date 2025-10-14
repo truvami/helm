@@ -1,0 +1,71 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  labels:
+    prometheus: kube-prometheus-stack-prometheus
+    role: alert-rules
+  name: truvami-authentication-alerts
+spec:
+  groups:
+    - name: truvami-authentication-alerts
+      rules:
+        - alert: TruvamiAPIKeyValidationFailuresHigh
+          annotations:
+            description: >-
+              High API key validation failure rate at {{ "{{" }} $value }} failures/sec.
+            summary: >-
+              API key validation failures detected
+          expr: >-
+            rate(truvami_api_key_validation_failures_count[5m]) > 0.1
+          for: 2m
+          labels:
+            {{- range $key, $value := .Values.alertLabels }}
+            {{ $key }}: {{ $value | quote }}
+            {{- end }}
+            service: truvami-api
+            severity: major
+            node: truvami-api
+            namespace: {{ .Release.Namespace }}
+            component: authentication
+
+        - alert: TruvamiOAuth2ValidationFailuresHigh
+          annotations:
+            description: >-
+              High OAuth2 validation failure rate at {{ "{{" }} $value }} failures/sec.
+            summary: >-
+              OAuth2 validation failures detected
+          expr: >-
+            rate(truvami_oauth2_validation_failures_count[5m]) > 0.05
+          for: 2m
+          labels:
+            {{- range $key, $value := .Values.alertLabels }}
+            {{ $key }}: {{ $value | quote }}
+            {{- end }}
+            service: truvami-api
+            severity: major
+            node: truvami-api
+            namespace: {{ .Release.Namespace }}
+            component: authentication
+
+        - alert: TruvamiAPIKeyValidationFailureSpike
+          annotations:
+            description: >-
+              Sudden spike in API key validation failures: {{ "{{" }} $value }} failures/sec.
+              This may indicate a security issue or misconfigured client.
+            summary: >-
+              Spike in API key validation failures
+          expr: >-
+            (
+              rate(truvami_api_key_validation_failures_count[1m]) > 
+              (rate(truvami_api_key_validation_failures_count[10m]) * 5)
+            ) and rate(truvami_api_key_validation_failures_count[1m]) > 0.5
+          for: 1m
+          labels:
+            {{- range $key, $value := .Values.alertLabels }}
+            {{ $key }}: {{ $value | quote }}
+            {{- end }}
+            service: truvami-api
+            severity: critical
+            node: truvami-api
+            namespace: {{ .Release.Namespace }}
+            component: authentication

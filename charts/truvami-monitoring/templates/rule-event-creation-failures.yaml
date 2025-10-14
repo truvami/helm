@@ -1,0 +1,81 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  labels:
+    prometheus: kube-prometheus-stack-prometheus
+    role: alert-rules
+  name: truvami-event-creation-failures
+spec:
+  groups:
+    - name: truvami-event-creation-failures
+      rules:
+        - alert: TruvamiEventCreationFailureRateHigh
+          annotations:
+            description: >-
+              **What's happening:** Device {{ "{{" }} $labels.devEui }} is experiencing high gRPC event creation failure rate (>{{ "{{" }} $value }} failures/sec).
+              
+              **Why this occurred:** The `truvami_failed_to_create_event_through_grpc_count` metric tracks failures when the bridge
+              service attempts to create events through the gRPC API. High failure rates indicate:
+              - gRPC API service connectivity issues
+              - Event data validation failures in the API
+              - Database connectivity issues on the API side
+              - API service overload or performance degradation
+              - Network connectivity issues between bridge and API
+              - Malformed event data from device {{ "{{" }} $labels.devEui }}
+              
+              **What to do:**
+              1. Check gRPC API service health and connectivity
+              2. Verify event data format and validation for device {{ "{{" }} $labels.devEui }}
+              3. Review bridge service logs for specific gRPC errors
+              4. Check API service logs for event creation failures
+              5. Monitor database health and connectivity on API service
+              6. Verify network connectivity between bridge and API services
+            summary: >-
+              High event creation failure rate for device {{ "{{" }} $labels.devEui }}
+          expr: >-
+            rate(truvami_failed_to_create_event_through_grpc_count[5m]) > 0.05
+          for: 2m
+          labels:
+            namespace: {{ .Release.Namespace }}
+            severity: major
+            node: "device-{{ "{{" }} $labels.devEui }}"
+            service: truvami-bridge
+            component: event-creation
+            devEui: "{{ "{{" }} $labels.devEui }}"
+            uplink: "{{ "{{" }} $labels.uplink }}"
+            {{- with .Values.alertLabels }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
+
+        - alert: TruvamiEventCreationFailureBurst
+          annotations:
+            description: >-
+              **What's happening:** Device {{ "{{" }} $labels.devEui }} had multiple event creation failures in short time period.
+              
+              **Why this occurred:** Sudden bursts of event creation failures may indicate:
+              - Temporary API service disruption
+              - Device sending malformed data bursts
+              - Network connectivity issues
+              - API service temporary overload
+              
+              **What to do:**
+              1. Check if issue is isolated to device {{ "{{" }} $labels.devEui }} or broader
+              2. Review device data quality and recent transmissions
+              3. Verify API service status during failure period
+              4. Check for network connectivity issues
+            summary: >-
+              Event creation failure burst for device {{ "{{" }} $labels.devEui }}
+          expr: >-
+            increase(truvami_failed_to_create_event_through_grpc_count[2m]) > 3
+          for: 30s
+          labels:
+            namespace: {{ .Release.Namespace }}
+            severity: warning
+            node: "device-{{ "{{" }} $labels.devEui }}"
+            service: truvami-bridge
+            component: event-creation
+            devEui: "{{ "{{" }} $labels.devEui }}"
+            uplink: "{{ "{{" }} $labels.uplink }}"
+            {{- with .Values.alertLabels }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
