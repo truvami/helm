@@ -7,7 +7,6 @@ alertLabels:
   altravis_test: "true"
   code: "SBCC"
   customer: "truvami"
-  node: "sbcc-cluster-7401-truvami-bridge"
 
 prometheus:
   storageSize: "10Gi"

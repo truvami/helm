@@ -7,7 +7,7 @@ metadata:
 spec:
   selector:
     matchLabels:
-      cnpg.io/cluster: {{ include "truvami-stack.fullname" . }}
+      cnpg.io/cluster: {{ include "truvami-monitoring.fullname" . }}
   endpoints:
   - port: metrics
     interval: 30s
