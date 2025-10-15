@@ -1,0 +1,28 @@
+# Helm Chart build artifacts
+*.tgz
+Chart.lock
+
+# Dashboard build artifacts
+charts/truvami-monitoring/dashboards-generated/
+dashboards/vendor/
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Temporary files
+/tmp/
+.tmp/
+
+# Pre-commit
+.pre-commit-config.yaml.bak
+
+# Logs
+*.log

@@ -1,0 +1,49 @@
+# Pre-commit configuration for Helm charts
+# Install with: pip install pre-commit && pre-commit install
+
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.4.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-yaml
+        args: [--allow-multiple-documents]
+        exclude: ^charts/.+/templates/
+      - id: check-merge-conflict
+      - id: check-added-large-files
+
+  - repo: https://github.com/norwoodj/helm-docs
+    rev: v1.11.3
+    hooks:
+      - id: helm-docs
+        args:
+          - --chart-search-root=charts
+
+  - repo: https://github.com/compilerla/conventional-pre-commit
+    rev: v3.0.0
+    hooks:
+      - id: conventional-pre-commit
+        stages: [commit-msg]
+        args: [feat, fix, docs, style, refactor, perf, test, build, ci, chore, revert]
+
+  - repo: local
+    hooks:
+      - id: helm-lint
+        name: Helm Lint
+        entry: scripts/hooks/helm-lint.sh
+        language: script
+        files: charts/.*\.(yaml|yml|tpl)$
+        pass_filenames: false
+
+      - id: chart-version-check
+        name: Chart Version Check
+        entry: scripts/hooks/version-check.sh
+        language: script
+        files: charts/.*/Chart\.yaml$
+
+      - id: values-schema-check
+        name: Values Schema Check
+        entry: scripts/hooks/values-check.sh
+        language: script
+        files: charts/.*/values\.yaml$

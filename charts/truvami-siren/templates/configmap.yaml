@@ -3,7 +3,7 @@ kind: ConfigMap
 metadata:
   name: "siren-config"
 data:
-  config.yaml: | 
+  config.yaml: |
     {{ .Values.siren | toYaml | nindent 4 }}
   set-env.sh: |
     #!/usr/bin/env bash

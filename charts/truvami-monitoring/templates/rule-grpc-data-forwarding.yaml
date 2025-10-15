@@ -13,14 +13,14 @@ spec:
           annotations:
             description: >-
               **What's happening:** Device {{ "{{" }} $labels.devEui }} is experiencing high gRPC uplink failures (>0.05 failures/sec over 5 minutes).
-              
-              **Why this occurred:** The system calculates failure rate using rate(truvami_failed_to_create_uplink_through_grpc_count[5m]) 
+
+              **Why this occurred:** The system calculates failure rate using rate(truvami_failed_to_create_uplink_through_grpc_count[5m])
               which measures how many uplink creation attempts via gRPC are failing per second. This typically indicates:
               - gRPC service connectivity issues
               - Authentication/authorization problems with the gRPC endpoint
               - Network latency or timeouts
               - Downstream API service unavailability
-              
+
               **What to do:**
               1. Check gRPC service health and connectivity
               2. Verify authentication credentials and certificates
@@ -46,7 +46,7 @@ spec:
           annotations:
             description: >-
               **What's happening:** Device {{ "{{" }} $labels.devEui }} is experiencing high gRPC position creation failures (>0.05 failures/sec over 5 minutes).
-              
+
               **Why this occurred:** The system measures position forwarding failures using rate(truvami_failed_to_create_position_through_grpc_count[5m])
               which tracks failed attempts to send position data via gRPC. Common causes include:
               - Position API service unavailability or overload
@@ -54,7 +54,7 @@ spec:
               - gRPC connection timeouts or network issues
               - Authentication failures with position services
               - Rate limiting on the receiving endpoint
-              
+
               **What to do:**
               1. Verify position API service status and performance
               2. Check gRPC connection health to position services
@@ -80,7 +80,7 @@ spec:
           annotations:
             description: >-
               **What's happening:** Device {{ "{{" }} $labels.devEui }} is experiencing high gRPC battery status failures (>0.05 failures/sec over 5 minutes).
-              
+
               **Why this occurred:** The system tracks battery status forwarding failures using rate(truvami_failed_to_create_battery_status_through_grpc_count[5m])
               which measures failed attempts to send battery information via gRPC. This usually indicates:
               - Battery monitoring API service issues
@@ -88,7 +88,7 @@ spec:
               - gRPC service connectivity problems
               - Authentication issues with battery monitoring services
               - Device battery sensor malfunction affecting data quality
-              
+
               **What to do:**
               1. Check battery monitoring API service availability
               2. Verify gRPC connectivity to battery services
@@ -114,7 +114,7 @@ spec:
           annotations:
             description: >-
               **What's happening:** Device {{ "{{" }} $labels.devEui }} is experiencing high gRPC rotation status failures (>0.05 failures/sec over 5 minutes).
-              
+
               **Why this occurred:** The system monitors rotation data forwarding using rate(truvami_failed_to_create_rotation_status_through_grpc_count[5m])
               which tracks failed attempts to send device rotation/orientation data via gRPC. Common causes include:
               - Rotation monitoring API service downtime or errors
@@ -122,7 +122,7 @@ spec:
               - gRPC connection issues to rotation services
               - Authentication problems with rotation monitoring endpoints
               - Device orientation sensor calibration issues
-              
+
               **What to do:**
               1. Verify rotation monitoring API service health
               2. Check gRPC connectivity to rotation services

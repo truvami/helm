@@ -10,7 +10,7 @@ valkey:
     resourcesPreset: "small"
   metrics:
     enabled: true
-    serviceMonitor: 
+    serviceMonitor:
       enabled: true
 
 kafka:

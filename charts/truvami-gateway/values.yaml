@@ -10,7 +10,7 @@ gateway:
 
   kafka:
     bootstrap:
-      servers: 
+      servers:
         - truvami-stack-kafka-bootstrap:9093
     allow.auto.create.topics: false
     enable.ssl.certificate.verification: false

@@ -56,7 +56,7 @@ spec:
               Spike in API key validation failures
           expr: >-
             (
-              rate(truvami_api_key_validation_failures_count[1m]) > 
+              rate(truvami_api_key_validation_failures_count[1m]) >
               (rate(truvami_api_key_validation_failures_count[10m]) * 5)
             ) and rate(truvami_api_key_validation_failures_count[1m]) > 0.5
           for: 1m

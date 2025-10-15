@@ -13,12 +13,12 @@ spec:
           annotations:
             description: >-
               **What's happening:** Device {{ "{{" }} $labels.devEui }} (customer: {{ "{{" }} $labels.customer }}) has critically low battery at {{ "{{" }} $value }}V (<2.5V).
-              
+
               **Why this occurred:** The device battery has dropped below the critical threshold of 2.5V.
               At this level, the device may:
               - Stop transmitting data completely
               - Enter emergency power-saving mode
-              
+
               **What to do:**
               1. **IMMEDIATE**: Schedule battery replacement / charging for device {{ "{{" }} $labels.devEui }}
               2. Contact customer {{ "{{" }} $labels.customer }} for maintenance scheduling
@@ -44,10 +44,10 @@ spec:
           annotations:
             description: >-
               **What's happening:** Device {{ "{{" }} $labels.devEui }} (customer: {{ "{{" }} $labels.customer }}) has very low battery at {{ "{{" }} $value }}V (<2.8V).
-              
+
               **Why this occurred:** Battery voltage has dropped significantly and the device is approaching critical levels.
               This indicates the battery should be replaced soon to prevent service interruption.
-              
+
               **What to do:**
               1. Schedule battery replacement / charging within next days
               2. Notify customer {{ "{{" }} $labels.customer }} of upcoming maintenance need

@@ -88,7 +88,7 @@ spec:
             summary: >-
               High Truvami Kafka integrations cache miss rate
           expr: >-
-            rate(truvami_kafka_integrations_cache_miss_count[5m]) / 
+            rate(truvami_kafka_integrations_cache_miss_count[5m]) /
             (rate(truvami_kafka_integrations_cache_hit_count[5m]) + rate(truvami_kafka_integrations_cache_miss_count[5m])) > 0.8
           for: 5m
           labels:
@@ -121,7 +121,7 @@ spec:
         - alert: TruvamiKafkaIntegrationConsumerLag
           annotations:
             description: >-
-              Customer Kafka integration consumer lag detected. No messages consumed for more than 30 minutes. 
+              Customer Kafka integration consumer lag detected. No messages consumed for more than 30 minutes.
               Last message was {{ "{{" }} $value | humanizeDuration }} ago for consumer group {{ "{{" }} $labels.consumergroup }} on topic {{ "{{" }} $labels.topic }}.
             summary: >-
               Truvami Kafka integration consumer lag detected on topic {{ "{{" }} $labels.topic }} (consumer group: {{ "{{" }} $labels.consumergroup }})
@@ -139,7 +139,7 @@ spec:
             description: >-
               Customer Kafka integration consumer appears blocked - no messages processed for more than 2 hours.
               Consumer group {{ "{{" }} $labels.consumergroup }} on topic {{ "{{" }} $labels.topic }} may need attention.
-              
+
               This is less critical than internal consumers but should be investigated if persistent.
             summary: >-
               Truvami Kafka integration consumer appears blocked on topic {{ "{{" }} $labels.topic }} (consumer group: {{ "{{" }} $labels.consumergroup }})

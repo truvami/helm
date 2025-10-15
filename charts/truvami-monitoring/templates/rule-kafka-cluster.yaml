@@ -35,12 +35,12 @@ spec:
         summary: "Kafka broker(s) are down"
         description: |
           Only {{ "{{" }} $value }} out of 3 expected Kafka brokers are available.
-          
+
           This indicates:
           - Broker failure or network issues
           - Potential data loss risk
           - Reduced cluster resilience
-          
+
           Immediate investigation required to restore cluster health.
 
     # Under-replicated Partitions
@@ -60,12 +60,12 @@ spec:
         summary: "Kafka has under-replicated partitions"
         description: |
           {{ "{{" }} $value }} partition(s) are under-replicated.
-          
+
           This indicates:
           - Broker connectivity issues
           - High broker load
           - Potential data durability risk
-          
+
           Check broker health and network connectivity.
 
     # Consumer Group Lag - Critical
@@ -86,12 +86,12 @@ spec:
         summary: "Critical Kafka consumer lag detected for group {{ "{{" }} $labels.consumergroup }}"
         description: |
           Consumer group {{ "{{" }} $labels.consumergroup }} has {{ "{{" }} $value }} messages lag on topic {{ "{{" }} $labels.topic }}.
-          
+
           This indicates:
           - Consumer processing bottleneck
           - Consumer service degradation
           - Potential message processing delays
-          
+
           Immediate action required to prevent data processing delays.
 
     # Consumer Group Lag - Major
@@ -112,12 +112,12 @@ spec:
         summary: "High Kafka consumer lag detected for group {{ "{{" }} $labels.consumergroup }}"
         description: |
           Consumer group {{ "{{" }} $labels.consumergroup }} has {{ "{{" }} $value }} messages lag on topic {{ "{{" }} $labels.topic }}.
-          
+
           This may indicate:
           - Increased message volume
           - Consumer processing slowdown
           - Resource constraints
-          
+
           Monitor consumer performance and consider scaling.
 
     # Topic Partition Leader Issues
@@ -137,12 +137,12 @@ spec:
         summary: "Kafka partition(s) without leader"
         description: |
           {{ "{{" }} $value }} partition(s) do not have a leader.
-          
+
           This indicates:
           - Broker election issues
           - Network partitioning
           - Cluster instability
-          
+
           Immediate attention required - topics may be unavailable.
 
     # Consumer Group Members
@@ -162,12 +162,12 @@ spec:
         summary: "Kafka consumer group {{ "{{" }} $labels.consumergroup }} has no active members"
         description: |
           Consumer group {{ "{{" }} $labels.consumergroup }} has no active consumer members.
-          
+
           This may indicate:
           - Consumer service downtime
           - Application deployment issues
           - Configuration problems
-          
+
           Verify consumer service health and configuration.
 
     # High Consumer Group Lag for Critical Topics
@@ -188,12 +188,12 @@ spec:
         summary: "High lag on critical alerts topic {{ "{{" }} $labels.topic }}"
         description: |
           Critical alerts topic {{ "{{" }} $labels.topic }} has {{ "{{" }} $value }} messages lag for consumer group {{ "{{" }} $labels.consumergroup }}.
-          
+
           This affects:
           - Real-time alert processing
           - Position tracking accuracy
           - Device monitoring capabilities
-          
+
           Immediate attention required for alert system functionality.
 
 {{- end }}

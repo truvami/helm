@@ -50,7 +50,7 @@ kafka:
     config:
       retention.ms: 2592000000
       segment.bytes: 1073741824
-  
+
   # Add additional ACLs to the KafkaUser created for the bridge
   additionalAcls: []
     # - host: '*'

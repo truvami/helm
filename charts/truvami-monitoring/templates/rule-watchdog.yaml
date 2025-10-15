@@ -37,14 +37,14 @@ spec:
           - Prometheus scraping or evaluation
           - AlertManager processing or routing
           - Webhook notification delivery
-          
+
           This alert is used to monitor the health of the monitoring system itself.
-        
+
         {{- if .Values.watchdog.webhookUrl }}
         # Watchdog heartbeat webhook URL
         webhook_url: {{ .Values.watchdog.webhookUrl | quote }}
         {{- end }}
-        
+
     # Dead Man's Switch - Alert if Watchdog stops firing
     - alert: TruvamiWatchdogDeadMansSwitch
       expr: absent_over_time(ALERTS{alertname="TruvamiWatchdog"}[5m])
@@ -60,15 +60,15 @@ spec:
         description: |
           The TruvamiWatchdog alert has not been firing for the last 5 minutes.
           This indicates a critical issue with the monitoring system:
-          
+
           Possible causes:
           - Prometheus is down or not scraping metrics
           - AlertManager is down or not processing alerts
           - Prometheus rule evaluation is failing
           - Network connectivity issues
-          
+
           Immediate investigation required to restore monitoring capabilities.
-        
+
         runbook_url: "https://github.com/truvami/helm/blob/main/docs/runbooks/monitoring-watchdog.md"
 
 {{- end }}

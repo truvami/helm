@@ -25,16 +25,16 @@
 
 2. PostgreSQL Database Information:
    The dashboard is configured with a managed PostgreSQL cluster using CloudNativePG.
-   
+
    Database Connection Details:
    - Host: {{ include "truvami-dashboard.fullname" . }}-postgres-rw
    - Port: 5432
    - Database: dashboard
    - Username: dashboard
-   
+
    To get the database password:
    kubectl get secret {{ include "truvami-dashboard.fullname" . }}-postgres-credentials -o jsonpath="{.data.password}" | base64 --decode
-   
+
    To connect to the database directly:
    kubectl exec -it {{ include "truvami-dashboard.fullname" . }}-postgres-1 -- psql -U dashboard -d dashboard
 
@@ -42,7 +42,7 @@
 
 2. PostgreSQL Database Information:
    The dashboard is configured to use an external PostgreSQL database.
-   
+
    External Database Configuration:
    - Host: {{ .Values.postgres.external.host }}
    - Port: {{ .Values.postgres.external.port }}

@@ -13,7 +13,7 @@ spec:
           annotations:
             description: >-
               **What's happening:** Consumer has been idle for too long (>1 hour), indicating potential processing stall or system issues.
-              
+
               **Why this occurred:** The system tracks consumer idle time using truvami_consumer_idle_time > 3600
               which measures seconds since the consumer last processed a message. Extended idle time beyond normal quiet periods suggests:
               - Consumer process hang or deadlock
@@ -22,7 +22,7 @@ spec:
               - Database or downstream service failures blocking processing
               - Resource exhaustion causing processing delays
               - Consumer configuration issues
-              
+
               **What to do:**
               1. **Check consumer process health** and restart if unresponsive
               2. **Verify Kafka connectivity** and broker accessibility
@@ -49,7 +49,7 @@ spec:
           annotations:
             description: >-
               **What's happening:** Kafka consumer is experiencing high error rates (>0.05 errors/sec over 5 minutes) with error_code {{ "{{" }} $labels.error_code }}.
-              
+
               **Why this occurred:** The system tracks consumer errors using rate(truvami_kafka_consumer_messages_error_count[5m])
               which measures the rate of message processing failures. High error rates typically indicate:
               - Invalid or corrupted message formats
@@ -58,7 +58,7 @@ spec:
               - Resource exhaustion during message processing
               - Schema validation failures
               - Authentication or authorization issues
-              
+
               **What to do:**
               1. **Identify error pattern** by examining error_code {{ "{{" }} $labels.error_code }}
               2. **Check message format validity** and schema compliance

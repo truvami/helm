@@ -3,5 +3,5 @@ kind: ConfigMap
 metadata:
   name: "{{ .Values.gateway.topic }}-gateway-config"
 data:
-  config.yaml: | 
+  config.yaml: |
     {{ .Values.gateway | toYaml | nindent 4 }}

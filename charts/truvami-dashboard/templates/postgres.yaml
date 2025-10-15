@@ -18,7 +18,7 @@ spec:
       shared_buffers: {{ .Values.postgres.sharedBuffers }}
   monitoring:
     enablePodMonitor: true
-  resources: 
+  resources:
     {{- toYaml .Values.postgres.resources | nindent 4 }}
   {{- if .Values.postgres.backup.enable }}
   backup:
@@ -26,4 +26,3 @@ spec:
     retentionPolicy: {{ .Values.postgres.backup.retentionPolicy | quote }}
   {{- end }}
 {{- end }}
-  

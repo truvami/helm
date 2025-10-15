@@ -3,5 +3,5 @@ kind: ConfigMap
 metadata:
   name: "config-api"
 data:
-  config.yaml: | 
+  config.yaml: |
     {{ .Values.api | toYaml | nindent 4 }}

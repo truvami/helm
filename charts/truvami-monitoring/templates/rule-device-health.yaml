@@ -13,7 +13,7 @@ spec:
           annotations:
             description: >-
               **What's happening:** Device {{ "{{" }} $labels.devEui }} on port {{ "{{" }} $labels.port }} is experiencing high payload decoding failures (>0.1 failures/sec over 5 minutes).
-              
+
               **Why this occurred:** The system tracks decoding failures using rate(truvami_failed_to_decode_payload_count[5m])
               which measures how often received device payloads cannot be properly decoded. Common causes include:
               - Device firmware changes affecting payload format
@@ -22,7 +22,7 @@ spec:
               - Device hardware malfunction affecting data encoding
               - Network interference causing data corruption
               - Device battery issues affecting transmission quality
-              
+
               **What to do:**
               1. Check device firmware version and decoder compatibility
               2. Verify device hardware health and battery status
@@ -85,17 +85,17 @@ spec:
           annotations:
             description: >-
               **What's happening:** Device {{ "{{" }} $labels.devEui }} has been detected transmitting on multiple LoRa networks over the past 7 days.
-              
-              **Why this occurred:** The query detects devices that have uplinks on both standard gateway IDs (8-character hex format) 
-              and non-standard gateway IDs within a 7-day window. This indicates the device may be switching between different 
+
+              **Why this occurred:** The query detects devices that have uplinks on both standard gateway IDs (8-character hex format)
+              and non-standard gateway IDs within a 7-day window. This indicates the device may be switching between different
               LoRa network configurations with every reset, creating unpredictable network behavior.
-              
-              Standard networks use 8-character hexadecimal gateway IDs (e.g., "12AB34CD"), while other networks may use 
+
+              Standard networks use 8-character hexadecimal gateway IDs (e.g., "12AB34CD"), while other networks may use
               different ID formats. When a device transmits on both types, it suggests dual provisioning or network switching.
-              
-              **Expected behavior after network migration:** If this alert triggered due to an intentional network change, 
+
+              **Expected behavior after network migration:** If this alert triggered due to an intentional network change,
               it will automatically clear after 7 days when the old network data expires from the monitoring window.
-              
+
               **What to do:**
               1. **If network change was intentional** - Wait for alert to auto-clear in 7 days, no action needed
               2. **If unintentional** - Verify device provisioning and check if accidentally provisioned on multiple networks

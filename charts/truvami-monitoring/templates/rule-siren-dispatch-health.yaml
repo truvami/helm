@@ -13,7 +13,7 @@ spec:
           annotations:
             description: >-
               **What's happening:** Siren alert dispatch has been inactive for >10 minutes - no alerts being sent.
-              
+
               **Why this occurred:** The `truvami_alerts_dispatch_count` metric shows no recent alert dispatches.
               This could indicate:
               - Siren service is not processing alert conditions
@@ -21,7 +21,7 @@ spec:
               - Alert dispatch mechanism is failing
               - Kafka message processing issues in siren
               - Siren service connectivity problems
-              
+
               **What to do:**
               1. Check if siren service is running and healthy
               2. Verify siren is consuming Kafka alert messages
@@ -47,13 +47,13 @@ spec:
           annotations:
             description: >-
               **What's happening:** Device {{ "{{" }} $labels.dev_eui }} is generating high volume of {{ "{{" }} $labels.schema }} alerts (>{{ "{{" }} $value }} alerts/min).
-              
+
               **Why this occurred:** A single device is triggering many alerts, which could indicate:
               - Device malfunction causing repeated alert conditions
               - Overly sensitive alert thresholds for this device
               - Device is in an unusual environment triggering alerts
               - Alert condition not properly debounced
-              
+
               **What to do:**
               1. Investigate device {{ "{{" }} $labels.dev_eui }} behavior and recent data
               2. Review alert threshold configuration for {{ "{{" }} $labels.schema }} alerts

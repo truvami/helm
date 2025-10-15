@@ -1,143 +1,84 @@
-# Truvami Dashboard Helm Chart
+# truvami-dashboard
 
-This Helm chart deploys the Truvami Dashboard application with Better Auth authentication and integrated PostgreSQL database support.
+![Version: 1.0.6](https://img.shields.io/badge/Version-1.0.6-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v2.8.0-rc3](https://img.shields.io/badge/AppVersion-v2.8.0--rc3-informational?style=flat-square)
 
-## 🚨 Migration Notice: v1.0.0 Breaking Changes
+Truvami Dashboard Helm chart with Better Auth integration
 
-**Version 1.0.0 introduces breaking changes due to migration from NextAuth.js to Better Auth.**
+## Values
 
-### Required Actions for Existing Deployments:
+| Key | Type | Default | Description |
+|-----|------|---------|-------------|
+| affinity | object | `{}` |  |
+| api.internalUrl | string | `"http://truvami-stack-truvami-api:8888"` |  |
+| api.publicUrl | string | `"https://api.truvami.com"` |  |
+| app.publicUrl | string | `"https://dashboard.truvami.com"` |  |
+| autoscaling.enabled | bool | `false` |  |
+| autoscaling.maxReplicas | int | `100` |  |
+| autoscaling.minReplicas | int | `1` |  |
+| autoscaling.targetCPUUtilizationPercentage | int | `80` |  |
+| betterAuth.secret | string | `""` |  |
+| database.url | string | `""` |  |
+| fullnameOverride | string | `""` |  |
+| hostAliases | list | `[]` |  |
+| image.pullPolicy | string | `"Always"` |  |
+| image.repository | string | `"ghcr.io/truvami/dashboard"` |  |
+| image.tag | string | `""` |  |
+| imagePullSecrets | list | `[]` |  |
+| ingress.annotations | object | `{}` |  |
+| ingress.className | string | `""` |  |
+| ingress.enabled | bool | `false` |  |
+| ingress.hosts[0].host | string | `"dashboard.truvami.com"` |  |
+| ingress.hosts[0].paths[0].path | string | `"/"` |  |
+| ingress.hosts[0].paths[0].pathType | string | `"ImplementationSpecific"` |  |
+| ingress.tls | list | `[]` |  |
+| keycloak.clientId | string | `"dashboard"` |  |
+| keycloak.clientSecret | string | `""` |  |
+| keycloak.discoveryUrl | string | `"https://sso.sbcdc.ch/auth/realms/truvami/.well-known/openid-configuration"` |  |
+| livenessProbe.httpGet.path | string | `"/"` |  |
+| livenessProbe.httpGet.port | string | `"http"` |  |
+| migration.resources.limits.cpu | string | `"500m"` |  |
+| migration.resources.limits.memory | string | `"512Mi"` |  |
+| migration.resources.requests.cpu | string | `"100m"` |  |
+| migration.resources.requests.memory | string | `"256Mi"` |  |
+| nameOverride | string | `""` |  |
+| nodeSelector | object | `{}` |  |
+| podAnnotations | object | `{}` |  |
+| podLabels | object | `{}` |  |
+| podSecurityContext | object | `{}` |  |
+| postgres.backup.barmanObjectStore | object | `{}` |  |
+| postgres.backup.enable | bool | `false` |  |
+| postgres.backup.retentionPolicy | string | `"30d"` |  |
+| postgres.enabled | bool | `true` |  |
+| postgres.external.database | string | `"dashboard"` |  |
+| postgres.external.existingSecret | string | `""` |  |
+| postgres.external.host | string | `""` |  |
+| postgres.external.password | string | `""` |  |
+| postgres.external.port | int | `5432` |  |
+| postgres.external.username | string | `"dashboard"` |  |
+| postgres.image.repository | string | `"ghcr.io/cloudnative-pg/postgresql"` |  |
+| postgres.image.tag | string | `"18"` |  |
+| postgres.replicaCount | int | `1` |  |
+| postgres.resources.limits.cpu | string | `"500m"` |  |
+| postgres.resources.limits.memory | string | `"1Gi"` |  |
+| postgres.resources.requests.cpu | string | `"100m"` |  |
+| postgres.resources.requests.memory | string | `"256Mi"` |  |
+| postgres.sharedBuffers | string | `"256MB"` |  |
+| postgres.storage.size | string | `"1Gi"` |  |
+| postgres.storage.storageClass | string | `""` |  |
+| readinessProbe.httpGet.path | string | `"/"` |  |
+| readinessProbe.httpGet.port | string | `"http"` |  |
+| replicaCount | int | `1` |  |
+| resources | object | `{}` |  |
+| securityContext | object | `{}` |  |
+| service.port | int | `3000` |  |
+| service.type | string | `"ClusterIP"` |  |
+| serviceAccount.annotations | object | `{}` |  |
+| serviceAccount.automount | bool | `true` |  |
+| serviceAccount.create | bool | `false` |  |
+| serviceAccount.name | string | `""` |  |
+| tolerations | list | `[]` |  |
+| volumeMounts | list | `[]` |  |
+| volumes | list | `[]` |  |
 
-1. **Update configuration**: All environment variables have changed
-2. **Provide new secrets**: `BETTER_AUTH_SECRET`, `KEYCLOAK_CLIENT_SECRET`
-3. **Database migration**: Better Auth uses different tables
-4. **Test thoroughly**: Authentication flow has changed
-
-See the [Migration Guide](#migration-from-nextauthjs-to-better-auth) below for detailed instructions.
-
-## Configuration Overview
-
-The chart now uses Better Auth for authentication with the following key components:
-
-- **Better Auth**: Modern authentication library replacing NextAuth.js
-- **Keycloak OAuth**: Enterprise SSO integration
-- **PostgreSQL**: Database for Better Auth tables and application data
-- **API Proxy**: Internal/external API routing
-
-## PostgreSQL Integration
-
-The chart supports two PostgreSQL configurations:
-
-### 1. Managed PostgreSQL (Default)
-
-When `postgres.enabled=true` (default), the chart automatically creates a PostgreSQL cluster using [CloudNativePG](https://cloudnative-pg.io/).
-
-```yaml
-postgres:
-  enabled: true
-  replicaCount: 1
-  image:
-    repository: ghcr.io/cloudnative-pg/postgresql
-    tag: "16.3"
-  storage:
-    size: 1Gi
-  resources:
-    limits:
-      cpu: 500m
-      memory: 1Gi
-    requests:
-      cpu: 100m
-      memory: 256Mi
-```
-
-### 2. External PostgreSQL
-
-To use an external PostgreSQL database, set `postgres.enabled=false` and configure the external settings:
-
-```yaml
-postgres:
-  enabled: false
-  external:
-    host: "my-postgres-server.example.com"
-    port: 5432
-    database: "dashboard"
-    username: "dashboard"
-    password: "secretpassword"
-```
-
-### 3. External PostgreSQL with Existing Secret
-
-For better security, you can use an existing Kubernetes secret:
-
-```yaml
-postgres:
-  enabled: false
-  external:
-    existingSecret: "my-postgres-secret"
-```
-
-The secret should contain the following keys:
-- `DB_HOST`
-- `DB_PORT`
-- `DB_NAME`
-- `DB_USER`
-- `DB_PASSWORD`
-
-## Prerequisites
-
-- Kubernetes 1.19+
-- Helm 3.0+
-- CloudNativePG operator (if using managed PostgreSQL)
-
-## Installation
-
-1. Add the Truvami Helm repository (if available):
-```bash
-helm repo add truvami https://charts.truvami.com
-helm repo update
-```
-
-2. Install the chart:
-```bash
-helm install my-dashboard truvami/truvami-dashboard
-```
-
-3. Or install from source:
-```bash
-helm install my-dashboard ./charts/truvami-dashboard
-```
-
-## Environment Variables
-
-The following database-related environment variables are automatically configured:
-
-- `DATABASE_URL`: Complete PostgreSQL connection string
-- `DB_HOST`: Database host
-- `DB_PORT`: Database port
-- `DB_NAME`: Database name
-- `DB_USER`: Database username
-- `DB_PASSWORD`: Database password
-
-## Backup Configuration
-
-When using managed PostgreSQL, you can enable backups to object storage:
-
-```yaml
-postgres:
-  backup:
-    enable: true
-    retentionPolicy: "30d"
-    barmanObjectStore:
-      destinationPath: "s3://my-bucket/backups"
-      s3Credentials:
-        accessKeyId:
-          name: "postgres-backup-secret"
-          key: "ACCESS_KEY_ID"
-        secretAccessKey:
-          name: "postgres-backup-secret"
-          key: "SECRET_ACCESS_KEY"
-```
-
-## Monitoring
-
-The managed PostgreSQL cluster automatically enables PodMonitor for Prometheus scraping.
+----------------------------------------------
+Autogenerated from chart metadata using [helm-docs v1.14.2](https://github.com/norwoodj/helm-docs/releases/v1.14.2)

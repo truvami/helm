@@ -13,7 +13,7 @@ spec:
           annotations:
             description: >-
               **What's happening:** WiFi solver is experiencing high error rate (>5% over 5 minutes).
-              
+
               **Why this occurred:** The `truvami_wifi_solver_error_count` / `truvami_wifi_solver_requests_count` ratio indicates
               the WiFi location solver is failing frequently. Common causes include:
               - WiFi access point database connectivity issues
@@ -21,7 +21,7 @@ spec:
               - WiFi solver service performance problems
               - Network connectivity issues to WiFi positioning services
               - Overloaded WiFi solver service
-              
+
               **What to do:**
               1. Check WiFi solver service health and resource utilization
               2. Verify connectivity to WiFi positioning databases
@@ -32,7 +32,7 @@ spec:
               WiFi solver error rate high (>5% over 5min)
           expr: >-
             (
-              rate(truvami_wifi_solver_error_count[5m]) / 
+              rate(truvami_wifi_solver_error_count[5m]) /
               rate(truvami_wifi_solver_requests_count[5m])
             ) > 0.05
           for: 3m
@@ -50,10 +50,10 @@ spec:
           annotations:
             description: >-
               **What's happening:** WiFi solver success rate has dropped below 90% over 5 minutes.
-              
+
               **Why this occurred:** The ratio of successful WiFi location resolutions to total requests has declined.
               This may indicate degraded service quality even if not experiencing complete failures.
-              
+
               **What to do:**
               1. Monitor WiFi solver performance trends
               2. Check for partial service degradation
@@ -63,7 +63,7 @@ spec:
               WiFi solver success rate low (<90%)
           expr: >-
             (
-              rate(truvami_wifi_solver_success_count[5m]) / 
+              rate(truvami_wifi_solver_success_count[5m]) /
               rate(truvami_wifi_solver_requests_count[5m])
             ) < 0.90
           for: 5m
@@ -81,14 +81,14 @@ spec:
           annotations:
             description: >-
               **What's happening:** WiFi solver is returning zero coordinates at high rate ({{ "{{" }} $value }} zero positions/sec).
-              
+
               **Why this occurred:** The `truvami_wifi_zero_position_count` metric indicates the solver is frequently
               unable to determine valid coordinates from WiFi access point data. This suggests:
               - Poor WiFi access point coverage in device locations
               - Insufficient WiFi access points in scan data (accessPointCount={{ "{{" }} $labels.accessPointCount }})
               - WiFi access point database coverage gaps
               - Degraded positioning algorithm performance
-              
+
               **What to do:**
               1. Analyze WiFi access point coverage in affected areas
               2. Review WiFi access point database completeness

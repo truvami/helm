@@ -13,7 +13,7 @@ spec:
           annotations:
             description: >-
               **What's happening:** Bridge consumer has been idle for {{ "{{" }} $value }}s (>20 minutes), indicating no Kafka messages are being processed.
-              
+
               **Why this occurred:** The `truvami_consumer_idle_time` metric tracks how long the bridge consumer has been without processing messages.
               Extended idle time typically indicates:
               - Kafka broker connectivity issues
@@ -21,7 +21,7 @@ spec:
               - No uplink messages being produced to Kafka topics
               - Consumer offset issues or partition assignment problems
               - Network connectivity issues between bridge and Kafka cluster
-              
+
               **What to do:**
               1. Check Kafka broker health and connectivity
               2. Verify consumer group membership and partition assignments
@@ -43,4 +43,3 @@ spec:
             {{- with .Values.alertLabels }}
             {{- toYaml . | nindent 12 }}
             {{- end }}
-

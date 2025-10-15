@@ -29,3 +29,32 @@ kube-score:
 
 build-stack:
 	helm dep up ./charts/truvami-stack
+
+# Release Management
+changelog: ## Generate changelog
+	@echo "📖 Generating changelog..."
+	@./scripts/changelog.sh
+
+update-chart: ## Update chart version (usage: make update-chart CHART=name VERSION=x.y.z)
+	@if [ -z "$(CHART)" ] || [ -z "$(VERSION)" ]; then \
+		echo "❌ Usage: make update-chart CHART=chart-name VERSION=x.y.z"; \
+		echo "   Example: make update-chart CHART=truvami-api VERSION=0.0.29"; \
+		exit 1; \
+	fi
+	@./scripts/update-chart.sh $(CHART) $(VERSION)
+
+release: ## Create a new release (interactive)
+	@echo "🚀 Starting release process..."
+	@./scripts/release.sh
+
+pre-commit-setup: ## Setup pre-commit hooks
+	@echo "🔧 Setting up pre-commit hooks..."
+	@if ! command -v pre-commit >/dev/null 2>&1; then \
+		echo "❌ pre-commit not found. Install it first:"; \
+		echo "   pip install pre-commit"; \
+		exit 1; \
+	fi
+	@pre-commit install
+	@echo "✅ Pre-commit hooks installed"
+
+.PHONY: get-versions build-stack changelog update-chart release pre-commit-setup

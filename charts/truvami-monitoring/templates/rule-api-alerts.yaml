@@ -184,7 +184,7 @@ spec:
             summary: >-
               High OAuth2 public key cache miss rate
           expr: >-
-            rate(truvami_oauth2_public_key_refresh_total[5m]) / 
+            rate(truvami_oauth2_public_key_refresh_total[5m]) /
             (rate(truvami_oauth2_public_key_cache_hit_total[5m]) + rate(truvami_oauth2_public_key_refresh_total[5m])) > 0.5
           for: 5m
           labels:
@@ -203,7 +203,7 @@ spec:
             summary: >-
               High API key cache miss rate
           expr: >-
-            rate(truvami_api_key_cache_miss_total[5m]) / 
+            rate(truvami_api_key_cache_miss_total[5m]) /
             (rate(truvami_api_key_cache_hit_total[5m]) + rate(truvami_api_key_cache_miss_total[5m])) > 0.8
           for: 5m
           labels:

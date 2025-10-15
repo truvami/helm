@@ -13,7 +13,7 @@ spec:
           annotations:
             description: >-
               **What's happening:** Gateway {{ "{{" }} $labels.gatewayId }} is receiving poor signal quality from device {{ "{{" }} $labels.devEui }} (RSSI: {{ "{{" }} $value }}dBm).
-              
+
               **Why this occurred:** The `truvami_gateway_uplink_rssi` metric shows signal strength below -120dBm, indicating:
               - Device is at maximum range from gateway
               - Physical obstructions blocking signal path
@@ -21,7 +21,7 @@ spec:
               - Device battery affecting transmission power
               - Gateway receiver sensitivity problems
               - Environmental interference
-              
+
               **What to do:**
               1. Check device {{ "{{" }} $labels.devEui }} location relative to gateway {{ "{{" }} $labels.gatewayId }}
               2. Verify device battery status and transmission power
@@ -50,13 +50,13 @@ spec:
           annotations:
             description: >-
               **What's happening:** Gateway {{ "{{" }} $labels.gatewayId }} is receiving critically poor signal from device {{ "{{" }} $labels.devEui }} (RSSI: {{ "{{" }} $value }}dBm).
-              
+
               **Why this occurred:** Signal strength below -125dBm indicates severe connectivity issues that may result in:
               - Intermittent or lost communications
               - High packet loss and retransmissions
               - Increased device battery drain from higher power attempts
               - Potential complete communication loss
-              
+
               **What to do:**
               1. Investigate device {{ "{{" }} $labels.gatewayId }} connectivity immediately
               2. Check if device is moving out of gateway range
@@ -83,14 +83,14 @@ spec:
           annotations:
             description: >-
               **What's happening:** Gateway {{ "{{" }} $labels.gatewayId }} is receiving low SNR from device {{ "{{" }} $labels.devEui }} (SNR: {{ "{{" }} $value }}dB).
-              
+
               **Why this occurred:** The `truvami_gateway_uplink_snr` metric shows signal-to-noise ratio below -15dB, indicating:
               - High noise environment affecting signal quality
               - Interference from other radio sources
               - Gateway receiver sensitivity issues
               - Device transmission power insufficient for distance
               - Environmental factors affecting signal propagation
-              
+
               **What to do:**
               1. Check for radio interference sources near gateway {{ "{{" }} $labels.gatewayId }}
               2. Verify gateway antenna installation and orientation

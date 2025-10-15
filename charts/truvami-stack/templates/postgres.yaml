@@ -17,11 +17,10 @@ spec:
       shared_buffers: {{ .Values.postgres.sharedBuffers }}
   monitoring:
     enablePodMonitor: true
-  resources: 
+  resources:
     {{- toYaml .Values.postgres.resources | nindent 4 }}
   {{- if .Values.postgres.backup.enable }}
   backup:
     barmanObjectStore: {{ .Values.postgres.backup.barmanObjectStore | toYaml | nindent 4 }}
     retentionPolicy: {{ .Values.postgres.backup.retentionPolicy | quote }}
   {{- end }}
-  

@@ -1,0 +1,44 @@
+{{- if .Values.dashboards.enabled }}
+{{- $dashboardFiles := .Files.Glob "dashboards-generated/*.json" }}
+{{- if $dashboardFiles }}
+{{- range $dashboardPath, $dashboardContent := .Files.Glob "dashboards-generated/*.json" }}
+{{- $dashboardName := base (trimSuffix ".json" $dashboardPath) }}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "truvami-monitoring.fullname" $ }}-dashboard-gen-{{ $dashboardName }}
+  namespace: {{ $.Release.Namespace }}
+  labels:
+    {{- include "truvami-monitoring.labels" $ | nindent 4 }}
+    grafana_dashboard: "1"
+  annotations:
+    {{- with $.Values.dashboards.annotations }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+data:
+  {{ $dashboardName }}.json: |
+    {{- $dashboardContent | toString | nindent 4 }}
+{{- end }}
+{{- end }}
+
+{{- /* Legacy support for dashboards defined in values.yaml */ -}}
+{{- range $name, $content := .Values.dashboards.general }}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "truvami-monitoring.fullname" $ }}-dashboard-{{ $name }}
+  namespace: {{ $.Release.Namespace }}
+  labels:
+    {{- include "truvami-monitoring.labels" $ | nindent 4 }}
+    grafana_dashboard: "1"
+  annotations:
+    {{- with $.Values.dashboards.annotations }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+data:
+  {{ $name }}.json: |
+    {{- $content | toJson | nindent 4 }}
+{{- end }}
+{{- end }}

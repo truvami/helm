@@ -13,7 +13,7 @@ spec:
           annotations:
             description: >-
               **What's happening:** Multiple versions of {{ "{{" }} $labels.container }} are running simultaneously, indicating a rolling upgrade in progress or deployment issue.
-              
+
               **Why this occurred:** The system detects version mismatches using count by (job) (count by (job, commit) (truvami_*_info)) > 1
               which counts distinct git commit hashes for each service. Multiple versions running simultaneously can indicate:
               - Normal rolling upgrade in progress (temporary condition)
@@ -22,7 +22,7 @@ spec:
               - Resource constraints preventing new pods from starting
               - Configuration issues causing deployment rollback
               - Manual intervention required for deployment completion
-              
+
               **What to do:**
               1. **Check if rolling upgrade is expected** - verify deployment status in Kubernetes
               2. **Monitor upgrade progress** - ensure old pods are terminating properly
@@ -51,7 +51,7 @@ spec:
           annotations:
             description: >-
               **What's happening:** Multiple versions of {{ "{{" }} $labels.container }} have been running for over 15 minutes - deployment appears stuck or failed.
-              
+
               **Why this occurred:** The system detects prolonged version mismatches indicating a deployment that hasn't completed properly.
               This is a more serious condition than normal rolling upgrades, suggesting:
               - **Deployment failure:** New pods failing to start or pass health checks
@@ -60,7 +60,7 @@ spec:
               - **Image pull failures:** Problems downloading new container images
               - **Pod eviction issues:** Old pods not terminating due to graceful shutdown problems
               - **Manual intervention needed:** Deployment requires admin action to complete
-              
+
               **What to do IMMEDIATELY:**
               1. **ESCALATE:** This is likely a failed deployment requiring immediate attention
               2. **Check deployment status:** kubectl get deployments,pods -l app={{ "{{" }} $labels.container }}
@@ -93,7 +93,7 @@ spec:
               Version: {{ "{{" }} $labels.version }}
               Commit: {{ "{{" }} $labels.commit }}
               Build Date: {{ "{{" }} $labels.build_date }}
-              
+
               This is an informational alert that fires when service version information is available.
               Use this to track deployments and version changes across the environment.
             summary: >-

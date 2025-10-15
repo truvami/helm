@@ -167,23 +167,23 @@ postgres:
   # Enable to create a PostgreSQL cluster using CloudNativePG
   # When enabled, a PostgreSQL cluster will be automatically created and configured
   enabled: true
-  
+
   # Number of PostgreSQL replicas
   replicaCount: 1
-  
+
   # PostgreSQL image configuration
   image:
     repository: ghcr.io/cloudnative-pg/postgresql
     tag: "18"
-  
+
   # Storage configuration for PostgreSQL
   storage:
     size: 1Gi
     storageClass: ""
-  
+
   # PostgreSQL configuration parameters
   sharedBuffers: "256MB"
-  
+
   # Resource limits and requests for PostgreSQL pods
   resources:
     limits:
@@ -192,7 +192,7 @@ postgres:
     requests:
       cpu: 100m
       memory: 256Mi
-  
+
   # Backup configuration (requires object storage)
   backup:
     enable: false
@@ -211,12 +211,12 @@ postgres:
       #   retention: "7d"
       # data:
       #   retention: "30d"
-  
+
   # External PostgreSQL configuration (used when postgres.enabled is false)
   external:
     # Host of the external PostgreSQL server
     host: ""
-    # Port of the external PostgreSQL server  
+    # Port of the external PostgreSQL server
     port: 5432
     # Database name
     database: "dashboard"

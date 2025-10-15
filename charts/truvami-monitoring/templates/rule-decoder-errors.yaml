@@ -34,12 +34,12 @@ spec:
         summary: "High payload decoding error rates (>0.1 errors/sec over 5min)"
         description: |
           High decoder error rates - payload decoding failures detected for device {{ "{{" }} $labels.devEui }}.
-          
+
           This indicates issues with:
           - Device payload format changes
           - Decoder configuration problems
           - Corrupted or malformed payloads
-          
+
     - alert: TruvamiDecodingErrorsCritical
       expr: rate(truvami_payloadparser_error_total[5m]) > 1
       for: 1m
@@ -56,7 +56,7 @@ spec:
         summary: "Critical payload decoding error rates (>1 error/sec over 5min)"
         description: |
           Critical decoder error rates - immediate attention required for payload decoding failures for device {{ "{{" }} $labels.devEui }}.
-          
+
           This requires immediate investigation of:
           - Device firmware compatibility
           - Decoder service health

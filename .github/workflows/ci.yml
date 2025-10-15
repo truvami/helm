@@ -1,0 +1,260 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [ main ]
+  push:
+    branches: [ main ]
+
+jobs:
+  lint-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Helm
+        uses: azure/setup-helm@v4
+        with:
+          version: '3.14.0'
+
+      - name: Set up Go (for Jsonnet tools)
+        uses: actions/setup-go@v4
+        with:
+          go-version: '1.21'
+          cache: true
+
+      - name: Install Jsonnet tools
+        run: |
+          go install github.com/google/go-jsonnet/cmd/jsonnet@latest
+          go install github.com/jsonnet-bundler/jsonnet-bundler/cmd/jb@latest
+
+      - name: Cache Jsonnet dependencies
+        uses: actions/cache@v3
+        with:
+          path: dashboards/vendor
+          key: jsonnet-deps-${{ hashFiles('dashboards/jsonnetfile.lock.json') }}
+          restore-keys: |
+            jsonnet-deps-
+
+      - name: Add Helm repos
+        run: |
+          helm repo add bitnami https://charts.bitnami.com/bitnami
+          helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+          helm repo add grafana https://grafana.github.io/helm-charts
+          helm repo add strimzi https://strimzi.io/charts/
+          helm repo update
+
+      - name: Build dashboards
+        run: |
+          make build-dashboards
+
+      - name: Lint Charts
+        run: |
+          set -e
+          failed_charts=()
+          for chart in $(ls ./charts); do
+            echo "Linting chart: $chart"
+            if ! helm lint ./charts/$chart; then
+              failed_charts+=("$chart")
+            fi
+          done
+
+          if [ ${#failed_charts[@]} -ne 0 ]; then
+            echo "❌ Failed to lint charts: ${failed_charts[*]}"
+            exit 1
+          else
+            echo "✅ All charts passed linting"
+          fi
+
+      - name: Template Charts
+        run: |
+          set -e
+          failed_charts=()
+          for chart in $(ls ./charts); do
+            echo "Templating chart: $chart"
+            if ! helm template test-release ./charts/$chart > /dev/null; then
+              failed_charts+=("$chart")
+            fi
+          done
+
+          if [ ${#failed_charts[@]} -ne 0 ]; then
+            echo "❌ Failed to template charts: ${failed_charts[*]}"
+            exit 1
+          else
+            echo "✅ All charts can be templated successfully"
+          fi
+
+      - name: Install chart-testing
+        uses: helm/chart-testing-action@v2.6.1
+
+      - name: Run chart-testing (list-changed)
+        id: list-changed
+        run: |
+          changed=$(ct list-changed --target-branch ${{ github.event.repository.default_branch }})
+          if [[ -n "$changed" ]]; then
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Run chart-testing (lint)
+        if: steps.list-changed.outputs.changed == 'true'
+        run: ct lint --target-branch ${{ github.event.repository.default_branch }}
+
+      - name: Create kind cluster
+        if: steps.list-changed.outputs.changed == 'true'
+        uses: helm/kind-action@v1.8.0
+
+      - name: Run chart-testing (install)
+        if: steps.list-changed.outputs.changed == 'true'
+        run: ct install --target-branch ${{ github.event.repository.default_branch }}
+
+  security-scan:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Helm
+        uses: azure/setup-helm@v4
+
+      - name: Install Helm plugins
+        run: |
+          helm plugin install https://github.com/zegl/kube-score/releases/latest/download/helm-kube-score.tar.gz
+
+      - name: Run kube-score security analysis
+        run: |
+          for chart in $(ls ./charts); do
+            echo "Running kube-score for chart: $chart"
+            helm template ./charts/$chart | kube-score score - --output-format ci
+          done
+
+  breaking-change-detection:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    steps:
+      - name: Checkout PR
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Checkout base branch
+        run: |
+          git fetch origin ${{ github.event.pull_request.base.ref }}
+
+      - name: Set up Helm
+        uses: azure/setup-helm@v4
+
+      - name: Add Helm repos
+        run: |
+          helm repo add bitnami https://charts.bitnami.com/bitnami
+          helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+          helm repo add grafana https://grafana.github.io/helm-charts
+          helm repo add strimzi https://strimzi.io/charts/
+          helm repo update
+
+      - name: Detect breaking changes
+        run: |
+          set -e
+          echo "Detecting breaking changes..."
+
+          # Get list of changed charts
+          changed_charts=$(git diff --name-only origin/${{ github.event.pull_request.base.ref }}...HEAD | grep "^charts/" | cut -d'/' -f2 | sort -u)
+
+          if [ -z "$changed_charts" ]; then
+            echo "No charts changed"
+            exit 0
+          fi
+
+          breaking_changes=()
+
+          for chart in $changed_charts; do
+            if [ ! -d "./charts/$chart" ]; then
+              echo "Chart $chart was deleted - this is a breaking change"
+              breaking_changes+=("$chart: Chart deleted")
+              continue
+            fi
+
+            echo "Checking chart: $chart"
+
+            # Check for version changes
+            current_version=$(yq eval '.version' ./charts/$chart/Chart.yaml)
+            git checkout origin/${{ github.event.pull_request.base.ref }} -- ./charts/$chart/Chart.yaml 2>/dev/null || echo "Chart is new"
+
+            if [ -f "./charts/$chart/Chart.yaml" ]; then
+              base_version=$(yq eval '.version' ./charts/$chart/Chart.yaml)
+
+              # Parse versions and check if major version increased
+              current_major=$(echo $current_version | cut -d'.' -f1)
+              base_major=$(echo $base_version | cut -d'.' -f1)
+
+              if [ "$current_major" -gt "$base_major" ]; then
+                echo "Major version bump detected for $chart: $base_version -> $current_version"
+              elif [ "$current_version" = "$base_version" ]; then
+                breaking_changes+=("$chart: Version not bumped despite changes")
+              fi
+            fi
+
+            # Restore current version
+            git checkout HEAD -- ./charts/$chart/Chart.yaml
+
+            # Template both versions and compare for breaking changes
+            mkdir -p /tmp/chart-diff
+
+            if git show origin/${{ github.event.pull_request.base.ref }}:charts/$chart/Chart.yaml > /dev/null 2>&1; then
+              # Create temporary directory for base version
+              git show origin/${{ github.event.pull_request.base.ref }}:charts/$chart/values.yaml > /tmp/chart-diff/values-base.yaml 2>/dev/null || echo "{}" > /tmp/chart-diff/values-base.yaml
+
+              # Check for removed required values
+              base_required=$(yq eval '.. | select(. == null) | path | join(".")' /tmp/chart-diff/values-base.yaml 2>/dev/null || echo "")
+              current_required=$(yq eval '.. | select(. == null) | path | join(".")' ./charts/$chart/values.yaml 2>/dev/null || echo "")
+
+              # This is a simplified check - in practice you'd want more sophisticated breaking change detection
+            fi
+          done
+
+          if [ ${#breaking_changes[@]} -ne 0 ]; then
+            echo "❌ Breaking changes detected:"
+            printf '%s\n' "${breaking_changes[@]}"
+            echo ""
+            echo "Please ensure:"
+            echo "1. Chart version is properly bumped"
+            echo "2. Breaking changes are documented"
+            echo "3. Migration guide is provided if needed"
+            exit 1
+          else
+            echo "✅ No breaking changes detected"
+          fi
+
+  documentation:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install helm-docs
+        run: |
+          cd /tmp
+          wget https://github.com/norwoodj/helm-docs/releases/latest/download/helm-docs_1.11.3_Linux_x86_64.tar.gz
+          tar -xzf helm-docs_1.11.3_Linux_x86_64.tar.gz
+          sudo mv helm-docs /usr/local/bin/
+
+      - name: Generate documentation
+        run: |
+          for chart in $(ls ./charts); do
+            if [ ! -f "./charts/$chart/README.md" ] || [ "./charts/$chart/Chart.yaml" -nt "./charts/$chart/README.md" ] || [ "./charts/$chart/values.yaml" -nt "./charts/$chart/README.md" ]; then
+              echo "Generating documentation for $chart"
+              helm-docs --chart-search-root ./charts/$chart
+            fi
+          done
+
+      - name: Check if documentation is up to date
+        run: |
+          if [ -n "$(git status --porcelain)" ]; then
+            echo "❌ Documentation is out of date. Please run 'helm-docs' and commit the changes."
+            git status --porcelain
+            exit 1
+          else
+            echo "✅ Documentation is up to date"
+          fi

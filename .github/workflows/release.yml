@@ -1,20 +1,58 @@
-name: Release Charts
+name: Release Charts and Changelog
 
 on:
   push:
-    branches:
-      - main
+    tags:
+      - 'v*'
 
 jobs:
-  release:
-    # depending on default permission settings for your org (contents being read-only or read-write for workloads), you will have to add permissions
-    # see: https://docs.github.com/en/actions/security-guides/automatic-token-authentication#modifying-the-permissions-for-the-github_token
+  changelog:
+    runs-on: ubuntu-latest
     permissions:
       contents: write
-    runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install git-cliff
+        uses: taiki-e/install-action@v2
+        with:
+          tool: git-cliff
+
+      - name: Generate Release Notes
+        id: changelog
+        run: |
+          # Generate changelog for this tag only
+          git-cliff --tag ${{ github.ref_name }} --strip all > RELEASE_NOTES.md
+
+          # Also update the full changelog
+          git-cliff --tag ${{ github.ref_name }} --output CHANGELOG.md
+
+          echo "Generated release notes:"
+          cat RELEASE_NOTES.md
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          body_path: RELEASE_NOTES.md
+          files: |
+            CHANGELOG.md
+          generate_release_notes: false
+          draft: false
+          prerelease: ${{ contains(github.ref_name, '-rc') }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  charts:
+    needs: changelog
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
@@ -36,7 +74,7 @@ jobs:
       - name: Build Charts
         run: |
           make build-stack
-          
+
       - name: Run chart-releaser
         uses: helm/chart-releaser-action@v1.6.0
         env:

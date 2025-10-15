@@ -1,0 +1,30 @@
+# Conventional Commits Configuration
+# Valid commit types for this project
+
+types:
+  - feat     # New features
+  - fix      # Bug fixes
+  - docs     # Documentation changes
+  - style    # Code style changes (formatting, etc.)
+  - refactor # Code refactoring
+  - perf     # Performance improvements
+  - test     # Test additions/updates
+  - build    # Build system changes
+  - ci       # CI/CD changes
+  - chore    # Maintenance tasks
+  - revert   # Revert previous commits
+
+# Valid scopes (optional)
+scopes:
+  - api        # API service
+  - bridge     # Bridge service
+  - dashboard  # Dashboard service
+  - decoder    # Decoder service
+  - gateway    # Gateway service
+  - siren      # Siren service
+  - monitoring # Monitoring stack
+  - stack      # Complete stack
+  - deps       # Dependencies
+  - ci         # CI/CD
+  - docs       # Documentation
+  - release    # Release related

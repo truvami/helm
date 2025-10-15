@@ -3,5 +3,5 @@ kind: ConfigMap
 metadata:
   name: "{{ .Values.bridge.topic }}-bridge-config"
 data:
-  config.yaml: | 
+  config.yaml: |
     {{ .Values.bridge | toYaml | nindent 4 }}

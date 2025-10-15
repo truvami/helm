@@ -31,7 +31,7 @@ spec:
             summary: >-
               High Siren cache miss rate
           expr: >-
-            rate(truvami_alerts_cache_miss_count[5m]) / 
+            rate(truvami_alerts_cache_miss_count[5m]) /
             (rate(truvami_alerts_cache_hit_count[5m]) + rate(truvami_alerts_cache_miss_count[5m])) > 0.5
           for: 5m
           labels:

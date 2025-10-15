@@ -35,7 +35,7 @@ watchdog:
 # AlertManager configuration
 alertmanager:
   enabled: true
-  
+
   # Resource configuration for Alertmanager
   resources:
     requests:
@@ -44,24 +44,50 @@ alertmanager:
     limits:
       cpu: "500m"
       memory: "512Mi"
-  
+
   # SMTP configuration for email notifications
   smtp:
     smarthost: "localhost:587"
     from: "alertmanager@truvami.com"
     # auth_username: ""
     # auth_password: ""
-  
+
   # Notification receivers
   receivers:
     slack:
       enabled: false
       webhook_url: ""  # Set your Slack webhook URL here
       channel: "#alerts"
-    
+
     email:
       enabled: false
       to: "alerts@truvami.com"
+
+# Dashboard configuration
+dashboards:
+  enabled: true
+  annotations:
+    k8s-sidecar-target-directory: "/tmp/dashboards"
+
+  # Jsonnet-based dashboard generation
+  # =================================
+  # Dashboards are built from Jsonnet sources in /dashboards/src/
+  #
+  # Development workflow:
+  # 1. Edit dashboard sources: /dashboards/src/*.jsonnet
+  # 2. Build dashboards: make build-dashboards
+  # 3. Generated files are created in: charts/truvami-monitoring/dashboards-generated/
+  # 4. Helm automatically includes generated files as ConfigMaps
+  #
+  # See docs/dashboard-development.md for detailed guide
+
+  # Legacy dashboards - for backwards compatibility only
+  # Use Jsonnet approach for all new dashboards
+  general: {}
+    # Example legacy dashboard:
+    # old-dashboard:
+    #   title: "Legacy Dashboard"
+    #   panels: [...]
 
 grafana:
   enabled: false

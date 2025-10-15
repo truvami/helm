@@ -21,7 +21,7 @@ spec:
       containers:
         - name: migrate
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
-          command: 
+          command:
             - "/usr/bin/truvami-api"
           args:
             - '--config'
