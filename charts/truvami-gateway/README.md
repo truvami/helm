@@ -1,6 +1,6 @@
 # truvami-gateway
 
-![Version: 0.0.28](https://img.shields.io/badge/Version-0.0.28-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v2.5.6-rc1](https://img.shields.io/badge/AppVersion-v2.5.6--rc1-informational?style=flat-square)
+![Version: 0.0.29](https://img.shields.io/badge/Version-0.0.29-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v2.5.6-rc1](https://img.shields.io/badge/AppVersion-v2.5.6--rc1-informational?style=flat-square)
 
 A Helm chart for Kubernetes
 
@@ -58,6 +58,7 @@ A Helm chart for Kubernetes
 | serviceAccount.automount | bool | `false` |  |
 | serviceAccount.create | bool | `false` |  |
 | serviceAccount.name | string | `""` |  |
+| serviceMonitor.enabled | bool | `true` |  |
 | tolerations | list | `[]` |  |
 | volumeMounts[0].mountPath | string | `"/etc/truvami-gateway"` |  |
 | volumeMounts[0].name | string | `"config"` |  |
