@@ -119,9 +119,12 @@ jobs:
       - name: Set up Helm
         uses: azure/setup-helm@v4
 
-      - name: Install Helm plugins
+      - name: Install kube-score
         run: |
-          helm plugin install https://github.com/zegl/kube-score/releases/latest/download/helm-kube-score.tar.gz
+          wget -O kube-score.tar.gz https://github.com/zegl/kube-score/releases/latest/download/kube-score_$(uname -s)_$(uname -m).tar.gz
+          tar -xzf kube-score.tar.gz
+          sudo mv kube-score /usr/local/bin/
+          kube-score version
 
       - name: Run kube-score security analysis
         run: |
@@ -236,9 +239,11 @@ jobs:
       - name: Install helm-docs
         run: |
           cd /tmp
-          wget https://github.com/norwoodj/helm-docs/releases/latest/download/helm-docs_1.11.3_Linux_x86_64.tar.gz
-          tar -xzf helm-docs_1.11.3_Linux_x86_64.tar.gz
+          HELM_DOCS_VERSION="1.14.2"
+          wget https://github.com/norwoodj/helm-docs/releases/download/v${HELM_DOCS_VERSION}/helm-docs_${HELM_DOCS_VERSION}_Linux_x86_64.tar.gz
+          tar -xzf helm-docs_${HELM_DOCS_VERSION}_Linux_x86_64.tar.gz
           sudo mv helm-docs /usr/local/bin/
+          helm-docs --version
 
       - name: Generate documentation
         run: |
