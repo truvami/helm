@@ -34,6 +34,7 @@ kube-score: ## Run kube-score security analysis
 	done
 
 build-stack: ## Build stack chart dependencies
+	@echo "🔧 Building truvami-stack chart dependencies..."
 	helm dep up ./charts/truvami-stack
 
 # Dashboard Management

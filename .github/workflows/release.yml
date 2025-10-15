@@ -66,10 +66,20 @@ jobs:
         env:
           GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
 
+      - name: Set up Go (for Jsonnet tools)
+        uses: actions/setup-go@v4
+        with:
+          go-version: '1.21'
+          cache: true
+
       - name: Add Bitnami Helm repo
         run: |
           helm repo add bitnami https://charts.bitnami.com/bitnami
           helm repo update
+
+      - name: Build Dashboards
+        run: |
+          make build-dashboards
 
       - name: Build Charts
         run: |
