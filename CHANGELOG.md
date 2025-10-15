@@ -8,7 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [1.0.1-rc5] - 2025-10-15
 
 ### Features
-- Added support for service monitor
+- Added support for service monitor by @michaelbeutler
 
 ## [1.0.1-rc4] - 2025-10-15
 
