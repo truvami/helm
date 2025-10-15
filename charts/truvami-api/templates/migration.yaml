@@ -13,6 +13,10 @@ spec:
   completions: 1
   parallelism: 1
   template:
+    metadata:
+      labels:
+        {{- include "truvami-api.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/component: migration
     spec:
       restartPolicy: Never
       serviceAccountName: {{ include "truvami-api.serviceAccountName" . }}
