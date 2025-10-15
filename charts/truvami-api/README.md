@@ -1,6 +1,6 @@
 # truvami-api
 
-![Version: 0.0.27](https://img.shields.io/badge/Version-0.0.27-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v0.7.21](https://img.shields.io/badge/AppVersion-v0.7.21-informational?style=flat-square)
+![Version: 0.0.28](https://img.shields.io/badge/Version-0.0.28-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v0.7.21](https://img.shields.io/badge/AppVersion-v0.7.21-informational?style=flat-square)
 
 A Helm chart for Kubernetes
 
@@ -53,7 +53,19 @@ A Helm chart for Kubernetes
 | metrics.port | int | `9090` |  |
 | metrics.serviceMonitor.additionalLabels | object | `{}` |  |
 | metrics.serviceMonitor.enabled | bool | `false` |  |
+| migration.resources.limits.cpu | string | `"100m"` |  |
+| migration.resources.limits.ephemeral-storage | string | `"1Gi"` |  |
+| migration.resources.limits.memory | string | `"128Mi"` |  |
+| migration.resources.requests.cpu | string | `"100m"` |  |
+| migration.resources.requests.ephemeral-storage | string | `"512Mi"` |  |
+| migration.resources.requests.memory | string | `"128Mi"` |  |
+| migration.securityContext.capabilities.drop[0] | string | `"ALL"` |  |
+| migration.securityContext.readOnlyRootFilesystem | bool | `true` |  |
+| migration.securityContext.runAsGroup | int | `65534` |  |
+| migration.securityContext.runAsNonRoot | bool | `true` |  |
+| migration.securityContext.runAsUser | int | `65534` |  |
 | nameOverride | string | `""` |  |
+| networkPolicy.enabled | bool | `false` |  |
 | nodeSelector | object | `{}` |  |
 | podAnnotations | object | `{}` |  |
 | podLabels | object | `{}` |  |
@@ -62,13 +74,16 @@ A Helm chart for Kubernetes
 | readinessProbe.httpGet.port | string | `"metrics"` |  |
 | replicaCount | int | `1` |  |
 | resources.limits.cpu | string | `"100m"` |  |
+| resources.limits.ephemeral-storage | string | `"1Gi"` |  |
 | resources.limits.memory | string | `"128Mi"` |  |
 | resources.requests.cpu | string | `"100m"` |  |
+| resources.requests.ephemeral-storage | string | `"512Mi"` |  |
 | resources.requests.memory | string | `"128Mi"` |  |
 | securityContext.capabilities.drop[0] | string | `"ALL"` |  |
 | securityContext.readOnlyRootFilesystem | bool | `true` |  |
+| securityContext.runAsGroup | int | `65534` |  |
 | securityContext.runAsNonRoot | bool | `true` |  |
-| securityContext.runAsUser | int | `1000` |  |
+| securityContext.runAsUser | int | `65534` |  |
 | serviceAccount.annotations | object | `{}` |  |
 | serviceAccount.automount | bool | `true` |  |
 | serviceAccount.create | bool | `false` |  |

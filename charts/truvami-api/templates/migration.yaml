@@ -21,6 +21,7 @@ spec:
       containers:
         - name: migrate
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
           command:
             - "/usr/bin/truvami-api"
           args:
@@ -40,6 +41,10 @@ spec:
                   key: encryption-key
                   name: truvami-api
                   optional: false
+          securityContext:
+            {{- toYaml .Values.migration.securityContext | nindent 12 }}
+          resources:
+            {{- toYaml .Values.migration.resources | nindent 12 }}
           {{- with .Values.volumeMounts }}
           volumeMounts:
             {{- toYaml . | nindent 12 }}

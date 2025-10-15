@@ -93,7 +93,8 @@ securityContext:
       - ALL
   readOnlyRootFilesystem: true
   runAsNonRoot: true
-  runAsUser: 1000
+  runAsUser: 65534
+  runAsGroup: 65534
 
 metrics:
   enabled: true
@@ -123,9 +124,11 @@ resources:
   limits:
     cpu: 100m
     memory: 128Mi
+    ephemeral-storage: 1Gi
   requests:
     cpu: 100m
     memory: 128Mi
+    ephemeral-storage: 512Mi
 
 livenessProbe:
   httpGet:
@@ -163,5 +166,27 @@ tolerations: []
 
 affinity: {}
 
+migration:
+  resources:
+    limits:
+      cpu: 100m
+      memory: 128Mi
+      ephemeral-storage: 1Gi
+    requests:
+      cpu: 100m
+      memory: 128Mi
+      ephemeral-storage: 512Mi
+  securityContext:
+    capabilities:
+      drop:
+        - ALL
+    readOnlyRootFilesystem: true
+    runAsNonRoot: true
+    runAsUser: 65534
+    runAsGroup: 65534
+
 serviceMonitor:
+  enabled: false
+
+networkPolicy:
   enabled: false
