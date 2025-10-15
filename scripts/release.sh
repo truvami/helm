@@ -150,9 +150,9 @@ if [[ -z "$VERSION" ]]; then
 fi
 
 # Validate version format
-if [[ ! "$VERSION" =~ ^v[0-9]+\.[0-9]+\.[0-9]+(-rc\.[0-9]+)?$ ]]; then
+if [[ ! "$VERSION" =~ ^v[0-9]+\.[0-9]+\.[0-9]+(-rc[0-9]+)?$ ]]; then
     echo "❌ Invalid version format: $VERSION"
-    echo "Expected format: v1.2.0 or v1.2.0-rc.1"
+    echo "Expected format: v1.2.0 or v1.2.0-rc1"
     exit 1
 fi
 
