@@ -5,10 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.1-rc4] - 2025-10-15
+
+### Features
+- Enhance device dashboard with comprehensive monitoring and fix panel issues
+
 ## [1.0.1-rc3] - 2025-10-15
 
 ### Features
-- Add service dashboard for truvami-siren
+- Add service dashboard for truvami-siren by @michaelbeutler
 
 ## [1.0.0-rc2] - 2025-10-15
 
@@ -152,6 +157,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * @StefanSmile made their first contribution
 * @simylein made their first contribution
 
+[1.0.1-rc4]: https://github.com/truvami/helm/compare/v1.0.1-rc3...v1.0.1-rc4
 [1.0.1-rc3]: https://github.com/truvami/helm/compare/v1.0.0-rc2...v1.0.1-rc3
 [1.0.0-rc2]: https://github.com/truvami/helm/compare/v1.0.0-rc1...v1.0.0-rc2
 
