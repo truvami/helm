@@ -239,8 +239,15 @@ local row = grafana.row;
       } else {}),
       $.panels.goRow(),
       $.panels.goVersion(serviceName),
-      $.panels.goHeap(serviceName),
-      $.panels.goThreads(serviceName),
+      $.panels.goGoroutines(serviceName),
+      $.panels.goMaxProcs(serviceName),
+      $.panels.goGCRate(serviceName),
+      $.panels.goHeapCurrent(serviceName),
+      $.panels.goNextGC(serviceName),
+      $.panels.goHeapTimeseries(serviceName),
+      $.panels.goRuntimeTimeseries(serviceName),
+      $.panels.goGCDuration(serviceName),
+      $.panels.goMemoryAllocationRate(serviceName),
     ];
 
     local allTemplates = [
@@ -271,12 +278,33 @@ local row = grafana.row;
       timepicker: $.dashboardDefaults.timepicker,
     },
 
-  // Device dashboard builder (based on truvami-device.json reference)
-  deviceDashboard(serviceName='truvami-device')::
+  // Device dashboard builder (enhanced with uplinks.json panels)
+  deviceDashboard(serviceName='truvami-device', extraPanels=[])::
     local deviceTemplates = [
       $.templates.datasource,
       $.templates.namespace,
       $.templates.service(serviceName),
+      {
+        allowCustomValue: false,
+        current: { text: ['All'], value: ['$__all'] },
+        datasource: { type: 'prometheus', uid: '${datasource}' },
+        definition: 'label_values(truvami_device_uplink_count,customer)',
+        description: '',
+        includeAll: true,
+        label: 'Customers',
+        multi: true,
+        name: 'customers',
+        options: [],
+        query: {
+          qryType: 1,
+          query: 'label_values(truvami_device_uplink_count,customer)',
+          refId: 'PrometheusVariableQueryEditor-VariableQuery',
+        },
+        refresh: 1,
+        regex: '',
+        sort: 1,
+        type: 'query',
+      },
       {
         allowCustomValue: true,
         current: { text: ['All'], value: ['$__all'] },
@@ -298,9 +326,71 @@ local row = grafana.row;
         sort: 1,
         type: 'query',
       },
+      {
+        current: { text: ['All'], value: ['$__all'] },
+        datasource: { type: 'prometheus', uid: '${datasource}' },
+        definition: 'label_values(truvami_device_uplink_count,port)',
+        description: '',
+        includeAll: true,
+        label: 'Ports',
+        multi: true,
+        name: 'ports',
+        options: [],
+        query: {
+          qryType: 1,
+          query: 'label_values(truvami_device_uplink_count,port)',
+          refId: 'PrometheusVariableQueryEditor-VariableQuery',
+        },
+        refresh: 1,
+        regex: '',
+        sort: 3,
+        type: 'query',
+      },
+      {
+        current: { text: ['All'], value: ['$__all'] },
+        datasource: { type: 'prometheus', uid: '${datasource}' },
+        definition: 'label_values(truvami_device_uplink_count,spreadingFactor)',
+        includeAll: true,
+        label: 'Spreading Factors',
+        multi: true,
+        name: 'spreadingFactors',
+        options: [],
+        query: {
+          qryType: 1,
+          query: 'label_values(truvami_device_uplink_count,spreadingFactor)',
+          refId: 'PrometheusVariableQueryEditor-VariableQuery',
+        },
+        refresh: 1,
+        regex: '',
+        type: 'query',
+      },
+      {
+        auto: false,
+        auto_count: 30,
+        auto_min: '10s',
+        current: { text: '1h', value: '1h' },
+        description: '',
+        label: 'Interval',
+        name: 'interval',
+        options: [
+          { selected: false, text: '1m', value: '1m' },
+          { selected: false, text: '10m', value: '10m' },
+          { selected: false, text: '30m', value: '30m' },
+          { selected: true, text: '1h', value: '1h' },
+          { selected: false, text: '6h', value: '6h' },
+          { selected: false, text: '12h', value: '12h' },
+          { selected: false, text: '1d', value: '1d' },
+          { selected: false, text: '7d', value: '7d' },
+          { selected: false, text: '14d', value: '14d' },
+          { selected: false, text: '30d', value: '30d' },
+        ],
+        query: '1m,10m,30m,1h,6h,12h,1d,7d,14d,30d',
+        refresh: 2,
+        type: 'interval',
+      },
     ];
 
-    local devicePanels = [
+    local standardPanels = [
       // Alarms row
       row.new('Alarms') + { gridPos: { h: 1, w: 24, x: 0, y: 0 }, collapsed: false },
 
@@ -351,7 +441,7 @@ local row = grafana.row;
       // Alert list and pie chart
       $.panels.alertsList({ h: 15, w: 18, x: 0, y: 4 }) + {
         options+: {
-          alertInstanceLabelFilter: '{service="$service",namespace="$namespace"}',
+          alertInstanceLabelFilter: '{devEui=~"$devices",namespace="$namespace"}',
         },
       },
       $.panels.alertsPie({ h: 15, w: 6, x: 18, y: 4 }) + {
@@ -360,68 +450,6 @@ local row = grafana.row;
           legendFormat: '__auto',
           refId: 'A',
         }],
-      },
-
-      // Uplinks row
-      row.new('Uplinks') + { gridPos: { h: 1, w: 24, x: 0, y: 19 }, collapsed: false },
-
-      // Uplinks per hour graph
-      {
-        type: 'timeseries',
-        title: 'Uplinks per hour',
-        datasource: '${datasource}',
-        gridPos: { h: 10, w: 24, x: 0, y: 20 },
-        targets: [{
-          expr: 'avg by(devEui) (rate(truvami_device_uplink_count{devEui=~"$devices"}[1h])) * 60 * 60',
-          legendFormat: '__auto',
-          refId: 'A',
-        }],
-        fieldConfig: {
-          defaults: {
-            color: { mode: 'palette-classic' },
-            custom: {
-              axisBorderShow: false,
-              axisCenteredZero: false,
-              axisColorMode: 'text',
-              axisLabel: '',
-              axisPlacement: 'auto',
-              barAlignment: 0,
-              barWidthFactor: 0.6,
-              drawStyle: 'line',
-              fillOpacity: 0,
-              gradientMode: 'none',
-              hideFrom: { legend: false, tooltip: false, viz: false },
-              insertNulls: false,
-              lineInterpolation: 'linear',
-              lineWidth: 1,
-              pointSize: 5,
-              scaleDistribution: { type: 'linear' },
-              showPoints: 'auto',
-              spanNulls: false,
-              stacking: { group: 'A', mode: 'none' },
-              thresholdsStyle: { mode: 'off' },
-            },
-            mappings: [],
-            thresholds: {
-              mode: 'absolute',
-              steps: [{ color: 'green', value: 0 }],
-            },
-            unit: 'uplinks/h',
-          },
-        },
-        options: {
-          legend: {
-            calcs: [],
-            displayMode: 'list',
-            placement: 'bottom',
-            showLegend: true,
-          },
-          tooltip: {
-            hideZeros: false,
-            mode: 'single',
-            sort: 'none',
-          },
-        },
       },
     ];
 
@@ -436,7 +464,7 @@ local row = grafana.row;
     )
     .addAnnotations($.annotations)
     .addTemplates(deviceTemplates)
-    .addPanels(devicePanels)
+    .addPanels(standardPanels + extraPanels)
     + {
       fiscalYearStartMonth: $.dashboardDefaults.fiscalYearStartMonth,
       graphTooltip: $.dashboardDefaults.graphTooltip,
@@ -857,22 +885,20 @@ local row = grafana.row;
 
     // Alerts pie chart
     alertsPie(gridPos={ h: 15, w: 6, x: 18, y: 7 }):
-      pieChart.new(
-        'Alerts',
-        datasource='${datasource}',
-      )
-      .addTarget(
-        prometheus.target(
-          'count by(alertname) (ALERTS{namespace="$namespace", service="$service"})',
-          legendFormat='__auto',
-        )
-      )
-      + {
+      {
+        type: 'piechart',
+        title: 'Alerts',
+        datasource: '${datasource}',
+        gridPos: gridPos,
+        targets: [{
+          expr: 'count by(alertname) (ALERTS{namespace="$namespace", service="$service"})',
+          legendFormat: '__auto',
+          refId: 'A',
+        }],
         options: {
           legend: {
-            displayMode: 'list',
+            displayMode: 'visible',
             placement: 'bottom',
-            showLegend: true,
           },
           pieType: 'pie',
           reduceOptions: {
@@ -881,22 +907,21 @@ local row = grafana.row;
             values: false,
           },
           tooltip: {
-            hideZeros: false,
             mode: 'single',
             sort: 'none',
           },
+          displayLabels: ['name'],
         },
-        gridPos: gridPos,
       },
 
     // Go row
     goRow(gridPos={ h: 1, w: 24, x: 0, y: 22 }):
-      row.new('Go') + { gridPos: gridPos, collapsed: false },
+      row.new('Go Runtime Metrics') + { gridPos: gridPos, collapsed: false },
 
-    // Go version panel
-    goVersion(serviceName, gridPos={ h: 3, w: 6, x: 0, y: 23 }):
+    // Go version panel - more compact
+    goVersion(serviceName, gridPos={ h: 3, w: 4, x: 0, y: 23 }):
       stat.new(
-        'Version',
+        'Go Version',
         datasource='${datasource}',
       )
       .addTarget(
@@ -932,32 +957,257 @@ local row = grafana.row;
         gridPos: gridPos,
       },
 
-    // Go heap memory
-    goHeap(serviceName, gridPos={ h: 7, w: 18, x: 6, y: 23 }):
-      graphPanel.new(
-        'Heap',
+    // Goroutines count stat
+    goGoroutines(serviceName, gridPos={ h: 3, w: 4, x: 4, y: 23 }):
+      stat.new(
+        'Goroutines',
         datasource='${datasource}',
-        format='decbytes',
       )
       .addTarget(
         prometheus.target(
-          'avg_over_time(go_memstats_heap_alloc_bytes{namespace="$namespace", container="$service"}[$__interval])',
-          legendFormat='Heap',
+          'sum(go_goroutines{namespace="$namespace", container="$service"})',
+          legendFormat='Active',
         )
       )
       + {
         fieldConfig: {
           defaults: {
-            color: { fixedColor: 'blue', mode: 'fixed' },
+            color: { mode: 'thresholds' },
+            mappings: [],
+            thresholds: {
+              mode: 'absolute',
+              steps: [
+                { color: 'green', value: 0 },
+                { color: 'yellow', value: 100 },
+                { color: 'red', value: 500 }
+              ],
+            },
+            unit: 'short',
+          },
+          overrides: [],
+        },
+        options: {
+          colorMode: 'value',
+          graphMode: 'area',
+          justifyMode: 'auto',
+          orientation: 'auto',
+          reduceOptions: {
+            calcs: ['lastNotNull'],
+            fields: '',
+            values: false,
+          },
+          textMode: 'auto',
+        },
+        gridPos: gridPos,
+      },
+
+    // GOMAXPROCS stat
+    goMaxProcs(serviceName, gridPos={ h: 3, w: 4, x: 8, y: 23 }):
+      stat.new(
+        'GOMAXPROCS',
+        datasource='${datasource}',
+      )
+      .addTarget(
+        prometheus.target(
+          'max(go_sched_gomaxprocs_threads{namespace="$namespace", container="$service"})',
+          legendFormat='Max Procs',
+        )
+      )
+      + {
+        fieldConfig: {
+          defaults: {
+            color: { mode: 'thresholds' },
+            mappings: [],
+            thresholds: {
+              mode: 'absolute',
+              steps: [{ color: 'text', value: 0 }],
+            },
+            unit: 'short',
+          },
+          overrides: [],
+        },
+        options: {
+          colorMode: 'value',
+          graphMode: 'none',
+          justifyMode: 'auto',
+          orientation: 'auto',
+          reduceOptions: {
+            calcs: ['lastNotNull'],
+            fields: '',
+            values: false,
+          },
+          textMode: 'auto',
+        },
+        gridPos: gridPos,
+      },
+
+    // GC rate stat
+    goGCRate(serviceName, gridPos={ h: 3, w: 4, x: 12, y: 23 }):
+      stat.new(
+        'GC Rate',
+        datasource='${datasource}',
+      )
+      .addTarget(
+        prometheus.target(
+          'rate(go_gc_duration_seconds_count{namespace="$namespace", container="$service"}[5m]) * 60',
+          legendFormat='GC/min',
+        )
+      )
+      + {
+        fieldConfig: {
+          defaults: {
+            color: { mode: 'thresholds' },
+            mappings: [],
+            thresholds: {
+              mode: 'absolute',
+              steps: [
+                { color: 'green', value: 0 },
+                { color: 'yellow', value: 10 },
+                { color: 'red', value: 30 }
+              ],
+            },
+            unit: 'short',
+            decimals: 2,
+          },
+          overrides: [],
+        },
+        options: {
+          colorMode: 'value',
+          graphMode: 'area',
+          justifyMode: 'auto',
+          orientation: 'auto',
+          reduceOptions: {
+            calcs: ['lastNotNull'],
+            fields: '',
+            values: false,
+          },
+          textMode: 'auto',
+        },
+        gridPos: gridPos,
+      },
+
+    // Current heap usage stat
+    goHeapCurrent(serviceName, gridPos={ h: 3, w: 4, x: 16, y: 23 }):
+      stat.new(
+        'Heap Usage',
+        datasource='${datasource}',
+      )
+      .addTarget(
+        prometheus.target(
+          'sum(go_memstats_heap_alloc_bytes{namespace="$namespace", container="$service"})',
+          legendFormat='Allocated',
+        )
+      )
+      + {
+        fieldConfig: {
+          defaults: {
+            color: { mode: 'thresholds' },
+            mappings: [],
+            thresholds: {
+              mode: 'absolute',
+              steps: [
+                { color: 'green', value: 0 },
+                { color: 'yellow', value: 50000000 },  // 50MB
+                { color: 'red', value: 200000000 }     // 200MB
+              ],
+            },
+            unit: 'decbytes',
+          },
+          overrides: [],
+        },
+        options: {
+          colorMode: 'value',
+          graphMode: 'area',
+          justifyMode: 'auto',
+          orientation: 'auto',
+          reduceOptions: {
+            calcs: ['lastNotNull'],
+            fields: '',
+            values: false,
+          },
+          textMode: 'auto',
+        },
+        gridPos: gridPos,
+      },
+
+    // Next GC threshold
+    goNextGC(serviceName, gridPos={ h: 3, w: 4, x: 20, y: 23 }):
+      stat.new(
+        'Next GC',
+        datasource='${datasource}',
+      )
+      .addTarget(
+        prometheus.target(
+          'sum(go_memstats_next_gc_bytes{namespace="$namespace", container="$service"})',
+          legendFormat='Threshold',
+        )
+      )
+      + {
+        fieldConfig: {
+          defaults: {
+            color: { mode: 'thresholds' },
+            mappings: [],
+            thresholds: {
+              mode: 'absolute',
+              steps: [{ color: 'text', value: 0 }],
+            },
+            unit: 'decbytes',
+          },
+          overrides: [],
+        },
+        options: {
+          colorMode: 'value',
+          graphMode: 'none',
+          justifyMode: 'auto',
+          orientation: 'auto',
+          reduceOptions: {
+            calcs: ['lastNotNull'],
+            fields: '',
+            values: false,
+          },
+          textMode: 'auto',
+        },
+        gridPos: gridPos,
+      },
+
+    // Memory allocation over time
+    goHeapTimeseries(serviceName, gridPos={ h: 8, w: 12, x: 0, y: 26 }):
+      graphPanel.new(
+        'Go Memory Usage Over Time',
+        datasource='${datasource}',
+        format='decbytes',
+      )
+      .addTargets([
+        prometheus.target(
+          'go_memstats_heap_alloc_bytes{namespace="$namespace", container="$service"}',
+          legendFormat='Heap Allocated',
+        ),
+        prometheus.target(
+          'go_memstats_heap_inuse_bytes{namespace="$namespace", container="$service"}',
+          legendFormat='Heap In Use',
+        ),
+        prometheus.target(
+          'go_memstats_heap_sys_bytes{namespace="$namespace", container="$service"}',
+          legendFormat='Heap System',
+        ),
+        prometheus.target(
+          'go_memstats_stack_inuse_bytes{namespace="$namespace", container="$service"}',
+          legendFormat='Stack In Use',
+        ),
+      ])
+      + {
+        fieldConfig: {
+          defaults: {
+            color: { mode: 'palette-classic' },
             custom: {
               drawStyle: 'line',
               lineInterpolation: 'linear',
               lineWidth: 2,
-              fillOpacity: 10,
+              fillOpacity: 0,
               gradientMode: 'none',
               spanNulls: false,
               insertNulls: false,
-              showPoints: 'auto',
+              showPoints: 'never',
               pointSize: 5,
               stacking: { group: 'A', mode: 'none' },
               axisPlacement: 'auto',
@@ -972,7 +1222,7 @@ local row = grafana.row;
             mappings: [],
             thresholds: {
               mode: 'absolute',
-              steps: [{ color: 'text', value: 0 }],
+              steps: [{ color: 'green', value: 0 }],
             },
             unit: 'decbytes',
           },
@@ -980,28 +1230,37 @@ local row = grafana.row;
         },
         options: {
           legend: {
-            calcs: [],
-            displayMode: 'list',
+            calcs: ['lastNotNull', 'max'],
+            displayMode: 'table',
             placement: 'bottom',
-            showLegend: false,
+            showLegend: true,
           },
-          tooltip: { mode: 'single', sort: 'none' },
+          tooltip: { mode: 'multi', sort: 'desc' },
         },
         gridPos: gridPos,
       },
 
-    // Go threads
-    goThreads(serviceName, gridPos={ h: 4, w: 6, x: 0, y: 26 }):
+    // Goroutines and GC metrics over time
+    goRuntimeTimeseries(serviceName, gridPos={ h: 8, w: 12, x: 12, y: 26 }):
       graphPanel.new(
-        'Threads',
+        'Go Runtime Metrics Over Time',
         datasource='${datasource}',
+        format='short',
       )
-      .addTarget(
+      .addTargets([
         prometheus.target(
-          'avg_over_time(go_threads{namespace="$namespace", container="$service"}[$__interval])',
-          legendFormat='Threads',
-        )
-      )
+          'go_goroutines{namespace="$namespace", container="$service"}',
+          legendFormat='Goroutines',
+        ),
+        prometheus.target(
+          'go_threads{namespace="$namespace", container="$service"}',
+          legendFormat='OS Threads',
+        ),
+        prometheus.target(
+          'rate(go_gc_duration_seconds_count{namespace="$namespace", container="$service"}[5m]) * 60',
+          legendFormat='GC Rate (per min)',
+        ),
+      ])
       + {
         fieldConfig: {
           defaults: {
@@ -1010,11 +1269,11 @@ local row = grafana.row;
               drawStyle: 'line',
               lineInterpolation: 'linear',
               lineWidth: 2,
-              fillOpacity: 10,
+              fillOpacity: 0,
               gradientMode: 'none',
               spanNulls: false,
               insertNulls: false,
-              showPoints: 'auto',
+              showPoints: 'never',
               pointSize: 5,
               stacking: { group: 'A', mode: 'none' },
               axisPlacement: 'auto',
@@ -1032,6 +1291,554 @@ local row = grafana.row;
               steps: [{ color: 'green', value: 0 }],
             },
           },
+          overrides: [
+            {
+              matcher: { id: 'byName', options: 'GC Rate (per min)' },
+              properties: [{ id: 'unit', value: 'short' }],
+            },
+          ],
+        },
+        options: {
+          legend: {
+            calcs: ['lastNotNull', 'max', 'mean'],
+            displayMode: 'table',
+            placement: 'bottom',
+            showLegend: true,
+          },
+          tooltip: { mode: 'multi', sort: 'desc' },
+        },
+        gridPos: gridPos,
+      },
+
+    // GC duration heatmap
+    goGCDuration(serviceName, gridPos={ h: 8, w: 12, x: 0, y: 34 }):
+      graphPanel.new(
+        'GC Duration Percentiles',
+        datasource='${datasource}',
+        format='s',
+      )
+      .addTargets([
+        prometheus.target(
+          'go_gc_duration_seconds{quantile="0",namespace="$namespace", container="$service"}',
+          legendFormat='p0 (min)',
+        ),
+        prometheus.target(
+          'go_gc_duration_seconds{quantile="0.25",namespace="$namespace", container="$service"}',
+          legendFormat='p25',
+        ),
+        prometheus.target(
+          'go_gc_duration_seconds{quantile="0.5",namespace="$namespace", container="$service"}',
+          legendFormat='p50 (median)',
+        ),
+        prometheus.target(
+          'go_gc_duration_seconds{quantile="0.75",namespace="$namespace", container="$service"}',
+          legendFormat='p75',
+        ),
+        prometheus.target(
+          'go_gc_duration_seconds{quantile="1",namespace="$namespace", container="$service"}',
+          legendFormat='p100 (max)',
+        ),
+      ])
+      + {
+        fieldConfig: {
+          defaults: {
+            color: { mode: 'palette-classic' },
+            custom: {
+              drawStyle: 'line',
+              lineInterpolation: 'linear',
+              lineWidth: 2,
+              fillOpacity: 10,
+              gradientMode: 'none',
+              spanNulls: false,
+              insertNulls: false,
+              showPoints: 'never',
+              pointSize: 5,
+              stacking: { group: 'A', mode: 'none' },
+              axisPlacement: 'auto',
+              axisLabel: 'Duration',
+              axisColorMode: 'text',
+              axisBorderShow: false,
+              scaleDistribution: { type: 'linear' },
+              axisCenteredZero: false,
+              hideFrom: { legend: false, tooltip: false, viz: false },
+              thresholdsStyle: { mode: 'off' },
+            },
+            mappings: [],
+            thresholds: {
+              mode: 'absolute',
+              steps: [
+                { color: 'green', value: 0 },
+                { color: 'yellow', value: 0.001 },  // 1ms
+                { color: 'red', value: 0.01 }       // 10ms
+              ],
+            },
+            unit: 's',
+          },
+          overrides: [],
+        },
+        options: {
+          legend: {
+            calcs: ['lastNotNull', 'max'],
+            displayMode: 'table',
+            placement: 'bottom',
+            showLegend: true,
+          },
+          tooltip: { mode: 'multi', sort: 'desc' },
+        },
+        gridPos: gridPos,
+      },
+
+    // Memory allocation rate and GC efficiency
+    goMemoryAllocationRate(serviceName, gridPos={ h: 8, w: 12, x: 12, y: 34 }):
+      graphPanel.new(
+        'Memory Allocation & GC Efficiency',
+        datasource='${datasource}',
+        format='binBps',
+      )
+      .addTargets([
+        prometheus.target(
+          'rate(go_memstats_alloc_bytes_total{namespace="$namespace", container="$service"}[5m])',
+          legendFormat='Allocation Rate',
+        ),
+        prometheus.target(
+          'rate(go_memstats_frees_total{namespace="$namespace", container="$service"}[5m])',
+          legendFormat='Object Frees/sec',
+        ),
+        prometheus.target(
+          'rate(go_memstats_mallocs_total{namespace="$namespace", container="$service"}[5m])',
+          legendFormat='Object Mallocs/sec',
+        ),
+      ])
+      + {
+        fieldConfig: {
+          defaults: {
+            color: { mode: 'palette-classic' },
+            custom: {
+              drawStyle: 'line',
+              lineInterpolation: 'linear',
+              lineWidth: 2,
+              fillOpacity: 0,
+              gradientMode: 'none',
+              spanNulls: false,
+              insertNulls: false,
+              showPoints: 'never',
+              pointSize: 5,
+              stacking: { group: 'A', mode: 'none' },
+              axisPlacement: 'auto',
+              axisLabel: '',
+              axisColorMode: 'text',
+              axisBorderShow: false,
+              scaleDistribution: { type: 'linear' },
+              axisCenteredZero: false,
+              hideFrom: { legend: false, tooltip: false, viz: false },
+              thresholdsStyle: { mode: 'off' },
+            },
+            mappings: [],
+            thresholds: {
+              mode: 'absolute',
+              steps: [{ color: 'green', value: 0 }],
+            },
+          },
+          overrides: [
+            {
+              matcher: { id: 'byRegexp', options: '.*Frees.*|.*Mallocs.*' },
+              properties: [{ id: 'unit', value: 'ops' }],
+            },
+          ],
+        },
+        options: {
+          legend: {
+            calcs: ['lastNotNull', 'max', 'mean'],
+            displayMode: 'table',
+            placement: 'bottom',
+            showLegend: true,
+          },
+          tooltip: { mode: 'multi', sort: 'desc' },
+        },
+        gridPos: gridPos,
+      },
+
+    // Device-specific panels for uplinks monitoring
+    uplinksByDevicesTimeseries(gridPos={ h: 10, w: 18, x: 0, y: 0 }):
+      {
+        type: 'timeseries',
+        title: 'Uplinks by devices',
+        datasource: '${datasource}',
+        gridPos: gridPos,
+        targets: [{
+          expr: 'sum by(devEui) (increase(truvami_device_uplink_count{customer=~"$customers", devEui=~"$devices", port=~"$ports", spreadingFactor=~"$spreadingFactors", namespace="$namespace"}[$interval]))',
+          legendFormat: '{{devEui}}',
+          refId: 'A',
+        }],
+        fieldConfig: {
+          defaults: {
+            color: { mode: 'palette-classic' },
+            custom: {
+              axisBorderShow: false,
+              axisCenteredZero: false,
+              axisColorMode: 'text',
+              axisLabel: '',
+              axisPlacement: 'auto',
+              barAlignment: 0,
+              barWidthFactor: 0.6,
+              drawStyle: 'line',
+              fillOpacity: 10,
+              gradientMode: 'none',
+              hideFrom: { legend: false, tooltip: false, viz: false },
+              insertNulls: false,
+              lineInterpolation: 'linear',
+              lineWidth: 1,
+              pointSize: 5,
+              scaleDistribution: { type: 'linear' },
+              showPoints: 'auto',
+              spanNulls: false,
+              stacking: { group: 'A', mode: 'none' },
+              thresholdsStyle: { mode: 'off' },
+            },
+            mappings: [],
+            thresholds: {
+              mode: 'absolute',
+              steps: [{ color: 'green' }],
+            },
+          },
+          overrides: [],
+        },
+        options: {
+          legend: {
+            calcs: [],
+            displayMode: 'list',
+            placement: 'right',
+            showLegend: true,
+          },
+          tooltip: {
+            hideZeros: false,
+            mode: 'single',
+            sort: 'none',
+          },
+        },
+      },
+
+    uplinksByDevicesPie(gridPos={ h: 10, w: 6, x: 18, y: 0 }):
+      {
+        type: 'piechart',
+        title: 'Uplinks by devices',
+        datasource: '${datasource}',
+        gridPos: gridPos,
+        targets: [{
+          expr: 'sum by(devEui) (increase(truvami_device_uplink_count{customer=~"$customers", devEui=~"$devices", port=~"$ports", spreadingFactor=~"$spreadingFactors", namespace="$namespace"}[$__range]))',
+          legendFormat: '{{devEui}}',
+          refId: 'A',
+        }],
+        options: {
+          reduceOptions: {
+            values: false,
+            calcs: ['lastNotNull'],
+            fields: '',
+          },
+          pieType: 'pie',
+          tooltip: { mode: 'single', sort: 'none' },
+          legend: {
+            displayMode: 'visible',
+            placement: 'bottom',
+          },
+          displayLabels: ['name'],
+        },
+      },
+
+    uplinksByPortsTimeseries(gridPos={ h: 10, w: 18, x: 0, y: 10 }):
+      {
+        type: 'timeseries',
+        title: 'Uplinks by ports',
+        datasource: '${datasource}',
+        gridPos: gridPos,
+        targets: [{
+          expr: 'sum by(port) (increase(truvami_device_uplink_count{customer=~"$customers", devEui=~"$devices", port=~"$ports", spreadingFactor=~"$spreadingFactors", namespace="$namespace"}[$interval]))',
+          legendFormat: 'Port {{port}}',
+          refId: 'A',
+        }],
+        fieldConfig: {
+          defaults: {
+            color: { mode: 'palette-classic' },
+            custom: {
+              axisBorderShow: false,
+              axisCenteredZero: false,
+              axisColorMode: 'text',
+              axisLabel: '',
+              axisPlacement: 'auto',
+              barAlignment: 0,
+              barWidthFactor: 0.6,
+              drawStyle: 'line',
+              fillOpacity: 10,
+              gradientMode: 'none',
+              hideFrom: { legend: false, tooltip: false, viz: false },
+              insertNulls: false,
+              lineInterpolation: 'linear',
+              lineWidth: 1,
+              pointSize: 5,
+              scaleDistribution: { type: 'linear' },
+              showPoints: 'auto',
+              spanNulls: false,
+              stacking: { group: 'A', mode: 'none' },
+              thresholdsStyle: { mode: 'off' },
+            },
+            mappings: [],
+            thresholds: {
+              mode: 'absolute',
+              steps: [{ color: 'green' }],
+            },
+          },
+          overrides: [],
+        },
+        options: {
+          legend: {
+            calcs: [],
+            displayMode: 'list',
+            placement: 'right',
+            showLegend: true,
+          },
+          tooltip: {
+            hideZeros: false,
+            mode: 'single',
+            sort: 'none',
+          },
+        },
+      },
+
+    uplinksByPortsPie(gridPos={ h: 10, w: 6, x: 18, y: 10 }):
+      {
+        type: 'piechart',
+        title: 'Uplinks by ports',
+        datasource: '${datasource}',
+        gridPos: gridPos,
+        targets: [{
+          expr: 'sum by(port) (increase(truvami_device_uplink_count{customer=~"$customers", devEui=~"$devices", port=~"$ports", spreadingFactor=~"$spreadingFactors", namespace="$namespace"}[$__range]))',
+          legendFormat: 'Port {{port}}',
+          refId: 'A',
+        }],
+        options: {
+          reduceOptions: {
+            values: false,
+            calcs: ['lastNotNull'],
+            fields: '',
+          },
+          pieType: 'pie',
+          tooltip: { mode: 'single', sort: 'none' },
+          legend: {
+            displayMode: 'visible',
+            placement: 'bottom',
+          },
+          displayLabels: ['name'],
+        },
+      },
+
+    uplinksBySpreadingFactorsTimeseries(gridPos={ h: 10, w: 18, x: 0, y: 20 }):
+      {
+        type: 'timeseries',
+        title: 'Uplinks by spreading factors',
+        datasource: '${datasource}',
+        gridPos: gridPos,
+        targets: [{
+          expr: 'sum by(spreadingFactor) (increase(truvami_device_uplink_count{customer=~"$customers", devEui=~"$devices", port=~"$ports", spreadingFactor=~"$spreadingFactors", namespace="$namespace"}[$interval]))',
+          legendFormat: '{{spreadingFactor}}',
+          refId: 'A',
+        }],
+        fieldConfig: {
+          defaults: {
+            color: { mode: 'palette-classic' },
+            custom: {
+              axisBorderShow: false,
+              axisCenteredZero: false,
+              axisColorMode: 'text',
+              axisLabel: '',
+              axisPlacement: 'auto',
+              barAlignment: 0,
+              barWidthFactor: 0.6,
+              drawStyle: 'line',
+              fillOpacity: 10,
+              gradientMode: 'none',
+              hideFrom: { legend: false, tooltip: false, viz: false },
+              insertNulls: false,
+              lineInterpolation: 'linear',
+              lineWidth: 1,
+              pointSize: 5,
+              scaleDistribution: { type: 'linear' },
+              showPoints: 'auto',
+              spanNulls: false,
+              stacking: { group: 'A', mode: 'none' },
+              thresholdsStyle: { mode: 'off' },
+            },
+            mappings: [],
+            thresholds: {
+              mode: 'absolute',
+              steps: [{ color: 'green' }],
+            },
+          },
+          overrides: [],
+        },
+        options: {
+          legend: {
+            calcs: [],
+            displayMode: 'list',
+            placement: 'right',
+            showLegend: true,
+          },
+          tooltip: {
+            hideZeros: false,
+            mode: 'single',
+            sort: 'none',
+          },
+        },
+      },
+
+    uplinksBySpreadingFactorsPie(gridPos={ h: 10, w: 6, x: 18, y: 20 }):
+      {
+        type: 'piechart',
+        title: 'Uplinks by spreading factors',
+        datasource: '${datasource}',
+        gridPos: gridPos,
+        targets: [{
+          expr: 'sum by(spreadingFactor) (increase(truvami_device_uplink_count{customer=~"$customers", devEui=~"$devices", port=~"$ports", spreadingFactor=~"$spreadingFactors", namespace="$namespace"}[$__range]))',
+          legendFormat: '{{spreadingFactor}}',
+          refId: 'A',
+        }],
+        options: {
+          reduceOptions: {
+            values: false,
+            calcs: ['lastNotNull'],
+            fields: '',
+          },
+          pieType: 'pie',
+          tooltip: { mode: 'single', sort: 'none' },
+          legend: {
+            displayMode: 'visible',
+            placement: 'bottom',
+          },
+          displayLabels: ['name'],
+        },
+      },
+
+    uplinksRate(gridPos={ h: 10, w: 6, x: 0, y: 30 }):
+      {
+        type: 'stat',
+        title: 'Uplinks',
+        datasource: '${datasource}',
+        gridPos: gridPos,
+        targets: [{
+          expr: 'sum by(__name__) (rate(truvami_device_uplink_count{customer=~"$customers", devEui=~"$devices", port=~"$ports", spreadingFactor=~"$spreadingFactors", namespace="$namespace"}[$interval]))',
+          legendFormat: '__auto',
+          refId: 'A',
+        }],
+        fieldConfig: {
+          defaults: {
+            color: { mode: 'palette-classic' },
+            mappings: [],
+            thresholds: {
+              mode: 'absolute',
+              steps: [
+                { color: 'green', value: null },
+                { color: 'red', value: 80 },
+              ],
+            },
+          },
+          overrides: [],
+        },
+        options: {
+          colorMode: 'none',
+          graphMode: 'area',
+          justifyMode: 'auto',
+          orientation: 'auto',
+          reduceOptions: {
+            values: false,
+            calcs: ['lastNotNull'],
+            fields: '',
+          },
+          textMode: 'auto',
+        },
+      },
+
+    uplinksPerHour(gridPos={ h: 10, w: 6, x: 6, y: 30 }):
+      {
+        type: 'stat',
+        title: 'Uplinks per hour',
+        datasource: '${datasource}',
+        gridPos: gridPos,
+        targets: [{
+          expr: 'sum by(__name__) (rate(truvami_device_uplink_count{customer=~"$customers", devEui=~"$devices", port=~"$ports", spreadingFactor=~"$spreadingFactors", namespace="$namespace"}[1h]) * 3600)',
+          legendFormat: '__auto',
+          refId: 'A',
+        }],
+        fieldConfig: {
+          defaults: {
+            color: { mode: 'thresholds' },
+            mappings: [],
+            thresholds: {
+              mode: 'absolute',
+              steps: [
+                { color: 'green', value: null },
+                { color: 'yellow', value: 100 },
+                { color: 'red', value: 500 },
+              ],
+            },
+            unit: 'short',
+          },
+          overrides: [],
+        },
+        options: {
+          colorMode: 'value',
+          graphMode: 'area',
+          justifyMode: 'auto',
+          orientation: 'auto',
+          reduceOptions: {
+            values: false,
+            calcs: ['lastNotNull'],
+            fields: '',
+          },
+          textMode: 'auto',
+        },
+      },
+
+    uplinkSequence(gridPos={ h: 10, w: 18, x: 12, y: 30 }):
+      {
+        type: 'timeseries',
+        title: 'Uplink sequence',
+        datasource: '${datasource}',
+        gridPos: gridPos,
+        targets: [{
+          expr: 'avg by(devEui) (truvami_device_uplink_frame_counter{customer=~"$customers", devEui=~"$devices", port=~"$ports", namespace="$namespace"})',
+          legendFormat: '{{devEui}}',
+          refId: 'A',
+        }],
+        fieldConfig: {
+          defaults: {
+            color: { mode: 'palette-classic' },
+            custom: {
+              axisBorderShow: false,
+              axisCenteredZero: false,
+              axisColorMode: 'text',
+              axisLabel: '',
+              axisPlacement: 'auto',
+              barAlignment: 0,
+              barWidthFactor: 0.6,
+              drawStyle: 'line',
+              fillOpacity: 0,
+              gradientMode: 'none',
+              hideFrom: { legend: false, tooltip: false, viz: false },
+              insertNulls: false,
+              lineInterpolation: 'linear',
+              lineWidth: 1,
+              pointSize: 5,
+              scaleDistribution: { type: 'linear' },
+              showPoints: 'auto',
+              spanNulls: false,
+              stacking: { group: 'A', mode: 'none' },
+              thresholdsStyle: { mode: 'off' },
+            },
+            mappings: [],
+            thresholds: {
+              mode: 'absolute',
+              steps: [{ color: 'green' }],
+            },
+          },
           overrides: [],
         },
         options: {
@@ -1039,84 +1846,300 @@ local row = grafana.row;
             calcs: [],
             displayMode: 'list',
             placement: 'bottom',
-            showLegend: false,
+            showLegend: true,
           },
-          tooltip: { mode: 'single', sort: 'none' },
+          tooltip: {
+            hideZeros: false,
+            mode: 'single',
+            sort: 'none',
+          },
         },
-        gridPos: gridPos,
       },
 
-    // Pod status
-    podStatus(serviceName, gridPos={ h: 8, w: 12, x: 0, y: 8 }):
-      graphPanel.new(
-        'Pod Status',
-        datasource='${datasource}',
-        format='short',
-        stack=true,
-      ).addTargets([
-        prometheus.target(
-          'sum by(phase) (kube_pod_status_phase{namespace="$namespace",pod=~"' + serviceName + '-.*"})',
-          legendFormat='{{phase}}',
-        ),
-      ]) + { gridPos: gridPos },
+    // Device status panels
+    batteryByDevices(gridPos={ h: 10, w: 12, x: 0, y: 40 }):
+      {
+        type: 'timeseries',
+        title: 'Battery by devices',
+        datasource: '${datasource}',
+        gridPos: gridPos,
+        targets: [{
+          expr: 'avg by(devEui) (truvami_device_battery_status{customer=~"$customers", devEui=~"$devices", namespace="$namespace"})',
+          legendFormat: '{{devEui}}',
+          refId: 'A',
+        }],
+        fieldConfig: {
+          defaults: {
+            color: { mode: 'palette-classic' },
+            custom: {
+              axisBorderShow: false,
+              axisCenteredZero: false,
+              axisColorMode: 'text',
+              axisLabel: '',
+              axisPlacement: 'auto',
+              barAlignment: 0,
+              barWidthFactor: 0.6,
+              drawStyle: 'line',
+              fillOpacity: 0,
+              gradientMode: 'none',
+              hideFrom: { legend: false, tooltip: false, viz: false },
+              insertNulls: false,
+              lineInterpolation: 'linear',
+              lineWidth: 1,
+              pointSize: 5,
+              scaleDistribution: { type: 'linear' },
+              showPoints: 'auto',
+              spanNulls: false,
+              stacking: { group: 'A', mode: 'none' },
+              thresholdsStyle: { mode: 'off' },
+            },
+            mappings: [],
+            thresholds: {
+              mode: 'absolute',
+              steps: [
+                { color: 'red', value: 0 },
+                { color: 'yellow', value: 3.5 },
+                { color: 'green', value: 4.0 },
+              ],
+            },
+            unit: 'volt',
+          },
+          overrides: [],
+        },
+        options: {
+          legend: {
+            calcs: [],
+            displayMode: 'list',
+            placement: 'bottom',
+            showLegend: true,
+          },
+          tooltip: {
+            hideZeros: false,
+            mode: 'single',
+            sort: 'none',
+          },
+        },
+      },
 
-    // Memory usage
-    memoryUsage(serviceName, gridPos={ h: 8, w: 12, x: 12, y: 8 }):
-      graphPanel.new(
-        'Memory Usage',
-        datasource='${datasource}',
-        format='bytes',
-      ).addTargets([
-        prometheus.target(
-          'sum(container_memory_usage_bytes{namespace="$namespace",pod=~"' + serviceName + '-.*",container!="POD",container!=""})',
-          legendFormat='Usage',
-        ),
-        prometheus.target(
-          'sum(container_spec_memory_limit_bytes{namespace="$namespace",pod=~"' + serviceName + '-.*",container!="POD",container!=""})',
-          legendFormat='Limit',
-        ),
-      ]) + { gridPos: gridPos },
+    bufferLevelByDevices(gridPos={ h: 10, w: 12, x: 12, y: 40 }):
+      {
+        type: 'timeseries',
+        title: 'Buffer level by devices',
+        datasource: '${datasource}',
+        gridPos: gridPos,
+        targets: [{
+          expr: 'avg by(devEui) (truvami_device_buffer_level{customer=~"$customers", devEui=~"$devices", namespace="$namespace"})',
+          legendFormat: '{{devEui}}',
+          refId: 'A',
+        }],
+        fieldConfig: {
+          defaults: {
+            color: { mode: 'palette-classic' },
+            custom: {
+              axisBorderShow: false,
+              axisCenteredZero: false,
+              axisColorMode: 'text',
+              axisLabel: '',
+              axisPlacement: 'auto',
+              barAlignment: 0,
+              barWidthFactor: 0.6,
+              drawStyle: 'line',
+              fillOpacity: 0,
+              gradientMode: 'none',
+              hideFrom: { legend: false, tooltip: false, viz: false },
+              insertNulls: false,
+              lineInterpolation: 'linear',
+              lineWidth: 1,
+              pointSize: 5,
+              scaleDistribution: { type: 'linear' },
+              showPoints: 'auto',
+              spanNulls: false,
+              stacking: { group: 'A', mode: 'none' },
+              thresholdsStyle: { mode: 'off' },
+            },
+            mappings: [],
+            thresholds: {
+              mode: 'absolute',
+              steps: [
+                { color: 'green', value: 0 },
+                { color: 'yellow', value: 5 },
+                { color: 'red', value: 10 },
+              ],
+            },
+          },
+          overrides: [],
+        },
+        options: {
+          legend: {
+            calcs: [],
+            displayMode: 'list',
+            placement: 'bottom',
+            showLegend: true,
+          },
+          tooltip: {
+            hideZeros: false,
+            mode: 'single',
+            sort: 'none',
+          },
+        },
+      },
 
-    // CPU usage
-    cpuUsage(serviceName, gridPos={ h: 8, w: 12, x: 0, y: 16 }):
-      graphPanel.new(
-        'CPU Usage',
-        datasource='${datasource}',
-        format='percent',
-      ).addTargets([
-        prometheus.target(
-          'sum(rate(container_cpu_usage_seconds_total{namespace="$namespace",pod=~"' + serviceName + '-.*",container!="POD",container!=""}[5m])) * 100',
-          legendFormat='Usage %',
-        ),
-      ]) + { gridPos: gridPos },
+    // Decode error monitoring panels
+    decodeErrorRate(gridPos={ h: 10, w: 6, x: 0, y: 50 }):
+      {
+        type: 'stat',
+        title: 'Decode error rate',
+        datasource: '${datasource}',
+        gridPos: gridPos,
+        targets: [{
+          expr: 'sum(rate(truvami_failed_to_decode_payload_count{devEui=~"$devices", port=~"$ports", namespace="$namespace"}[$interval])) / sum(rate(truvami_device_uplink_count{customer=~"$customers", devEui=~"$devices", port=~"$ports", spreadingFactor=~"$spreadingFactors", namespace="$namespace"}[$interval]))',
+          legendFormat: '__auto',
+          refId: 'A',
+        }],
+        fieldConfig: {
+          defaults: {
+            color: { mode: 'thresholds' },
+            mappings: [],
+            thresholds: {
+              mode: 'absolute',
+              steps: [
+                { color: 'green', value: null },
+                { color: 'yellow', value: 0.05 },
+                { color: 'red', value: 0.1 },
+              ],
+            },
+            unit: 'percentunit',
+            min: 0,
+            max: 1,
+          },
+          overrides: [],
+        },
+        options: {
+          colorMode: 'background',
+          graphMode: 'area',
+          justifyMode: 'auto',
+          orientation: 'auto',
+          reduceOptions: {
+            values: false,
+            calcs: ['lastNotNull'],
+            fields: '',
+          },
+          textMode: 'auto',
+        },
+      },
 
-    // Request rate
-    requestRate(serviceName, gridPos={ h: 8, w: 12, x: 12, y: 16 }):
-      graphPanel.new(
-        'Request Rate',
-        datasource='${datasource}',
-        format='reqps',
-      ).addTargets([
-        prometheus.target(
-          'sum(rate(http_requests_total{service="' + serviceName + '",namespace="$namespace"}[5m]))',
-          legendFormat='Requests/sec',
-        ),
-      ]) + { gridPos: gridPos },
+    decodeErrorsByDevicesTimeseries(gridPos={ h: 10, w: 18, x: 6, y: 50 }):
+      {
+        type: 'timeseries',
+        title: 'Decode errors by devices',
+        datasource: '${datasource}',
+        gridPos: gridPos,
+        targets: [{
+          expr: 'sum by(devEui) (increase(truvami_failed_to_decode_payload_count{devEui=~"$devices", port=~"$ports", namespace="$namespace"}[$interval]))',
+          legendFormat: '{{devEui}}',
+          refId: 'A',
+        }],
+        fieldConfig: {
+          defaults: {
+            color: { mode: 'palette-classic' },
+            custom: {
+              axisBorderShow: false,
+              axisCenteredZero: false,
+              axisColorMode: 'text',
+              axisLabel: '',
+              axisPlacement: 'auto',
+              barAlignment: 0,
+              barWidthFactor: 0.6,
+              drawStyle: 'line',
+              fillOpacity: 10,
+              gradientMode: 'none',
+              hideFrom: { legend: false, tooltip: false, viz: false },
+              insertNulls: false,
+              lineInterpolation: 'linear',
+              lineWidth: 1,
+              pointSize: 5,
+              scaleDistribution: { type: 'linear' },
+              showPoints: 'auto',
+              spanNulls: false,
+              stacking: { group: 'A', mode: 'none' },
+              thresholdsStyle: { mode: 'off' },
+            },
+            mappings: [],
+            thresholds: {
+              mode: 'absolute',
+              steps: [{ color: 'green' }],
+            },
+          },
+          overrides: [],
+        },
+        options: {
+          legend: {
+            calcs: [],
+            displayMode: 'list',
+            placement: 'bottom',
+            showLegend: true,
+          },
+          tooltip: {
+            hideZeros: false,
+            mode: 'single',
+            sort: 'none',
+          },
+        },
+      },
 
-    // Error rate
-    errorRate(serviceName, gridPos={ h: 8, w: 24, x: 0, y: 24 }):
-      graphPanel.new(
-        'Error Rate',
-        datasource='${datasource}',
-        format='percent',
-        min=0,
-        max=100,
-      ).addTargets([
-        prometheus.target(
-          'sum(rate(http_requests_total{service="' + serviceName + '",namespace="$namespace",code=~"5.."}[5m])) / sum(rate(http_requests_total{service="' + serviceName + '",namespace="$namespace"}[5m])) * 100',
-          legendFormat='Error Rate %',
-        ),
-      ]) + { gridPos: gridPos },
+    decodeErrorsByDevicesPie(gridPos={ h: 10, w: 12, x: 0, y: 60 }):
+      {
+        type: 'piechart',
+        title: 'Decode errors by devices',
+        datasource: '${datasource}',
+        gridPos: gridPos,
+        targets: [{
+          expr: 'sum by(devEui) (increase(truvami_failed_to_decode_payload_count{devEui=~"$devices", port=~"$ports", namespace="$namespace"}[$__range]))',
+          legendFormat: '{{devEui}}',
+          refId: 'A',
+        }],
+        options: {
+          reduceOptions: {
+            values: false,
+            calcs: ['lastNotNull'],
+            fields: '',
+          },
+          pieType: 'pie',
+          tooltip: { mode: 'single', sort: 'none' },
+          legend: {
+            displayMode: 'visible',
+            placement: 'bottom',
+          },
+          displayLabels: ['name'],
+        },
+      },
+
+    decodeErrorsByPortsPie(gridPos={ h: 10, w: 12, x: 12, y: 60 }):
+      {
+        type: 'piechart',
+        title: 'Decode errors by ports',
+        datasource: '${datasource}',
+        gridPos: gridPos,
+        targets: [{
+          expr: 'sum by(port) (increase(truvami_failed_to_decode_payload_count{devEui=~"$devices", port=~"$ports", namespace="$namespace"}[$__range]))',
+          legendFormat: 'Port {{port}}',
+          refId: 'A',
+        }],
+        options: {
+          reduceOptions: {
+            values: false,
+            calcs: ['lastNotNull'],
+            fields: '',
+          },
+          pieType: 'pie',
+          tooltip: { mode: 'single', sort: 'none' },
+          legend: {
+            displayMode: 'visible',
+            placement: 'bottom',
+          },
+          displayLabels: ['name'],
+        },
+      },
   },
 
   // Utility functions
