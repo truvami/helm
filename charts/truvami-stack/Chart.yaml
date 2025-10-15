@@ -6,7 +6,7 @@ type: application
 # This is the chart version. This version number should be incremented each time you make changes
 # to the chart and its templates, including the app version.
 # Versions are expected to follow Semantic Versioning (https://semver.org/)
-version: 0.1.199
+version: 0.1.200
 
 # Each truvami application has it's own chart and can be deployed independently.
 # This chart is a parent chart that deploys all the truvami applications.
@@ -27,7 +27,7 @@ dependencies:
     version: 1.0.6
     repository: "file://../truvami-dashboard/"
   - name: truvami-monitoring
-    version: 0.1.81
+    version: 0.1.82
     repository: "file://../truvami-monitoring/"
   - name: truvami-siren
     version: 0.2.7
