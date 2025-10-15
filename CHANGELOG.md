@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [1.0.0-rc1] - 2025-10-15
 
 ### Features
 - Add ports timeline and device donut by @simylein
@@ -96,6 +96,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Update Prometheus alert rules for device monitoring and Kafka integration, enhancing alert descriptions and node labels by @michaelbeutler
 - Add Prometheus alert rules for Truvami Go runtime metrics and service-specific monitoring by @michaelbeutler
 - Enhance alerting and dashboard configurations by @michaelbeutler
+- Add new dashboards for Truvami services and overview by @michaelbeutler
+- Update CI workflows to install kube-score and helm-docs with versioning by @michaelbeutler
+- Specify kube-score version in CI workflow installation by @michaelbeutler
 
 ### Fixes
 - Donut charts display the sum over the whole timespan by @simylein
@@ -127,6 +130,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Update truvami-monitoring version to 0.1.47 and increment chart version to 0.1.121; replace old tgz files by @michaelbeutler
 - Update alert descriptions and timeframes for gateway signal strength and quality by @michaelbeutler
 - Update alertInstanceLabelFilter to use service and namespace for improved filtering by @michaelbeutler
+- Correct regex for version format validation and update error message
 
 ### Refactors
 - Update Prometheus alert rules for device monitoring, standardize node labels and remove deprecated rules by @michaelbeutler
