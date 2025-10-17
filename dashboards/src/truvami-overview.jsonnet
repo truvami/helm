@@ -3,7 +3,6 @@ local dashboard = grafana.dashboard;
 local template = grafana.template;
 local prometheus = grafana.prometheus;
 local graphPanel = grafana.graphPanel;
-local singlestat = grafana.singlestat;
 local truvami = import '../lib/truvami.libsonnet';
 
 // Monitoring overview dashboard with dynamic panel generation
@@ -16,20 +15,80 @@ local services = [
   'truvami-siren'
 ];
 
-// Generate service health overview panels dynamically
+// Generate service health overview panels dynamically using modern stat panels
 local serviceHealthPanels = [
-  singlestat.new(
-    title=service + ' Health',
-    datasource='${datasource}',
-    colorBackground=true,
-    thresholds='0,1',
-    colors=['red', 'green']
-  ).addTarget(
-    prometheus.target(
-      'up{container="' + service + '",namespace="$namespace"}',
-      legendFormat=service,
-    )
-  ) + { gridPos: truvami.utils.gridPos(4, 4, (i % 6) * 4, std.floor(i / 6) * 4) }
+  {
+    type: 'stat',
+    title: service + ' Health',
+    gridPos: truvami.utils.gridPos(4, 4, (i % 6) * 4, std.floor(i / 6) * 4),
+    fieldConfig: {
+      defaults: {
+        mappings: [
+          {
+            type: 'value',
+            options: {
+              '0': {
+                text: 'DOWN',
+                index: 0
+              },
+              '1': {
+                text: 'OK',
+                index: 1
+              }
+            }
+          }
+        ],
+        thresholds: {
+          mode: 'absolute',
+          steps: [
+            {
+              color: 'red',
+              value: null
+            },
+            {
+              color: 'green',
+              value: 1
+            }
+          ]
+        },
+        unit: 'none'
+      },
+      overrides: []
+    },
+    targets: [
+      {
+        datasource: {
+          uid: '${datasource}'
+        },
+        expr: 'min by(__name__) (up{container="' + service + '", namespace="$namespace"})',
+        format: 'time_series',
+        intervalFactor: 2,
+        legendFormat: service,
+        refId: 'A'
+      }
+    ],
+    maxDataPoints: 100,
+    datasource: {
+      uid: '${datasource}'
+    },
+    options: {
+      reduceOptions: {
+        values: false,
+        calcs: [
+          'mean'
+        ],
+        fields: ''
+      },
+      orientation: 'horizontal',
+      textMode: 'auto',
+      wideLayout: true,
+      colorMode: 'background',
+      graphMode: 'none',
+      justifyMode: 'auto',
+      showPercentChange: false,
+      percentChangeColorMode: 'standard'
+    }
+  }
   for i in std.range(0, std.length(services) - 1)
   for service in [services[i]]
 ];
