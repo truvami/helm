@@ -5,10 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.1-rc9] - 2025-10-20
+
+### Features
+- Add truvami-docs chart by @michaelbeutler
+
 ## [1.0.1-rc8] - 2025-10-17
 
 ### Features
-- Add uplinks pricing dashboard with comprehensive metrics and visualizations
+- Add uplinks pricing dashboard with comprehensive metrics and visualizations by @michaelbeutler
 
 ## [1.0.1-rc7] - 2025-10-15
 
@@ -173,6 +178,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * @StefanSmile made their first contribution
 * @simylein made their first contribution
 
+[1.0.1-rc9]: https://github.com/truvami/helm/compare/v1.0.1-rc8...v1.0.1-rc9
 [1.0.1-rc8]: https://github.com/truvami/helm/compare/v1.0.1-rc7...v1.0.1-rc8
 [1.0.1-rc7]: https://github.com/truvami/helm/compare/v1.0.1-rc6...v1.0.1-rc7
 [1.0.1-rc5]: https://github.com/truvami/helm/compare/v1.0.1-rc4...v1.0.1-rc5
