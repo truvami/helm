@@ -1,0 +1,28 @@
+{{- if .Values.postgres.enabled }}
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: {{ .Release.Name }}-docs-db
+  labels:
+    {{- include "truvami-docs.labels" . | nindent 4 }}
+spec:
+  instances: {{ .Values.postgres.replicaCount }}
+  imageName: "{{ .Values.postgres.image.repository }}:{{ .Values.postgres.image.tag }}"
+  bootstrap:
+    initdb:
+      database: app
+      owner: app
+  storage: {{ .Values.postgres.storage | toYaml | nindent 4 }}
+  postgresql:
+    parameters:
+      shared_buffers: {{ .Values.postgres.sharedBuffers }}
+  monitoring:
+    enablePodMonitor: true
+  resources:
+    {{- toYaml .Values.postgres.resources | nindent 4 }}
+  {{- if .Values.postgres.backup.enable }}
+  backup:
+    barmanObjectStore: {{ .Values.postgres.backup.barmanObjectStore | toYaml | nindent 4 }}
+    retentionPolicy: {{ .Values.postgres.backup.retentionPolicy | quote }}
+  {{- end }}
+{{- end }}
