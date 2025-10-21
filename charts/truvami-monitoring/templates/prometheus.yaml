@@ -86,6 +86,8 @@ spec:
     - namespace: {{ .Release.Namespace }}
       name: "{{ include "truvami-monitoring.fullname" . }}"
       port: web
+  enableRemoteWriteReceiver: {{ .Values.prometheus.enableRemoteWriteReceiver | default "false" }}
+
 ---
 apiVersion: monitoring.coreos.com/v1
 kind: Alertmanager

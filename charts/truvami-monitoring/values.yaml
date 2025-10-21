@@ -9,6 +9,7 @@ alertLabels:
   customer: "truvami"
 
 prometheus:
+  enableRemoteWriteReceiver: false
   storageSize: "10Gi"
   retention: "10d"
   resources:

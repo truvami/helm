@@ -49,6 +49,7 @@ This chart contains all CRD's for the truvami-stack monitoring and alerting.
 | grafana.smtp.passwordKey | string | `"password"` |  |
 | grafana.smtp.userKey | string | `"user"` |  |
 | nameOverride | string | `""` |  |
+| prometheus.enableRemoteWriteReceiver | bool | `false` |  |
 | prometheus.resources.limits.cpu | string | `"1"` |  |
 | prometheus.resources.limits.memory | string | `"1Gi"` |  |
 | prometheus.resources.requests.cpu | string | `"100m"` |  |
