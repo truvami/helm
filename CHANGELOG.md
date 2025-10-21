@@ -8,7 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [1.0.1-rc10] - 2025-10-21
 
 ### Features
-- Add enableRemoteWriteReceiver option to values.yaml
+- Add enableRemoteWriteReceiver option to values.yaml by @michaelbeutler
 
 ## [1.0.1-rc9] - 2025-10-20
 
