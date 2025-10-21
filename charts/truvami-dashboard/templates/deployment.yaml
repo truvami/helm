@@ -47,6 +47,8 @@ spec:
           envFrom:
             - secretRef:
                 name: {{ include "truvami-dashboard.fullname" . }}
+            - configMapRef:
+                name: {{ include "truvami-dashboard.fullname" . }}-config
             {{- if .Values.postgres.external.existingSecret }}
             - secretRef:
                 name: {{ .Values.postgres.external.existingSecret }}

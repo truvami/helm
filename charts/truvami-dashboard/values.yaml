@@ -38,6 +38,35 @@ api:
   # Internal API URL (for container-to-container communication)
   internalUrl: "http://truvami-stack-truvami-api:8888"
 
+# OpenTelemetry Configuration
+openTelemetry:
+  # -- REQUIRED: Tempo/OTEL endpoint for trace export
+  # @default -- http://tempo:4318
+  tempoEndpoint: "http://tempo:4318"
+
+  # -- OPTIONAL: Service name for traces
+  # @default -- truvami-dashboard
+  serviceName: "truvami-dashboard"
+
+  # -- OPTIONAL: Service version for traces (automatically uses NEXT_PUBLIC_VERSION from Docker build if available)
+  # @default -- 0.1.0
+  serviceVersion: "0.1.0"
+
+  # -- OPTIONAL: Environment name (automatically set to NODE_ENV if not provided)
+  # @default -- development
+  environment: "development"
+
+  # Additional OTEL Configuration
+  # These can be set to further customize OpenTelemetry behavior
+  exporter:
+    # -- OTEL_EXPORTER_OTLP_ENDPOINT (if different from tempoEndpoint)
+    endpoint: ""
+    # -- OTEL_EXPORTER_OTLP_HEADERS (e.g., "api-key=your-api-key")
+    headers: ""
+
+  # -- OTEL_RESOURCE_ATTRIBUTES (additional resource attributes)
+  resourceAttributes: ""
+
 # Container Configuration
 
 image:

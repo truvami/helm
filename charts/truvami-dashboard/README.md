@@ -1,6 +1,6 @@
 # truvami-dashboard
 
-![Version: 1.0.6](https://img.shields.io/badge/Version-1.0.6-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v2.8.0-rc3](https://img.shields.io/badge/AppVersion-v2.8.0--rc3-informational?style=flat-square)
+![Version: 1.0.7](https://img.shields.io/badge/Version-1.0.7-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v2.8.0-rc13](https://img.shields.io/badge/AppVersion-v2.8.0--rc13-informational?style=flat-square)
 
 Truvami Dashboard Helm chart with Better Auth integration
 
@@ -42,6 +42,13 @@ Truvami Dashboard Helm chart with Better Auth integration
 | migration.resources.requests.memory | string | `"256Mi"` |  |
 | nameOverride | string | `""` |  |
 | nodeSelector | object | `{}` |  |
+| openTelemetry.environment | string | development | OPTIONAL: Environment name (automatically set to NODE_ENV if not provided) |
+| openTelemetry.exporter.endpoint | string | `""` | OTEL_EXPORTER_OTLP_ENDPOINT (if different from tempoEndpoint) |
+| openTelemetry.exporter.headers | string | `""` | OTEL_EXPORTER_OTLP_HEADERS (e.g., "api-key=your-api-key") |
+| openTelemetry.resourceAttributes | string | `""` | OTEL_RESOURCE_ATTRIBUTES (additional resource attributes) |
+| openTelemetry.serviceName | string | truvami-dashboard | OPTIONAL: Service name for traces |
+| openTelemetry.serviceVersion | string | 0.1.0 | OPTIONAL: Service version for traces (automatically uses NEXT_PUBLIC_VERSION from Docker build if available) |
+| openTelemetry.tempoEndpoint | string | http://tempo:4318 | REQUIRED: Tempo/OTEL endpoint for trace export |
 | podAnnotations | object | `{}` |  |
 | podLabels | object | `{}` |  |
 | podSecurityContext | object | `{}` |  |

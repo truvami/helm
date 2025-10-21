@@ -1,0 +1,36 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "truvami-dashboard.fullname" . }}-config
+  labels:
+    {{- include "truvami-dashboard.labels" . | nindent 4 }}
+data:
+  # OpenTelemetry Configuration
+  # ===========================
+
+  # REQUIRED: Tempo/OTEL endpoint for trace export
+  TEMPO_ENDPOINT: {{ .Values.openTelemetry.tempoEndpoint | quote }}
+
+  # OPTIONAL: Service name for traces
+  OTEL_SERVICE_NAME: {{ .Values.openTelemetry.serviceName | quote }}
+
+  # OPTIONAL: Service version for traces
+  SERVICE_VERSION: {{ .Values.openTelemetry.serviceVersion | quote }}
+
+  # OPTIONAL: Environment name
+  ENVIRONMENT: {{ .Values.openTelemetry.environment | quote }}
+
+  {{- if .Values.openTelemetry.exporter.endpoint }}
+  # OTEL_EXPORTER_OTLP_ENDPOINT
+  OTEL_EXPORTER_OTLP_ENDPOINT: {{ .Values.openTelemetry.exporter.endpoint | quote }}
+  {{- end }}
+
+  {{- if .Values.openTelemetry.exporter.headers }}
+  # OTEL_EXPORTER_OTLP_HEADERS
+  OTEL_EXPORTER_OTLP_HEADERS: {{ .Values.openTelemetry.exporter.headers | quote }}
+  {{- end }}
+
+  {{- if .Values.openTelemetry.resourceAttributes }}
+  # OTEL_RESOURCE_ATTRIBUTES
+  OTEL_RESOURCE_ATTRIBUTES: {{ .Values.openTelemetry.resourceAttributes | quote }}
+  {{- end }}

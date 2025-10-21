@@ -31,6 +31,9 @@ spec:
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           args: ["migrate"]
+          envFrom:
+            - configMapRef:
+                name: {{ include "truvami-dashboard.fullname" . }}-config
           {{- if .Values.postgres.enabled }}
           env:
             - name: DB_PASSWORD
@@ -54,9 +57,12 @@ spec:
             - name: DATABASE_URL
               value: "postgresql://{{ .Values.postgres.external.username }}:{{ .Values.postgres.external.password }}@{{ .Values.postgres.external.host }}:{{ .Values.postgres.external.port }}/{{ .Values.postgres.external.database }}"
           {{- else }}
-          envFrom:
-            - secretRef:
-                name: {{ .Values.postgres.external.existingSecret }}
+          env:
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.postgres.external.existingSecret }}
+                  key: DATABASE_URL
           {{- end }}
           resources:
             {{- toYaml .Values.migration.resources | nindent 12 }}
