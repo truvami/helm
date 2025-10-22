@@ -1,6 +1,6 @@
 # truvami-docs
 
-![Version: 0.1.1](https://img.shields.io/badge/Version-0.1.1-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v1.0.0-rc1](https://img.shields.io/badge/AppVersion-v1.0.0--rc1-informational?style=flat-square)
+![Version: 0.1.2](https://img.shields.io/badge/Version-0.1.2-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v1.0.0-rc1](https://img.shields.io/badge/AppVersion-v1.0.0--rc1-informational?style=flat-square)
 
 A Helm chart for Kubernetes
 
@@ -57,8 +57,8 @@ A Helm chart for Kubernetes
 | postgres.image.tag | string | `"18"` |  |
 | postgres.pooler.affinity | object | `{}` |  |
 | postgres.pooler.defaultPoolSize | string | `"15"` |  |
-| postgres.pooler.image.repository | string | `"pgbouncer/pgbouncer"` |  |
-| postgres.pooler.image.tag | string | `"1.21.0"` |  |
+| postgres.pooler.image.repository | string | `"ghcr.io/cloudnative-pg/pgbouncer"` |  |
+| postgres.pooler.image.tag | string | `"1.24.1-23"` |  |
 | postgres.pooler.instances | int | `1` |  |
 | postgres.pooler.maxClientConn | string | `"100"` |  |
 | postgres.pooler.monitoring.enabled | bool | `true` |  |

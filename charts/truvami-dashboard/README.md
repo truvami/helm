@@ -1,6 +1,6 @@
 # truvami-dashboard
 
-![Version: 1.0.8](https://img.shields.io/badge/Version-1.0.8-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v2.8.0-rc13](https://img.shields.io/badge/AppVersion-v2.8.0--rc13-informational?style=flat-square)
+![Version: 1.0.9](https://img.shields.io/badge/Version-1.0.9-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v2.8.0-rc13](https://img.shields.io/badge/AppVersion-v2.8.0--rc13-informational?style=flat-square)
 
 Truvami Dashboard Helm chart with Better Auth integration
 
@@ -66,8 +66,8 @@ Truvami Dashboard Helm chart with Better Auth integration
 | postgres.image.tag | string | `"18"` |  |
 | postgres.pooler.affinity | object | `{}` |  |
 | postgres.pooler.defaultPoolSize | string | `"15"` |  |
-| postgres.pooler.image.repository | string | `"pgbouncer/pgbouncer"` |  |
-| postgres.pooler.image.tag | string | `"1.21.0"` |  |
+| postgres.pooler.image.repository | string | `"ghcr.io/cloudnative-pg/pgbouncer"` |  |
+| postgres.pooler.image.tag | string | `"1.24.1-23"` |  |
 | postgres.pooler.instances | int | `1` |  |
 | postgres.pooler.maxClientConn | string | `"100"` |  |
 | postgres.pooler.monitoring.enabled | bool | `true` |  |

@@ -1,6 +1,6 @@
 # truvami-stack
 
-![Version: 0.1.212](https://img.shields.io/badge/Version-0.1.212-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)
+![Version: 0.1.213](https://img.shields.io/badge/Version-0.1.213-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)
 
 A Helm chart for Kubernetes
 
@@ -10,9 +10,9 @@ A Helm chart for Kubernetes
 |------------|------|---------|
 | file://../truvami-api/ | truvami-api | 0.0.30 |
 | file://../truvami-bridge/ | truvami-bridge | 0.1.35 |
-| file://../truvami-dashboard/ | truvami-dashboard | 1.0.8 |
+| file://../truvami-dashboard/ | truvami-dashboard | 1.0.9 |
 | file://../truvami-decoder/ | truvami-decoder | 0.0.20 |
-| file://../truvami-docs/ | truvami-docs | 0.1.1 |
+| file://../truvami-docs/ | truvami-docs | 0.1.2 |
 | file://../truvami-gateway/ | truvami-gateway | 0.0.30 |
 | file://../truvami-monitoring/ | truvami-monitoring | 0.1.89 |
 | file://../truvami-siren/ | truvami-siren | 0.2.7 |
@@ -39,8 +39,8 @@ A Helm chart for Kubernetes
 | postgres.backup.barmanObjectStore.s3Credentials.secretAccessKey.name | string | `"aws-creds"` |  |
 | postgres.backup.enable | bool | `false` |  |
 | postgres.backup.retentionPolicy | string | `"30d"` |  |
-| postgres.image.repository | string | `"ghcr.io/cloudnative-pg/postgis"` |  |
-| postgres.image.tag | string | `"17-3.4"` |  |
+| postgres.image.repository | string | `"ghcr.io/cloudnative-pg/pgbouncer"` |  |
+| postgres.image.tag | string | `"1.24.1-23"` |  |
 | postgres.pooler.affinity | object | `{}` |  |
 | postgres.pooler.defaultPoolSize | string | `"25"` |  |
 | postgres.pooler.image.repository | string | `"pgbouncer/pgbouncer"` |  |

@@ -238,8 +238,8 @@ postgres:
     maxClientConn: "100"
     defaultPoolSize: "15"
     image:
-      repository: pgbouncer/pgbouncer
-      tag: "1.21.0"
+      repository: ghcr.io/cloudnative-pg/pgbouncer
+      tag: "1.24.1-23"
     resources:
       requests:
         memory: 64Mi
