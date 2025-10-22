@@ -35,6 +35,30 @@ postgres:
       cpu: '2'
   sharedBuffers: "1536MB"
 
+  pooler:
+    instances: 2
+    type: "rw"
+    poolMode: "session"
+    maxClientConn: "200"
+    defaultPoolSize: "25"
+    image:
+      repository: pgbouncer/pgbouncer
+      tag: "1.21.0"
+    resources:
+      requests:
+        memory: 128Mi
+        cpu: 100m
+      limits:
+        memory: 256Mi
+        cpu: 200m
+    monitoring:
+      enabled: true
+      podMonitorLabels: {}
+    nodeSelector: {}
+    tolerations: []
+    affinity: {}
+    parameters: {}
+
   backup:
     enable: false
     retentionPolicy: "30d"

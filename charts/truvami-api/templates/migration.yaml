@@ -33,12 +33,27 @@ spec:
             - /etc/truvami-api/config.yaml
             - 'migrate'
           env:
+            {{- if .Values.database.host }}
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.database.secretName }}
+                  key: password
+            - name: DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.database.secretName }}
+                  key: username
+            - name: DATABASE_URI
+              value: "postgresql://$(DB_USER):$(DB_PASSWORD)@{{ .Values.database.host }}:{{ .Values.database.port }}/{{ .Values.database.name }}?sslmode=require"
+            {{- else }}
             - name: DATABASE_URI
               valueFrom:
                 secretKeyRef:
                   key: {{ .Values.database.secretKey }}
                   name: {{ .Values.database.secretName }}
                   optional: false
+            {{- end }}
             - name: ENCRYPTION_KEY
               valueFrom:
                 secretKeyRef:

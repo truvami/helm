@@ -29,6 +29,7 @@ database:
   # PostgreSQL connection string
   # Format: postgresql://username:password@host:port/database
   # Should be provided via external secret
+  # Note: When postgres.enabled=true, database connections will automatically use the pooler
   url: ""
 
 # Truvami API Configuration
@@ -221,6 +222,31 @@ postgres:
     requests:
       cpu: 100m
       memory: 256Mi
+
+  # Connection pooler configuration using PgBouncer
+  pooler:
+    instances: 1
+    type: "rw"
+    poolMode: "session"
+    maxClientConn: "100"
+    defaultPoolSize: "15"
+    image:
+      repository: pgbouncer/pgbouncer
+      tag: "1.21.0"
+    resources:
+      requests:
+        memory: 64Mi
+        cpu: 50m
+      limits:
+        memory: 128Mi
+        cpu: 100m
+    monitoring:
+      enabled: true
+      podMonitorLabels: {}
+    nodeSelector: {}
+    tolerations: []
+    affinity: {}
+    parameters: {}
 
   # Backup configuration (requires object storage)
   backup:

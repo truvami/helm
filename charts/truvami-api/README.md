@@ -33,6 +33,9 @@ A Helm chart for Kubernetes
 | autoscaling.maxReplicas | int | `100` |  |
 | autoscaling.minReplicas | int | `1` |  |
 | autoscaling.targetCPUUtilizationPercentage | int | `80` |  |
+| database.host | string | `"truvami-stack-pooler"` |  |
+| database.name | string | `"app"` |  |
+| database.port | int | `5432` |  |
 | database.secretKey | string | `"uri"` |  |
 | database.secretName | string | `"truvami-stack-app"` |  |
 | fullnameOverride | string | `""` |  |

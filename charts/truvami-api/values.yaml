@@ -50,6 +50,11 @@ api:
       defaultTimeout: 60s
 
 database:
+  # Use pooler for connection by default
+  host: "truvami-stack-pooler"
+  port: 5432
+  name: "app"
+  # Fallback to secret-based configuration for backwards compatibility
   secretName: truvami-stack-app
   secretKey: uri
 

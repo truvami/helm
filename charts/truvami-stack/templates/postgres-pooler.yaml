@@ -1,0 +1,54 @@
+apiVersion: postgresql.cnpg.io/v1
+kind: Pooler
+metadata:
+  name: {{ include "truvami-stack.fullname" . }}-pooler
+  labels:
+    {{- include "truvami-stack.labels" . | nindent 4 }}
+spec:
+  cluster:
+    name: {{ include "truvami-stack.fullname" . }}
+
+  instances: {{ .Values.postgres.pooler.instances | default 2 }}
+  type: {{ .Values.postgres.pooler.type | default "rw" }}
+
+  pgbouncer:
+    poolMode: {{ .Values.postgres.pooler.poolMode | default "session" }}
+    parameters:
+      max_client_conn: {{ .Values.postgres.pooler.maxClientConn | default "200" | quote }}
+      default_pool_size: {{ .Values.postgres.pooler.defaultPoolSize | default "25" | quote }}
+      {{- if .Values.postgres.pooler.parameters }}
+      {{- range $key, $value := .Values.postgres.pooler.parameters }}
+      {{ $key }}: {{ $value | quote }}
+      {{- end }}
+      {{- end }}
+
+  template:
+    metadata:
+      labels:
+        {{- include "truvami-stack.labels" . | nindent 8 }}
+        app.kubernetes.io/component: pooler
+    spec:
+      containers:
+      - name: pgbouncer
+        image: "{{ .Values.postgres.pooler.image.repository }}:{{ .Values.postgres.pooler.image.tag }}"
+        resources:
+          {{- toYaml .Values.postgres.pooler.resources | nindent 10 }}
+      {{- with .Values.postgres.pooler.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.postgres.pooler.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.postgres.pooler.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+
+  monitoring:
+    enabled: {{ .Values.postgres.pooler.monitoring.enabled | default true }}
+    {{- if .Values.postgres.pooler.monitoring.podMonitorLabels }}
+    podMonitorLabels:
+      {{- toYaml .Values.postgres.pooler.monitoring.podMonitorLabels | nindent 6 }}
+    {{- end }}

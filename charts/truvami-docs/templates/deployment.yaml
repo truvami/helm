@@ -64,7 +64,7 @@ spec:
                   name: {{ .Release.Name }}-docs-db-app
                   key: username
             - name: DB_HOST
-              value: "{{ .Release.Name }}-docs-db-rw"
+              value: "{{ .Release.Name }}-docs-db-pooler"
             - name: DB_PORT
               value: "5432"
             - name: DB_NAME
