@@ -8,8 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [1.0.1-rc12] - 2025-10-22
 
 ### Features
-- Added logs panel to service dashboards
-- Add PostgreSQL connection pooler configuration and update related templates
+- Added logs panel to service dashboards by @michaelbeutler
+- Add PostgreSQL connection pooler configuration and update related templates by @michaelbeutler
 
 ## [1.0.1-rc10] - 2025-10-21
 
