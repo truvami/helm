@@ -1,6 +1,6 @@
 # truvami-stack
 
-![Version: 0.1.213](https://img.shields.io/badge/Version-0.1.213-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)
+![Version: 0.1.214](https://img.shields.io/badge/Version-0.1.214-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)
 
 A Helm chart for Kubernetes
 
@@ -39,13 +39,13 @@ A Helm chart for Kubernetes
 | postgres.backup.barmanObjectStore.s3Credentials.secretAccessKey.name | string | `"aws-creds"` |  |
 | postgres.backup.enable | bool | `false` |  |
 | postgres.backup.retentionPolicy | string | `"30d"` |  |
-| postgres.image.repository | string | `"ghcr.io/cloudnative-pg/pgbouncer"` |  |
-| postgres.image.tag | string | `"1.24.1-23"` |  |
+| postgres.image.repository | string | `"ghcr.io/cloudnative-pg/postgis"` |  |
+| postgres.image.tag | string | `"17-3.4"` |  |
 | postgres.pooler.affinity | object | `{}` |  |
 | postgres.pooler.defaultPoolSize | string | `"25"` |  |
-| postgres.pooler.image.repository | string | `"pgbouncer/pgbouncer"` |  |
-| postgres.pooler.image.tag | string | `"1.21.0"` |  |
-| postgres.pooler.instances | int | `2` |  |
+| postgres.pooler.image.repository | string | `"ghcr.io/cloudnative-pg/pgbouncer"` |  |
+| postgres.pooler.image.tag | string | `"1.24.1-23"` |  |
+| postgres.pooler.instances | int | `3` |  |
 | postgres.pooler.maxClientConn | string | `"200"` |  |
 | postgres.pooler.monitoring.enabled | bool | `true` |  |
 | postgres.pooler.monitoring.podMonitorLabels | object | `{}` |  |

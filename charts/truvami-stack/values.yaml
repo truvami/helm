@@ -21,8 +21,8 @@ kafka:
 postgres:
   replicaCount: 3
   image:
-    repository: ghcr.io/cloudnative-pg/pgbouncer
-    tag: "1.24.1-23"
+    repository: ghcr.io/cloudnative-pg/postgis
+    tag: "17-3.4"
   storage:
     storageClass: standard-retain
     size: 25Gi
@@ -36,14 +36,14 @@ postgres:
   sharedBuffers: "1536MB"
 
   pooler:
-    instances: 2
+    instances: 3
     type: "rw"
     poolMode: "session"
     maxClientConn: "200"
     defaultPoolSize: "25"
     image:
-      repository: pgbouncer/pgbouncer
-      tag: "1.21.0"
+      repository: ghcr.io/cloudnative-pg/pgbouncer
+      tag: "1.24.1-23"
     resources:
       requests:
         memory: 128Mi
