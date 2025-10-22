@@ -140,6 +140,21 @@ local row = grafana.row;
       type: 'constant',
     },
 
+    // Logs datasource template
+    logsDatasource: {
+      allowCustomValue: false,
+      current: { text: 'Loki', value: '${logs_datasource}' },
+      label: 'Logs Datasource',
+      name: 'logs_datasource',
+      options: [],
+      query: 'loki',
+      refresh: 1,
+      regex: '',
+      type: 'datasource',
+    },
+
+
+
     // DevEui selector for device-specific dashboards
     devEui: {
       allowCustomValue: false,
@@ -254,6 +269,7 @@ local row = grafana.row;
       $.templates.datasource,
       $.templates.namespace,
       $.templates.service(serviceName),
+      $.templates.logsDatasource,
     ] + (if devEuiFilter then [$.templates.devEui] else []);
 
     dashboard.new(
@@ -2140,6 +2156,41 @@ local row = grafana.row;
           displayLabels: ['name'],
         },
       },
+
+    // Logs panel for service monitoring
+    serviceLogs(serviceName, gridPos={ h: 10, w: 24, x: 0, y: 0 }):
+      {
+        type: 'logs',
+        title: serviceName + ' Logs',
+        datasource: '${logs_datasource}',
+        gridPos: gridPos,
+        targets: [{
+          expr: '{app="' + serviceName + '", namespace="$namespace"}',
+          refId: 'A',
+        }],
+        options: {
+          showTime: true,
+          showLabels: false,
+          showCommonLabels: false,
+          wrapLogMessage: false,
+          prettifyLogMessage: false,
+          enableLogDetails: true,
+          dedupStrategy: 'none',
+          sortOrder: 'Descending',
+        },
+        fieldConfig: {
+          defaults: {
+            custom: {
+              align: 'auto',
+              cellOptions: { type: 'auto' },
+              inspect: false,
+            },
+          },
+          overrides: [],
+        },
+      },
+
+
   },
 
   // Utility functions

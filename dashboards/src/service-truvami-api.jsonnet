@@ -192,4 +192,8 @@ truvami.serviceDashboard('truvami-api', [
   apiPanels.apiKeyCacheStats({ h: 6, w: 8, x: 0, y: 52 }),
   apiPanels.oauth2Stats({ h: 6, w: 8, x: 8, y: 52 }),
   apiPanels.healthCheckDuration({ h: 6, w: 8, x: 16, y: 52 }),
+
+  // Logs section
+  row.new('Logs') + { gridPos: { h: 1, w: 24, x: 0, y: 58 }, collapsed: false },
+  truvami.panels.serviceLogs('truvami-api', { h: 10, w: 24, x: 0, y: 59 }),
 ])

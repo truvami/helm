@@ -194,4 +194,8 @@ truvami.serviceDashboard('truvami-siren', [
   sirenPanels.alertProcessingByType({ h: 6, w: 8, x: 0, y: 52 }),
   sirenPanels.positionAlertsProcessing({ h: 6, w: 8, x: 8, y: 52 }),
   sirenPanels.dispatchStalledAlerts({ h: 6, w: 8, x: 16, y: 52 }),
+
+  // Logs section
+  row.new('Logs') + { gridPos: { h: 1, w: 24, x: 0, y: 58 }, collapsed: false },
+  truvami.panels.serviceLogs('truvami-siren', { h: 10, w: 24, x: 0, y: 59 }),
 ])
