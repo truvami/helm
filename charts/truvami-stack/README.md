@@ -1,6 +1,6 @@
 # truvami-stack
 
-![Version: 0.1.220](https://img.shields.io/badge/Version-0.1.220-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)
+![Version: 0.1.221](https://img.shields.io/badge/Version-0.1.221-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)
 
 A Helm chart for Kubernetes
 
@@ -15,7 +15,7 @@ A Helm chart for Kubernetes
 | file://../truvami-docs/ | truvami-docs | 0.1.3 |
 | file://../truvami-gateway/ | truvami-gateway | 0.0.31 |
 | file://../truvami-monitoring/ | truvami-monitoring | 0.1.91 |
-| file://../truvami-siren/ | truvami-siren | 0.2.9 |
+| file://../truvami-siren/ | truvami-siren | 0.2.10 |
 | https://charts.bitnami.com/bitnami | valkey | 3.0.9 |
 
 ## Values
