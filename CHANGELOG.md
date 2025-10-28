@@ -8,7 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [1.0.1-rc18] - 2025-10-28
 
 ### Features
-- Bump truvami-dashboard version to 1.0.11 and update truvami-stack to use the new version
+- Bump truvami-dashboard version to 1.0.11 and update truvami-stack to use the new version by @michaelbeutler
 
 ## [1.0.1-rc17] - 2025-10-28
 
