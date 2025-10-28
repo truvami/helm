@@ -27,6 +27,148 @@ prometheusRule:
   labels: {}
   annotations: {}
 
+# Alert Rules Configuration
+# Each alert rule can be individually enabled/disabled and have configurable severity levels
+alerts:
+  # Deployment Version Monitoring
+  deploymentVersions:
+    enabled: true
+    multipleVersions:
+      enabled: true
+      severity: warning
+      duration: 5m
+    longRunningMismatch:
+      enabled: true
+      severity: critical
+      duration: 15m
+    serviceVersionInfo:
+      enabled: true
+      severity: info
+      duration: 1m
+
+  # Service Health Monitoring
+  serviceHealth:
+    enabled: true
+    bridgeDown:
+      enabled: true
+      severity: critical
+      duration: 1m
+    bridgeHighErrorRate:
+      enabled: true
+      severity: major
+      duration: 2m
+      threshold: 0.1
+
+  # Device Battery Monitoring
+  deviceBattery:
+    enabled: true
+    criticallyLow:
+      enabled: true
+      severity: minor
+      duration: 1m
+      threshold: 2.5
+    veryLow:
+      enabled: true
+      severity: warning
+      duration: 5m
+      threshold: 2.8
+
+  # Device Duty Cycle Monitoring
+  # Monitors duty cycle events - flags sent by device when approaching 1% airtime limit
+  deviceDutyCycle:
+    enabled: true
+    highDutyCycle:
+      enabled: true
+      severity: warning
+      duration: 1h
+      threshold: 10  # Alert when duty cycle count > 10 in 24 hours - indicates too frequent uplinks
+    excessiveDutyCycle:
+      enabled: true
+      severity: critical
+      duration: 1h
+      threshold: 20  # Alert when duty cycle count > 20 in 24 hours - critical misconfiguration
+
+  # Device Health Monitoring
+  deviceHealth:
+    enabled: true
+    # Add other device health alerts here as needed
+
+  # Kafka Monitoring
+  kafka:
+    enabled: true
+    # Add kafka alerts configuration here
+
+  # Database Monitoring
+  database:
+    enabled: true
+    # Add database alerts configuration here
+
+  # Gateway Monitoring
+  gateway:
+    enabled: true
+    # Add gateway alerts configuration here
+
+  # API Monitoring
+  api:
+    enabled: true
+    grpcValidationErrors:
+      enabled: true
+      severity: major
+      duration: 2m
+      threshold: 0.1
+    deviceNotFoundErrors:
+      enabled: true
+      severity: major
+      duration: 2m
+      threshold: 0.1
+    webhookErrors:
+      enabled: true
+      severity: major
+      duration: 2m
+      threshold: 0.1
+    authErrors:
+      enabled: true
+      severity: major
+      duration: 2m
+    securityErrors:
+      enabled: true
+      severity: major
+      duration: 1m
+      threshold: 0.5
+    performanceIssues:
+      enabled: true
+      severity: minor
+      duration: 5m
+
+  # Bridge Consumer Monitoring
+  bridgeConsumer:
+    enabled: true
+    # Add bridge consumer alerts configuration here
+
+  # Siren Monitoring
+  siren:
+    enabled: true
+    # Add siren alerts configuration here
+
+  # Authentication Monitoring
+  authentication:
+    enabled: true
+    # Add authentication alerts configuration here
+
+  # Integration Monitoring
+  integration:
+    enabled: true
+    # Add integration alerts configuration here
+
+# Global alert defaults that can be overridden per alert
+alertDefaults:
+  severityLevels:
+    info: info
+    warning: warning
+    minor: minor
+    major: major
+    critical: critical
+
 # Watchdog configuration
 watchdog:
   # Webhook URL for watchdog heartbeat (e.g., UptimeRobot heartbeat URL)

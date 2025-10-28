@@ -1,0 +1,125 @@
+{{- if .Values.alerts.deviceDutyCycle.enabled }}
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  labels:
+    prometheus: kube-prometheus-stack-prometheus
+    role: alert-rules
+  name: truvami-device-duty-cycle
+spec:
+  groups:
+    - name: truvami-device-duty-cycle
+      rules:
+        {{- if .Values.alerts.deviceDutyCycle.highDutyCycle.enabled }}
+        - alert: TruvamiDeviceHighDutyCycle
+          annotations:
+            description: >-
+              **What's happening:** Device {{ "{{" }} $labels.devEui }} (customer: {{ "{{" }} $labels.customer }}) has sent {{ "{{" }} $value }} duty cycle warning events in the past 24 hours, indicating it's approaching the 1% airtime fair use policy limit.
+
+              **Device Details:**
+              - Device EUI: {{ "{{" }} $labels.devEui }}
+              - Customer: {{ "{{" }} $labels.customer }}
+              - Duty Cycle Events (24h): {{ "{{" }} $value }}
+              - Threshold: > {{ .Values.alerts.deviceDutyCycle.highDutyCycle.threshold }}
+              - Service: {{ "{{" }} $labels.job }}
+              - Instance: {{ "{{" }} $labels.instance }}
+
+              **Why this occurred:** The device is sending duty cycle warning flags because it's approaching or hitting the LoRaWAN 1% airtime limit.
+              This indicates the device is configured with uplink intervals that are too frequent for the amount of data being transmitted.
+
+              **Root causes:**
+              - **Uplink interval too frequent** for the data payload size
+              - **Spreading factor too low** causing longer airtime per transmission
+              - **Multiple sensors** transmitting on same schedule
+              - **Retransmissions** due to poor network coverage
+              - **Device misconfiguration** or incorrect regional parameters
+
+              **Impact:**
+              - **Device will self-throttle** to comply with 1% duty cycle limit
+              - **Data transmission delays** as device reduces frequency
+              - **Potential data loss** if device buffers overflow
+              - **Regulatory compliance** issues if duty cycle exceeded
+              - **Poor user experience** due to delayed data updates
+
+              **What to do:**
+              1. **Review device uplink configuration** - increase transmission intervals
+              2. **Check spreading factor settings** - optimize for airtime vs range
+              3. **Analyze payload size** - reduce unnecessary data if possible
+              4. **Verify network coverage** - poor RSSI causes retransmissions
+              5. **Contact customer** {{ "{{" }} $labels.customer }} about reconfiguration needs
+              6. **Monitor other devices** in same area for similar issues
+              7. **Consider adaptive data rate (ADR)** if not already enabled
+            summary: >-
+              {{ "{{" }} $labels.devEui }} approaching duty cycle limit: {{ "{{" }} $value }} events in 24h (threshold: >{{ .Values.alerts.deviceDutyCycle.highDutyCycle.threshold }})
+          expr: >-
+            increase(truvami_device_duty_cycle_count[24h]) > {{ .Values.alerts.deviceDutyCycle.highDutyCycle.threshold }}
+          for: {{ .Values.alerts.deviceDutyCycle.highDutyCycle.duration }}
+          labels:
+            namespace: {{ .Release.Namespace }}
+            severity: {{ .Values.alerts.deviceDutyCycle.highDutyCycle.severity }}
+            node: "{{ "{{" }} $labels.devEui }}"
+            service: truvami-device
+            component: duty-cycle
+            customer: "{{ "{{" }} $labels.customer }}"
+            devEui: "{{ "{{" }} $labels.devEui }}"
+            {{- with .Values.alertLabels }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
+        {{- end }}
+
+        {{- if .Values.alerts.deviceDutyCycle.excessiveDutyCycle.enabled }}
+        - alert: TruvamiDeviceExcessiveDutyCycle
+          annotations:
+            description: >-
+              **What's happening:** Device {{ "{{" }} $labels.devEui }} (customer: {{ "{{" }} $labels.customer }}) has sent {{ "{{" }} $value }} duty cycle warning events in 24 hours - CRITICAL MISCONFIGURATION.
+
+              **Device Details:**
+              - Device EUI: {{ "{{" }} $labels.devEui }}
+              - Customer: {{ "{{" }} $labels.customer }}
+              - Duty Cycle Events (24h): {{ "{{" }} $value }}
+              - Critical Threshold: > {{ .Values.alerts.deviceDutyCycle.excessiveDutyCycle.threshold }}
+              - Service: {{ "{{" }} $labels.job }}
+              - Instance: {{ "{{" }} $labels.instance }}
+
+              **Why this occurred:** The device is repeatedly hitting the 1% duty cycle limit, indicating severe misconfiguration.
+              This level of duty cycle warnings means the device is:
+              - **Constantly throttling itself** to avoid regulatory violations
+              - **Configured with extremely frequent uplinks** inappropriate for LoRaWAN
+              - **Potentially stuck in a transmission loop** or firmware issue
+              - **Violating LoRaWAN fair access policies** repeatedly
+
+              **CRITICAL Impact:**
+              - **Device effectively unusable** due to constant throttling
+              - **Severe battery drain** - device lifetime significantly reduced
+              - **Regulatory compliance violation** - potential network operator penalties
+              - **Network congestion** affecting other devices in the area
+              - **Customer service degradation** - unreliable data transmission
+              - **Potential network operator sanctions** for duty cycle violations
+
+              **What to do IMMEDIATELY:**
+              1. **ESCALATE TO CUSTOMER IMMEDIATELY** - this requires urgent reconfiguration
+              2. **Review device configuration urgently** - uplink interval likely far too frequent
+              3. **Check if device is stuck** in continuous transmission mode
+              4. **Verify firmware version** - may need emergency update
+              5. **Consider temporary device shutdown** to prevent further violations
+              6. **Audit other devices** in same deployment for similar misconfigurations
+              7. **Document for compliance** - may need to report to network operator
+              8. **Plan immediate site visit** if remote reconfiguration not possible
+            summary: >-
+              {{ "{{" }} $labels.devEui }} severe duty cycle violations: {{ "{{" }} $value }} events in 24h (critical: >{{ .Values.alerts.deviceDutyCycle.excessiveDutyCycle.threshold }})
+          expr: >-
+            increase(truvami_device_duty_cycle_count[24h]) > {{ .Values.alerts.deviceDutyCycle.excessiveDutyCycle.threshold }}
+          for: {{ .Values.alerts.deviceDutyCycle.excessiveDutyCycle.duration }}
+          labels:
+            namespace: {{ .Release.Namespace }}
+            severity: {{ .Values.alerts.deviceDutyCycle.excessiveDutyCycle.severity }}
+            node: "{{ "{{" }} $labels.devEui }}"
+            service: truvami-device
+            component: duty-cycle
+            customer: "{{ "{{" }} $labels.customer }}"
+            devEui: "{{ "{{" }} $labels.devEui }}"
+            {{- with .Values.alertLabels }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
+        {{- end }}
+{{- end }}

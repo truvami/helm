@@ -1,3 +1,4 @@
+{{- if .Values.alerts.api.enabled }}
 apiVersion: monitoring.coreos.com/v1
 kind: PrometheusRule
 metadata:
@@ -9,6 +10,7 @@ spec:
   groups:
     - name: truvami-api-grpc-validation-errors
       rules:
+        {{- if .Values.alerts.api.grpcValidationErrors.enabled }}
         - alert: TruvamiGrpcValidationErrorsHigh
           annotations:
             description: >-
@@ -22,17 +24,18 @@ spec:
               rate(truvami_battery_status_insert_validation_error_count[5m]) +
               rate(truvami_event_insert_validation_error_count[5m]) +
               rate(truvami_rotation_status_insert_validation_error_count[5m])
-            ) > 0.1
-          for: 2m
+            ) > {{ .Values.alerts.api.grpcValidationErrors.threshold }}
+          for: {{ .Values.alerts.api.grpcValidationErrors.duration }}
           labels:
             namespace: {{ .Release.Namespace }}
-            severity: major
+            severity: {{ .Values.alerts.api.grpcValidationErrors.severity }}
             node: truvami-api
             service: truvami-api
             component: grpc-validation
             {{- with .Values.alertLabels }}
             {{- toYaml . | nindent 12 }}
             {{- end }}
+        {{- end }}
 
         - alert: TruvamiUplinkValidationErrorsHigh
           annotations:
@@ -468,3 +471,4 @@ spec:
             severity: critical
             node: truvami-api
             namespace: {{ .Release.Namespace }}
+{{- end }}

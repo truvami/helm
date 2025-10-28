@@ -1,3 +1,4 @@
+{{- if .Values.alerts.deviceBattery.enabled }}
 apiVersion: monitoring.coreos.com/v1
 kind: PrometheusRule
 metadata:
@@ -9,6 +10,7 @@ spec:
   groups:
     - name: truvami-device-battery-alerts
       rules:
+        {{- if .Values.alerts.deviceBattery.criticallyLow.enabled }}
         - alert: TruvamiDeviceBatteryCriticallyLow
           annotations:
             description: >-
@@ -24,13 +26,13 @@ spec:
               2. Contact customer {{ "{{" }} $labels.customer }} for maintenance scheduling
               3. Monitor device for complete communication loss
             summary: >-
-              Device {{ "{{" }} $labels.devEui }} battery critically low <2.5V
+              Device {{ "{{" }} $labels.devEui }} battery critically low <{{ .Values.alerts.deviceBattery.criticallyLow.threshold }}V
           expr: >-
-            truvami_device_battery_status < 2.5
-          for: 1m
+            truvami_device_battery_status < {{ .Values.alerts.deviceBattery.criticallyLow.threshold }}
+          for: {{ .Values.alerts.deviceBattery.criticallyLow.duration }}
           labels:
             namespace: {{ .Release.Namespace }}
-            severity: minor
+            severity: {{ .Values.alerts.deviceBattery.criticallyLow.severity }}
             node: "{{ "{{" }} $labels.devEui }}"
             service: truvami-device
             component: battery
@@ -39,11 +41,13 @@ spec:
             {{- with .Values.alertLabels }}
             {{- toYaml . | nindent 12 }}
             {{- end }}
+        {{- end }}
 
+        {{- if .Values.alerts.deviceBattery.veryLow.enabled }}
         - alert: TruvamiDeviceBatteryVeryLow
           annotations:
             description: >-
-              **What's happening:** Device {{ "{{" }} $labels.devEui }} (customer: {{ "{{" }} $labels.customer }}) has very low battery at {{ "{{" }} $value }}V (<2.8V).
+              **What's happening:** Device {{ "{{" }} $labels.devEui }} (customer: {{ "{{" }} $labels.customer }}) has very low battery at {{ "{{" }} $value }}V (<{{ .Values.alerts.deviceBattery.veryLow.threshold }}V).
 
               **Why this occurred:** Battery voltage has dropped significantly and the device is approaching critical levels.
               This indicates the battery should be replaced soon to prevent service interruption.
@@ -53,13 +57,13 @@ spec:
               2. Notify customer {{ "{{" }} $labels.customer }} of upcoming maintenance need
               3. Monitor battery level daily for further decline
             summary: >-
-              Device {{ "{{" }} $labels.devEui }} battery very low <2.8V
+              Device {{ "{{" }} $labels.devEui }} battery very low <{{ .Values.alerts.deviceBattery.veryLow.threshold }}V
           expr: >-
-            truvami_device_battery_status < 2.8 and truvami_device_battery_status >= 2.5
-          for: 5m
+            truvami_device_battery_status < {{ .Values.alerts.deviceBattery.veryLow.threshold }} and truvami_device_battery_status >= {{ .Values.alerts.deviceBattery.criticallyLow.threshold }}
+          for: {{ .Values.alerts.deviceBattery.veryLow.duration }}
           labels:
             namespace: {{ .Release.Namespace }}
-            severity: warning
+            severity: {{ .Values.alerts.deviceBattery.veryLow.severity }}
             node: "{{ "{{" }} $labels.devEui }}"
             service: truvami-device
             component: battery
@@ -68,3 +72,5 @@ spec:
             {{- with .Values.alertLabels }}
             {{- toYaml . | nindent 12 }}
             {{- end }}
+        {{- end }}
+{{- end }}

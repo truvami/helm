@@ -1,6 +1,6 @@
 # truvami-monitoring
 
-![Version: 0.1.89](https://img.shields.io/badge/Version-0.1.89-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)
+![Version: 0.1.90](https://img.shields.io/badge/Version-0.1.90-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)
 
 This chart contains all CRD's for the truvami-stack monitoring and alerting.
 
@@ -8,6 +8,11 @@ This chart contains all CRD's for the truvami-stack monitoring and alerting.
 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
+| alertDefaults.severityLevels.critical | string | `"critical"` |  |
+| alertDefaults.severityLevels.info | string | `"info"` |  |
+| alertDefaults.severityLevels.major | string | `"major"` |  |
+| alertDefaults.severityLevels.minor | string | `"minor"` |  |
+| alertDefaults.severityLevels.warning | string | `"warning"` |  |
 | alertLabels.altravis_prod | string | `"false"` |  |
 | alertLabels.altravis_test | string | `"true"` |  |
 | alertLabels.code | string | `"SBCC"` |  |
@@ -24,6 +29,73 @@ This chart contains all CRD's for the truvami-stack monitoring and alerting.
 | alertmanager.resources.requests.memory | string | `"128Mi"` |  |
 | alertmanager.smtp.from | string | `"alertmanager@truvami.com"` |  |
 | alertmanager.smtp.smarthost | string | `"localhost:587"` |  |
+| alerts.api.authErrors.duration | string | `"2m"` |  |
+| alerts.api.authErrors.enabled | bool | `true` |  |
+| alerts.api.authErrors.severity | string | `"major"` |  |
+| alerts.api.deviceNotFoundErrors.duration | string | `"2m"` |  |
+| alerts.api.deviceNotFoundErrors.enabled | bool | `true` |  |
+| alerts.api.deviceNotFoundErrors.severity | string | `"major"` |  |
+| alerts.api.deviceNotFoundErrors.threshold | float | `0.1` |  |
+| alerts.api.enabled | bool | `true` |  |
+| alerts.api.grpcValidationErrors.duration | string | `"2m"` |  |
+| alerts.api.grpcValidationErrors.enabled | bool | `true` |  |
+| alerts.api.grpcValidationErrors.severity | string | `"major"` |  |
+| alerts.api.grpcValidationErrors.threshold | float | `0.1` |  |
+| alerts.api.performanceIssues.duration | string | `"5m"` |  |
+| alerts.api.performanceIssues.enabled | bool | `true` |  |
+| alerts.api.performanceIssues.severity | string | `"minor"` |  |
+| alerts.api.securityErrors.duration | string | `"1m"` |  |
+| alerts.api.securityErrors.enabled | bool | `true` |  |
+| alerts.api.securityErrors.severity | string | `"major"` |  |
+| alerts.api.securityErrors.threshold | float | `0.5` |  |
+| alerts.api.webhookErrors.duration | string | `"2m"` |  |
+| alerts.api.webhookErrors.enabled | bool | `true` |  |
+| alerts.api.webhookErrors.severity | string | `"major"` |  |
+| alerts.api.webhookErrors.threshold | float | `0.1` |  |
+| alerts.authentication.enabled | bool | `true` |  |
+| alerts.bridgeConsumer.enabled | bool | `true` |  |
+| alerts.database.enabled | bool | `true` |  |
+| alerts.deploymentVersions.enabled | bool | `true` |  |
+| alerts.deploymentVersions.longRunningMismatch.duration | string | `"15m"` |  |
+| alerts.deploymentVersions.longRunningMismatch.enabled | bool | `true` |  |
+| alerts.deploymentVersions.longRunningMismatch.severity | string | `"critical"` |  |
+| alerts.deploymentVersions.multipleVersions.duration | string | `"5m"` |  |
+| alerts.deploymentVersions.multipleVersions.enabled | bool | `true` |  |
+| alerts.deploymentVersions.multipleVersions.severity | string | `"warning"` |  |
+| alerts.deploymentVersions.serviceVersionInfo.duration | string | `"1m"` |  |
+| alerts.deploymentVersions.serviceVersionInfo.enabled | bool | `true` |  |
+| alerts.deploymentVersions.serviceVersionInfo.severity | string | `"info"` |  |
+| alerts.deviceBattery.criticallyLow.duration | string | `"1m"` |  |
+| alerts.deviceBattery.criticallyLow.enabled | bool | `true` |  |
+| alerts.deviceBattery.criticallyLow.severity | string | `"minor"` |  |
+| alerts.deviceBattery.criticallyLow.threshold | float | `2.5` |  |
+| alerts.deviceBattery.enabled | bool | `true` |  |
+| alerts.deviceBattery.veryLow.duration | string | `"5m"` |  |
+| alerts.deviceBattery.veryLow.enabled | bool | `true` |  |
+| alerts.deviceBattery.veryLow.severity | string | `"warning"` |  |
+| alerts.deviceBattery.veryLow.threshold | float | `2.8` |  |
+| alerts.deviceDutyCycle.enabled | bool | `true` |  |
+| alerts.deviceDutyCycle.excessiveDutyCycle.duration | string | `"1h"` |  |
+| alerts.deviceDutyCycle.excessiveDutyCycle.enabled | bool | `true` |  |
+| alerts.deviceDutyCycle.excessiveDutyCycle.severity | string | `"critical"` |  |
+| alerts.deviceDutyCycle.excessiveDutyCycle.threshold | int | `20` |  |
+| alerts.deviceDutyCycle.highDutyCycle.duration | string | `"1h"` |  |
+| alerts.deviceDutyCycle.highDutyCycle.enabled | bool | `true` |  |
+| alerts.deviceDutyCycle.highDutyCycle.severity | string | `"warning"` |  |
+| alerts.deviceDutyCycle.highDutyCycle.threshold | int | `10` |  |
+| alerts.deviceHealth.enabled | bool | `true` |  |
+| alerts.gateway.enabled | bool | `true` |  |
+| alerts.integration.enabled | bool | `true` |  |
+| alerts.kafka.enabled | bool | `true` |  |
+| alerts.serviceHealth.bridgeDown.duration | string | `"1m"` |  |
+| alerts.serviceHealth.bridgeDown.enabled | bool | `true` |  |
+| alerts.serviceHealth.bridgeDown.severity | string | `"critical"` |  |
+| alerts.serviceHealth.bridgeHighErrorRate.duration | string | `"2m"` |  |
+| alerts.serviceHealth.bridgeHighErrorRate.enabled | bool | `true` |  |
+| alerts.serviceHealth.bridgeHighErrorRate.severity | string | `"major"` |  |
+| alerts.serviceHealth.bridgeHighErrorRate.threshold | float | `0.1` |  |
+| alerts.serviceHealth.enabled | bool | `true` |  |
+| alerts.siren.enabled | bool | `true` |  |
 | dashboards.annotations.k8s-sidecar-target-directory | string | `"/tmp/dashboards"` |  |
 | dashboards.enabled | bool | `true` |  |
 | dashboards.general | object | `{}` |  |

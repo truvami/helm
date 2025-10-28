@@ -60,3 +60,49 @@ Create the name of the service account to use
 {{- default "default" .Values.serviceAccount.name }}
 {{- end }}
 {{- end }}
+
+{{/*
+Alert configuration helper - checks if an alert group is enabled
+*/}}
+{{- define "truvami-monitoring.alertEnabled" -}}
+{{- $alertPath := .alertPath }}
+{{- $values := .values }}
+{{- $enabled := true }}
+{{- range $part := (split "." $alertPath) }}
+{{- if hasKey $values $part }}
+{{- $values = index $values $part }}
+{{- else }}
+{{- $enabled = false }}
+{{- break }}
+{{- end }}
+{{- end }}
+{{- if and $enabled (hasKey $values "enabled") }}
+{{- $values.enabled }}
+{{- else }}
+{{- false }}
+{{- end }}
+{{- end }}
+
+{{/*
+Alert configuration helper - gets alert configuration value with fallback
+*/}}
+{{- define "truvami-monitoring.alertConfig" -}}
+{{- $alertPath := .alertPath }}
+{{- $configKey := .configKey }}
+{{- $default := .default }}
+{{- $values := .values }}
+{{- $config := $values }}
+{{- range $part := (split "." $alertPath) }}
+{{- if hasKey $config $part }}
+{{- $config = index $config $part }}
+{{- else }}
+{{- $config = dict }}
+{{- break }}
+{{- end }}
+{{- end }}
+{{- if hasKey $config $configKey }}
+{{- index $config $configKey }}
+{{- else }}
+{{- $default }}
+{{- end }}
+{{- end }}

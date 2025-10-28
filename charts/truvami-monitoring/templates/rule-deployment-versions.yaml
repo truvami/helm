@@ -1,3 +1,4 @@
+{{- if .Values.alerts.deploymentVersions.enabled }}
 apiVersion: monitoring.coreos.com/v1
 kind: PrometheusRule
 metadata:
@@ -9,10 +10,16 @@ spec:
   groups:
     - name: truvami-deployment-versions
       rules:
+        {{- if .Values.alerts.deploymentVersions.multipleVersions.enabled }}
         - alert: TruvamiMultipleVersionsRunning
           annotations:
             description: >-
-              **What's happening:** Multiple versions of {{ "{{" }} $labels.container }} are running simultaneously, indicating a rolling upgrade in progress or deployment issue.
+              **What's happening:** Multiple versions of service {{ "{{" }} $labels.job }} are running simultaneously, indicating a rolling upgrade in progress or deployment issue.
+
+              **Service Details:**
+              - Service: {{ "{{" }} $labels.job }}
+              - Running Versions: {{ "{{" }} $value }} different versions detected
+              - Affected Pods: Check kubectl get pods -l app={{ "{{" }} $labels.job }}
 
               **Why this occurred:** The system detects version mismatches using count by (job) (count by (job, commit) (truvami_*_info)) > 1
               which counts distinct git commit hashes for each service. Multiple versions running simultaneously can indicate:
@@ -33,24 +40,32 @@ spec:
               7. **Monitor application health** during version transition
               8. **Alert development team** if unexpected version deployment detected
             summary: >-
-              Multiple versions of {{ "{{" }} $labels.container }} running (rolling upgrade or deployment issue)
+              Service {{ "{{" }} $labels.job }} has {{ "{{" }} $value }} versions running - rolling upgrade or deployment issue detected
           expr: >-
             count by (job) (count by (job, commit) ({__name__=~"truvami_(bridge|gateway|siren|api|decoder)_info"})) > 1
-          for: 5m
+          for: {{ .Values.alerts.deploymentVersions.multipleVersions.duration }}
           labels:
             namespace: {{ .Release.Namespace }}
-            severity: warning
+            severity: {{ .Values.alerts.deploymentVersions.multipleVersions.severity }}
             node: truvami-{{ "{{" }} $labels.job }}
             service: truvami-{{ "{{" }} $labels.job }}
             component: version-control
             {{- with .Values.alertLabels }}
             {{- toYaml . | nindent 12 }}
             {{- end }}
+        {{- end }}
 
+        {{- if .Values.alerts.deploymentVersions.longRunningMismatch.enabled }}
         - alert: TruvamiLongRunningVersionMismatch
           annotations:
             description: >-
-              **What's happening:** Multiple versions of {{ "{{" }} $labels.container }} have been running for over 15 minutes - deployment appears stuck or failed.
+              **What's happening:** Multiple versions of service {{ "{{" }} $labels.job }} have been running for over {{ .Values.alerts.deploymentVersions.longRunningMismatch.duration }} - deployment appears stuck or failed.
+
+              **Service Details:**
+              - Service: {{ "{{" }} $labels.job }}
+              - Running Versions: {{ "{{" }} $value }} different versions detected
+              - Duration: Over {{ .Values.alerts.deploymentVersions.longRunningMismatch.duration }}
+              - Check Command: kubectl get deployments,pods -l app={{ "{{" }} $labels.job }}
 
               **Why this occurred:** The system detects prolonged version mismatches indicating a deployment that hasn't completed properly.
               This is a more serious condition than normal rolling upgrades, suggesting:
@@ -63,7 +78,7 @@ spec:
 
               **What to do IMMEDIATELY:**
               1. **ESCALATE:** This is likely a failed deployment requiring immediate attention
-              2. **Check deployment status:** kubectl get deployments,pods -l app={{ "{{" }} $labels.container }}
+              2. **Check deployment status:** kubectl get deployments,pods -l app={{ "{{" }} $labels.job }}
               3. **Review pod logs:** Look for startup errors or health check failures
               4. **Check resource usage:** Verify sufficient CPU/memory for new pods
               5. **Validate configuration:** Ensure new deployment config is valid
@@ -71,42 +86,51 @@ spec:
               7. **Check image availability:** Verify container images are accessible
               8. **Monitor service health:** Ensure service availability during resolution
             summary: >-
-              STUCK DEPLOYMENT: Multiple versions of {{ "{{" }} $labels.container }} running >15min - immediate action required
+              STUCK DEPLOYMENT: Service {{ "{{" }} $labels.job }} has {{ "{{" }} $value }} versions running >{{ .Values.alerts.deploymentVersions.longRunningMismatch.duration }} - immediate action required
           expr: >-
             count by (job) (count by (job, commit) ({__name__=~"truvami_(bridge|gateway|siren|api|decoder)_info"})) > 1
-          for: 15m
+          for: {{ .Values.alerts.deploymentVersions.longRunningMismatch.duration }}
           labels:
             namespace: {{ .Release.Namespace }}
-            severity: critical
+            severity: {{ .Values.alerts.deploymentVersions.longRunningMismatch.severity }}
             node: truvami-{{ "{{" }} $labels.job }}
             service: truvami-{{ "{{" }} $labels.job }}
             component: version-control
             {{- with .Values.alertLabels }}
             {{- toYaml . | nindent 12 }}
             {{- end }}
+        {{- end }}
 
+        {{- if .Values.alerts.deploymentVersions.serviceVersionInfo.enabled }}
         - alert: TruvamiServiceVersionInfo
           annotations:
             description: >-
               **Service Version Information:**
-              Service: {{ "{{" }} $labels.container }}
-              Version: {{ "{{" }} $labels.version }}
-              Commit: {{ "{{" }} $labels.commit }}
-              Build Date: {{ "{{" }} $labels.build_date }}
+              - Service: {{ "{{" }} $labels.job }}
+              - Container: {{ "{{" }} $labels.container }}
+              - Version: {{ "{{" }} $labels.version }}
+              - Commit: {{ "{{" }} $labels.commit }}
+              - Build Date: {{ "{{" }} $labels.build_date }}
+              - Instance: {{ "{{" }} $labels.instance }}
+              - Pod: {{ "{{" }} $labels.pod }}
 
               This is an informational alert that fires when service version information is available.
               Use this to track deployments and version changes across the environment.
             summary: >-
-              {{ "{{" }} $labels.container }} running version {{ "{{" }} $labels.version }} (commit: {{ "{{" }} $labels.commit }})
+              Service {{ "{{" }} $labels.job }} running version {{ "{{" }} $labels.version }} (commit: {{ "{{" }} printf "%.8s" $labels.commit }})
           expr: >-
             {__name__=~"truvami_(bridge|gateway|siren|api|decoder)_info"}
-          for: 1m
+          for: {{ .Values.alerts.deploymentVersions.serviceVersionInfo.duration }}
           labels:
             namespace: {{ .Release.Namespace }}
-            severity: info
+            severity: {{ .Values.alerts.deploymentVersions.serviceVersionInfo.severity }}
             node: truvami-{{ "{{" }} $labels.job }}
             service: truvami-{{ "{{" }} $labels.job }}
             component: version-info
+            version: "{{ "{{" }} $labels.version }}"
+            commit: "{{ "{{" }} $labels.commit }}"
             {{- with .Values.alertLabels }}
             {{- toYaml . | nindent 12 }}
             {{- end }}
+        {{- end }}
+{{- end }}

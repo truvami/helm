@@ -1,3 +1,4 @@
+{{- if .Values.alerts.serviceHealth.enabled }}
 apiVersion: monitoring.coreos.com/v1
 kind: PrometheusRule
 metadata:
@@ -9,6 +10,7 @@ spec:
   groups:
     - name: truvami-service-health
       rules:
+        {{- if .Values.alerts.serviceHealth.bridgeDown.enabled }}
         - alert: TruvamiBridgeDown
           annotations:
             description: >-
@@ -42,33 +44,37 @@ spec:
               Truvami Bridge is down - CRITICAL SERVICE OUTAGE
           expr: >-
             up{job="truvami-bridge"} == 0
-          for: 1m
+          for: {{ .Values.alerts.serviceHealth.bridgeDown.duration }}
           labels:
             namespace: {{ .Release.Namespace }}
-            severity: critical
+            severity: {{ .Values.alerts.serviceHealth.bridgeDown.severity }}
             node: truvami-bridge
             service: truvami-bridge
             {{- with .Values.alertLabels }}
             {{- toYaml . | nindent 12 }}
             {{- end }}
+        {{- end }}
+        {{- if .Values.alerts.serviceHealth.bridgeHighErrorRate.enabled }}
         - alert: TruvamiBridgeHighErrorRate
           annotations:
             description: >-
               High error rate detected over the last 5 minutes.
             summary: >-
-              High error rate in Truvami Bridge (>0.1 errors/sec over 5min, alert after 2min)
+              High error rate in Truvami Bridge (>{{ .Values.alerts.serviceHealth.bridgeHighErrorRate.threshold }} errors/sec over 5min, alert after {{ .Values.alerts.serviceHealth.bridgeHighErrorRate.duration }})
           expr: >-
             (
               rate(truvami_failed_to_decode_payload_count[5m]) +
               rate(truvami_failed_to_create_uplink_through_grpc_count[5m]) +
               rate(truvami_failed_to_fetch_device_metadata_count[5m])
-            ) > 0.1
-          for: 2m
+            ) > {{ .Values.alerts.serviceHealth.bridgeHighErrorRate.threshold }}
+          for: {{ .Values.alerts.serviceHealth.bridgeHighErrorRate.duration }}
           labels:
             namespace: {{ .Release.Namespace }}
-            severity: major
+            severity: {{ .Values.alerts.serviceHealth.bridgeHighErrorRate.severity }}
             node: truvami-bridge
             service: truvami-bridge
             {{- with .Values.alertLabels }}
             {{- toYaml . | nindent 12 }}
             {{- end }}
+        {{- end }}
+{{- end }}
