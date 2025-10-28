@@ -51,8 +51,8 @@ spec:
             - secretRef:
                 name: {{ .Values.postgres.external.existingSecret }}
             {{- end }}
-          {{- if .Values.postgres.enabled }}
           env:
+          {{- if .Values.postgres.enabled }}
             - name: DB_PASSWORD
               valueFrom:
                 secretKeyRef:
@@ -71,6 +71,26 @@ spec:
               value: "app"
             - name: DATABASE_URL
               value: "postgresql://$(DB_USER):$(DB_PASSWORD)@$(DB_HOST):$(DB_PORT)/$(DB_NAME)"
+          {{- else if .Values.database.existingSecret }}
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.database.existingSecret }}
+                  key: {{ .Values.database.existingSecretKey }}
+          {{- end }}
+          {{- if .Values.betterAuth.existingSecret }}
+            - name: BETTER_AUTH_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.betterAuth.existingSecret }}
+                  key: {{ .Values.betterAuth.existingSecretKey }}
+          {{- end }}
+          {{- if .Values.keycloak.existingSecret }}
+            - name: KEYCLOAK_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.keycloak.existingSecret }}
+                  key: {{ .Values.keycloak.existingSecretKey }}
           {{- end }}
           {{- with .Values.livenessProbe }}
           livenessProbe:

@@ -31,8 +31,8 @@ spec:
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           args: ["migrate"]
-          {{- if .Values.postgres.enabled }}
           env:
+          {{- if .Values.postgres.enabled }}
             - name: DB_PASSWORD
               valueFrom:
                 secretKeyRef:
@@ -45,15 +45,34 @@ spec:
                   key: username
             - name: DATABASE_URL
               value: "postgresql://$(DB_USER):$(DB_PASSWORD)@{{ .Release.Name }}-docs-db-pooler:5432/app"
+          {{- else if .Values.database.existingSecret }}
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.database.existingSecret }}
+                  key: {{ .Values.database.existingSecretKey }}
           {{- else if .Values.database.url }}
-          env:
             - name: DATABASE_URL
               value: {{ .Values.database.url | quote }}
           {{- else if not .Values.postgres.external.existingSecret }}
-          env:
             - name: DATABASE_URL
               value: "postgresql://{{ .Values.postgres.external.username }}:{{ .Values.postgres.external.password }}@{{ .Values.postgres.external.host }}:{{ .Values.postgres.external.port }}/{{ .Values.postgres.external.database }}"
-          {{- else }}
+          {{- end }}
+          {{- if .Values.betterAuth.existingSecret }}
+            - name: BETTER_AUTH_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.betterAuth.existingSecret }}
+                  key: {{ .Values.betterAuth.existingSecretKey }}
+          {{- end }}
+          {{- if .Values.keycloak.existingSecret }}
+            - name: KEYCLOAK_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.keycloak.existingSecret }}
+                  key: {{ .Values.keycloak.existingSecretKey }}
+          {{- end }}
+          {{- if .Values.postgres.external.existingSecret }}
           envFrom:
             - secretRef:
                 name: {{ .Values.postgres.external.existingSecret }}

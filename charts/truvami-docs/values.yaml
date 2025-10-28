@@ -10,6 +10,13 @@ betterAuth:
   # Generate with: openssl rand -base64 32
   # Should be provided via external secret management
   secret: ""
+  # Optional: existing secret containing Better Auth secret
+  # If provided, it should contain the Better Auth secret key
+  # When using existingSecret, the above secret value is ignored
+  existingSecret: ""
+  # Key name in the existing secret that contains the Better Auth secret
+  # Only used when existingSecret is set
+  existingSecretKey: "better-auth-secret"
 
 # Application Configuration
 app:
@@ -24,6 +31,13 @@ keycloak:
   clientId: "dashboard"
   # OAuth client secret - should be provided via external secret
   clientSecret: ""
+  # Optional: existing secret containing Keycloak client secret
+  # If provided, it should contain the Keycloak client secret
+  # When using existingSecret, the above clientSecret value is ignored
+  existingSecret: ""
+  # Key name in the existing secret that contains the Keycloak client secret
+  # Only used when existingSecret is set
+  existingSecretKey: "client-secret"
 
 # Database Configuration
 database:
@@ -32,6 +46,13 @@ database:
   # Should be provided via external secret
   # Note: When postgres.enabled=true, database connections will automatically use the pooler
   url: ""
+  # Optional: existing secret containing database URL
+  # If provided, it should contain the database connection string
+  # When using existingSecret, the above url value is ignored
+  existingSecret: ""
+  # Key name in the existing secret that contains the database URL
+  # Only used when existingSecret is set
+  existingSecretKey: "jdbc-uri"
 
 # This sets the container image more information can be found here: https://kubernetes.io/docs/concepts/containers/images/
 image:

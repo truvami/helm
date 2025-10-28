@@ -1,6 +1,6 @@
 # truvami-docs
 
-![Version: 0.1.2](https://img.shields.io/badge/Version-0.1.2-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v1.0.0-rc1](https://img.shields.io/badge/AppVersion-v1.0.0--rc1-informational?style=flat-square)
+![Version: 0.1.3](https://img.shields.io/badge/Version-0.1.3-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v1.0.0-rc1](https://img.shields.io/badge/AppVersion-v1.0.0--rc1-informational?style=flat-square)
 
 A Helm chart for Kubernetes
 
@@ -14,7 +14,11 @@ A Helm chart for Kubernetes
 | autoscaling.maxReplicas | int | `100` |  |
 | autoscaling.minReplicas | int | `1` |  |
 | autoscaling.targetCPUUtilizationPercentage | int | `80` |  |
+| betterAuth.existingSecret | string | `""` |  |
+| betterAuth.existingSecretKey | string | `"better-auth-secret"` |  |
 | betterAuth.secret | string | `""` |  |
+| database.existingSecret | string | `""` |  |
+| database.existingSecretKey | string | `"jdbc-uri"` |  |
 | database.url | string | `""` |  |
 | fullnameOverride | string | `""` |  |
 | httpRoute | object | `{"annotations":{},"enabled":false,"hostnames":["docs2.truvami.com"],"parentRefs":[{"name":"gateway","sectionName":"http"}],"rules":[{"matches":[{"path":{"type":"PathPrefix","value":"/headers"}}]}]}` | Expose the service via gateway-api HTTPRoute Requires Gateway API resources and suitable controller installed within the cluster (see: https://gateway-api.sigs.k8s.io/guides/) |
@@ -32,6 +36,8 @@ A Helm chart for Kubernetes
 | keycloak.clientId | string | `"dashboard"` |  |
 | keycloak.clientSecret | string | `""` |  |
 | keycloak.discoveryUrl | string | `"https://sso.sbcdc.ch/auth/realms/truvami/.well-known/openid-configuration"` |  |
+| keycloak.existingSecret | string | `""` |  |
+| keycloak.existingSecretKey | string | `"client-secret"` |  |
 | livenessProbe.httpGet.path | string | `"/"` |  |
 | livenessProbe.httpGet.port | string | `"http"` |  |
 | migration.resources.limits.cpu | string | `"500m"` |  |
