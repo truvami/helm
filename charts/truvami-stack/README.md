@@ -1,6 +1,6 @@
 # truvami-stack
 
-![Version: 0.1.217](https://img.shields.io/badge/Version-0.1.217-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)
+![Version: 0.1.218](https://img.shields.io/badge/Version-0.1.218-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)
 
 A Helm chart for Kubernetes
 
@@ -10,7 +10,7 @@ A Helm chart for Kubernetes
 |------------|------|---------|
 | file://../truvami-api/ | truvami-api | 0.0.30 |
 | file://../truvami-bridge/ | truvami-bridge | 0.1.35 |
-| file://../truvami-dashboard/ | truvami-dashboard | 1.0.10 |
+| file://../truvami-dashboard/ | truvami-dashboard | 1.0.11 |
 | file://../truvami-decoder/ | truvami-decoder | 0.0.20 |
 | file://../truvami-docs/ | truvami-docs | 0.1.3 |
 | file://../truvami-gateway/ | truvami-gateway | 0.0.30 |
