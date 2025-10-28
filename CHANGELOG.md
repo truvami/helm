@@ -5,11 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.1-rc17] - 2025-10-28
+
+### Features
+- Update truvami-dashboard to version 1.0.10 and enhance secret management for Better Auth and Keycloak
+
 ## [1.0.1-rc16] - 2025-10-28
 
 ### Features
-- Update Helm chart to version 0.1.3 and enhance secret management for Better Auth and Keycloak
-- Bump chart version to 0.1.216 and update truvami-docs dependency to 0.1.3
+- Update Helm chart to version 0.1.3 and enhance secret management for Better Auth and Keycloak by @michaelbeutler
+- Bump chart version to 0.1.216 and update truvami-docs dependency to 0.1.3 by @michaelbeutler
 
 ## [1.0.1-rc15] - 2025-10-28
 
@@ -201,6 +206,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * @StefanSmile made their first contribution
 * @simylein made their first contribution
 
+[1.0.1-rc17]: https://github.com/truvami/helm/compare/v1.0.1-rc16...v1.0.1-rc17
 [1.0.1-rc16]: https://github.com/truvami/helm/compare/v1.0.1-rc15...v1.0.1-rc16
 [1.0.1-rc15]: https://github.com/truvami/helm/compare/v1.0.1-rc14...v1.0.1-rc15
 [1.0.1-rc12]: https://github.com/truvami/helm/compare/v1.0.1-rc11...v1.0.1-rc12
