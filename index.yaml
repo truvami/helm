@@ -1512,6 +1512,16 @@ entries:
     version: 0.0.1
   truvami-monitoring:
   - apiVersion: v2
+    created: "2025-10-28T11:54:06.268913932Z"
+    description: This chart contains all CRD's for the truvami-stack monitoring and
+      alerting.
+    digest: 4de4c7f89580a8309bb6a334e6710e9689f96f5d9208121a530a9b07e3a95ef9
+    name: truvami-monitoring
+    type: application
+    urls:
+    - https://github.com/truvami/helm/releases/download/truvami-monitoring-0.1.91/truvami-monitoring-0.1.91.tgz
+    version: 0.1.91
+  - apiVersion: v2
     created: "2025-10-22T16:07:15.832218441Z"
     description: This chart contains all CRD's for the truvami-stack monitoring and
       alerting.
@@ -2804,6 +2814,52 @@ entries:
     - https://github.com/truvami/helm/releases/download/truvami-siren-0.1.2/truvami-siren-0.1.2.tgz
     version: 0.1.2
   truvami-stack:
+  - apiVersion: v2
+    created: "2025-10-28T11:54:06.455655574Z"
+    dependencies:
+    - condition: truvami-gateway.enabled
+      name: truvami-gateway
+      repository: file://../truvami-gateway/
+      version: 0.0.30
+    - condition: truvami-bridge.enabled
+      name: truvami-bridge
+      repository: file://../truvami-bridge/
+      version: 0.1.35
+    - condition: truvami-api.enabled
+      name: truvami-api
+      repository: file://../truvami-api/
+      version: 0.0.30
+    - condition: truvami-decoder.enabled
+      name: truvami-decoder
+      repository: file://../truvami-decoder/
+      version: 0.0.20
+    - condition: truvami-dashboard.enabled
+      name: truvami-dashboard
+      repository: file://../truvami-dashboard/
+      version: 1.0.9
+    - condition: truvami-monitoring.enabled
+      name: truvami-monitoring
+      repository: file://../truvami-monitoring/
+      version: 0.1.91
+    - condition: truvami-siren.enabled
+      name: truvami-siren
+      repository: file://../truvami-siren/
+      version: 0.2.7
+    - condition: truvami-docs.enabled
+      name: truvami-docs
+      repository: file://../truvami-docs/
+      version: 0.1.2
+    - condition: valkey.enabled
+      name: valkey
+      repository: https://charts.bitnami.com/bitnami
+      version: 3.0.9
+    description: A Helm chart for Kubernetes
+    digest: f5f7271363a1d9cfb89b95a28ced78d5b0316037255286fa896bed627b128de6
+    name: truvami-stack
+    type: application
+    urls:
+    - https://github.com/truvami/helm/releases/download/truvami-stack-0.1.215/truvami-stack-0.1.215.tgz
+    version: 0.1.215
   - apiVersion: v2
     created: "2025-10-22T16:57:46.007357329Z"
     dependencies:
@@ -9097,4 +9153,4 @@ entries:
     urls:
     - https://github.com/truvami/helm/releases/download/truvami-stack-0.1.0/truvami-stack-0.1.0.tgz
     version: 0.1.0
-generated: "2025-10-22T16:57:46.008242921Z"
+generated: "2025-10-28T11:54:06.456448306Z"
