@@ -1,6 +1,6 @@
 # truvami-dashboard
 
-![Version: 1.0.9](https://img.shields.io/badge/Version-1.0.9-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v2.8.0-rc13](https://img.shields.io/badge/AppVersion-v2.8.0--rc13-informational?style=flat-square)
+![Version: 1.0.10](https://img.shields.io/badge/Version-1.0.10-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v2.8.0-rc13](https://img.shields.io/badge/AppVersion-v2.8.0--rc13-informational?style=flat-square)
 
 Truvami Dashboard Helm chart with Better Auth integration
 
@@ -16,7 +16,11 @@ Truvami Dashboard Helm chart with Better Auth integration
 | autoscaling.maxReplicas | int | `100` |  |
 | autoscaling.minReplicas | int | `1` |  |
 | autoscaling.targetCPUUtilizationPercentage | int | `80` |  |
+| betterAuth.existingSecret | string | `""` |  |
+| betterAuth.existingSecretKey | string | `"better-auth-secret"` |  |
 | betterAuth.secret | string | `""` |  |
+| database.existingSecret | string | `""` |  |
+| database.existingSecretKey | string | `"jdbc-uri"` |  |
 | database.url | string | `""` |  |
 | fullnameOverride | string | `""` |  |
 | hostAliases | list | `[]` |  |
@@ -34,6 +38,8 @@ Truvami Dashboard Helm chart with Better Auth integration
 | keycloak.clientId | string | `"dashboard"` |  |
 | keycloak.clientSecret | string | `""` |  |
 | keycloak.discoveryUrl | string | `"https://sso.sbcdc.ch/auth/realms/truvami/.well-known/openid-configuration"` |  |
+| keycloak.existingSecret | string | `""` |  |
+| keycloak.existingSecretKey | string | `"client-secret"` |  |
 | livenessProbe.httpGet.path | string | `"/"` |  |
 | livenessProbe.httpGet.port | string | `"http"` |  |
 | migration.resources.limits.cpu | string | `"500m"` |  |
