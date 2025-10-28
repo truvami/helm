@@ -3,6 +3,9 @@
 # Declare variables to be passed into your templates.
 
 gateway:
+  # Strimzi cluster name for Kafka resources
+  cluster: "truvami-stack"
+
   topic: truvami
   otel:
     enable: true

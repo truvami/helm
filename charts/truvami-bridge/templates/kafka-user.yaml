@@ -3,7 +3,7 @@ kind: KafkaUser
 metadata:
   name: "{{ .Values.bridge.topic }}-bridge-kafka"
   labels:
-    strimzi.io/cluster: {{ .Release.Name }}
+    strimzi.io/cluster: {{ .Values.bridge.cluster | default .Release.Name }}
 spec:
   authentication:
     type: tls

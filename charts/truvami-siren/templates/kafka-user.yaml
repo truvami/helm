@@ -5,7 +5,7 @@ kind: KafkaTopic
 metadata:
   name: "{{ $topic }}"
   labels:
-    strimzi.io/cluster: {{ $root.Release.Name }}
+    strimzi.io/cluster: {{ $root.Values.siren.cluster | default $root.Release.Name }}
 spec:
   partitions: {{ $root.Values.kafka.topic.partitions | default 3 }}
   replicas: {{ $root.Values.kafka.topic.replicas | default 3 }}
@@ -16,7 +16,7 @@ kind: KafkaTopic
 metadata:
   name: "{{ index $root.Values.siren.kafka.alerts "retry-topics" $name }}"
   labels:
-    strimzi.io/cluster: {{ $root.Release.Name }}
+    strimzi.io/cluster: {{ $root.Values.siren.cluster | default $root.Release.Name }}
 spec:
   partitions: {{ $root.Values.kafka.topic.partitions | default 3 }}
   replicas: {{ $root.Values.kafka.topic.replicas | default 3 }}
@@ -27,7 +27,7 @@ kind: KafkaTopic
 metadata:
   name: "{{ index $root.Values.siren.kafka.alerts "dlq-topics" $name }}"
   labels:
-    strimzi.io/cluster: {{ $root.Release.Name }}
+    strimzi.io/cluster: {{ $root.Values.siren.cluster | default $root.Release.Name }}
 spec:
   partitions: {{ $root.Values.kafka.topic.partitions | default 3 }}
   replicas: {{ $root.Values.kafka.topic.replicas | default 3 }}
@@ -39,7 +39,7 @@ kind: KafkaUser
 metadata:
   name: "truvami-siren-kafka"
   labels:
-    strimzi.io/cluster: {{ .Release.Name }}
+    strimzi.io/cluster: {{ .Values.siren.cluster | default .Release.Name }}
 spec:
   authentication:
     type: tls

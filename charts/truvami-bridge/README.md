@@ -1,6 +1,6 @@
 # truvami-bridge
 
-![Version: 0.1.35](https://img.shields.io/badge/Version-0.1.35-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v2.3.18](https://img.shields.io/badge/AppVersion-v2.3.18-informational?style=flat-square)
+![Version: 0.1.36](https://img.shields.io/badge/Version-0.1.36-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v2.3.18](https://img.shields.io/badge/AppVersion-v2.3.18-informational?style=flat-square)
 
 A Helm chart for Kubernetes
 
@@ -13,6 +13,7 @@ A Helm chart for Kubernetes
 | autoscaling.maxReplicas | int | `100` |  |
 | autoscaling.minReplicas | int | `1` |  |
 | autoscaling.targetCPUUtilizationPercentage | int | `80` |  |
+| bridge.cluster | string | `"truvami-stack"` |  |
 | bridge.featureFlags.fed1a230-cee8-11ee-9ddb-47f5f8bdd1a5.doNotFallbackSetCapturedAt | bool | `true` |  |
 | bridge.grpc.server | string | `"truvami-stack-truvami-api:5001"` |  |
 | bridge.kafka."allow.auto.create.topics" | bool | `false` |  |

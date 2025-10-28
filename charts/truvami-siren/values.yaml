@@ -3,6 +3,9 @@
 # Declare variables to be passed into your templates.
 
 siren:
+  # Strimzi cluster name for Kafka resources
+  cluster: truvami-stack
+
   metrics:
     port: 9090
 
