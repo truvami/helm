@@ -96,3 +96,20 @@ nodeSelector: {}
 tolerations: []
 
 affinity: {}
+
+truvami-gateway:
+  enabled: true
+truvami-bridge:
+  enabled: true
+truvami-api:
+  enabled: true
+truvami-decoder:
+  enabled: true
+truvami-dashboard:
+  enabled: true
+truvami-monitoring:
+  enabled: true
+truvami-siren:
+  enabled: true
+truvami-docs:
+  enabled: true

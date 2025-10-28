@@ -1,6 +1,6 @@
 # truvami-stack
 
-![Version: 0.1.214](https://img.shields.io/badge/Version-0.1.214-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)
+![Version: 0.1.215](https://img.shields.io/badge/Version-0.1.215-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)
 
 A Helm chart for Kubernetes
 
@@ -14,7 +14,7 @@ A Helm chart for Kubernetes
 | file://../truvami-decoder/ | truvami-decoder | 0.0.20 |
 | file://../truvami-docs/ | truvami-docs | 0.1.2 |
 | file://../truvami-gateway/ | truvami-gateway | 0.0.30 |
-| file://../truvami-monitoring/ | truvami-monitoring | 0.1.89 |
+| file://../truvami-monitoring/ | truvami-monitoring | 0.1.91 |
 | file://../truvami-siren/ | truvami-siren | 0.2.7 |
 | https://charts.bitnami.com/bitnami | valkey | 3.0.9 |
 
@@ -68,6 +68,14 @@ A Helm chart for Kubernetes
 | postgres.storage.storageClass | string | `"standard-retain"` |  |
 | securityContext | object | `{}` |  |
 | tolerations | list | `[]` |  |
+| truvami-api.enabled | bool | `true` |  |
+| truvami-bridge.enabled | bool | `true` |  |
+| truvami-dashboard.enabled | bool | `true` |  |
+| truvami-decoder.enabled | bool | `true` |  |
+| truvami-docs.enabled | bool | `true` |  |
+| truvami-gateway.enabled | bool | `true` |  |
+| truvami-monitoring.enabled | bool | `true` |  |
+| truvami-siren.enabled | bool | `true` |  |
 | valkey.enabled | bool | `true` |  |
 | valkey.metrics.enabled | bool | `true` |  |
 | valkey.metrics.serviceMonitor.enabled | bool | `true` |  |
