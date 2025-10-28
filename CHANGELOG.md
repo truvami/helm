@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.1-rc21] - 2025-10-28
+
+### Fixes
+- Update KafkaUser resource name to match release name
+- Bump truvami-siren and truvami-stack chart versions to 0.2.10 and 0.1.221 respectively
+
 ## [1.0.1-rc20] - 2025-10-28
 
 ### Fixes
@@ -216,6 +222,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * @StefanSmile made their first contribution
 * @simylein made their first contribution
 
+[1.0.1-rc21]: https://github.com/truvami/helm/compare/v1.0.1-rc20...v1.0.1-rc21
 [1.0.1-rc20]: https://github.com/truvami/helm/compare/v1.0.1-rc19...v1.0.1-rc20
 [1.0.1-rc18]: https://github.com/truvami/helm/compare/v1.0.1-rc17...v1.0.1-rc18
 [1.0.1-rc17]: https://github.com/truvami/helm/compare/v1.0.1-rc16...v1.0.1-rc17
