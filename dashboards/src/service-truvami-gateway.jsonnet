@@ -141,7 +141,4 @@ truvami.serviceDashboard('truvami-gateway', [
   gatewayPanels.gatewayActivity({ h: 6, w: 12, x: 0, y: 52 }),
   gatewayPanels.averageSignalQuality({ h: 6, w: 12, x: 12, y: 52 }),
 
-  // Logs section
-  row.new('Logs') + { gridPos: { h: 1, w: 24, x: 0, y: 58 }, collapsed: false },
-  truvami.panels.serviceLogs('truvami-gateway', { h: 10, w: 24, x: 0, y: 59 }),
 ])

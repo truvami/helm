@@ -324,13 +324,13 @@ local row = grafana.row;
       },
       {
         allowCustomValue: true,
-        current: { text: ['All'], value: ['$__all'] },
+        current: { text: 'All', value: '$__all' },
         datasource: { type: 'prometheus', uid: '${datasource}' },
         definition: 'label_values(truvami_device_uplink_count{namespace="$namespace"},devEui)',
         description: '',
         includeAll: true,
         label: 'Devices',
-        multi: true,
+        multi: false,
         name: 'devices',
         options: [],
         query: {
@@ -455,19 +455,13 @@ local row = grafana.row;
         }],
       },
 
-      // Alert list and service logs
+      // Alert list and device logs
       $.panels.alertsList({ h: 15, w: 8, x: 0, y: 4 }) + {
         options+: {
           alertInstanceLabelFilter: '{devEui=~"$devices",namespace="$namespace"}',
         },
       },
-      $.panels.serviceLogsPanel({ h: 15, w: 16, x: 8, y: 4 }) + {
-        targets: [{
-          expr: '{namespace="$namespace", devEui=~"$devices"} |~ "devEui"',
-          refId: 'A',
-        }],
-      },
-      $.panels.deviceLogsPanel({ h: 10, w: 24, x: 0, y: 19 }),
+      $.panels.deviceLogsPanel({ h: 15, w: 16, x: 8, y: 4 }),
     ];
 
     grafana.dashboard.new(
@@ -918,7 +912,7 @@ local row = grafana.row;
           wrapLogMessage: false,
           prettifyLogMessage: false,
           enableLogDetails: true,
-          dedupStrategy: 'none',
+          dedupStrategy: 'signature',
           sortOrder: 'Descending',
         },
         fieldConfig: {
@@ -951,7 +945,7 @@ local row = grafana.row;
           wrapLogMessage: false,
           prettifyLogMessage: false,
           enableLogDetails: true,
-          dedupStrategy: 'none',
+          dedupStrategy: 'signature',
           sortOrder: 'Descending',
         },
         fieldConfig: {
