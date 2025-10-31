@@ -6,53 +6,53 @@ local truvami = import '../lib/truvami.libsonnet';
 // Device-specific panels using library functions
 local devicePanels = {
   // Uplinks Analysis panels
-  uplinksByDevicesTimeseries: truvami.panels.uplinksByDevicesTimeseries({ h: 10, w: 18, x: 0, y: 20 }),
-  uplinksByDevicesPie: truvami.panels.uplinksByDevicesPie({ h: 10, w: 6, x: 18, y: 20 }),
+  uplinksByDevicesTimeseries: truvami.panels.uplinksByDevicesTimeseries(),
+  uplinksByDevicesPie: truvami.panels.uplinksByDevicesPie(),
 
-  uplinksByPortsTimeseries: truvami.panels.uplinksByPortsTimeseries({ h: 10, w: 18, x: 0, y: 30 }),
-  uplinksByPortsPie: truvami.panels.uplinksByPortsPie({ h: 10, w: 6, x: 18, y: 30 }),
+  uplinksByPortsTimeseries: truvami.panels.uplinksByPortsTimeseries(),
+  uplinksByPortsPie: truvami.panels.uplinksByPortsPie(),
 
-  uplinksBySpreadingFactorsTimeseries: truvami.panels.uplinksBySpreadingFactorsTimeseries({ h: 10, w: 18, x: 0, y: 40 }),
-  uplinksBySpreadingFactorsPie: truvami.panels.uplinksBySpreadingFactorsPie({ h: 10, w: 6, x: 18, y: 40 }),
+  uplinksBySpreadingFactorsTimeseries: truvami.panels.uplinksBySpreadingFactorsTimeseries(),
+  uplinksBySpreadingFactorsPie: truvami.panels.uplinksBySpreadingFactorsPie(),
 
-  uplinksRate: truvami.panels.uplinksRate({ h: 10, w: 6, x: 0, y: 50 }),
-  uplinksPerHour: truvami.panels.uplinksPerHour({ h: 10, w: 6, x: 6, y: 50 }),
-  uplinkSequence: truvami.panels.uplinkSequence({ h: 10, w: 12, x: 12, y: 50 }),
+  uplinksRate: truvami.panels.uplinksRate(),
+  uplinksPerHour: truvami.panels.uplinksPerHour(),
+  uplinkSequence: truvami.panels.uplinkSequence(),
 
   // Device Status panels
-  batteryByDevices: truvami.panels.batteryByDevices({ h: 10, w: 12, x: 0, y: 61 }),
-  bufferLevelByDevices: truvami.panels.bufferLevelByDevices({ h: 10, w: 12, x: 12, y: 61 }),
+  batteryByDevices: truvami.panels.batteryByDevices(),
+  bufferLevelByDevices: truvami.panels.bufferLevelByDevices(),
 
   // Decode Error panels
-  decodeErrorRate: truvami.panels.decodeErrorRate({ h: 10, w: 6, x: 0, y: 72 }),
-  decodeErrorsByDevicesTimeseries: truvami.panels.decodeErrorsByDevicesTimeseries({ h: 10, w: 18, x: 6, y: 72 }),
-  decodeErrorsByDevicesPie: truvami.panels.decodeErrorsByDevicesPie({ h: 10, w: 12, x: 0, y: 82 }),
-  decodeErrorsByPortsPie: truvami.panels.decodeErrorsByPortsPie({ h: 10, w: 12, x: 12, y: 82 }),
+  decodeErrorRate: truvami.panels.decodeErrorRate(),
+  decodeErrorsByDevicesTimeseries: truvami.panels.decodeErrorsByDevicesTimeseries(),
+  decodeErrorsByDevicesPie: truvami.panels.decodeErrorsByDevicesPie(),
+  decodeErrorsByPortsPie: truvami.panels.decodeErrorsByPortsPie(),
 };
 
 // Build dashboard with device-specific panels
 truvami.deviceDashboard('truvami-device', [
-  // Uplinks Analysis section (after Alarms which end at y: 18)
-  row.new('Uplinks Analysis') + { gridPos: { h: 1, w: 24, x: 0, y: 19 }, collapsed: false },
-  devicePanels.uplinksByDevicesTimeseries,
-  devicePanels.uplinksByDevicesPie,
-  devicePanels.uplinksByPortsTimeseries,
-  devicePanels.uplinksByPortsPie,
-  devicePanels.uplinksBySpreadingFactorsTimeseries,
-  devicePanels.uplinksBySpreadingFactorsPie,
-  devicePanels.uplinksRate,
-  devicePanels.uplinksPerHour,
-  devicePanels.uplinkSequence,
+  // Uplinks Analysis section (after Alarms and Device Logs which end at y: 29)
+  row.new('Uplinks Analysis') + { gridPos: { h: 1, w: 24, x: 0, y: 30 }, collapsed: false },
+  devicePanels.uplinksByDevicesTimeseries + { gridPos: { h: 10, w: 18, x: 0, y: 31 } },
+  devicePanels.uplinksByDevicesPie + { gridPos: { h: 10, w: 6, x: 18, y: 31 } },
+  devicePanels.uplinksByPortsTimeseries + { gridPos: { h: 10, w: 18, x: 0, y: 41 } },
+  devicePanels.uplinksByPortsPie + { gridPos: { h: 10, w: 6, x: 18, y: 41 } },
+  devicePanels.uplinksBySpreadingFactorsTimeseries + { gridPos: { h: 10, w: 18, x: 0, y: 51 } },
+  devicePanels.uplinksBySpreadingFactorsPie + { gridPos: { h: 10, w: 6, x: 18, y: 51 } },
+  devicePanels.uplinksRate + { gridPos: { h: 10, w: 6, x: 0, y: 61 } },
+  devicePanels.uplinksPerHour + { gridPos: { h: 10, w: 6, x: 6, y: 61 } },
+  devicePanels.uplinkSequence + { gridPos: { h: 10, w: 12, x: 12, y: 61 } },
 
   // Device Status section
-  row.new('Device Status') + { gridPos: { h: 1, w: 24, x: 0, y: 60 }, collapsed: false },
-  devicePanels.batteryByDevices,
-  devicePanels.bufferLevelByDevices,
+  row.new('Device Status') + { gridPos: { h: 1, w: 24, x: 0, y: 71 }, collapsed: false },
+  devicePanels.batteryByDevices + { gridPos: { h: 10, w: 12, x: 0, y: 72 } },
+  devicePanels.bufferLevelByDevices + { gridPos: { h: 10, w: 12, x: 12, y: 72 } },
 
   // Decode Errors section
-  row.new('Decode Errors & Quality') + { gridPos: { h: 1, w: 24, x: 0, y: 71 }, collapsed: false },
-  devicePanels.decodeErrorRate,
-  devicePanels.decodeErrorsByDevicesTimeseries,
-  devicePanels.decodeErrorsByDevicesPie,
-  devicePanels.decodeErrorsByPortsPie,
+  row.new('Decode Errors & Quality') + { gridPos: { h: 1, w: 24, x: 0, y: 82 }, collapsed: false },
+  devicePanels.decodeErrorRate + { gridPos: { h: 10, w: 6, x: 0, y: 83 } },
+  devicePanels.decodeErrorsByDevicesTimeseries + { gridPos: { h: 10, w: 18, x: 6, y: 83 } },
+  devicePanels.decodeErrorsByDevicesPie + { gridPos: { h: 10, w: 12, x: 0, y: 93 } },
+  devicePanels.decodeErrorsByPortsPie + { gridPos: { h: 10, w: 12, x: 12, y: 93 } },
 ])

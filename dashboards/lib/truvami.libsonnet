@@ -246,10 +246,10 @@ local row = grafana.row;
       $.panels.alertsList() + (if devEuiFilter then {
         options+: { alertInstanceLabelFilter: alertFilter }
       } else {}),
-      $.panels.alertsPie() + (if devEuiFilter then {
+      $.panels.serviceLogsPanel() + (if devEuiFilter then {
         targets: [{
-          expr: 'count by(alertname) (ALERTS' + alertFilter + ')',
-          legendFormat: '__auto',
+          expr: '{namespace="$namespace", service="$service", devEui=~"$devEui"} |~ "devEui"',
+          refId: 'A',
         }]
       } else {}),
       $.panels.goRow(),
@@ -300,6 +300,7 @@ local row = grafana.row;
       $.templates.datasource,
       $.templates.namespace,
       $.templates.service(serviceName),
+      $.templates.logsDatasource,
       {
         allowCustomValue: false,
         current: { text: ['All'], value: ['$__all'] },
@@ -454,19 +455,19 @@ local row = grafana.row;
         }],
       },
 
-      // Alert list and pie chart
-      $.panels.alertsList({ h: 15, w: 18, x: 0, y: 4 }) + {
+      // Alert list and service logs
+      $.panels.alertsList({ h: 15, w: 8, x: 0, y: 4 }) + {
         options+: {
           alertInstanceLabelFilter: '{devEui=~"$devices",namespace="$namespace"}',
         },
       },
-      $.panels.alertsPie({ h: 15, w: 6, x: 18, y: 4 }) + {
+      $.panels.serviceLogsPanel({ h: 15, w: 16, x: 8, y: 4 }) + {
         targets: [{
-          expr: 'count by(alertname) (ALERTS{namespace="$namespace", devEui=~"$devices"})',
-          legendFormat: '__auto',
+          expr: '{namespace="$namespace", devEui=~"$devices"} |~ "devEui"',
           refId: 'A',
         }],
       },
+      $.panels.deviceLogsPanel({ h: 10, w: 24, x: 0, y: 19 }),
     ];
 
     grafana.dashboard.new(
@@ -871,10 +872,10 @@ local row = grafana.row;
         gridPos: gridPos,
       },
 
-    // Alert list panel
-    alertsList(gridPos={ h: 15, w: 18, x: 0, y: 7 }):
+    // Alert list panel (1/3 width)
+    alertsList(gridPos={ h: 15, w: 8, x: 0, y: 7 }):
       alertList.new(
-        'List',
+        'Alerts List',
       )
       + {
         options: {
@@ -899,34 +900,69 @@ local row = grafana.row;
         gridPos: gridPos,
       },
 
-    // Alerts pie chart
-    alertsPie(gridPos={ h: 15, w: 6, x: 18, y: 7 }):
+    // Service logs panel (2/3 width) - replaces alerts pie chart
+    serviceLogsPanel(gridPos={ h: 15, w: 16, x: 8, y: 7 }):
       {
-        type: 'piechart',
-        title: 'Alerts',
-        datasource: '${datasource}',
+        type: 'logs',
+        title: 'Service Logs',
+        datasource: '${logs_datasource}',
         gridPos: gridPos,
         targets: [{
-          expr: 'count by(alertname) (ALERTS{namespace="$namespace", service="$service"})',
-          legendFormat: '__auto',
+          expr: '{namespace="$namespace", service_name="$service"}',
           refId: 'A',
         }],
         options: {
-          legend: {
-            displayMode: 'visible',
-            placement: 'bottom',
+          showTime: false,
+          showLabels: false,
+          showCommonLabels: false,
+          wrapLogMessage: false,
+          prettifyLogMessage: false,
+          enableLogDetails: true,
+          dedupStrategy: 'none',
+          sortOrder: 'Descending',
+        },
+        fieldConfig: {
+          defaults: {
+            custom: {
+              align: 'auto',
+              cellOptions: { type: 'auto' },
+              inspect: false,
+            },
           },
-          pieType: 'pie',
-          reduceOptions: {
-            calcs: ['lastNotNull'],
-            fields: '',
-            values: false,
+          overrides: [],
+        },
+      },
+
+    // Device logs panel for searching devEui across all services
+    deviceLogsPanel(gridPos={ h: 10, w: 24, x: 0, y: 22 }):
+      {
+        type: 'logs',
+        title: 'Device Logs (DevEui Search)',
+        datasource: '${logs_datasource}',
+        gridPos: gridPos,
+        targets: [{
+          expr: '{namespace="$namespace", service_name=~"truvami-.*"} |~ "devEui"',
+          refId: 'A',
+        }],
+        options: {
+          showTime: false,
+          showLabels: false,
+          showCommonLabels: false,
+          wrapLogMessage: false,
+          prettifyLogMessage: false,
+          enableLogDetails: true,
+          dedupStrategy: 'none',
+          sortOrder: 'Descending',
+        },
+        fieldConfig: {
+          defaults: {
+            custom: {
+              align: 'auto',
+              cellOptions: { type: 'auto' },
+              inspect: false,
+            },
           },
-          tooltip: {
-            mode: 'single',
-            sort: 'none',
-          },
-          displayLabels: ['name'],
+          overrides: [],
         },
       },
 
