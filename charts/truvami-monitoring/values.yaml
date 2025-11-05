@@ -93,6 +93,9 @@ alerts:
     enabled: true
     # Add other device health alerts here as needed
 
+  signalQuality:
+    enabled: true
+
   # Kafka Monitoring
   kafka:
     enabled: true
