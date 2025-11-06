@@ -7,14 +7,255 @@ metadata:
   labels:
     {{- include "truvami-monitoring.labels" . | nindent 4 }}
 spec:
+  # Routing configuration
   route:
-    groupBy: ['alertname']
-    groupWait: 0s
-    groupInterval: 5m
-    repeatInterval: 5m
-    receiver: 'watchdog-heartbeat'
+    groupBy: {{ .Values.alertmanager.route.group_by | default (list "alertname" "cluster" "service") | toJson }}
+    groupWait: {{ .Values.alertmanager.route.group_wait | default "10s" | quote }}
+    groupInterval: {{ .Values.alertmanager.route.group_interval | default "5m" | quote }}
+    repeatInterval: {{ .Values.alertmanager.route.repeat_interval | default "12h" | quote }}
+    receiver: {{ .Values.alertmanager.route.receiver | default "default-receiver" | quote }}
+
+    # Sub-routes for specific alert handling
+    routes:
+    {{- if .Values.alertmanager.route.routes }}
+    {{- range .Values.alertmanager.route.routes }}
+    - {{- toYaml . | nindent 6 }}
+    {{- end }}
+    {{- else }}
+    # Critical alerts route
+    - matchers:
+      - matchType: "="
+        name: "severity"
+        value: "critical"
+      receiver: 'critical-alerts'
+      groupWait: '0s'
+      groupInterval: '1m'
+      repeatInterval: '1h'
+
+    # Watchdog alerts route
+    - matchers:
+      - matchType: "="
+        name: "alertname"
+        value: "Watchdog"
+      receiver: 'watchdog-heartbeat'
+      groupWait: '0s'
+      groupInterval: '1m'
+      repeatInterval: '5m'
+
+    # Production alerts to OpsGenie
+    - matchers:
+      - matchType: "=~"
+        name: "environment"
+        value: "prod|production"
+      receiver: 'opsgenie-production'
+      groupWait: '5s'
+      repeatInterval: '5m'
+    {{- end }}
+
+  # Inhibition rules
+  {{- if .Values.alertmanager.inhibit_rules }}
+  inhibitRules:
+  {{- range .Values.alertmanager.inhibit_rules }}
+  - sourceMatchers:
+    {{- range .source_matchers }}
+    - matchType: "="
+      name: {{ . | quote }}
+    {{- end }}
+    targetMatchers:
+    {{- range .target_matchers }}
+    - matchType: "="
+      name: {{ . | quote }}
+    {{- end }}
+    equal: {{ .equal | toJson }}
+  {{- end }}
+  {{- else }}
+  inhibitRules:
+  # Suppress warning alerts when critical alerts are firing for the same service
+  - sourceMatchers:
+    - matchType: "="
+      name: "severity"
+      value: "critical"
+    targetMatchers:
+    - matchType: "=~"
+      name: "severity"
+      value: "warning|minor"
+    equal: ["service", "cluster"]
+
+  # Suppress all alerts when service is in maintenance
+  - sourceMatchers:
+    - matchType: "="
+      name: "maintenance"
+      value: "true"
+    targetMatchers:
+    - matchType: "=~"
+      name: "service"
+      value: ".*"
+    equal: ["service"]
+  {{- end }}
 
   receivers:
+  # Default receiver
+  - name: 'default-receiver'
+    {{- if and .Values.alertmanager.receivers.default.enabled .Values.alertmanager.receivers.default.webhook.enabled }}
+    webhookConfigs:
+    - url: {{ .Values.alertmanager.receivers.default.webhook.url | quote }}
+      sendResolved: {{ .Values.alertmanager.receivers.default.webhook.send_resolved | default true }}
+      httpConfig:
+        followRedirects: {{ .Values.alertmanager.global.http_config.follow_redirects | default true }}
+      title: {{ .Values.alertmanager.receivers.default.webhook.title | default "Truvami Alert" | quote }}
+      text: {{ .Values.alertmanager.receivers.default.webhook.text | default "Alert triggered" | quote }}
+    {{- end }}
+
+  # Critical alerts receiver
+  - name: 'critical-alerts'
+    {{- if .Values.alertmanager.receivers.critical.enabled }}
+    {{- if .Values.alertmanager.receivers.critical.webhook.enabled }}
+    webhookConfigs:
+    - url: {{ .Values.alertmanager.receivers.critical.webhook.url | quote }}
+      sendResolved: true
+      httpConfig:
+        followRedirects: true
+      title: {{ .Values.alertmanager.receivers.critical.webhook.title | default "🚨 CRITICAL ALERT" | quote }}
+      text: {{ .Values.alertmanager.receivers.critical.webhook.text | default "Critical alert triggered" | quote }}
+    {{- end }}
+    {{- if .Values.alertmanager.receivers.critical.slack.enabled }}
+    slackConfigs:
+    - apiURL:
+        key: url
+        name: {{ include "truvami-monitoring.fullname" . }}-slack-webhook
+      channel: {{ .Values.alertmanager.receivers.critical.slack.channel | default "#critical-alerts" | quote }}
+      title: {{ .Values.alertmanager.receivers.critical.slack.title | default "🚨 CRITICAL: Alert" | quote }}
+      text: {{ .Values.alertmanager.receivers.critical.slack.text | default "Critical alert details" | quote }}
+      sendResolved: true
+    {{- end }}
+    {{- end }}
+
+  # OpsGenie receiver for production alerts
+  {{- if .Values.alertmanager.receivers.opsgenie.enabled }}
+  - name: 'opsgenie-production'
+    opsgenieConfigs:
+    - apiKey:
+        key: api-key
+        name: {{ include "truvami-monitoring.fullname" . }}-opsgenie-secret
+      apiURL: {{ .Values.alertmanager.receivers.opsgenie.api_url | default "https://api.opsgenie.com/" | quote }}
+      message: {{ .Values.alertmanager.receivers.opsgenie.message | default "Alert: {{ `{{ .GroupLabels.alertname }}` }}" | quote }}
+      description: {{ .Values.alertmanager.receivers.opsgenie.description | default "{{ `{{ range .Alerts }}{{ .Annotations.description }}{{ end }}` }}" | quote }}
+      priority: {{ .Values.alertmanager.receivers.opsgenie.priority | default "{{ `{{ if eq .GroupLabels.severity \"critical\" }}P1{{ else if eq .GroupLabels.severity \"major\" }}P2{{ else }}P3{{ end }}` }}" | quote }}
+      sendResolved: true
+      {{- if .Values.alertmanager.receivers.opsgenie.teams }}
+      teams:
+      {{- range .Values.alertmanager.receivers.opsgenie.teams }}
+      - {{ . | quote }}
+      {{- end }}
+      {{- end }}
+      {{- if .Values.alertmanager.receivers.opsgenie.responders }}
+      responders:
+      {{- range .Values.alertmanager.receivers.opsgenie.responders }}
+      - type: {{ .type | quote }}
+        {{- if .name }}
+        name: {{ .name | quote }}
+        {{- end }}
+        {{- if .username }}
+        username: {{ .username | quote }}
+        {{- end }}
+        {{- if .id }}
+        id: {{ .id | quote }}
+        {{- end }}
+      {{- end }}
+      {{- end }}
+      details:
+        cluster: {{ "{{ .GroupLabels.cluster }}" | quote }}
+        service: {{ "{{ .GroupLabels.service }}" | quote }}
+        environment: {{ "{{ .GroupLabels.environment }}" | quote }}
+        {{- if .Values.alertmanager.receivers.opsgenie.details }}
+        {{- range $key, $value := .Values.alertmanager.receivers.opsgenie.details }}
+        {{ $key }}: {{ $value | quote }}
+        {{- end }}
+        {{- end }}
+  {{- end }}
+
+  # Slack receiver
+  {{- if .Values.alertmanager.receivers.slack.enabled }}
+  - name: 'slack-alerts'
+    slackConfigs:
+    - apiURL:
+        key: webhook-url
+        name: {{ include "truvami-monitoring.fullname" . }}-slack-webhook
+      channel: {{ .Values.alertmanager.receivers.slack.channel | default "#alerts" | quote }}
+      username: {{ .Values.alertmanager.receivers.slack.username | default "AlertManager" | quote }}
+      iconEmoji: {{ .Values.alertmanager.receivers.slack.icon_emoji | default ":warning:" | quote }}
+      title: {{ .Values.alertmanager.receivers.slack.title | default "Alert: {{ `{{ .GroupLabels.alertname }}` }}" | quote }}
+      text: {{ .Values.alertmanager.receivers.slack.text | default "{{ `{{ range .Alerts }}{{ .Annotations.summary }}{{ end }}` }}" | quote }}
+      color: {{ .Values.alertmanager.receivers.slack.color | default "{{ `{{ if eq .GroupLabels.severity \"critical\" }}danger{{ else if eq .GroupLabels.severity \"major\" }}warning{{ else }}good{{ end }}` }}" | quote }}
+      sendResolved: true
+  {{- end }}
+
+  # Email receiver
+  {{- if .Values.alertmanager.receivers.email.enabled }}
+  - name: 'email-alerts'
+    emailConfigs:
+    - to: {{ .Values.alertmanager.receivers.email.to | quote }}
+      from: {{ .Values.alertmanager.receivers.email.from | default .Values.alertmanager.global.smtp_from | quote }}
+      smarthost: {{ .Values.alertmanager.global.smtp_smarthost | quote }}
+      {{- if .Values.alertmanager.global.smtp_auth_username }}
+      authUsername: {{ .Values.alertmanager.global.smtp_auth_username | quote }}
+      {{- end }}
+      {{- if .Values.alertmanager.secrets.smtp_auth_password }}
+      authPassword:
+        key: {{ .Values.alertmanager.secrets.smtp_auth_password.key | quote }}
+        name: {{ .Values.alertmanager.secrets.smtp_auth_password.name | quote }}
+      {{- end }}
+      subject: {{ .Values.alertmanager.receivers.email.subject | default "[{{ `{{ .Status | toUpper }}` }}] {{ `{{ .GroupLabels.alertname }}` }}" | quote }}
+      body: {{ .Values.alertmanager.receivers.email.body | default "Alert details: {{ `{{ range .Alerts }}{{ .Annotations.summary }}{{ end }}` }}" | quote }}
+      headers:
+        Subject: {{ .Values.alertmanager.receivers.email.subject | default "[{{ `{{ .Status | toUpper }}` }}] {{ `{{ .GroupLabels.alertname }}` }}" | quote }}
+  {{- end }}
+
+  # PagerDuty receiver
+  {{- if .Values.alertmanager.receivers.pagerduty.enabled }}
+  - name: 'pagerduty-alerts'
+    pagerdutyConfigs:
+    - routingKey:
+        key: routing-key
+        name: {{ include "truvami-monitoring.fullname" . }}-pagerduty-secret
+      description: {{ .Values.alertmanager.receivers.pagerduty.description | default "{{ `{{ .GroupLabels.alertname }}` }}: {{ `{{ .GroupLabels.instance }}` }}" | quote }}
+      severity: {{ .Values.alertmanager.receivers.pagerduty.severity | default "{{ `{{ .GroupLabels.severity }}` }}" | quote }}
+      client: {{ .Values.alertmanager.receivers.pagerduty.client | default "Truvami AlertManager" | quote }}
+      clientURL: {{ .Values.alertmanager.receivers.pagerduty.client_url | default "{{ `{{ .ExternalURL }}` }}" | quote }}
+      {{- if .Values.alertmanager.receivers.pagerduty.details }}
+      details:
+      {{- range $key, $value := .Values.alertmanager.receivers.pagerduty.details }}
+        {{ $key }}: {{ $value | quote }}
+      {{- end }}
+      {{- end }}
+  {{- end }}
+
+  # Microsoft Teams receiver
+  {{- if .Values.alertmanager.receivers.teams.enabled }}
+  - name: 'teams-alerts'
+    msteamsConfigs:
+    - webhookUrl:
+        key: webhook-url
+        name: {{ include "truvami-monitoring.fullname" . }}-teams-webhook
+      title: {{ .Values.alertmanager.receivers.teams.title | default "{{ `{{ .GroupLabels.alertname }}` }}" | quote }}
+      summary: {{ .Values.alertmanager.receivers.teams.summary | default "{{ `{{ range .Alerts }}{{ .Annotations.summary }}{{ end }}` }}" | quote }}
+      text: {{ .Values.alertmanager.receivers.teams.text | default "{{ `{{ range .Alerts }}{{ .Annotations.description }}{{ end }}` }}" | quote }}
+  {{- end }}
+
+  # Discord receiver (via webhook)
+  {{- if .Values.alertmanager.receivers.discord.enabled }}
+  - name: 'discord-alerts'
+    webhookConfigs:
+    - url:
+        key: webhook-url
+        name: {{ include "truvami-monitoring.fullname" . }}-discord-webhook
+      sendResolved: true
+      httpConfig:
+        followRedirects: true
+      title: {{ .Values.alertmanager.receivers.discord.title | default "{{ `{{ .GroupLabels.alertname }}` }}" | quote }}
+      text: {{ .Values.alertmanager.receivers.discord.message | default "{{ `{{ range .Alerts }}{{ .Annotations.summary }}{{ end }}` }}" | quote }}
+  {{- end }}
+
   # Watchdog heartbeat receiver - sends to configured webhook URL
   - name: 'watchdog-heartbeat'
     {{- if .Values.watchdog.webhookUrl }}
@@ -24,7 +265,7 @@ spec:
       httpConfig:
         followRedirects: true
       title: 'Truvami Monitoring Watchdog'
-      text: 'Monitoring system is operational'
+      text: 'Monitoring system is operational at {{ `{{ .ExternalURL }}` }}'
     {{- end }}
 
 {{- end }}

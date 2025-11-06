@@ -1,0 +1,323 @@
+# Example AlertManager configurations for different environments
+
+# Production Configuration with OpsGenie and Slack
+production:
+  alertmanager:
+    enabled: true
+
+    global:
+      smtp_smarthost: "smtp.company.com:587"
+      smtp_from: "alerts@company.com"
+      smtp_auth_username: "alertmanager"
+      resolve_timeout: "5m"
+
+    route:
+      receiver: "default-receiver"
+      group_by: ["alertname", "cluster", "service"]
+      group_wait: "10s"
+      group_interval: "5m"
+      repeat_interval: "12h"
+      routes:
+        - matchers:
+          - matchType: "="
+            name: "severity"
+            value: "critical"
+          receiver: "critical-opsgenie"
+          group_wait: "0s"
+          repeat_interval: "1h"
+        - matchers:
+          - matchType: "="
+            name: "alertname"
+            value: "Watchdog"
+          receiver: "watchdog-heartbeat"
+          repeat_interval: "5m"
+
+    receivers:
+      opsgenie:
+        enabled: true
+        api_key: "your-opsgenie-api-key"
+        api_url: "https://api.opsgenie.com/"
+        teams:
+          - "DevOps"
+          - "Platform Team"
+        responders:
+          - type: "team"
+            name: "DevOps"
+          - type: "user"
+            username: "oncall-engineer"
+        priority: "{{ if eq .GroupLabels.severity \"critical\" }}P1{{ else if eq .GroupLabels.severity \"major\" }}P2{{ else }}P3{{ end }}"
+        message: "{{ .GroupLabels.alertname }} on {{ .GroupLabels.cluster }}"
+        description: "{{ range .Alerts }}{{ .Annotations.description }}{{ end }}"
+
+      slack:
+        enabled: true
+        webhook_url: "https://hooks.slack.com/services/YOUR/SLACK/WEBHOOK"
+        channel: "#production-alerts"
+        username: "AlertManager"
+        icon_emoji: "🚨"
+        title: "{{ if eq .Status \"firing\" }}🔴 FIRING{{ else }}🟢 RESOLVED{{ end }} {{ .GroupLabels.alertname }}"
+        color: "{{ if eq .GroupLabels.severity \"critical\" }}danger{{ else if eq .GroupLabels.severity \"major\" }}warning{{ else }}good{{ end }}"
+
+      email:
+        enabled: true
+        to: "oncall@company.com"
+        subject: "[{{ .Status | toUpper }}] {{ .GroupLabels.alertname }} - {{ .GroupLabels.cluster }}"
+
+      pagerduty:
+        enabled: true
+        routing_key: "your-pagerduty-integration-key"
+        description: "{{ .GroupLabels.alertname }}: {{ .GroupLabels.instance }}"
+        severity: "{{ .GroupLabels.severity }}"
+
+    inhibit_rules:
+      - source_matchers:
+          - "severity=critical"
+        target_matchers:
+          - "severity=~warning|minor"
+        equal: ["service", "cluster"]
+
+---
+
+# Staging Configuration with Slack only
+staging:
+  alertmanager:
+    enabled: true
+
+    route:
+      receiver: "slack-staging"
+      group_by: ["alertname", "service"]
+      group_wait: "30s"
+      group_interval: "10m"
+      repeat_interval: "24h"
+
+    receivers:
+      slack:
+        enabled: true
+        webhook_url: "https://hooks.slack.com/services/YOUR/STAGING/WEBHOOK"
+        channel: "#staging-alerts"
+        username: "Staging AlertManager"
+        icon_emoji: "⚠️"
+        title: "{{ .GroupLabels.alertname }} (Staging)"
+
+---
+
+# Development Configuration with webhook only
+development:
+  alertmanager:
+    enabled: true
+
+    route:
+      receiver: "webhook-dev"
+      group_by: ["alertname"]
+      group_wait: "1m"
+      group_interval: "30m"
+      repeat_interval: "24h"
+
+    receivers:
+      default:
+        enabled: true
+        webhook:
+          enabled: true
+          url: "https://webhook.site/your-unique-url"
+          send_resolved: true
+          title: "Dev Alert: {{ .GroupLabels.alertname }}"
+
+---
+
+# Complete Multi-Channel Configuration
+multi_channel:
+  alertmanager:
+    enabled: true
+
+    global:
+      smtp_smarthost: "smtp.gmail.com:587"
+      smtp_from: "alerts@company.com"
+      smtp_auth_username: "alerts@company.com"
+      resolve_timeout: "5m"
+      http_config:
+        follow_redirects: true
+        enable_http2: true
+
+    route:
+      receiver: "default-receiver"
+      group_by: ["alertname", "cluster", "service"]
+      group_wait: "10s"
+      group_interval: "5m"
+      repeat_interval: "12h"
+      routes:
+        # Critical alerts - multiple channels
+        - matchers:
+          - matchType: "="
+            name: "severity"
+            value: "critical"
+          receiver: "critical-all-channels"
+          group_wait: "0s"
+          repeat_interval: "1h"
+
+        # Database alerts - specialized team
+        - matchers:
+          - matchType: "=~"
+            name: "service"
+            value: "postgres|redis|mongodb"
+          receiver: "database-team"
+          group_wait: "30s"
+          repeat_interval: "2h"
+
+        # Security alerts - immediate escalation
+        - matchers:
+          - matchType: "="
+            name: "category"
+            value: "security"
+          receiver: "security-team"
+          group_wait: "0s"
+          repeat_interval: "15m"
+
+    receivers:
+      # Default receiver with webhook
+      default:
+        enabled: true
+        webhook:
+          enabled: true
+          url: "https://your-webhook-endpoint.com/alerts"
+          send_resolved: true
+          title: "{{ .GroupLabels.alertname }}"
+          text: "{{ range .Alerts }}{{ .Annotations.summary }}{{ end }}"
+
+      # Critical alerts - all channels
+      critical:
+        enabled: true
+        webhook:
+          enabled: true
+          url: "https://critical-webhook.company.com/alerts"
+        slack:
+          enabled: true
+          webhook_url: "https://hooks.slack.com/services/CRITICAL/ALERTS"
+          channel: "#critical-alerts"
+          title: "🚨 CRITICAL: {{ .GroupLabels.alertname }}"
+
+      # OpsGenie for production critical alerts
+      opsgenie:
+        enabled: true
+        api_key: "your-opsgenie-api-key"
+        teams: ["Platform", "DevOps", "On-Call"]
+        responders:
+          - type: "team"
+            name: "Platform"
+          - type: "escalation"
+            name: "Engineering Escalation"
+        priority: "P1"
+        message: "CRITICAL: {{ .GroupLabels.alertname }}"
+        description: |
+          {{ range .Alerts }}
+          Service: {{ .Labels.service }}
+          Instance: {{ .Labels.instance }}
+          Description: {{ .Annotations.description }}
+          Runbook: {{ .Annotations.runbook_url }}
+          {{ end }}
+
+      # Slack for general alerts
+      slack:
+        enabled: true
+        webhook_url: "https://hooks.slack.com/services/GENERAL/ALERTS"
+        channel: "#general-alerts"
+        username: "AlertManager"
+        icon_emoji: "📢"
+        title: "{{ if eq .Status \"firing\" }}🔥{{ else }}✅{{ end }} {{ .GroupLabels.alertname }}"
+        text: |
+          *Service:* {{ .GroupLabels.service }}
+          *Cluster:* {{ .GroupLabels.cluster }}
+          *Summary:* {{ range .Alerts }}{{ .Annotations.summary }}{{ end }}
+        color: "{{ if eq .GroupLabels.severity \"critical\" }}danger{{ else if eq .GroupLabels.severity \"warning\" }}warning{{ else }}good{{ end }}"
+
+      # Email for business hours alerts
+      email:
+        enabled: true
+        to: "team@company.com"
+        from: "monitoring@company.com"
+        subject: "[{{ .Status }}] {{ .GroupLabels.alertname }} on {{ .GroupLabels.cluster }}"
+        body: |
+          Alert Details:
+          =============
+          {{ range .Alerts }}
+          Alert: {{ .Labels.alertname }}
+          Severity: {{ .Labels.severity }}
+          Service: {{ .Labels.service }}
+          Instance: {{ .Labels.instance }}
+          Summary: {{ .Annotations.summary }}
+          Description: {{ .Annotations.description }}
+          Started: {{ .StartsAt }}
+          {{ if .Labels.runbook_url }}Runbook: {{ .Labels.runbook_url }}{{ end }}
+
+          {{ end }}
+
+      # PagerDuty for after-hours critical alerts
+      pagerduty:
+        enabled: true
+        routing_key: "your-pagerduty-routing-key"
+        description: "{{ .GroupLabels.alertname }} on {{ .GroupLabels.cluster }}"
+        severity: "critical"
+        client: "Truvami Monitoring"
+        client_url: "https://monitoring.company.com"
+        details:
+          cluster: "{{ .GroupLabels.cluster }}"
+          service: "{{ .GroupLabels.service }}"
+          environment: "{{ .GroupLabels.environment }}"
+          alert_count: "{{ len .Alerts }}"
+
+      # Microsoft Teams for management notifications
+      teams:
+        enabled: true
+        webhook_url: "https://company.webhook.office.com/webhookb2/..."
+        title: "{{ .GroupLabels.alertname }} Alert"
+        summary: "{{ range .Alerts }}{{ .Annotations.summary }}{{ end }}"
+        text: |
+          **Environment:** {{ .GroupLabels.environment }}
+          **Service:** {{ .GroupLabels.service }}
+          **Severity:** {{ .GroupLabels.severity }}
+          **Details:** {{ range .Alerts }}{{ .Annotations.description }}{{ end }}
+
+      # Discord for development team
+      discord:
+        enabled: true
+        webhook_url: "https://discord.com/api/webhooks/..."
+        title: "⚠️ {{ .GroupLabels.alertname }}"
+        message: |
+          **Alert:** {{ .GroupLabels.alertname }}
+          **Status:** {{ .Status }}
+          **Service:** {{ .GroupLabels.service }}
+          **Summary:** {{ range .Alerts }}{{ .Annotations.summary }}{{ end }}
+
+    # Advanced inhibition rules
+    inhibit_rules:
+      # Suppress warnings when critical alerts are firing
+      - source_matchers:
+          - "severity=critical"
+        target_matchers:
+          - "severity=~warning|minor|info"
+        equal: ["service", "cluster"]
+
+      # Suppress node alerts when cluster is down
+      - source_matchers:
+          - "alertname=ClusterDown"
+        target_matchers:
+          - "alertname=~NodeDown|NodeNotReady"
+        equal: ["cluster"]
+
+      # Suppress individual service alerts during maintenance
+      - source_matchers:
+          - "maintenance=true"
+        target_matchers:
+          - "service=~.*"
+        equal: ["service"]
+
+    # Secret references (create these manually or via CI/CD)
+    secrets:
+      opsgenie_api_key:
+        name: "monitoring-secrets"
+        key: "opsgenie-key"
+      slack_webhook_url:
+        name: "monitoring-secrets"
+        key: "slack-webhook"
+      smtp_auth_password:
+        name: "monitoring-secrets"
+        key: "smtp-password"

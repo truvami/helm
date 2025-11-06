@@ -191,23 +191,205 @@ alertmanager:
       cpu: "500m"
       memory: "512Mi"
 
-  # SMTP configuration for email notifications
-  smtp:
-    smarthost: "localhost:587"
-    from: "alertmanager@truvami.com"
-    # auth_username: ""
-    # auth_password: ""
+  # Global configuration
+  global:
+    smtp_smarthost: "localhost:587"
+    smtp_from: "alertmanager@truvami.com"
+    smtp_auth_username: ""
+    smtp_auth_password: ""
+    # Global resolution timeout - how long to wait before an alert is declared resolved if it's not updated
+    resolve_timeout: "5m"
+    # HTTP configuration for webhooks
+    http_config:
+      follow_redirects: true
+      enable_http2: true
+
+  # Routing configuration
+  route:
+    # Default receiver for all alerts
+    receiver: "default-receiver"
+    # Group alerts by these labels
+    group_by: ["alertname", "cluster", "service"]
+    # How long to initially wait to send a notification for a group of alerts
+    group_wait: "10s"
+    # How long to wait before sending another notification about new alerts added to a group
+    group_interval: "5m"
+    # How long to wait before re-sending a notification
+    repeat_interval: "12h"
+    # Sub-routes for specific alert handling
+    routes:
+      # Critical alerts route
+      - match:
+          severity: "critical"
+        receiver: "critical-alerts"
+        group_wait: "0s"
+        group_interval: "1m"
+        repeat_interval: "1h"
+
+      # Watchdog alerts route
+      - match:
+          alertname: "Watchdog"
+        receiver: "watchdog-heartbeat"
+        group_wait: "0s"
+        group_interval: "1m"
+        repeat_interval: "5m"
+
+      # OpsGenie route for production alerts
+      - match_re:
+          environment: "prod|production"
+        receiver: "opsgenie-production"
+        group_wait: "5s"
+        repeat_interval: "5m"
 
   # Notification receivers
   receivers:
+    # Default receiver
+    default:
+      enabled: true
+      webhook:
+        enabled: false
+        url: ""
+        send_resolved: true
+        title: "Truvami Alert: {{ .GroupLabels.alertname }}"
+        text: "{{ range .Alerts }}{{ .Annotations.summary }}{{ end }}"
+
+    # Critical alerts receiver
+    critical:
+      enabled: true
+      # Multiple notification channels for critical alerts
+      webhook:
+        enabled: false
+        url: ""
+      slack:
+        enabled: false
+        webhook_url: ""
+        channel: "#critical-alerts"
+        title: "🚨 CRITICAL: {{ .GroupLabels.alertname }}"
+        text: "{{ range .Alerts }}{{ .Annotations.summary }}{{ end }}"
+
+    # OpsGenie receiver for production alerts
+    opsgenie:
+      enabled: false
+      api_key: ""  # Set your OpsGenie API key here (or use secret reference)
+      api_url: "https://api.opsgenie.com/"
+      # Teams to notify
+      teams: []
+      # Responders configuration
+      responders:
+        - type: "team"
+          name: "DevOps"
+        - type: "user"
+          username: "on-call-engineer"
+      # Priority mapping
+      priority: "{{ if eq .GroupLabels.severity \"critical\" }}P1{{ else if eq .GroupLabels.severity \"major\" }}P2{{ else }}P3{{ end }}"
+      # Message configuration
+      message: "{{ .GroupLabels.alertname }}: {{ .GroupLabels.instance }}"
+      description: "{{ range .Alerts }}{{ .Annotations.description }}{{ end }}"
+      # Additional details
+      details:
+        cluster: "{{ .GroupLabels.cluster }}"
+        service: "{{ .GroupLabels.service }}"
+        environment: "{{ .GroupLabels.environment }}"
+        runbook: "{{ .CommonAnnotations.runbook_url }}"
+
+    # Slack receiver
     slack:
       enabled: false
       webhook_url: ""  # Set your Slack webhook URL here
       channel: "#alerts"
+      username: "AlertManager"
+      icon_emoji: "🚨"
+      title: "{{ if eq .Status \"firing\" }}🔴{{ else }}🟢{{ end }} {{ .GroupLabels.alertname }}"
+      text: "{{ range .Alerts }}{{ .Annotations.summary }}{{ if .Annotations.description }}\n{{ .Annotations.description }}{{ end }}{{ end }}"
+      # Color coding based on severity
+      color: "{{ if eq .GroupLabels.severity \"critical\" }}danger{{ else if eq .GroupLabels.severity \"major\" }}warning{{ else }}good{{ end }}"
 
+    # Email receiver
     email:
       enabled: false
       to: "alerts@truvami.com"
+      from: "alertmanager@truvami.com"
+      subject: "[{{ .Status | toUpper }}] {{ .GroupLabels.alertname }} ({{ .GroupLabels.cluster }})"
+      body: |
+        {{ range .Alerts }}
+        **Alert:** {{ .Annotations.summary }}
+        **Description:** {{ .Annotations.description }}
+        **Severity:** {{ .Labels.severity }}
+        **Cluster:** {{ .Labels.cluster }}
+        **Service:** {{ .Labels.service }}
+        **Started:** {{ .StartsAt }}
+        {{ if .Labels.runbook_url }}**Runbook:** {{ .Labels.runbook_url }}{{ end }}
+        {{ end }}
+
+    # PagerDuty receiver (optional)
+    pagerduty:
+      enabled: false
+      routing_key: ""  # Set your PagerDuty integration key
+      description: "{{ .GroupLabels.alertname }}: {{ .GroupLabels.instance }}"
+      severity: "{{ .GroupLabels.severity }}"
+      client: "Truvami AlertManager"
+      client_url: "{{ .ExternalURL }}"
+      details:
+        cluster: "{{ .GroupLabels.cluster }}"
+        service: "{{ .GroupLabels.service }}"
+        environment: "{{ .GroupLabels.environment }}"
+
+    # Microsoft Teams receiver (optional)
+    teams:
+      enabled: false
+      webhook_url: ""  # Set your Teams webhook URL
+      title: "{{ .GroupLabels.alertname }}"
+      summary: "{{ range .Alerts }}{{ .Annotations.summary }}{{ end }}"
+
+    # Discord receiver (optional)
+    discord:
+      enabled: false
+      webhook_url: ""  # Set your Discord webhook URL
+      title: "{{ .GroupLabels.alertname }}"
+      message: "{{ range .Alerts }}{{ .Annotations.summary }}{{ end }}"
+
+  # Inhibition rules - suppress notifications for certain combinations
+  inhibit_rules:
+    # Suppress warning alerts when critical alerts are firing for the same service
+    - source_matchers:
+        - severity="critical"
+      target_matchers:
+        - severity=~"warning|minor"
+      equal:
+        - service
+        - cluster
+
+    # Suppress all alerts when service is in maintenance
+    - source_matchers:
+        - maintenance="true"
+      target_matchers:
+        - service=~".*"
+      equal:
+        - service
+
+  # Silence configuration
+  silences:
+    # Default silence duration
+    default_duration: "1h"
+    # Maximum silence duration
+    max_duration: "24h"
+
+  # Secret references for sensitive data
+  secrets:
+    # Reference to secret containing OpsGenie API key
+    opsgenie_api_key:
+      name: "truvami-monitoring-secrets"
+      key: "opsgenie-api-key"
+
+    # Reference to secret containing Slack webhook URL
+    slack_webhook_url:
+      name: "truvami-monitoring-secrets"
+      key: "slack-webhook-url"
+
+    # Reference to secret containing SMTP credentials
+    smtp_auth_password:
+      name: "truvami-monitoring-secrets"
+      key: "smtp-password"
 
 # Dashboard configuration
 dashboards:
