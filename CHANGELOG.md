@@ -5,10 +5,21 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.1-rc24] - 2025-11-19
+
+### Documentation
+- Updated docs by @niko-kriznik-globtim
+
+### Features
+- Update Valkey deployment by @niko-kriznik-globtim
+
+### Fixes
+- Truvami-monitoring version by @niko-kriznik-globtim
+
 ## [1.0.1-rc23] - 2025-11-06
 
 ### Features
-- Update truvami-monitoring chart to version 0.2.0 with enhanced AlertManager configurations and new example setups
+- Update truvami-monitoring chart to version 0.2.0 with enhanced AlertManager configurations and new example setups by @michaelbeutler
 
 ## [1.0.1-rc22] - 2025-11-05
 
@@ -236,6 +247,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * @StefanSmile made their first contribution
 * @simylein made their first contribution
 
+[1.0.1-rc24]: https://github.com/truvami/helm/compare/v1.0.1-rc23...v1.0.1-rc24
 [1.0.1-rc23]: https://github.com/truvami/helm/compare/v1.0.1-rc22...v1.0.1-rc23
 [1.0.1-rc22]: https://github.com/truvami/helm/compare/v1.0.1-rc21...v1.0.1-rc22
 [1.0.1-rc21]: https://github.com/truvami/helm/compare/v1.0.1-rc20...v1.0.1-rc21
