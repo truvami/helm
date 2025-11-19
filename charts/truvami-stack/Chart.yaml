@@ -32,7 +32,7 @@ dependencies:
     repository: "file://../truvami-dashboard/"
     condition: truvami-dashboard.enabled
   - name: truvami-monitoring
-    version: 0.1.92
+    version: 0.2.0
     repository: "file://../truvami-monitoring/"
     condition: truvami-monitoring.enabled
   - name: truvami-siren
