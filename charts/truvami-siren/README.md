@@ -1,6 +1,6 @@
 # truvami-siren
 
-![Version: 0.2.10](https://img.shields.io/badge/Version-0.2.10-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v1.0.1](https://img.shields.io/badge/AppVersion-v1.0.1-informational?style=flat-square)
+![Version: 0.2.11](https://img.shields.io/badge/Version-0.2.11-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v1.1.0](https://img.shields.io/badge/AppVersion-v1.1.0-informational?style=flat-square)
 
 A Helm chart for Kubernetes
 
@@ -84,9 +84,11 @@ A Helm chart for Kubernetes
 | siren.metrics.port | int | `9090` |  |
 | siren.otel.endpoint | string | `"tempo.grafana-tempo.svc.cluster.local:4318"` |  |
 | siren.valkey.cache-ttl | string | `"15m"` |  |
+| siren.valkey.host | string | `"truvami-stack-valkey-primary:6379"` |  |
 | siren.valkey.key-prefix | string | `"siren"` |  |
+| siren.valkey.username | string | `"default"` |  |
 | tolerations | list | `[]` |  |
-| valkey.secretKey | string | `"uri"` |  |
+| valkey.secretKey | string | `"valkey-password"` |  |
 | valkey.secretName | string | `"truvami-stack-valkey"` |  |
 | volumeMounts[0].mountPath | string | `"/etc/truvami-siren"` |  |
 | volumeMounts[0].name | string | `"config"` |  |
