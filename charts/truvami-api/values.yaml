@@ -45,6 +45,8 @@ api:
     # asSecret: "xxxxxxxxxxxxxx"
 
   valkey:
+    host: truvami-stack-valkey-primary:6379
+    username: default
     configDispatch:
       keyPrefix: "config_dispatch"
       defaultTimeout: 60s
@@ -60,7 +62,7 @@ database:
 
 valkey:
   secretName: truvami-stack-valkey
-  secretKey: uri
+  secretKey: valkey-password
 
 replicaCount: 1
 

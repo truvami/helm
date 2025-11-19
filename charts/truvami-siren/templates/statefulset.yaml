@@ -84,7 +84,7 @@ spec:
                   key: user.password
                   name: "truvami-siren-kafka"
                   optional: false
-            - name: VALKEY_URI
+            - name: VALKEY_PASSWORD
               valueFrom:
                 secretKeyRef:
                   key: {{ .Values.valkey.secretKey }}

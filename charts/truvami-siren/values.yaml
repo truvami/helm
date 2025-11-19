@@ -17,6 +17,8 @@ siren:
     server: truvami-stack-truvami-api:5001
 
   valkey:
+    host: truvami-stack-valkey-primary:6379
+    username: default
     key-prefix: "siren"
     cache-ttl: 15m
 
@@ -69,7 +71,7 @@ siren:
 
 valkey:
   secretName: truvami-stack-valkey
-  secretKey: uri
+  secretKey: valkey-password
 
 kafka:
   topic:
