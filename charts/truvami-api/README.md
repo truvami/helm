@@ -1,6 +1,6 @@
 # truvami-api
 
-![Version: 0.0.30](https://img.shields.io/badge/Version-0.0.30-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v0.7.21](https://img.shields.io/badge/AppVersion-v0.7.21-informational?style=flat-square)
+![Version: 0.0.31](https://img.shields.io/badge/Version-0.0.31-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v0.10.0](https://img.shields.io/badge/AppVersion-v0.10.0-informational?style=flat-square)
 
 A Helm chart for Kubernetes
 
@@ -26,6 +26,8 @@ A Helm chart for Kubernetes
 | api.thingpark.host | string | `"proxy1.lpn.swisscom.ch"` |  |
 | api.valkey.configDispatch.defaultTimeout | string | `"60s"` |  |
 | api.valkey.configDispatch.keyPrefix | string | `"config_dispatch"` |  |
+| api.valkey.host | string | `"truvami-stack-valkey-primary:6379"` |  |
+| api.valkey.username | string | `"default"` |  |
 | api.webhook.initializationTimeout | string | `"15s"` |  |
 | api.webhook.postRequestTimeout | string | `"5s"` |  |
 | api.webhook.response.storedMaxBodySize | int | `512` |  |
@@ -93,7 +95,7 @@ A Helm chart for Kubernetes
 | serviceAccount.name | string | `""` |  |
 | serviceMonitor.enabled | bool | `false` |  |
 | tolerations | list | `[]` |  |
-| valkey.secretKey | string | `"uri"` |  |
+| valkey.secretKey | string | `"valkey-password"` |  |
 | valkey.secretName | string | `"truvami-stack-valkey"` |  |
 | volumeMounts[0].mountPath | string | `"/etc/truvami-api"` |  |
 | volumeMounts[0].name | string | `"config"` |  |
