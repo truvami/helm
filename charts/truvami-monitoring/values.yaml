@@ -91,10 +91,15 @@ alerts:
   # Device Health Monitoring
   deviceHealth:
     enabled: true
+    excessiveUplinks:
+      enabled: true
+      severity: major
+      duration: 1h
+      threshold: 240  # Alert when device sends more than 240 uplinks per day
     # Add other device health alerts here as needed
 
   signalQuality:
-    enabled: true
+    enabled: false
 
   # Kafka Monitoring
   kafka:

@@ -1,3 +1,4 @@
+{{- if .Values.alerts.deviceHealth.enabled }}
 apiVersion: monitoring.coreos.com/v1
 kind: PrometheusRule
 metadata:
@@ -129,4 +130,65 @@ spec:
             {{- with .Values.alertLabels }}
             {{- toYaml . | nindent 12 }}
             {{- end }}
+
+        {{- if .Values.alerts.deviceHealth.excessiveUplinks.enabled }}
+        - alert: TruvamiDeviceExcessiveUplinks
+          annotations:
+            description: >-
+              **What's happening:** Device {{ "{{" }} $labels.devEui }} (customer: {{ "{{" }} $labels.customer }}) has sent {{ "{{" }} $value }} uplinks in the past 24 hours, exceeding the {{ .Values.alerts.deviceHealth.excessiveUplinks.threshold }}-uplink daily limit.
+
+              **Device Details:**
+              - Device EUI: {{ "{{" }} $labels.devEui }}
+              - Customer: {{ "{{" }} $labels.customer }}
+              - Daily Uplinks: {{ "{{" }} $value }}
+              - Threshold: > {{ .Values.alerts.deviceHealth.excessiveUplinks.threshold }}
+              - Service: {{ "{{" }} $labels.job }}
+              - Instance: {{ "{{" }} $labels.instance }}
+
+              **Why this occurred:** The device is transmitting far more frequently than expected. With >240 uplinks per day,
+              the device is averaging more than one uplink every 6 minutes (24h/240 = 6min intervals), which is excessive
+              for most IoT applications and may indicate:
+
+              **Root causes:**
+              - **Sensor malfunction** triggering continuous alerts or readings
+              - **Configuration error** with extremely frequent transmission intervals
+              - **Stuck device firmware** in continuous transmission loop
+              - **Environmental triggers** causing constant sensor activation
+              - **Testing/debugging mode** accidentally left enabled
+              - **Multiple applications** or sensors sharing same device
+              - **Network issues** causing excessive retransmissions
+
+              **Impact:**
+              - **Severely reduced battery life** - device may drain battery 10x faster
+              - **Network congestion** affecting other devices in the area
+              - **Higher data costs** and increased infrastructure load
+              - **Potential duty cycle violations** approaching LoRaWAN limits
+              - **Poor data quality** from over-sampling sensors
+              - **Customer service degradation** due to battery replacement needs
+
+              **What to do:**
+              1. **Contact customer immediately** {{ "{{" }} $labels.customer }} - this requires attention
+              2. **Review device configuration** - check transmission intervals and triggers
+              3. **Verify sensor operation** - ensure sensors aren't malfunctioning
+              4. **Check for firmware issues** - device may be stuck in test mode
+              5. **Analyze uplink patterns** - identify if bursts or continuous transmission
+              6. **Monitor battery status** - check for accelerated battery drain
+              7. **Compare with similar devices** - verify if isolated or widespread issue
+              8. **Consider temporary throttling** if device cannot be reconfigured remotely
+              9. **Plan immediate intervention** - may need site visit for reconfiguration
+            summary: >-
+              {{ "{{" }} $labels.devEui }} excessive daily uplinks: {{ "{{" }} $value }} (threshold: >{{ .Values.alerts.deviceHealth.excessiveUplinks.threshold }})
+          expr: >-
+            increase(truvami_device_uplink_count[24h]) > {{ .Values.alerts.deviceHealth.excessiveUplinks.threshold }}
+          for: {{ .Values.alerts.deviceHealth.excessiveUplinks.duration }}
+          labels:
             namespace: {{ .Release.Namespace }}
+            severity: {{ .Values.alerts.deviceHealth.excessiveUplinks.severity }}
+            node: "{{ "{{" }} $labels.devEui }}"
+            service: truvami-device
+            component: uplink-frequency
+            {{- with .Values.alertLabels }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
+        {{- end }}
+{{- end }}

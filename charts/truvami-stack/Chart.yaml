@@ -6,40 +6,40 @@ type: application
 # This is the chart version. This version number should be incremented each time you make changes
 # to the chart and its templates, including the app version.
 # Versions are expected to follow Semantic Versioning (https://semver.org/)
-version: 0.1.224
+version: 0.1.225
 
 # Each truvami application has it's own chart and can be deployed independently.
 # This chart is a parent chart that deploys all the truvami applications.
 dependencies:
   - name: truvami-gateway
     version: 0.0.31
-    repository: "file://../truvami-gateway/"
+    repository: "https://helm.truvami.com/"
     condition: truvami-gateway.enabled
   - name: truvami-bridge
     version: 0.1.37
-    repository: "file://../truvami-bridge/"
+    repository: "https://helm.truvami.com/"
     condition: truvami-bridge.enabled
   - name: truvami-api
     version: 0.0.31
-    repository: "file://../truvami-api/"
+    repository: "https://helm.truvami.com/"
     condition: truvami-api.enabled
   - name: truvami-decoder
     version: 0.0.21
-    repository: "file://../truvami-decoder/"
+    repository: "https://helm.truvami.com/"
     condition: truvami-decoder.enabled
   - name: truvami-dashboard
     version: 1.0.11
-    repository: "file://../truvami-dashboard/"
+    repository: "https://helm.truvami.com/"
     condition: truvami-dashboard.enabled
   - name: truvami-monitoring
     version: 0.2.1
-    repository: "file://../truvami-monitoring/"
+    repository: "https://helm.truvami.com/"
     condition: truvami-monitoring.enabled
   - name: truvami-siren
     version: 0.2.11
-    repository: "file://../truvami-siren/"
+    repository: "https://helm.truvami.com/"
     condition: truvami-siren.enabled
   - name: truvami-docs
     version: 0.1.3
-    repository: "file://../truvami-docs/"
+    repository: "https://helm.truvami.com/"
     condition: truvami-docs.enabled

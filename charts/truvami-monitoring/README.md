@@ -1,6 +1,6 @@
 # truvami-monitoring
 
-![Version: 0.2.1](https://img.shields.io/badge/Version-0.2.1-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)
+![Version: 0.2.2](https://img.shields.io/badge/Version-0.2.2-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)
 
 This chart contains all CRD's for the truvami-stack monitoring and alerting.
 
@@ -179,6 +179,10 @@ This chart contains all CRD's for the truvami-stack monitoring and alerting.
 | alerts.deviceDutyCycle.highDutyCycle.severity | string | `"warning"` |  |
 | alerts.deviceDutyCycle.highDutyCycle.threshold | int | `10` |  |
 | alerts.deviceHealth.enabled | bool | `true` |  |
+| alerts.deviceHealth.excessiveUplinks.duration | string | `"1h"` |  |
+| alerts.deviceHealth.excessiveUplinks.enabled | bool | `true` |  |
+| alerts.deviceHealth.excessiveUplinks.severity | string | `"major"` |  |
+| alerts.deviceHealth.excessiveUplinks.threshold | int | `240` |  |
 | alerts.gateway.enabled | bool | `true` |  |
 | alerts.integration.enabled | bool | `true` |  |
 | alerts.kafka.enabled | bool | `true` |  |
@@ -190,7 +194,7 @@ This chart contains all CRD's for the truvami-stack monitoring and alerting.
 | alerts.serviceHealth.bridgeHighErrorRate.severity | string | `"major"` |  |
 | alerts.serviceHealth.bridgeHighErrorRate.threshold | float | `0.1` |  |
 | alerts.serviceHealth.enabled | bool | `true` |  |
-| alerts.signalQuality.enabled | bool | `true` |  |
+| alerts.signalQuality.enabled | bool | `false` |  |
 | alerts.siren.enabled | bool | `true` |  |
 | dashboards.annotations.k8s-sidecar-target-directory | string | `"/tmp/dashboards"` |  |
 | dashboards.enabled | bool | `true` |  |
