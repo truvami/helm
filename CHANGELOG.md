@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.1-rc25] - 2025-11-20
+
+### Features
+- Added new alerts by @michaelbeutler
+
+### Refactors
+- Use redis instead of valkey dashboard by @michaelbeutler
+
 ## [1.0.1-rc24] - 2025-11-19
 
 ### Documentation
@@ -247,6 +255,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * @StefanSmile made their first contribution
 * @simylein made their first contribution
 
+[1.0.1-rc25]: https://github.com/truvami/helm/compare/v1.0.1-rc24...v1.0.1-rc25
 [1.0.1-rc24]: https://github.com/truvami/helm/compare/v1.0.1-rc23...v1.0.1-rc24
 [1.0.1-rc23]: https://github.com/truvami/helm/compare/v1.0.1-rc22...v1.0.1-rc23
 [1.0.1-rc22]: https://github.com/truvami/helm/compare/v1.0.1-rc21...v1.0.1-rc22
