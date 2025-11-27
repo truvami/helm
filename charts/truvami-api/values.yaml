@@ -34,6 +34,7 @@ api:
       storedMaxBodySize: 512
   database:
     initializationTimeout: 15s
+    migrateTimeout: 1m
 
   # This should be set using environment variables
   # encryption:
