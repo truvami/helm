@@ -79,7 +79,7 @@ spec:
       annotations:
         summary: "Valkey memory fragmentation is high"
         description: |
-          Valkey instance {{ "{{" }} $labels.instance }} has memory fragmentation ratio of {{ "{{" }} $value }}.
+          Valkey instance {{ "{{" }} $labels.instance }} has memory fragmentation ratio of {{ "{{" }} printf "%.2f" $value }}.
 
           This indicates:
           - Inefficient memory usage

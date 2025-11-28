@@ -12,7 +12,7 @@ spec:
         - alert: SirenUplinkProcessingFailures
           annotations:
             description: >-
-              Siren uplink processing failure rate is {{ "{{" }} $value }} failures/sec for topic {{ "{{" }} $labels.topic }}.
+              Siren uplink processing failure rate is {{ "{{" }} printf "%.2f" $value }} failures/sec for topic {{ "{{" }} $labels.topic }}.
             summary: >-
               High Siren uplink processing failure rate (topic: {{ "{{" }} $labels.topic }})
           expr: >-
@@ -27,7 +27,7 @@ spec:
         - alert: SirenPositionProcessingFailures
           annotations:
             description: >-
-              Siren position processing failure rate is {{ "{{" }} $value }} failures/sec for topic {{ "{{" }} $labels.topic }}.
+              Siren position processing failure rate is {{ "{{" }} printf "%.2f" $value }} failures/sec for topic {{ "{{" }} $labels.topic }}.
             summary: >-
               High Siren position processing failure rate (topic: {{ "{{" }} $labels.topic }})
           expr: >-
@@ -42,7 +42,7 @@ spec:
         - alert: SirenBatteryStatusProcessingFailures
           annotations:
             description: >-
-              Siren battery status processing failure rate is {{ "{{" }} $value }} failures/sec for topic {{ "{{" }} $labels.topic }}.
+              Siren battery status processing failure rate is {{ "{{" }} printf "%.2f" $value }} failures/sec for topic {{ "{{" }} $labels.topic }}.
             summary: >-
               High Siren battery status processing failure rate (topic: {{ "{{" }} $labels.topic }})
           expr: >-
@@ -57,7 +57,7 @@ spec:
         - alert: SirenRotationStatusProcessingFailures
           annotations:
             description: >-
-              Siren rotation status processing failure rate is {{ "{{" }} $value }} failures/sec for topic {{ "{{" }} $labels.topic }}.
+              Siren rotation status processing failure rate is {{ "{{" }} printf "%.2f" $value }} failures/sec for topic {{ "{{" }} $labels.topic }}.
             summary: >-
               High Siren rotation status processing failure rate (topic: {{ "{{" }} $labels.topic }})
           expr: >-
@@ -72,7 +72,7 @@ spec:
         - alert: SirenEventProcessingFailures
           annotations:
             description: >-
-              Siren event processing failure rate is {{ "{{" }} $value }} failures/sec for topic {{ "{{" }} $labels.topic }}.
+              Siren event processing failure rate is {{ "{{" }} printf "%.2f" $value }} failures/sec for topic {{ "{{" }} $labels.topic }}.
             summary: >-
               High Siren event processing failure rate (topic: {{ "{{" }} $labels.topic }})
           expr: >-
@@ -87,7 +87,7 @@ spec:
         - alert: SirenAlertProcessingRateHigh
           annotations:
             description: >-
-              Siren alert processing rate is unusually high at {{ "{{" }} $value }} alerts/sec.
+              Siren alert processing rate is unusually high at {{ "{{" }} printf "%.2f" $value }} alerts/sec.
             summary: >-
               Unusually high Siren alert processing rate
           expr: >-
@@ -108,7 +108,7 @@ spec:
         - alert: SirenAlertProcessingRateLow
           annotations:
             description: >-
-              Siren alert processing rate is unusually low at {{ "{{" }} $value }} alerts/sec - possible system issue.
+              Siren alert processing rate is unusually low at {{ "{{" }} printf "%.2f" $value }} alerts/sec - possible system issue.
             summary: >-
               Unusually low Siren alert processing rate
           expr: >-

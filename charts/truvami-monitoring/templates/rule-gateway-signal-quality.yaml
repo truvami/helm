@@ -13,7 +13,7 @@ spec:
         - alert: TruvamiGatewaySignalQualityPoor
           annotations:
             description: >-
-              **What's happening:** Gateway {{ "{{" }} $labels.gatewayId }} is receiving poor signal quality from device {{ "{{" }} $labels.devEui }} (RSSI: {{ "{{" }} $value }}dBm).
+              **What's happening:** Gateway {{ "{{" }} $labels.gatewayId }} is receiving poor signal quality from device {{ "{{" }} $labels.devEui }} (RSSI: {{ "{{" }} printf "%.2f" $value }}dBm).
 
               **Why this occurred:** The `truvami_gateway_uplink_rssi` metric shows signal strength below -120dBm, indicating:
               - Device is at maximum range from gateway
@@ -31,7 +31,7 @@ spec:
               5. Monitor device antenna orientation and installation
               6. Verify gateway receiver health and antenna connections
             summary: >-
-              Poor signal quality: Gateway {{ "{{" }} $labels.gatewayId }} <-120dBm
+              Poor signal quality: Gateway {{ "{{" }} $labels.gatewayId }} {{ "{{" }} printf "%.2f" $value }}dBm
           expr: >-
             truvami_gateway_uplink_rssi < -120
           for: 5m
@@ -50,7 +50,7 @@ spec:
         - alert: TruvamiGatewaySignalQualityCritical
           annotations:
             description: >-
-              **What's happening:** Gateway {{ "{{" }} $labels.gatewayId }} is receiving critically poor signal from device {{ "{{" }} $labels.devEui }} (RSSI: {{ "{{" }} $value }}dBm).
+              **What's happening:** Gateway {{ "{{" }} $labels.gatewayId }} is receiving critically poor signal from device {{ "{{" }} $labels.devEui }} (RSSI: {{ "{{" }} printf "%.2f" $value }}dBm).
 
               **Why this occurred:** Signal strength below -125dBm indicates severe connectivity issues that may result in:
               - Intermittent or lost communications
@@ -64,7 +64,7 @@ spec:
               3. Plan device relocation or add gateway coverage
               4. Verify device is still operational and accessible
             summary: >-
-              Critical signal quality: Gateway {{ "{{" }} $labels.gatewayId }} <-125dBm
+              Critical signal quality: Gateway {{ "{{" }} $labels.gatewayId }} {{ "{{" }} printf "%.2f" $value }}dBm
           expr: >-
             truvami_gateway_uplink_rssi < -125
           for: 2m
@@ -83,7 +83,7 @@ spec:
         - alert: TruvamiGatewaySNRLow
           annotations:
             description: >-
-              **What's happening:** Gateway {{ "{{" }} $labels.gatewayId }} is receiving low SNR from device {{ "{{" }} $labels.devEui }} (SNR: {{ "{{" }} $value }}dB).
+              **What's happening:** Gateway {{ "{{" }} $labels.gatewayId }} is receiving low SNR from device {{ "{{" }} $labels.devEui }} (SNR: {{ "{{" }} printf "%.2f" $value }}dB).
 
               **Why this occurred:** The `truvami_gateway_uplink_snr` metric shows signal-to-noise ratio below -15dB, indicating:
               - High noise environment affecting signal quality
@@ -99,7 +99,7 @@ spec:
               4. Consider increasing device transmission power if possible
               5. Evaluate need for additional gateway coverage
             summary: >-
-              Low SNR: Gateway {{ "{{" }} $labels.gatewayId }} <-15dB
+              Low SNR: Gateway {{ "{{" }} $labels.gatewayId }} {{ "{{" }} printf "%.2f" $value }}dB
           expr: >-
             truvami_gateway_uplink_snr < -15
           for: 10m

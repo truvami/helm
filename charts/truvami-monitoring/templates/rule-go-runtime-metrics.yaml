@@ -81,7 +81,7 @@ spec:
         - alert: TruvamiGoGCDurationHigh
           annotations:
             description: >-
-              **What's happening:** Go service {{ "{{" }} $labels.job }} garbage collection is taking {{ "{{" }} $value }}s (>100ms average over 5min).
+              **What's happening:** Go service {{ "{{" }} $labels.job }} garbage collection is taking {{ "{{" }} printf "%.2f" $value }}s (>100ms average over 5min).
 
               **Why this occurred:** Long GC pauses indicate:
               - Large heap sizes requiring more time to collect
