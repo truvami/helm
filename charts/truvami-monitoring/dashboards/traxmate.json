@@ -18,13 +18,13 @@
     "editable": true,
     "fiscalYearStartMonth": 0,
     "graphTooltip": 0,
-    "id": 10,
+    "id": 9,
     "links": [],
     "panels": [
         {
             "datasource": {
                 "type": "prometheus",
-                "uid": "PBFA97CFB590B2093"
+                "uid": "prometheus"
             },
             "fieldConfig": {
                 "defaults": {
@@ -55,6 +55,7 @@
                             "type": "linear"
                         },
                         "showPoints": "auto",
+                        "showValues": false,
                         "spanNulls": false,
                         "stacking": {
                             "group": "A",
@@ -69,7 +70,8 @@
                         "mode": "absolute",
                         "steps": [
                             {
-                                "color": "green"
+                                "color": "green",
+                                "value": 0
                             },
                             {
                                 "color": "red",
@@ -100,7 +102,7 @@
                     "sort": "none"
                 }
             },
-            "pluginVersion": "11.6.0",
+            "pluginVersion": "12.3.0",
             "targets": [
                 {
                     "datasource": {
@@ -108,7 +110,7 @@
                         "uid": "PBFA97CFB590B2093"
                     },
                     "editorMode": "code",
-                    "expr": "100 *\nsum by(__name__) (\n  increase(truvami_loracloud_position_estimate_invalid_total[5m])\n)\n/\n(\n  sum by(__name__) (\n    increase(truvami_loracloud_position_estimate_valid_total[5m])\n  )\n  +\n  sum by(__name__) (\n    increase(truvami_loracloud_position_estimate_invalid_total[5m])\n  )\n)\n",
+                    "expr": "100 *\nsum by(__name__) (\n  increase(truvami_loracloud_v2_requests_total{outcome=\"error\"}[5m])\n)\n/\n(\n  sum by(__name__) (\n    increase(truvami_loracloud_v2_requests_total{outcome=\"success\"}[5m])\n  )\n  +\n  sum by(__name__) (\n    increase(truvami_loracloud_v2_requests_total{outcome=\"error\"}[5m])\n  )\n)\n",
                     "legendFormat": "Error rate",
                     "range": true,
                     "refId": "A"
@@ -119,7 +121,7 @@
                         "uid": "PBFA97CFB590B2093"
                     },
                     "editorMode": "code",
-                    "expr": "sum by(__name__) (\n  increase(truvami_loracloud_position_estimate_invalid_total[5m])\n)",
+                    "expr": "sum by(__name__) (\n  increase(truvami_loracloud_v2_requests_total{outcome=\"error\"}[5m])\n)",
                     "hide": false,
                     "instant": false,
                     "legendFormat": "Invalid resolution",
@@ -132,7 +134,7 @@
                         "uid": "PBFA97CFB590B2093"
                     },
                     "editorMode": "code",
-                    "expr": "  sum by(__name__) (\n    increase(truvami_loracloud_position_estimate_valid_total[5m])\n  )",
+                    "expr": "  sum by(__name__) (\n    increase(truvami_loracloud_v2_requests_total{outcome=\"success\"}[5m])\n  )",
                     "hide": false,
                     "instant": false,
                     "legendFormat": "Valid resolution",
@@ -146,7 +148,7 @@
         {
             "datasource": {
                 "type": "prometheus",
-                "uid": "PBFA97CFB590B2093"
+                "uid": "prometheus"
             },
             "fieldConfig": {
                 "defaults": {
@@ -177,6 +179,7 @@
                             "type": "linear"
                         },
                         "showPoints": "auto",
+                        "showValues": false,
                         "spanNulls": false,
                         "stacking": {
                             "group": "A",
@@ -191,7 +194,8 @@
                         "mode": "absolute",
                         "steps": [
                             {
-                                "color": "green"
+                                "color": "green",
+                                "value": 0
                             },
                             {
                                 "color": "red",
@@ -222,11 +226,11 @@
                     "sort": "none"
                 }
             },
-            "pluginVersion": "11.6.0",
+            "pluginVersion": "12.3.0",
             "targets": [
                 {
                     "editorMode": "code",
-                    "expr": "sum by(__name__) (truvami_loracloud_position_estimate_valid_total)",
+                    "expr": "sum by(__name__) (truvami_loracloud_v2_requests_total{outcome=\"success\"})",
                     "legendFormat": "Valid resolution",
                     "range": true,
                     "refId": "A"
@@ -237,7 +241,7 @@
                         "uid": "PBFA97CFB590B2093"
                     },
                     "editorMode": "code",
-                    "expr": "sum by(__name__) (truvami_loracloud_position_estimate_invalid_total)",
+                    "expr": "sum by(__name__) (truvami_loracloud_v2_requests_total{outcome=\"error\"})",
                     "hide": false,
                     "instant": false,
                     "legendFormat": "Invalid resolution",
@@ -250,7 +254,7 @@
         }
     ],
     "preload": false,
-    "schemaVersion": 41,
+    "schemaVersion": 42,
     "tags": [],
     "templating": {
         "list": []
@@ -263,5 +267,5 @@
     "timezone": "browser",
     "title": "Traxmate",
     "uid": "fevn3dunis0lcc",
-    "version": 12
+    "version": 1
 }
