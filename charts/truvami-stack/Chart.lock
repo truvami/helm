@@ -16,12 +16,12 @@ dependencies:
   version: 1.0.11
 - name: truvami-monitoring
   repository: file://../truvami-monitoring
-  version: 0.2.4
+  version: 0.2.5
 - name: truvami-siren
   repository: file://../truvami-siren
   version: 0.2.11
 - name: truvami-docs
   repository: file://../truvami-docs
   version: 0.1.3
-digest: sha256:9f4b49720be06b827415be24da988434c628a0d1b9c3713dba46f7f7f34788ca
-generated: "2025-11-26T16:04:48.524322297Z"
+digest: sha256:b82189141acc1c5b905de3cfc4706a92ab335dc9c037fe3cf9a0f12cd0ea396b
+generated: "2025-12-16T10:16:59.961122733Z"
