@@ -59,6 +59,28 @@ jobs:
         env:
           CR_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
 
+      - name: Install git-cliff
+        run: |
+          CLIFF_VERSION="2.7.0"
+          wget -O git-cliff.tar.gz https://github.com/orhun/git-cliff/releases/download/v${CLIFF_VERSION}/git-cliff-${CLIFF_VERSION}-x86_64-unknown-linux-gnu.tar.gz
+          tar -xzf git-cliff.tar.gz
+          sudo mv git-cliff-${CLIFF_VERSION}/git-cliff /usr/local/bin/
+          git-cliff --version
+
+      - name: Generate changelog
+        run: |
+          git-cliff --config cliff.toml --output CHANGELOG.md
+
+      - name: Commit and push changelog
+        run: |
+          git add CHANGELOG.md
+          if git diff --cached --quiet; then
+            echo "No changelog changes to commit"
+          else
+            git commit -m "docs: update CHANGELOG.md [skip ci]"
+            git push origin main
+          fi
+
       - name: Login to GHCR (OCI)
         run: |
           echo "${{ secrets.GITHUB_TOKEN }}" | helm registry login ghcr.io \
