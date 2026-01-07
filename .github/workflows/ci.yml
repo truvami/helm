@@ -19,7 +19,7 @@ jobs:
       dashboards: ${{ steps.filter.outputs.dashboards }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
       - name: Paths filter
         id: filter
         uses: dorny/paths-filter@v3
@@ -35,7 +35,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0
 
@@ -45,7 +45,7 @@ jobs:
           version: '3.16.1'
 
       - name: Cache Helm repository data
-        uses: actions/cache@v3
+        uses: actions/cache@v5
         with:
           path: ~/.cache/helm
           key: helm-cache-${{ runner.os }}-${{ hashFiles('charts/**/Chart.yaml') }}
@@ -61,7 +61,7 @@ jobs:
           helm repo update
 
       - name: Install chart-testing
-        uses: helm/chart-testing-action@v2.6.1
+        uses: helm/chart-testing-action@v2.8.0
 
       - name: List changed charts
         id: list-changed
@@ -90,7 +90,7 @@ jobs:
       contents: read
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0
 
@@ -103,7 +103,7 @@ jobs:
           | tar -xz && sudo mv kubeconform /usr/local/bin/
 
       - name: Install chart-testing
-        uses: helm/chart-testing-action@v2.6.1
+        uses: helm/chart-testing-action@v2.8.0
 
       - name: List changed charts
         id: list-changed
@@ -133,7 +133,7 @@ jobs:
       contents: read
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0
 
@@ -149,7 +149,7 @@ jobs:
           kube-score version
 
       - name: Install chart-testing
-        uses: helm/chart-testing-action@v2.6.1
+        uses: helm/chart-testing-action@v2.8.0
 
       - name: List changed charts
         id: list-changed
@@ -178,7 +178,7 @@ jobs:
       contents: write
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Install helm-docs
         run: |
@@ -209,7 +209,7 @@ jobs:
           github.event_name == 'pull_request' &&
           github.event.pull_request.head.repo.full_name == github.repository &&
           steps.docs_changes.outputs.dirty == 'true'
-        uses: stefanzweifel/git-auto-commit-action@v5
+        uses: stefanzweifel/git-auto-commit-action@v7
         with:
           commit_message: "docs(charts): update generated READMEs"
           file_pattern: charts/**/README.md
@@ -228,12 +228,12 @@ jobs:
     if: needs.changes.outputs.dashboards == 'true'
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0
 
       - name: Set up Go (for Jsonnet tools)
-        uses: actions/setup-go@v4
+        uses: actions/setup-go@v6
         with:
           go-version: '1.21'
           cache: true
@@ -244,7 +244,7 @@ jobs:
           go install github.com/jsonnet-bundler/jsonnet-bundler/cmd/jb@latest
 
       - name: Cache Jsonnet dependencies
-        uses: actions/cache@v3
+        uses: actions/cache@v5
         with:
           path: dashboards/vendor
           key: jsonnet-deps-${{ hashFiles('dashboards/jsonnetfile.lock.json') }}
@@ -263,7 +263,7 @@ jobs:
       pull-requests: write
     steps:
       - name: Checkout PR branch
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0
 
@@ -273,7 +273,7 @@ jobs:
           version: '3.16.1'
 
       - name: Install chart-testing
-        uses: helm/chart-testing-action@v2.6.1
+        uses: helm/chart-testing-action@v2.8.0
 
       - name: List changed charts
         id: list-changed
@@ -332,14 +332,14 @@ jobs:
 
       - name: Upload diagram artifacts
         # if: steps.list-changed.outputs.changed == 'true'
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: chart-diagrams
           path: diagrams
 
       - name: Create comparison comment
         # if: steps.list-changed.outputs.changed == 'true'
-        uses: actions/github-script@v7
+        uses: actions/github-script@v8
         with:
           script: |
             const fs = require('fs');
