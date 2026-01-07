@@ -316,24 +316,6 @@ jobs:
             fi
           done < changed_charts.txt
 
-      - name: Optimize diagram images
-        # if: steps.list-changed.outputs.changed == 'true'
-        run: |
-          # Install ImageMagick for compression
-          sudo apt-get update && sudo apt-get install -y imagemagick
-
-          # Optimize all PNG files
-          for png in diagrams/*.png; do
-            if [ -f "$png" ]; then
-              echo "Optimizing $png"
-              # Reduce colors and quality for smaller file size
-              convert "$png" -colors 256 -quality 85 -strip "$png"
-            fi
-          done
-
-          # Show file sizes
-          du -h diagrams/*.png | sort -rh
-
       - name: Commit diagrams
         # if: steps.list-changed.outputs.changed == 'true'
         run: |
