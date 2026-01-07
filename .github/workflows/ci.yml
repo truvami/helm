@@ -305,7 +305,6 @@ jobs:
             helm template "$chart" > /tmp/${chart_name}.yaml || echo "Failed to template $chart_name"
             docker run --rm -v /tmp:/tmp -v $(pwd)/diagrams:/diagrams philippemerle/kubediagrams kube-diagrams \
               -o /diagrams/${chart_name}.png \
-              --width 1200 --height 800 \
               /tmp/${chart_name}.yaml || echo "Failed to generate diagram for $chart_name"
 
             # Check if diagram exists on base branch and fetch it for comparison
