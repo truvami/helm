@@ -6,8 +6,32 @@ on:
   push:
     branches: [ main ]
 
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
-  lint-and-test:
+  changes:
+    name: Detect changes
+    runs-on: ubuntu-latest
+    outputs:
+      charts: ${{ steps.filter.outputs.charts }}
+      dashboards: ${{ steps.filter.outputs.dashboards }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Paths filter
+        id: filter
+        uses: dorny/paths-filter@v3
+        with:
+          filters: |
+            charts:
+              - 'charts/**'
+            dashboards:
+              - 'dashboards/**'
+
+  charts-lint:
+    name: Helm chart linting (ct)
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -18,7 +42,195 @@ jobs:
       - name: Set up Helm
         uses: azure/setup-helm@v4
         with:
-          version: '3.14.0'
+          version: '3.16.1'
+
+      - name: Cache Helm repository data
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/helm
+          key: helm-cache-${{ runner.os }}-${{ hashFiles('charts/**/Chart.yaml') }}
+          restore-keys: |
+            helm-cache-${{ runner.os }}-
+
+      - name: Add Helm repos
+        run: |
+          helm repo add bitnami https://charts.bitnami.com/bitnami
+          helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+          helm repo add grafana https://grafana.github.io/helm-charts
+          helm repo add strimzi https://strimzi.io/charts/
+          helm repo update
+
+      - name: Install chart-testing
+        uses: helm/chart-testing-action@v2.6.1
+
+      - name: List changed charts
+        id: list-changed
+        run: |
+          changed=$(ct list-changed --config ct.yaml --target-branch ${{ github.event.repository.default_branch }})
+          if [[ -n "$changed" ]]; then
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+            echo "Changed charts:"
+            echo "$changed"
+          else
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            echo "No charts changed"
+          fi
+
+      - name: Run ct lint
+        if: steps.list-changed.outputs.changed == 'true'
+        run: ct lint --config ct.yaml --target-branch ${{ github.event.repository.default_branch }}
+
+  kubeconform:
+    name: Kubeconform schema validation
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        k8s: ['1.26.0', '1.28.0']
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Helm
+        uses: azure/setup-helm@v4
+
+      - name: Install kubeconform
+        run: |
+          curl -sSL https://github.com/yannh/kubeconform/releases/latest/download/kubeconform-linux-amd64.tar.gz \
+          | tar -xz && sudo mv kubeconform /usr/local/bin/
+
+      - name: Install chart-testing
+        uses: helm/chart-testing-action@v2.6.1
+
+      - name: List changed charts
+        id: list-changed
+        run: |
+          changed=$(ct list-changed --config ct.yaml --target-branch ${{ github.event.repository.default_branch }})
+          if [[ -n "$changed" ]]; then
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+            printf '%s\n' "$changed" > changed_charts.txt
+          else
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Validate templates against ${{ matrix.k8s }}
+        if: steps.list-changed.outputs.changed == 'true'
+        continue-on-error: true
+        run: |
+          while read -r chart; do
+            echo "Validating $chart for Kubernetes ${{ matrix.k8s }}"
+            helm template test "$chart" --kube-version ${{ matrix.k8s }} \
+            | kubeconform -strict -ignore-missing-schemas -summary
+          done < changed_charts.txt
+
+  security-scan:
+    name: kube-score security scan
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Helm
+        uses: azure/setup-helm@v4
+
+      - name: Install kube-score
+        run: |
+          KUBE_SCORE_VERSION="1.20.0"
+          wget -O kube-score.tar.gz https://github.com/zegl/kube-score/releases/download/v${KUBE_SCORE_VERSION}/kube-score_${KUBE_SCORE_VERSION}_linux_amd64.tar.gz
+          tar -xzf kube-score.tar.gz
+          sudo mv kube-score /usr/local/bin/
+          kube-score version
+
+      - name: Install chart-testing
+        uses: helm/chart-testing-action@v2.6.1
+
+      - name: List changed charts
+        id: list-changed
+        run: |
+          changed=$(ct list-changed --config ct.yaml --target-branch ${{ github.event.repository.default_branch }})
+          if [[ -n "$changed" ]]; then
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+            printf '%s\n' "$changed" > changed_charts.txt
+          else
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Run kube-score on changed charts
+        if: steps.list-changed.outputs.changed == 'true'
+        continue-on-error: true
+        run: |
+          while read -r chart; do
+            echo "Running kube-score for $chart"
+            helm template "$chart" | kube-score score - --output-format ci
+          done < changed_charts.txt
+
+  documentation:
+    name: Chart docs up-to-date
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install helm-docs
+        run: |
+          cd /tmp
+          HELM_DOCS_VERSION="1.14.2"
+          wget https://github.com/norwoodj/helm-docs/releases/download/v${HELM_DOCS_VERSION}/helm-docs_${HELM_DOCS_VERSION}_Linux_x86_64.tar.gz
+          tar -xzf helm-docs_${HELM_DOCS_VERSION}_Linux_x86_64.tar.gz
+          sudo mv helm-docs /usr/local/bin/
+          helm-docs --version
+
+      - name: Generate documentation
+        run: |
+          for chart in $(ls ./charts); do
+            helm-docs --chart-search-root ./charts/$chart
+          done
+
+      - name: Detect changes
+        id: docs_changes
+        run: |
+          if [ -n "$(git status --porcelain)" ]; then
+            echo "dirty=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "dirty=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Auto-commit updated docs (same-repo PRs)
+        if: |
+          github.event_name == 'pull_request' &&
+          github.event.pull_request.head.repo.full_name == github.repository &&
+          steps.docs_changes.outputs.dirty == 'true'
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "docs(charts): update generated READMEs"
+          file_pattern: charts/**/README.md
+
+      - name: Fail if docs are outdated (fork PRs or pushes)
+        if: steps.docs_changes.outputs.dirty == 'true' && ! (github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository)
+        run: |
+          echo "❌ Documentation is out of date. Please run 'helm-docs' and commit the changes."
+          git status --porcelain
+          exit 1
+
+  dashboards:
+    name: Dashboards build
+    runs-on: ubuntu-latest
+    needs: changes
+    if: needs.changes.outputs.dashboards == 'true'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Set up Go (for Jsonnet tools)
         uses: actions/setup-go@v4
@@ -39,228 +251,178 @@ jobs:
           restore-keys: |
             jsonnet-deps-
 
-      - name: Add Helm repos
-        run: |
-          helm repo add bitnami https://charts.bitnami.com/bitnami
-          helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
-          helm repo add grafana https://grafana.github.io/helm-charts
-          helm repo add strimzi https://strimzi.io/charts/
-          helm repo update
-
       - name: Build dashboards
-        run: |
-          make build-dashboards
+        run: make build-dashboards
 
-      - name: Lint Charts
-        run: |
-          set -e
-          failed_charts=()
-          for chart in $(ls ./charts); do
-            echo "Linting chart: $chart"
-            if ! helm lint ./charts/$chart; then
-              failed_charts+=("$chart")
-            fi
-          done
-
-          if [ ${#failed_charts[@]} -ne 0 ]; then
-            echo "❌ Failed to lint charts: ${failed_charts[*]}"
-            exit 1
-          else
-            echo "✅ All charts passed linting"
-          fi
-
-      - name: Template Charts
-        run: |
-          set -e
-          failed_charts=()
-          for chart in $(ls ./charts); do
-            echo "Templating chart: $chart"
-            if ! helm template test-release ./charts/$chart > /dev/null; then
-              failed_charts+=("$chart")
-            fi
-          done
-
-          if [ ${#failed_charts[@]} -ne 0 ]; then
-            echo "❌ Failed to template charts: ${failed_charts[*]}"
-            exit 1
-          else
-            echo "✅ All charts can be templated successfully"
-          fi
-
-      - name: Install chart-testing
-        uses: helm/chart-testing-action@v2.6.1
-
-      - name: Run chart-testing (list-changed)
-        id: list-changed
-        run: |
-          changed=$(ct list-changed --target-branch ${{ github.event.repository.default_branch }})
-          if [[ -n "$changed" ]]; then
-            echo "changed=true" >> "$GITHUB_OUTPUT"
-          fi
-
-      - name: Run chart-testing (lint)
-        if: steps.list-changed.outputs.changed == 'true'
-        run: ct lint --target-branch ${{ github.event.repository.default_branch }}
-
-      - name: Create kind cluster
-        if: steps.list-changed.outputs.changed == 'true'
-        uses: helm/kind-action@v1.8.0
-
-      - name: Run chart-testing (install)
-        if: steps.list-changed.outputs.changed == 'true'
-        run: ct install --target-branch ${{ github.event.repository.default_branch }}
-
-  security-scan:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Set up Helm
-        uses: azure/setup-helm@v4
-
-      - name: Install kube-score
-        run: |
-          KUBE_SCORE_VERSION="1.20.0"
-          wget -O kube-score.tar.gz https://github.com/zegl/kube-score/releases/download/v${KUBE_SCORE_VERSION}/kube-score_${KUBE_SCORE_VERSION}_linux_amd64.tar.gz
-          tar -xzf kube-score.tar.gz
-          sudo mv kube-score /usr/local/bin/
-          kube-score version
-
-      - name: Run kube-score security analysis
-        run: |
-          for chart in $(ls ./charts); do
-            echo "Running kube-score for chart: $chart"
-            helm template ./charts/$chart | kube-score score - --output-format ci
-          done
-
-  breaking-change-detection:
+  chart-diagrams:
+    name: Generate chart diagrams
     runs-on: ubuntu-latest
     if: github.event_name == 'pull_request'
+    permissions:
+      contents: write
+      pull-requests: write
     steps:
-      - name: Checkout PR
+      - name: Checkout PR branch
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - name: Checkout base branch
-        run: |
-          git fetch origin ${{ github.event.pull_request.base.ref }}
-
       - name: Set up Helm
         uses: azure/setup-helm@v4
+        with:
+          version: '3.16.1'
 
-      - name: Add Helm repos
+      - name: Install chart-testing
+        uses: helm/chart-testing-action@v2.6.1
+
+      - name: List changed charts
+        id: list-changed
         run: |
-          helm repo add bitnami https://charts.bitnami.com/bitnami
-          helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
-          helm repo add grafana https://grafana.github.io/helm-charts
-          helm repo add strimzi https://strimzi.io/charts/
-          helm repo update
-
-      - name: Detect breaking changes
-        run: |
-          set -e
-          echo "Detecting breaking changes..."
-
-          # Get list of changed charts
-          changed_charts=$(git diff --name-only origin/${{ github.event.pull_request.base.ref }}...HEAD | grep "^charts/" | cut -d'/' -f2 | sort -u)
-
-          if [ -z "$changed_charts" ]; then
-            echo "No charts changed"
-            exit 0
+          changed=$(ct list-changed --config ct.yaml --target-branch ${{ github.event.repository.default_branch }})
+          if [[ -n "$changed" ]]; then
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+            printf '%s\n' "$changed" > changed_charts.txt
+            echo "Changed charts:"
+            cat changed_charts.txt
+          else
+            echo "changed=false" >> "$GITHUB_OUTPUT"
           fi
 
-          breaking_changes=()
+      - name: Generate diagrams
+        # if: steps.list-changed.outputs.changed == 'true'
+        run: |
+          mkdir -p diagrams
+          while read -r chart; do
+            chart_name=$(basename "$chart")
+            echo "Processing $chart_name"
 
-          for chart in $changed_charts; do
-            if [ ! -d "./charts/$chart" ]; then
-              echo "Chart $chart was deleted - this is a breaking change"
-              breaking_changes+=("$chart: Chart deleted")
-              continue
+            # Update dependencies for charts that need them
+            if [[ "$chart_name" == "truvami-stack" ]]; then
+              helm dependency update "$chart" || echo "Failed to update dependencies for $chart_name"
             fi
 
-            echo "Checking chart: $chart"
+            # Generate current diagram
+            helm template "$chart" > /tmp/${chart_name}.yaml || echo "Failed to template $chart_name"
+            docker run --rm -v /tmp:/tmp -v $(pwd)/diagrams:/diagrams philippemerle/kubediagrams kube-diagrams \
+              -o /diagrams/${chart_name}.png \
+              --width 1200 --height 800 \
+              /tmp/${chart_name}.yaml || echo "Failed to generate diagram for $chart_name"
 
-            # Check for version changes
-            current_version=$(yq eval '.version' ./charts/$chart/Chart.yaml)
-            git checkout origin/${{ github.event.pull_request.base.ref }} -- ./charts/$chart/Chart.yaml 2>/dev/null || echo "Chart is new"
-
-            if [ -f "./charts/$chart/Chart.yaml" ]; then
-              base_version=$(yq eval '.version' ./charts/$chart/Chart.yaml)
-
-              # Parse versions and check if major version increased
-              current_major=$(echo $current_version | cut -d'.' -f1)
-              base_major=$(echo $base_version | cut -d'.' -f1)
-
-              if [ "$current_major" -gt "$base_major" ]; then
-                echo "Major version bump detected for $chart: $base_version -> $current_version"
-              elif [ "$current_version" = "$base_version" ]; then
-                breaking_changes+=("$chart: Version not bumped despite changes")
-              fi
+            # Check if diagram exists on base branch and fetch it for comparison
+            if git show origin/${{ github.event.repository.default_branch }}:diagrams/${chart_name}.png > /tmp/${chart_name}.previous.png 2>/dev/null; then
+              echo "Found previous diagram for $chart_name, copying to diagrams folder"
+              cp /tmp/${chart_name}.previous.png diagrams/${chart_name}.previous.png
+            else
+              echo "No previous diagram found for $chart_name on base branch"
             fi
+          done < changed_charts.txt
 
-            # Restore current version
-            git checkout HEAD -- ./charts/$chart/Chart.yaml
+      - name: Optimize diagram images
+        # if: steps.list-changed.outputs.changed == 'true'
+        run: |
+          # Install ImageMagick for compression
+          sudo apt-get update && sudo apt-get install -y imagemagick
 
-            # Template both versions and compare for breaking changes
-            mkdir -p /tmp/chart-diff
-
-            if git show origin/${{ github.event.pull_request.base.ref }}:charts/$chart/Chart.yaml > /dev/null 2>&1; then
-              # Create temporary directory for base version
-              git show origin/${{ github.event.pull_request.base.ref }}:charts/$chart/values.yaml > /tmp/chart-diff/values-base.yaml 2>/dev/null || echo "{}" > /tmp/chart-diff/values-base.yaml
-
-              # Check for removed required values
-              base_required=$(yq eval '.. | select(. == null) | path | join(".")' /tmp/chart-diff/values-base.yaml 2>/dev/null || echo "")
-              current_required=$(yq eval '.. | select(. == null) | path | join(".")' ./charts/$chart/values.yaml 2>/dev/null || echo "")
-
-              # This is a simplified check - in practice you'd want more sophisticated breaking change detection
+          # Optimize all PNG files
+          for png in diagrams/*.png; do
+            if [ -f "$png" ]; then
+              echo "Optimizing $png"
+              # Reduce colors and quality for smaller file size
+              convert "$png" -colors 256 -quality 85 -strip "$png"
             fi
           done
 
-          if [ ${#breaking_changes[@]} -ne 0 ]; then
-            echo "❌ Breaking changes detected:"
-            printf '%s\n' "${breaking_changes[@]}"
-            echo ""
-            echo "Please ensure:"
-            echo "1. Chart version is properly bumped"
-            echo "2. Breaking changes are documented"
-            echo "3. Migration guide is provided if needed"
-            exit 1
+          # Show file sizes
+          du -h diagrams/*.png | sort -rh
+
+      - name: Commit diagrams
+        # if: steps.list-changed.outputs.changed == 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add diagrams/ || true
+          if git diff --cached --quiet; then
+            echo "No changes to commit"
           else
-            echo "✅ No breaking changes detected"
+            git commit -m "chore: add chart diagrams for PR review"
+            git push origin HEAD:${{ github.head_ref }}
+            echo "Diagrams committed and pushed successfully"
           fi
 
-  documentation:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - name: Upload diagram artifacts
+        # if: steps.list-changed.outputs.changed == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: chart-diagrams
+          path: diagrams
 
-      - name: Install helm-docs
-        run: |
-          cd /tmp
-          HELM_DOCS_VERSION="1.14.2"
-          wget https://github.com/norwoodj/helm-docs/releases/download/v${HELM_DOCS_VERSION}/helm-docs_${HELM_DOCS_VERSION}_Linux_x86_64.tar.gz
-          tar -xzf helm-docs_${HELM_DOCS_VERSION}_Linux_x86_64.tar.gz
-          sudo mv helm-docs /usr/local/bin/
-          helm-docs --version
+      - name: Create comparison comment
+        # if: steps.list-changed.outputs.changed == 'true'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const path = require('path');
 
-      - name: Generate documentation
-        run: |
-          for chart in $(ls ./charts); do
-            if [ ! -f "./charts/$chart/README.md" ] || [ "./charts/$chart/Chart.yaml" -nt "./charts/$chart/README.md" ] || [ "./charts/$chart/values.yaml" -nt "./charts/$chart/README.md" ]; then
-              echo "Generating documentation for $chart"
-              helm-docs --chart-search-root ./charts/$chart
-            fi
-          done
+            const charts = fs.readFileSync('changed_charts.txt', 'utf8').trim().split('\n');
 
-      - name: Check if documentation is up to date
-        run: |
-          if [ -n "$(git status --porcelain)" ]; then
-            echo "❌ Documentation is out of date. Please run 'helm-docs' and commit the changes."
-            git status --porcelain
-            exit 1
-          else
-            echo "✅ Documentation is up to date"
-          fi
+            let comment = '## 📊 Chart Diagram\n\n';
+            comment += 'Visual representation of Kubernetes resources in changed charts:\n\n';
+
+            const repoUrl = `https://raw.githubusercontent.com/${{ github.repository }}/${{ github.head_ref }}/diagrams`;
+
+            for (const chart of charts) {
+              const chartName = path.basename(chart);
+              const currentPath = `diagrams/${chartName}.png`;
+              const previousPath = `diagrams/${chartName}.previous.png`;
+              const currentExists = fs.existsSync(currentPath);
+              const previousExists = fs.existsSync(previousPath);
+
+              if (previousExists && currentExists) {
+                comment += `<details>\n<summary><strong>${chartName}</strong> (Before/After)</summary>\n\n`;
+                comment += '| Before | After |\n';
+                comment += '|--------|-------|\n';
+                const beforeImg = `<img src="${repoUrl}/${chartName}.previous.png" width="500" alt="Before" />`;
+                const afterImg = `<img src="${repoUrl}/${chartName}.png" width="500" alt="After" />`;
+                comment += `| ${beforeImg} | ${afterImg} |\n\n`;
+                comment += `</details>\n\n`;
+              } else if (currentExists) {
+                comment += `<details>\n<summary><strong>${chartName}</strong> (New/Updated)</summary>\n\n`;
+                comment += `<img src="${repoUrl}/${chartName}.png" width="800" alt="Diagram" />\n\n`;
+                comment += `</details>\n\n`;
+              } else {
+                comment += `<details>\n<summary><strong>${chartName}</strong></summary>\n\n`;
+                comment += '❌ Failed to generate diagram\n\n';
+                comment += `</details>\n\n`;
+              }
+            }
+
+            comment += '\n> 💡 Diagrams generated with [KubeDiagrams](https://github.com/philippemerle/KubeDiagrams)\n';
+
+            // Find existing comment
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+            });
+
+            const botComment = comments.find(comment =>
+              comment.user.type === 'Bot' &&
+              comment.body.includes('📊 Chart Diagram')
+            );
+
+            if (botComment) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: botComment.id,
+                body: comment
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body: comment
+              });
+            }

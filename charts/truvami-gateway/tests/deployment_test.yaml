@@ -1,0 +1,10 @@
+suite: deployment
+templates:
+  - templates/deployment.yaml
+tests:
+  - it: should render a Deployment with a container
+    asserts:
+      - isKind:
+          of: Deployment
+      - exists:
+          path: spec.template.spec.containers[0].image
