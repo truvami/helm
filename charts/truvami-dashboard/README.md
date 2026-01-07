@@ -1,6 +1,6 @@
 # truvami-dashboard
 
-![Version: 1.0.11](https://img.shields.io/badge/Version-1.0.11-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v2.8.0-rc13](https://img.shields.io/badge/AppVersion-v2.8.0--rc13-informational?style=flat-square)
+![Version: 1.0.12](https://img.shields.io/badge/Version-1.0.12-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v2.8.0-rc13](https://img.shields.io/badge/AppVersion-v2.8.0--rc13-informational?style=flat-square)
 
 Truvami Dashboard Helm chart with Better Auth integration
 
