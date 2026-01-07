@@ -1,55 +1,17 @@
-name: Release Charts and Changelog
+name: Release Charts on Main
 
 on:
   push:
-    tags:
-      - 'v*'
+    branches:
+      - main
+  workflow_dispatch:
 
 jobs:
-  changelog:
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: Install git-cliff
-        uses: taiki-e/install-action@v2
-        with:
-          tool: git-cliff
-
-      - name: Generate Release Notes
-        id: changelog
-        run: |
-          # Generate changelog for this tag only
-          git-cliff --tag ${{ github.ref_name }} --strip all > RELEASE_NOTES.md
-
-          # Also update the full changelog
-          git-cliff --tag ${{ github.ref_name }} --output CHANGELOG.md
-
-          echo "Generated release notes:"
-          cat RELEASE_NOTES.md
-
-      - name: Create GitHub Release
-        uses: softprops/action-gh-release@v1
-        with:
-          body_path: RELEASE_NOTES.md
-          files: |
-            CHANGELOG.md
-          generate_release_notes: false
-          draft: false
-          prerelease: ${{ contains(github.ref_name, '-rc') }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
   charts:
-    needs: changelog
     runs-on: ubuntu-latest
     permissions:
       contents: write
+      packages: write
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -72,9 +34,12 @@ jobs:
           go-version: '1.21'
           cache: true
 
-      - name: Add Bitnami Helm repo
+      - name: Add Helm repos
         run: |
           helm repo add bitnami https://charts.bitnami.com/bitnami
+          helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+          helm repo add grafana https://grafana.github.io/helm-charts
+          helm repo add strimzi https://strimzi.io/charts/
           helm repo update
 
       - name: Build Dashboards
@@ -93,3 +58,27 @@ jobs:
           mark_as_latest: false
         env:
           CR_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+
+      - name: Login to GHCR (OCI)
+        run: |
+          echo "${{ secrets.GITHUB_TOKEN }}" | helm registry login ghcr.io \
+            --username "${{ github.actor }}" --password-stdin
+
+      - name: Push packaged charts to GHCR (OCI)
+        run: |
+          set -e
+          shopt -s nullglob
+          dir=.cr-release-packages
+          if [ ! -d "$dir" ]; then
+            echo "No packaged charts found (directory $dir missing). Skipping OCI push."
+            exit 0
+          fi
+          pkgs=($dir/*.tgz)
+          if [ ${#pkgs[@]} -eq 0 ]; then
+            echo "No packaged charts to push."
+            exit 0
+          fi
+          for pkg in "${pkgs[@]}"; do
+            echo "Pushing $pkg to oci://ghcr.io/truvami/helm"
+            helm push "$pkg" oci://ghcr.io/truvami/helm
+          done

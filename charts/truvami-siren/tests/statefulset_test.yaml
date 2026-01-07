@@ -1,0 +1,10 @@
+suite: statefulset
+templates:
+  - templates/statefulset.yaml
+tests:
+  - it: should render a StatefulSet with a container
+    asserts:
+      - isKind:
+          of: StatefulSet
+      - exists:
+          path: spec.template.spec.containers[0].image

@@ -204,6 +204,37 @@ make release
 3. **Helm chart releaser** publishes only charts with version changes
 4. **Stack dependencies** automatically updated when individual charts change
 
+## Quick Contributor Guide
+
+- Commit style: use Conventional Commits in PR titles (enforced).
+- If you change a chart, bump its `Chart.yaml` `version`:
+	- Breaking change: major (X.y.z)
+	- Backward-compatible feature: minor (x.Y.z)
+	- Fix/maintenance/template tweak: patch (x.y.Z)
+- `appVersion` should reflect the service image tag (informational for users), not the chart version.
+- Local checks before pushing:
+
+```bash
+# Lint + install with ct (uses ct.yaml)
+ct lint --config ct.yaml
+ct install --config ct.yaml
+
+# Optional: schema validation
+helm template test ./charts/<name> --kube-version 1.28.0 | kubeconform -strict -ignore-missing-schemas -summary
+
+# Optional: helm unit tests
+helm plugin install https://github.com/helm-unittest/helm-unittest || true
+helm unittest ./charts/<name>
+
+# Update chart READMEs
+helm-docs --chart-search-root ./charts/<name>
+```
+
+- CI will auto-generate and commit README changes for same-repo PRs; for forks, CI will ask you to run `helm-docs`.
+- After merge to `main`, changed charts are automatically packaged and released to:
+	- GitHub Pages index (chart-releaser)
+	- OCI registry at `oci://ghcr.io/truvami/helm`
+
 ### Adding New Charts
 
 1. Create chart directory: `charts/new-service/`

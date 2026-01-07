@@ -1,0 +1,10 @@
+suite: service
+templates:
+  - templates/service.yaml
+tests:
+  - it: should render a Service
+    asserts:
+      - isKind:
+          of: Service
+      - exists:
+          path: spec.selector
