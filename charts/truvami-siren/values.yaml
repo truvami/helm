@@ -69,6 +69,14 @@ siren:
         size: 8
         queue: 32
 
+  whatsapp:
+    # Secret containing WhatsApp credentials
+    existingSecret: ""
+    # Secret key for ALERTS_DISPATCHER_WHATSAPP_PHONE_NUMBER_ID
+    phoneNumberIdKey: ALERTS_DISPATCHER_WHATSAPP_PHONE_NUMBER_ID
+    # Secret key for ALERTS_DISPATCHER_WHATSAPP_ACCESS_TOKEN
+    accessTokenKey: ALERTS_DISPATCHER_WHATSAPP_ACCESS_TOKEN
+
 valkey:
   secretName: truvami-stack-valkey
   secretKey: valkey-password
