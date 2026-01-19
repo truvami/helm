@@ -87,6 +87,9 @@ A Helm chart for Kubernetes
 | siren.valkey.host | string | `"truvami-stack-valkey-primary:6379"` |  |
 | siren.valkey.key-prefix | string | `"siren"` |  |
 | siren.valkey.username | string | `"default"` |  |
+| siren.whatsapp.accessTokenKey | string | `"ALERTS_DISPATCHER_WHATSAPP_ACCESS_TOKEN"` |  |
+| siren.whatsapp.existingSecret | string | `""` |  |
+| siren.whatsapp.phoneNumberIdKey | string | `"ALERTS_DISPATCHER_WHATSAPP_PHONE_NUMBER_ID"` |  |
 | tolerations | list | `[]` |  |
 | valkey.secretKey | string | `"valkey-password"` |  |
 | valkey.secretName | string | `"truvami-stack-valkey"` |  |
