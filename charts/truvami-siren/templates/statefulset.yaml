@@ -95,20 +95,18 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: metadata.name
-            {{- with .Values.siren.whatsapp }}
-            {{- if .existingSecret }}
             - name: ALERTS_DISPATCHER_WHATSAPP_PHONE_NUMBER_ID
               valueFrom:
                 secretKeyRef:
-                  name: {{ .existingSecret }}
-                  key: {{ .phoneNumberIdKey }}
+                  key: ALERTS_DISPATCHER_WHATSAPP_PHONE_NUMBER_ID
+                  name: truvami-siren
+                  optional: false
             - name: ALERTS_DISPATCHER_WHATSAPP_ACCESS_TOKEN
               valueFrom:
                 secretKeyRef:
-                  name: {{ .existingSecret }}
-                  key: {{ .accessTokenKey }}
-            {{- end }}
-            {{- end }}
+                  key: ALERTS_DISPATCHER_WHATSAPP_ACCESS_TOKEN
+                  name: truvami-siren
+                  optional: false
           volumeMounts:
             {{- with .Values.volumeMounts }}
             {{- toYaml . | nindent 12 }}
