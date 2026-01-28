@@ -5,6 +5,35 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### CI
+- Enhance CI/CD workflows with new jobs by @michaelbeutler
+- Enhance CI/CD workflows with new jobs (#49) by @michaelbeutler in [#49](https://github.com/truvami/helm/pull/49)
+- Fix Make targets by @michaelbeutler
+- Update go version by @michaelbeutler
+
+### Documentation
+- Ran `helm-docs` by @niko-kriznik-globtim
+- Used v1.14.2 to generate docs by @niko-kriznik-globtim
+- Run helm-docs by @niko-kriznik-globtim
+- Update generated READMEs by @StefanSmile
+
+### Features
+- Added migrateTimeout to `api` by @niko-kriznik-globtim
+- Add git-cliff for changelog generation and automate changelog updates by @michaelbeutler
+
+### Fixes
+- Improve formatting of alert descriptions to show values with two decimal places by @michaelbeutler
+- Use new Traxmate counters by @niko-kriznik-globtim
+- Remove hardcoded dimensions for diagram generation by @michaelbeutler
+- Remove diagram optimization step from CI workflow by @michaelbeutler
+- Add missing public url by @michaelbeutler
+
+### New Contributors
+* @dependabot[bot] made their first contribution
+* @github-actions[bot] made their first contribution
+
 ## [1.0.1-rc27] - 2025-11-20
 
 ### Fixes
@@ -260,6 +289,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * @StefanSmile made their first contribution
 * @simylein made their first contribution
 
+[unreleased]: https://github.com/truvami/helm/compare/v1.0.1-rc27...HEAD
 [1.0.1-rc27]: https://github.com/truvami/helm/compare/v1.0.1-rc26...v1.0.1-rc27
 [1.0.1-rc25]: https://github.com/truvami/helm/compare/v1.0.1-rc24...v1.0.1-rc25
 [1.0.1-rc24]: https://github.com/truvami/helm/compare/v1.0.1-rc23...v1.0.1-rc24
