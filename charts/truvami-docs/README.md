@@ -1,6 +1,6 @@
 # truvami-docs
 
-![Version: 0.1.6](https://img.shields.io/badge/Version-0.1.6-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v1.0.0-rc1](https://img.shields.io/badge/AppVersion-v1.0.0--rc1-informational?style=flat-square)
+![Version: 0.1.7](https://img.shields.io/badge/Version-0.1.7-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v1.0.0-rc1](https://img.shields.io/badge/AppVersion-v1.0.0--rc1-informational?style=flat-square)
 
 A Helm chart for Kubernetes
 
@@ -40,6 +40,10 @@ A Helm chart for Kubernetes
 | keycloak.existingSecretKey | string | `"client-secret"` |  |
 | livenessProbe.httpGet.path | string | `"/"` |  |
 | livenessProbe.httpGet.port | string | `"http"` |  |
+| metrics.enabled | bool | `true` |  |
+| metrics.port | int | `9091` |  |
+| metrics.serviceMonitor.additionalLabels | object | `{}` |  |
+| metrics.serviceMonitor.enabled | bool | `false` |  |
 | migration.resources.limits.cpu | string | `"500m"` |  |
 | migration.resources.limits.memory | string | `"512Mi"` |  |
 | migration.resources.requests.cpu | string | `"100m"` |  |

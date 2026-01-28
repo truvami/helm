@@ -311,3 +311,10 @@ postgres:
     # If provided, it should contain keys: DB_HOST, DB_PORT, DB_NAME, DB_USER, DB_PASSWORD
     # When using existingSecret, the above individual values are ignored
     existingSecret: ""
+
+metrics:
+  enabled: true
+  port: 9091
+  serviceMonitor:
+    enabled: false
+    additionalLabels: {}

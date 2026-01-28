@@ -1,0 +1,20 @@
+{{- if .Values.metrics.serviceMonitor.enabled -}}
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: truvami-docs
+  labels:
+    {{- include "truvami-docs.labels" . | nindent 4 }}
+spec:
+  jobLabel: k8s-apps
+  selector:
+    matchLabels:
+    {{- include "truvami-docs.selectorLabels" . | nindent 6 }}
+  namespaceSelector:
+    matchNames:
+    - {{ .Release.Namespace }}
+  endpoints:
+  - port: metrics
+    interval: 15s
+    path: /metrics
+{{- end -}}
