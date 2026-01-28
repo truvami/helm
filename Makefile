@@ -42,11 +42,19 @@ install-jsonnet: ## Install jsonnet and jsonnet-bundler
 	@echo "🔧 Installing Jsonnet tools..."
 	@if ! command -v jsonnet >/dev/null 2>&1; then \
 		echo "Installing jsonnet..."; \
-		go install github.com/google/go-jsonnet/cmd/jsonnet@latest; \
+		if command -v brew >/dev/null 2>&1; then \
+			brew install go-jsonnet; \
+		else \
+			go install github.com/google/go-jsonnet/cmd/jsonnet@latest; \
+		fi; \
 	fi
 	@if ! command -v jb >/dev/null 2>&1; then \
 		echo "Installing jsonnet-bundler..."; \
-		go install github.com/jsonnet-bundler/jsonnet-bundler/cmd/jb@latest; \
+		if command -v brew >/dev/null 2>&1; then \
+			brew install jsonnet-bundler; \
+		else \
+			go install github.com/jsonnet-bundler/jsonnet-bundler/cmd/jb@latest; \
+		fi; \
 	fi
 	@echo "✅ Jsonnet tools installed"
 
