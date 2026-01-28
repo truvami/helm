@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Used v1.14.2 to generate docs by @niko-kriznik-globtim
 - Run helm-docs by @niko-kriznik-globtim
 - Update generated READMEs by @StefanSmile
+- Update CHANGELOG.md [skip ci] by @michaelbeutler
 
 ### Features
 - Added migrateTimeout to `api` by @niko-kriznik-globtim
