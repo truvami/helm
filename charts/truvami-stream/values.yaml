@@ -8,8 +8,8 @@ stream:
     cors:
       allowedOrigins:
         - http://localhost:3000
-        - http://stream.truvami.com
-        - http://stream.test.truvami.com
+        - https://stream.truvami.com
+        - https://stream.test.truvami.com
 
   metrics:
     enabled: true
@@ -82,9 +82,9 @@ replicaCount: 1
 
 image:
   repository: ghcr.io/truvami/stream
-  pullPolicy: Always
+  pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: ""
+  tag: "v0.1.0"
 
 imagePullSecrets: []
 nameOverride: ""
@@ -179,23 +179,15 @@ readinessProbe:
 autoscaling:
   enabled: false
   minReplicas: 1
-  maxReplicas: 100
+  maxReplicas: 10
   targetCPUUtilizationPercentage: 80
   # targetMemoryUtilizationPercentage: 80
 
 # Additional volumes on the output Deployment definition.
-volumes:
-  - configMap:
-      defaultMode: 420
-      name: "config-stream"
-      optional: false
-    name: config
+volumes: []
 
 # Additional volumeMounts on the output Deployment definition.
-volumeMounts:
-  - mountPath: /etc/truvami-stream
-    name: config
-    readOnly: true
+volumeMounts: []
 
 nodeSelector: {}
 

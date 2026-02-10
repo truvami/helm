@@ -2,7 +2,7 @@
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
-  name: truvami-stream
+  name: {{ include "truvami-stream.fullname" . }}
   labels:
     {{- include "truvami-stream.labels" . | nindent 4 }}
 spec:

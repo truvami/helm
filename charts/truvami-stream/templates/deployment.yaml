@@ -30,8 +30,10 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       serviceAccountName: {{ include "truvami-stream.serviceAccountName" . }}
+      {{- $defaultPodSecCtx := dict "runAsNonRoot" true "fsGroup" 1000 }}
+      {{- $podSecCtx := mustMergeOverwrite $defaultPodSecCtx (.Values.podSecurityContext | default dict) }}
       securityContext:
-        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+        {{- toYaml $podSecCtx | nindent 8 }}
       containers:
         - name: {{ .Chart.Name }}
           args:
@@ -67,8 +69,10 @@ spec:
                   key: {{ .Values.valkey.secretKey }}
                   name: {{ .Values.valkey.secretName }}
                   optional: false
+          {{- $defaultSecCtx := dict "allowPrivilegeEscalation" false "readOnlyRootFilesystem" true "runAsNonRoot" true "runAsUser" 1000 "runAsGroup" 1000 "capabilities" (dict "drop" (list "ALL")) "seccompProfile" (dict "type" "RuntimeDefault") }}
+          {{- $secCtx := mustMergeOverwrite $defaultSecCtx (.Values.securityContext | default dict) }}
           securityContext:
-            {{- toYaml .Values.securityContext | nindent 12 }}
+            {{- toYaml $secCtx | nindent 12 }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
@@ -86,14 +90,22 @@ spec:
             {{- toYaml .Values.readinessProbe | nindent 12 }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
-          {{- with .Values.volumeMounts }}
           volumeMounts:
+            - mountPath: /etc/truvami-stream
+              name: config
+              readOnly: true
+            {{- with .Values.volumeMounts }}
             {{- toYaml . | nindent 12 }}
-          {{- end }}
-      {{- with .Values.volumes }}
+            {{- end }}
       volumes:
+        - configMap:
+            defaultMode: 420
+            name: {{ include "truvami-stream.fullname" . }}-config
+            optional: false
+          name: config
+        {{- with .Values.volumes }}
         {{- toYaml . | nindent 8 }}
-      {{- end }}
+        {{- end }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}

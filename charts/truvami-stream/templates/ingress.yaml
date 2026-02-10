@@ -37,7 +37,7 @@ spec:
               service:
                 name: {{ include "truvami-stream.fullname" $ }}
                 port:
-                  number: {{ $.Values.service.port }}
+                  number: {{ $.Values.stream.server.port }}
           {{- end }}
     {{- end }}
 {{- end }}
