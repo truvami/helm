@@ -9946,4 +9946,15 @@ entries:
     urls:
     - https://github.com/truvami/helm/releases/download/truvami-stack-0.1.0/truvami-stack-0.1.0.tgz
     version: 0.1.0
-generated: "2026-01-28T15:35:16.420922002Z"
+  truvami-stream:
+  - apiVersion: v2
+    appVersion: v0.1.0
+    created: "2026-02-10T10:56:29.639257622Z"
+    description: A Helm chart for Kubernetes
+    digest: cc071009cd37ebfff0da8cad815879c75522e6971558d66b464e64ce7d37efd5
+    name: truvami-stream
+    type: application
+    urls:
+    - https://github.com/truvami/helm/releases/download/truvami-stream-0.1.0/truvami-stream-0.1.0.tgz
+    version: 0.1.0
+generated: "2026-02-10T10:56:29.639996892Z"
