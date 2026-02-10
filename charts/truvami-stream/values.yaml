@@ -1,0 +1,202 @@
+# Default values for truvami-stream.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+stream:
+  server:
+    port: 8890
+    cors:
+      allowedOrigins:
+        - http://localhost:3000
+        - https://stream.truvami.com
+        - https://stream.test.truvami.com
+
+  metrics:
+    enabled: true
+    port: 8891
+
+  otel:
+    enabled: false
+    endpoint: "tempo.grafana-tempo.svc.cluster.local:4318"
+
+  auth:
+    jwksURL: "https://sso.sbcdc.ch/auth/realms/truvami/protocol/openid-connect/certs"
+    issuer: "https://sso.sbcdc.ch/auth/realms/truvami"
+
+  # PostgreSQL read replica connection
+  database:
+    initializationTimeout: 15s
+    connectionMaxLifetime: 30m
+    connectionMaxIdleTime: 5m
+
+  # Valkey connection
+  valkey:
+    host: truvami-stack-valkey-primary:6379
+    username: default
+    stream_prefix: "api"
+    stats:
+      httpCache:
+        keyPrefix: "stream:http:v1:stats"
+        bucketSize: 1m
+        # Bump this when deploying breaking changes
+        namespaceVersion: 1
+
+  logging:
+    level: info # debug, info, warn, error
+    encoding: json # json, console
+    time-encoder: rfc3339 # rfc3339, iso8601, epoch
+
+  health:
+    checkInterval: 10s
+    checkTimeout: 2s
+    maxUnhealthyDuration: 5m
+
+  # Datasource configuration
+  datasources:
+    max_live_interval_seconds: 3600 # Maximum SSE refresh interval in seconds
+    events:
+      enabled: true # Enable/disable events datasource globally
+      min_live_interval_seconds: 1 # Minimum SSE refresh interval in seconds (max frequency, default: 1 second)
+      max_items: 1000 # Max items returned per query (default: 1000)
+      # Per-customer overrides (optional)
+      # customers:
+      #   "00000000-0000-0000-0000-000000000000":
+      #     enabled: true
+      #     min_live_interval_seconds: 5
+      #     max_items: 500
+
+database:
+  # Use read-only pooler for connection
+  host: "truvami-stack-pooler-ro"
+  port: 5432
+  name: "app"
+  # Fallback to secret-based configuration for backwards compatibility
+  secretName: truvami-stack-app
+  secretKey: uri
+
+valkey:
+  secretName: truvami-stack-valkey
+  secretKey: valkey-password
+
+replicaCount: 1
+
+image:
+  repository: ghcr.io/truvami/stream
+  pullPolicy: IfNotPresent
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: "v0.1.0"
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: false
+  # Automatically mount a ServiceAccount's API credentials?
+  automount: true
+  # Annotations to add to the service account
+  annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""
+
+podAnnotations: {}
+podLabels: {}
+
+podSecurityContext:
+  {}
+  # fsGroup: 2000
+
+securityContext:
+  capabilities:
+    drop:
+      - ALL
+  readOnlyRootFilesystem: true
+  runAsNonRoot: true
+  runAsUser: 65534
+  runAsGroup: 65534
+
+ingress:
+  enabled: false
+  className: ""
+  annotations:
+    {}
+    # kubernetes.io/ingress.class: nginx
+    # kubernetes.io/tls-acme: "true"
+  hosts:
+    - host: chart-example.local
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
+  tls: []
+  #  - secretName: chart-example-tls
+  #    hosts:
+  #      - chart-example.local
+
+# -- Expose the service via gateway-api HTTPRoute
+# Requires Gateway API resources and suitable controller installed within the cluster
+# (see: https://gateway-api.sigs.k8s.io/guides/)
+httpRoute:
+  # HTTPRoute enabled.
+  enabled: false
+  # HTTPRoute annotations.
+  annotations: {}
+  # Which Gateways this Route is attached to.
+  parentRefs:
+  - name: gateway
+    sectionName: http
+    # namespace: default
+  # Hostnames matching HTTP header.
+  hostnames:
+  - chart-example.local
+  # List of rules and filters applied.
+  rules:
+  - matches:
+    - path:
+        type: PathPrefix
+        value: /headers
+
+resources:
+  limits:
+    cpu: 100m
+    memory: 128Mi
+    ephemeral-storage: 1Gi
+  requests:
+    cpu: 100m
+    memory: 128Mi
+    ephemeral-storage: 512Mi
+
+livenessProbe:
+  httpGet:
+    path: /healthz
+    port: metrics
+readinessProbe:
+  httpGet:
+    path: /readyz
+    port: metrics
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 10
+  targetCPUUtilizationPercentage: 80
+  # targetMemoryUtilizationPercentage: 80
+
+# Additional volumes on the output Deployment definition.
+volumes: []
+
+# Additional volumeMounts on the output Deployment definition.
+volumeMounts: []
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+serviceMonitor:
+  enabled: false
+
+networkPolicy:
+  enabled: false
