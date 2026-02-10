@@ -2,62 +2,89 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
+# -- Application configuration (mounted as stream.yaml ConfigMap).
+# This block contains only non-sensitive settings; all secrets
+# (DATABASE_URI, VALKEY_PASSWORD) are injected as env vars from
+# Kubernetes Secrets — never place credentials here.
 stream:
   server:
+    # -- HTTP server listen port
     port: 8890
     cors:
+      # -- Origins allowed for CORS requests
       allowedOrigins:
         - http://localhost:3000
         - https://stream.truvami.com
         - https://stream.test.truvami.com
 
   metrics:
+    # -- Enable Prometheus metrics endpoint
     enabled: true
+    # -- Metrics server listen port
     port: 8891
 
   otel:
+    # -- Enable OpenTelemetry tracing
     enabled: false
+    # -- OpenTelemetry collector OTLP endpoint
     endpoint: "tempo.grafana-tempo.svc.cluster.local:4318"
 
   auth:
+    # -- JWKS endpoint URL for JWT validation
     jwksURL: "https://sso.sbcdc.ch/auth/realms/truvami/protocol/openid-connect/certs"
+    # -- Expected JWT issuer claim
     issuer: "https://sso.sbcdc.ch/auth/realms/truvami"
 
-  # PostgreSQL read replica connection
   database:
+    # -- Timeout for initial database connection
     initializationTimeout: 15s
+    # -- Maximum lifetime of a database connection (tune for PgBouncer)
     connectionMaxLifetime: 30m
+    # -- Maximum idle time before a connection is closed
     connectionMaxIdleTime: 5m
 
-  # Valkey connection
   valkey:
+    # -- Valkey (Redis-compatible) host:port address
     host: truvami-stack-valkey-primary:6379
+    # -- Valkey authentication username
     username: default
+    # -- Key prefix used when reading from Valkey streams
     stream_prefix: "api"
     stats:
       httpCache:
+        # -- Redis key prefix for stats cache entries
         keyPrefix: "stream:http:v1:stats"
+        # -- Aggregation bucket size for stats
         bucketSize: 1m
-        # Bump this when deploying breaking changes
+        # -- Bump this when deploying breaking cache changes
         namespaceVersion: 1
 
   logging:
-    level: info # debug, info, warn, error
-    encoding: json # json, console
-    time-encoder: rfc3339 # rfc3339, iso8601, epoch
+    # -- Log level (debug, info, warn, error)
+    level: info
+    # -- Log encoding format (json, console)
+    encoding: json
+    # -- Timestamp encoder (rfc3339, iso8601, epoch)
+    time-encoder: rfc3339
 
   health:
+    # -- Interval between background health checks
     checkInterval: 10s
+    # -- Timeout for each health check probe
     checkTimeout: 2s
+    # -- Duration of continuous failures before liveness probe fails
     maxUnhealthyDuration: 5m
 
-  # Datasource configuration
   datasources:
-    max_live_interval_seconds: 3600 # Maximum SSE refresh interval in seconds
+    # -- Global maximum SSE refresh interval in seconds
+    max_live_interval_seconds: 3600
     events:
-      enabled: true # Enable/disable events datasource globally
-      min_live_interval_seconds: 1 # Minimum SSE refresh interval in seconds (max frequency, default: 1 second)
-      max_items: 1000 # Max items returned per query (default: 1000)
+      # -- Enable or disable events datasource globally
+      enabled: true
+      # -- Minimum SSE refresh interval in seconds (caps max update frequency)
+      min_live_interval_seconds: 1
+      # -- Maximum number of items returned per query
+      max_items: 1000
       # Per-customer overrides (optional)
       # customers:
       #   "00000000-0000-0000-0000-000000000000":
@@ -65,49 +92,68 @@ stream:
       #     min_live_interval_seconds: 5
       #     max_items: 500
 
+# -- PostgreSQL read-only pooler connection settings.
+# Credentials are sourced from the referenced Kubernetes Secret.
 database:
-  # Use read-only pooler for connection
+  # -- CNPG read-only connection pooler hostname
   host: "truvami-stack-pooler-ro"
+  # -- PostgreSQL port
   port: 5432
+  # -- Database name
   name: "app"
-  # Fallback to secret-based configuration for backwards compatibility
+  # -- Name of the Kubernetes Secret containing DB credentials
   secretName: truvami-stack-app
+  # -- Key inside the Secret that holds the connection URI (fallback)
   secretKey: uri
 
+# -- Valkey Secret reference for password injection
 valkey:
+  # -- Name of the Kubernetes Secret containing the Valkey password
   secretName: truvami-stack-valkey
+  # -- Key inside the Secret that holds the password
   secretKey: valkey-password
 
+# -- Number of pod replicas
 replicaCount: 1
 
+# -- Container image settings
 image:
+  # -- Image repository
   repository: ghcr.io/truvami/stream
+  # -- Image pull policy (IfNotPresent recommended with pinned tags)
   pullPolicy: IfNotPresent
-  # Overrides the image tag whose default is the chart appVersion.
+  # -- Image tag; defaults to the chart appVersion if empty
   tag: "v0.1.0"
 
+# -- Docker registry pull secrets
 imagePullSecrets: []
+# -- Override the chart name
 nameOverride: ""
+# -- Override the full release name
 fullnameOverride: ""
 
+# -- Kubernetes ServiceAccount configuration
 serviceAccount:
-  # Specifies whether a service account should be created
+  # -- Whether to create a dedicated ServiceAccount
   create: false
-  # Automatically mount a ServiceAccount's API credentials?
-  automount: true
-  # Annotations to add to the service account
+  # -- Automount API credentials into pods (disable to reduce attack surface)
+  automount: false
+  # -- Annotations to add to the ServiceAccount
   annotations: {}
-  # The name of the service account to use.
-  # If not set and create is true, a name is generated using the fullname template
+  # -- Explicit ServiceAccount name; generated from fullname when empty
   name: ""
 
+# -- Annotations added to every Pod
 podAnnotations: {}
+# -- Labels added to every Pod
 podLabels: {}
 
+# -- Pod-level security context (merged with secure defaults in the template)
 podSecurityContext:
   {}
   # fsGroup: 2000
 
+# -- Container-level security context (merged with secure defaults in the template)
 securityContext:
   capabilities:
     drop:
@@ -117,13 +163,14 @@ securityContext:
   runAsUser: 65534
   runAsGroup: 65534
 
+# -- Kubernetes Ingress configuration
 ingress:
   enabled: false
   className: ""
   annotations:
     {}
     # kubernetes.io/ingress.class: nginx
-    # kubernetes.io/tls-acme: "true"
+    # cert-manager.io/cluster-issuer: letsencrypt
   hosts:
     - host: chart-example.local
       paths:
@@ -155,11 +202,12 @@ httpRoute:
   - matches:
     - path:
         type: PathPrefix
-        value: /headers
+        value: /
 
+# -- Resource requests and limits.
+# CPU limit is intentionally omitted to allow bursting; memory is capped.
 resources:
   limits:
-    cpu: 100m
     memory: 128Mi
     ephemeral-storage: 1Gi
   requests:
@@ -167,15 +215,28 @@ resources:
     memory: 128Mi
     ephemeral-storage: 512Mi
 
+# -- Liveness probe configuration (port "metrics" = stream.metrics.port)
 livenessProbe:
   httpGet:
     path: /healthz
     port: metrics
+  initialDelaySeconds: 15
+  timeoutSeconds: 5
+  periodSeconds: 10
+  failureThreshold: 3
+
+# -- Readiness probe configuration (port "metrics" = stream.metrics.port)
 readinessProbe:
   httpGet:
     path: /readyz
     port: metrics
+  initialDelaySeconds: 10
+  timeoutSeconds: 5
+  periodSeconds: 10
+  failureThreshold: 3
+  successThreshold: 1
 
+# -- Horizontal Pod Autoscaler settings
 autoscaling:
   enabled: false
   minReplicas: 1
@@ -183,20 +244,25 @@ autoscaling:
   targetCPUUtilizationPercentage: 80
   # targetMemoryUtilizationPercentage: 80
 
-# Additional volumes on the output Deployment definition.
+# -- Additional volumes on the Deployment (config volume is added automatically)
 volumes: []
 
-# Additional volumeMounts on the output Deployment definition.
+# -- Additional volumeMounts on the container (config mount is added automatically)
 volumeMounts: []
 
+# -- Node selector constraints
 nodeSelector: {}
 
+# -- Pod tolerations
 tolerations: []
 
+# -- Pod affinity / anti-affinity rules
 affinity: {}
 
+# -- Prometheus ServiceMonitor (requires stream.metrics.enabled)
 serviceMonitor:
   enabled: false
 
+# -- Kubernetes NetworkPolicy
 networkPolicy:
   enabled: false

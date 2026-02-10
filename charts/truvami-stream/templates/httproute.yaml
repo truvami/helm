@@ -1,6 +1,7 @@
 {{- if .Values.httpRoute.enabled -}}
 {{- $fullName := include "truvami-stream.fullname" . -}}
 {{- $svcPort := .Values.stream.server.port -}}
+{{- $_ := required "httpRoute.rules must contain at least one rule when httpRoute is enabled" .Values.httpRoute.rules -}}
 apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
 metadata:
