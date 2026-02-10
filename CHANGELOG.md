@@ -19,10 +19,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Run helm-docs by @niko-kriznik-globtim
 - Update generated READMEs by @StefanSmile
 - Update CHANGELOG.md [skip ci] by @michaelbeutler
+- Update CHANGELOG.md [skip ci] by @michaelbeutler
 
 ### Features
 - Added migrateTimeout to `api` by @niko-kriznik-globtim
 - Add git-cliff for changelog generation and automate changelog updates by @michaelbeutler
+- Add truvami-stream Helm chart by @michaelbeutler
+- Added truvami-stream Helm chart (#54) by @michaelbeutler in [#54](https://github.com/truvami/helm/pull/54)
 
 ### Fixes
 - Improve formatting of alert descriptions to show values with two decimal places by @michaelbeutler
@@ -31,9 +34,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Remove diagram optimization step from CI workflow by @michaelbeutler
 - Add missing public url by @michaelbeutler
 
+### Refactors
+- Address review comments by @michaelbeutler
+
 ### New Contributors
-* @dependabot[bot] made their first contribution
 * @github-actions[bot] made their first contribution
+* @dependabot[bot] made their first contribution
 
 ## [1.0.1-rc27] - 2025-11-20
 
