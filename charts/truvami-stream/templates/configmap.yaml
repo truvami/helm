@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: "config-stream"
+data:
+  stream.yaml: |
+    {{ .Values.stream | toYaml | nindent 4 }}
