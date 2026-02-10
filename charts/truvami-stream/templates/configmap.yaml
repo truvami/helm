@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "truvami-stream.fullname" . }}-config
+data:
+  stream.yaml: |
+    {{ .Values.stream | toYaml | nindent 4 }}
