@@ -4,6 +4,42 @@
 
 Truvami Dashboard Helm chart with Better Auth integration
 
+## Gateway API Support
+
+This chart supports both traditional Kubernetes Ingress and the modern [Gateway API](https://gateway-api.sigs.k8s.io/) for routing traffic to the application.
+
+### Using Gateway API (Recommended)
+
+To use Gateway API instead of Ingress, configure the `httpRoute` section in your values:
+
+```yaml
+httpRoute:
+  enabled: true
+  parentRefs:
+  - name: my-gateway
+    sectionName: http
+  hostnames:
+  - dashboard.example.com
+  rules:
+  - matches:
+    - path:
+        type: PathPrefix
+        value: /
+```
+
+### Migration from Ingress to Gateway API
+
+If you're currently using Ingress, you can migrate to Gateway API by:
+
+1. Ensure Gateway API CRDs are installed in your cluster
+2. Create a Gateway resource (if not already present)
+3. Enable `httpRoute.enabled: true` in your values
+4. Configure `httpRoute.parentRefs` to reference your Gateway
+5. Set `httpRoute.hostnames` and `httpRoute.rules` to match your current Ingress configuration
+6. Disable Ingress by setting `ingress.enabled: false`
+
+**Note:** Ingress and HTTPRoute are mutually exclusive. Only enable one at a time.
+
 ## Values
 
 | Key | Type | Default | Description |
@@ -24,6 +60,13 @@ Truvami Dashboard Helm chart with Better Auth integration
 | database.url | string | `""` |  |
 | fullnameOverride | string | `""` |  |
 | hostAliases | list | `[]` |  |
+| httpRoute.annotations | object | `{}` |  |
+| httpRoute.enabled | bool | `false` |  |
+| httpRoute.hostnames[0] | string | `"dashboard.truvami.com"` |  |
+| httpRoute.parentRefs[0].name | string | `"gateway"` |  |
+| httpRoute.parentRefs[0].sectionName | string | `"http"` |  |
+| httpRoute.rules[0].matches[0].path.type | string | `"PathPrefix"` |  |
+| httpRoute.rules[0].matches[0].path.value | string | `"/"` |  |
 | image.pullPolicy | string | `"Always"` |  |
 | image.repository | string | `"ghcr.io/truvami/dashboard"` |  |
 | image.tag | string | `""` |  |
