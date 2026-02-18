@@ -1,0 +1,38 @@
+{{- if .Values.networkPolicy.enabled }}
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: {{ include "truvami-seedbox.fullname" . }}
+  labels:
+    {{- include "truvami-seedbox.labels" . | nindent 4 }}
+spec:
+  podSelector:
+    matchLabels:
+      {{- include "truvami-seedbox.selectorLabels" . | nindent 6 }}
+  policyTypes:
+    - Ingress
+    - Egress
+  ingress:
+    - from: []
+      ports:
+        - protocol: TCP
+          port: {{ .Values.seedbox.metrics.port }}
+  egress:
+    # Allow DNS resolution
+    - to: []
+      ports:
+        - protocol: UDP
+          port: 53
+        - protocol: TCP
+          port: 53
+    # Allow gRPC to truvami API
+    - to: []
+      ports:
+        - protocol: TCP
+          port: 5001
+    # Allow OTEL collector
+    - to: []
+      ports:
+        - protocol: TCP
+          port: 4318
+{{- end }}

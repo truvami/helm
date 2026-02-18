@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "truvami-seedbox.fullname" . }}-config
+data:
+  seedbox.yaml: |
+    {{ .Values.seedbox | toYaml | nindent 4 }}

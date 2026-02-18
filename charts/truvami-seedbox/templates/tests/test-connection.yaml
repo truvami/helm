@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: "{{ include "truvami-seedbox.fullname" . }}-test-connection"
+  labels:
+    {{- include "truvami-seedbox.labels" . | nindent 4 }}
+  annotations:
+    "helm.sh/hook": test
+spec:
+  containers:
+    - name: wget
+      image: busybox:1.36
+      command: ['wget']
+      args: ['http://{{ include "truvami-seedbox.fullname" . }}:{{ .Values.seedbox.metrics.port }}/metrics']
+  restartPolicy: Never

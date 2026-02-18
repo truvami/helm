@@ -1,0 +1,171 @@
+# Default values for truvami-seedbox.
+
+# -- Application configuration (mounted as seedbox.yaml ConfigMap).
+# This block contains only non-sensitive settings.
+seedbox:
+  metrics:
+    # -- Prometheus metrics endpoint listen port
+    port: 7070
+
+  otel:
+    # -- Enable OpenTelemetry tracing
+    enabled: false
+    # -- OpenTelemetry collector OTLP endpoint
+    endpoint: "tempo.grafana-tempo.svc.cluster.local:4318"
+
+  relay:
+    # -- gRPC target for the truvami API
+    grpc: "truvami-stack-truvami-api:5001"
+    # -- Capacity of internal relay channels
+    channelsCapacity: 10
+
+  producer:
+    # -- Interval between synthetic data productions
+    interval: 10s
+    maps:
+      # -- Path to map CSV files inside the container
+      path: ./maps
+    weights:
+      # -- Relative weight for position messages
+      position: 10
+      # -- Relative weight for battery status messages
+      batteryStatus: 5
+      # -- Relative weight for event messages
+      event: 3
+    # -- Map of customer ID to device EUIs (populated per-environment)
+    customerDevices: {}
+    uplink:
+      # -- Minimum average RSSI value
+      minAverageRssi: -128
+      # -- Maximum average RSSI value
+      maxAverageRssi: -10
+      # -- Minimum average SNR value
+      minAverageSnr: -20
+      # -- Maximum average SNR value
+      maxAverageSnr: 15
+    position:
+      # -- Minimum latitude
+      minLatitude: -90
+      # -- Maximum latitude
+      maxLatitude: 90
+      # -- Minimum longitude
+      minLongitude: -180
+      # -- Maximum longitude
+      maxLongitude: 180
+      # -- Minimum altitude in meters
+      minAltitude: 0
+      # -- Maximum altitude in meters
+      maxAltitude: 8848
+    batteryStatus:
+      # -- Minimum battery voltage
+      minVoltage: 1.5
+      # -- Maximum battery voltage
+      maxVoltage: 4.5
+
+# -- Number of pod replicas
+replicaCount: 1
+
+# -- Container image settings
+image:
+  # -- Image repository
+  repository: ghcr.io/truvami/seedbox
+  # -- Image pull policy (IfNotPresent recommended with pinned tags)
+  pullPolicy: IfNotPresent
+  # -- Image tag; defaults to the chart appVersion if empty
+  tag: "v0.1.0"
+
+# -- Docker registry pull secrets
+imagePullSecrets: []
+# -- Override the chart name
+nameOverride: ""
+# -- Override the full release name
+fullnameOverride: ""
+
+# -- Kubernetes ServiceAccount configuration
+serviceAccount:
+  # -- Whether to create a dedicated ServiceAccount
+  create: false
+  # -- Automount API credentials into pods (disable to reduce attack surface)
+  automount: false
+  # -- Annotations to add to the ServiceAccount
+  annotations: {}
+  # -- Explicit ServiceAccount name; generated from fullname when empty
+  name: ""
+
+# -- Annotations added to every Pod
+podAnnotations: {}
+# -- Labels added to every Pod
+podLabels: {}
+
+# -- Pod-level security context (merged with secure defaults in the template)
+podSecurityContext:
+  {}
+  # fsGroup: 2000
+
+# -- Container-level security context (merged with secure defaults in the template)
+securityContext:
+  capabilities:
+    drop:
+      - ALL
+  readOnlyRootFilesystem: true
+  runAsNonRoot: true
+  runAsUser: 65534
+  runAsGroup: 65534
+
+# -- Resource requests and limits.
+resources:
+  limits:
+    memory: 128Mi
+    ephemeral-storage: 1Gi
+  requests:
+    cpu: 100m
+    memory: 128Mi
+    ephemeral-storage: 512Mi
+
+# -- Liveness probe configuration (port "metrics" = seedbox.metrics.port)
+livenessProbe:
+  httpGet:
+    path: /metrics
+    port: metrics
+  initialDelaySeconds: 15
+  timeoutSeconds: 5
+  periodSeconds: 10
+  failureThreshold: 3
+
+# -- Readiness probe configuration (port "metrics" = seedbox.metrics.port)
+readinessProbe:
+  httpGet:
+    path: /metrics
+    port: metrics
+  initialDelaySeconds: 10
+  timeoutSeconds: 5
+  periodSeconds: 10
+  failureThreshold: 3
+  successThreshold: 1
+
+# -- Horizontal Pod Autoscaler settings
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 10
+  targetCPUUtilizationPercentage: 80
+
+# -- Additional volumes on the Deployment
+volumes: []
+# -- Additional volumeMounts on the container
+volumeMounts: []
+
+# -- Node selector constraints
+nodeSelector: {}
+# -- Pod tolerations
+tolerations: []
+# -- Pod affinity / anti-affinity rules
+affinity: {}
+
+# -- Prometheus ServiceMonitor
+serviceMonitor:
+  enabled: false
+
+# -- Kubernetes NetworkPolicy
+networkPolicy:
+  enabled: false

@@ -1,0 +1,4 @@
+1. Access the metrics endpoint by running these commands:
+  export POD_NAME=$(kubectl get pods --namespace {{ .Release.Namespace }} -l "app.kubernetes.io/name={{ include "truvami-seedbox.name" . }},app.kubernetes.io/instance={{ .Release.Name }}" -o jsonpath="{.items[0].metadata.name}")
+  echo "Visit http://127.0.0.1:{{ .Values.seedbox.metrics.port }}/metrics to view Prometheus metrics"
+  kubectl --namespace {{ .Release.Namespace }} port-forward $POD_NAME {{ .Values.seedbox.metrics.port }}:{{ .Values.seedbox.metrics.port }}
