@@ -27,6 +27,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add git-cliff for changelog generation and automate changelog updates by @michaelbeutler
 - Add truvami-stream Helm chart by @michaelbeutler
 - Added truvami-stream Helm chart (#54) by @michaelbeutler in [#54](https://github.com/truvami/helm/pull/54)
+- Add new seedbox chart by @michaelbeutler
 
 ### Fixes
 - Improve formatting of alert descriptions to show values with two decimal places by @michaelbeutler
