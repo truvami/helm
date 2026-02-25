@@ -22,6 +22,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Update CHANGELOG.md [skip ci] by @michaelbeutler
 - Update CHANGELOG.md [skip ci] by @michaelbeutler
 - Update CHANGELOG.md [skip ci] by @michaelbeutler
+- Update CHANGELOG.md [skip ci] by @michaelbeutler
 
 ### Features
 - Added migrateTimeout to `api` by @niko-kriznik-globtim
@@ -29,6 +30,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add truvami-stream Helm chart by @michaelbeutler
 - Added truvami-stream Helm chart (#54) by @michaelbeutler in [#54](https://github.com/truvami/helm/pull/54)
 - Add new seedbox chart by @michaelbeutler
+- Add metrics and mcp server support by @michaelbeutler
+- Add metrics and mcp server support by @michaelbeutler
 - Add metrics and mcp server support by @michaelbeutler
 
 ### Fixes
