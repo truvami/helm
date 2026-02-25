@@ -44,6 +44,11 @@ spec:
             - name: http
               containerPort: {{ .Values.service.port }}
               protocol: TCP
+            {{- if .Values.metrics.enabled }}
+            - name: metrics
+              containerPort: {{ .Values.metrics.port }}
+              protocol: TCP
+            {{- end }}
           envFrom:
             - secretRef:
                 name: {{ include "truvami-docs.fullname" . }}
@@ -77,6 +82,10 @@ spec:
                 secretKeyRef:
                   name: {{ .Values.database.existingSecret }}
                   key: {{ .Values.database.existingSecretKey }}
+          {{- end }}
+          {{- if .Values.metrics.enabled }}
+            - name: METRICS_PORT
+              value: {{ .Values.metrics.port | quote }}
           {{- end }}
           {{- if .Values.betterAuth.existingSecret }}
             - name: BETTER_AUTH_SECRET

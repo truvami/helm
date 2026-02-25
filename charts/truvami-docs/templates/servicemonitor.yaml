@@ -1,10 +1,13 @@
-{{- if .Values.metrics.serviceMonitor.enabled -}}
+{{- if and .Values.metrics.enabled .Values.metrics.serviceMonitor.enabled -}}
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
-  name: truvami-docs
+  name: {{ include "truvami-docs.fullname" . }}
   labels:
     {{- include "truvami-docs.labels" . | nindent 4 }}
+    {{- with .Values.metrics.serviceMonitor.additionalLabels }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
 spec:
   jobLabel: k8s-apps
   selector:

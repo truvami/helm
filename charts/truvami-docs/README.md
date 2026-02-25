@@ -40,6 +40,8 @@ A Helm chart for Kubernetes
 | keycloak.existingSecretKey | string | `"client-secret"` |  |
 | livenessProbe.httpGet.path | string | `"/"` |  |
 | livenessProbe.httpGet.port | string | `"http"` |  |
+| mcp.clientId | string | `"docs-mcp"` |  |
+| mcp.enabled | bool | `false` |  |
 | metrics.enabled | bool | `true` |  |
 | metrics.port | int | `9091` |  |
 | metrics.serviceMonitor.additionalLabels | object | `{}` |  |

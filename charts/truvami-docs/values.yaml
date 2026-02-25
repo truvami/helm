@@ -312,6 +312,14 @@ postgres:
     # When using existingSecret, the above individual values are ignored
     existingSecret: ""
 
+# MCP (Model Context Protocol) server configuration
+# The MCP server runs on the same port as the app at /api/mcp
+mcp:
+  # Enable or disable the MCP server
+  enabled: false
+  # OAuth client ID for MCP authentication
+  clientId: "docs-mcp"
+
 metrics:
   enabled: true
   port: 9091
