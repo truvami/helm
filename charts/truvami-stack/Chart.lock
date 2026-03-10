@@ -19,9 +19,9 @@ dependencies:
   version: 0.2.6
 - name: truvami-siren
   repository: file://../truvami-siren
-  version: 0.2.12
+  version: 0.3.0
 - name: truvami-docs
   repository: file://../truvami-docs
-  version: 0.1.4
-digest: sha256:5644e60811be9c3864f86d16177ddb2b7287869d4094120c39aebbfe2545a5d9
-generated: "2026-01-07T11:37:57.665156+01:00"
+  version: 0.2.0
+digest: sha256:c65aea13bbdc4b69b7f7f48d0df74b745a19f20f6ac341046f20b1705f05e04c
+generated: "2026-03-10T17:48:57.068924+01:00"

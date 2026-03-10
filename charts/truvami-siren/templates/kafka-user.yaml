@@ -1,9 +1,10 @@
 {{- $root := . -}}
-{{- range $name, $topic := .Values.siren.kafka.alerts.topics }}
+{{- $prefix := .Values.siren.kafka.alerts.topics.prefix -}}
+{{- range $item := .Values.siren.kafka.alerts.topics.items }}
 apiVersion: kafka.strimzi.io/v1beta2
 kind: KafkaTopic
 metadata:
-  name: "{{ $topic }}"
+  name: "{{ $prefix }}.{{ $item }}"
   labels:
     strimzi.io/cluster: {{ $root.Values.siren.cluster | default $root.Release.Name }}
 spec:
@@ -14,7 +15,7 @@ spec:
 apiVersion: kafka.strimzi.io/v1beta2
 kind: KafkaTopic
 metadata:
-  name: "{{ index $root.Values.siren.kafka.alerts "retry-topics" $name }}"
+  name: "{{ $prefix }}.{{ $item }}-retry"
   labels:
     strimzi.io/cluster: {{ $root.Values.siren.cluster | default $root.Release.Name }}
 spec:
@@ -25,7 +26,7 @@ spec:
 apiVersion: kafka.strimzi.io/v1beta2
 kind: KafkaTopic
 metadata:
-  name: "{{ index $root.Values.siren.kafka.alerts "dlq-topics" $name }}"
+  name: "{{ $prefix }}.{{ $item }}-dlq"
   labels:
     strimzi.io/cluster: {{ $root.Values.siren.cluster | default $root.Release.Name }}
 spec:

@@ -36,23 +36,16 @@ siren:
       protocol: SSL
     alerts:
       topics:
-        uplinks: alerts.uplinks
-        positions: alerts.positions
-        battery-statuses: alerts.battery-statuses
-        rotations: alerts.rotations
-        events: alerts.events
-      retry-topics:
-        uplinks: alerts.uplinks-retry
-        positions: alerts.positions-retry
-        battery-statuses: alerts.battery-statuses-retry
-        rotations: alerts.rotations-retry
-        events: alerts.events-retry
-      dlq-topics:
-        uplinks: alerts.uplinks-dlq
-        positions: alerts.positions-dlq
-        battery-statuses: alerts.battery-statuses-dlq
-        rotations: alerts.rotations-dlq
-        events: alerts.events-dlq
+        prefix: alerts
+        items:
+          - uplinks
+          - positions
+          - battery-statuses
+          - rotations
+          - events
+          - temperatures
+          - humidities
+          - sniffed-devices
       retry:
         first-retry: 5s
         second-retry: 10m

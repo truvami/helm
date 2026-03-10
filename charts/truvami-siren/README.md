@@ -1,6 +1,6 @@
 # truvami-siren
 
-![Version: 0.2.12](https://img.shields.io/badge/Version-0.2.12-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v1.1.0](https://img.shields.io/badge/AppVersion-v1.1.0-informational?style=flat-square)
+![Version: 0.3.0](https://img.shields.io/badge/Version-0.3.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v1.1.0](https://img.shields.io/badge/AppVersion-v1.1.0-informational?style=flat-square)
 
 A Helm chart for Kubernetes
 
@@ -58,25 +58,19 @@ A Helm chart for Kubernetes
 | siren.cluster | string | `"truvami-stack"` |  |
 | siren.grpc.server | string | `"truvami-stack-truvami-api:5001"` |  |
 | siren.kafka."enable.ssl.certificate.verification" | bool | `false` |  |
-| siren.kafka.alerts.dlq-topics.battery-statuses | string | `"alerts.battery-statuses-dlq"` |  |
-| siren.kafka.alerts.dlq-topics.events | string | `"alerts.events-dlq"` |  |
-| siren.kafka.alerts.dlq-topics.positions | string | `"alerts.positions-dlq"` |  |
-| siren.kafka.alerts.dlq-topics.rotations | string | `"alerts.rotations-dlq"` |  |
-| siren.kafka.alerts.dlq-topics.uplinks | string | `"alerts.uplinks-dlq"` |  |
 | siren.kafka.alerts.poll-timeout | string | `"1s"` |  |
-| siren.kafka.alerts.retry-topics.battery-statuses | string | `"alerts.battery-statuses-retry"` |  |
-| siren.kafka.alerts.retry-topics.events | string | `"alerts.events-retry"` |  |
-| siren.kafka.alerts.retry-topics.positions | string | `"alerts.positions-retry"` |  |
-| siren.kafka.alerts.retry-topics.rotations | string | `"alerts.rotations-retry"` |  |
-| siren.kafka.alerts.retry-topics.uplinks | string | `"alerts.uplinks-retry"` |  |
 | siren.kafka.alerts.retry.first-retry | string | `"5s"` |  |
 | siren.kafka.alerts.retry.second-retry | string | `"10m"` |  |
 | siren.kafka.alerts.retry.third-retry | string | `"1h"` |  |
-| siren.kafka.alerts.topics.battery-statuses | string | `"alerts.battery-statuses"` |  |
-| siren.kafka.alerts.topics.events | string | `"alerts.events"` |  |
-| siren.kafka.alerts.topics.positions | string | `"alerts.positions"` |  |
-| siren.kafka.alerts.topics.rotations | string | `"alerts.rotations"` |  |
-| siren.kafka.alerts.topics.uplinks | string | `"alerts.uplinks"` |  |
+| siren.kafka.alerts.topics.items[0] | string | `"uplinks"` |  |
+| siren.kafka.alerts.topics.items[1] | string | `"positions"` |  |
+| siren.kafka.alerts.topics.items[2] | string | `"battery-statuses"` |  |
+| siren.kafka.alerts.topics.items[3] | string | `"rotations"` |  |
+| siren.kafka.alerts.topics.items[4] | string | `"events"` |  |
+| siren.kafka.alerts.topics.items[5] | string | `"temperatures"` |  |
+| siren.kafka.alerts.topics.items[6] | string | `"humidities"` |  |
+| siren.kafka.alerts.topics.items[7] | string | `"sniffed-devices"` |  |
+| siren.kafka.alerts.topics.prefix | string | `"alerts"` |  |
 | siren.kafka.bootstrap.servers[0] | string | `"truvami-stack-kafka-bootstrap:9093"` |  |
 | siren.kafka.group.id | string | `"siren"` |  |
 | siren.kafka.security.protocol | string | `"SSL"` |  |

@@ -4,7 +4,21 @@ metadata:
   name: "siren-config"
 data:
   config.yaml: |
-    {{ .Values.siren | toYaml | nindent 4 }}
+    {{- $siren := deepCopy .Values.siren }}
+    {{- $prefix := $siren.kafka.alerts.topics.prefix }}
+    {{- $items := $siren.kafka.alerts.topics.items }}
+    {{- $topics := dict }}
+    {{- $retryTopics := dict }}
+    {{- $dlqTopics := dict }}
+    {{- range $item := $items }}
+    {{- $_ := set $topics $item (printf "%s.%s" $prefix $item) }}
+    {{- $_ := set $retryTopics $item (printf "%s.%s-retry" $prefix $item) }}
+    {{- $_ := set $dlqTopics $item (printf "%s.%s-dlq" $prefix $item) }}
+    {{- end }}
+    {{- $_ := set $siren.kafka.alerts "topics" $topics }}
+    {{- $_ := set $siren.kafka.alerts "retry-topics" $retryTopics }}
+    {{- $_ := set $siren.kafka.alerts "dlq-topics" $dlqTopics }}
+    {{ $siren | toYaml | nindent 4 }}
   set-env.sh: |
     #!/usr/bin/env bash
     set -euo pipefail
