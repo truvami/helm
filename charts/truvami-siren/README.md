@@ -36,12 +36,12 @@ A Helm chart for Kubernetes
 | readinessProbe.httpGet.path | string | `"/readyz"` |  |
 | readinessProbe.httpGet.port | string | `"metrics"` |  |
 | replicaCount | int | `1` |  |
-| retry.enabled | bool | `false` |  |
-| retry.replicaCount | int | `1` |  |
 | resources.limits.cpu | string | `"100m"` |  |
 | resources.limits.memory | string | `"128Mi"` |  |
 | resources.requests.cpu | string | `"100m"` |  |
 | resources.requests.memory | string | `"128Mi"` |  |
+| retry.enabled | bool | `false` |  |
+| retry.replicaCount | int | `1` |  |
 | securityContext.capabilities.drop[0] | string | `"ALL"` |  |
 | securityContext.readOnlyRootFilesystem | bool | `true` |  |
 | securityContext.runAsNonRoot | bool | `true` |  |
@@ -53,9 +53,9 @@ A Helm chart for Kubernetes
 | serviceAccount.create | bool | `false` |  |
 | serviceAccount.name | string | `""` |  |
 | serviceMonitor.enabled | bool | `false` |  |
+| siren.alerts.device-inactive.evaluation-interval | string | `"1m"` |  |
 | siren.alerts.device-label.lookup-timeout | string | `"50ms"` |  |
 | siren.alerts.device-label.valkey-key-prefix | string | `"api"` |  |
-| siren.alerts.device-inactive.evaluation-interval | string | `"1m"` |  |
 | siren.alerts.dispatcher.webhook.timeout | string | `"5s"` |  |
 | siren.alerts.dispatcher.worker-pool.queue | int | `32` |  |
 | siren.alerts.dispatcher.worker-pool.size | int | `8` |  |
