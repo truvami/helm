@@ -68,7 +68,7 @@ spec:
             - name: KAFKA_GROUP_ID
               value: {{ .Release.Name }}
             - name: TRUVAMI_ENVIRONMENT
-              value: {{ .Values.enviroment | default "production" }}
+              value: {{ .Values.environment | default "production" | quote }}
             - name: LORACLOUD_APIKEY
               valueFrom:
                 secretKeyRef:

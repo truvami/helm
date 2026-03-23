@@ -29,12 +29,17 @@ siren:
     enable.ssl.certificate.verification: false
     group:
       id: siren
+    # Used when running in retry mode; if empty, chart runtime defaults to "<release-name>-retry"
+    retry-group:
+      id: ""
     ssl:
       ca:
         location: /var/run/secrets/kafka/ca.crt
     security:
       protocol: SSL
     alerts:
+      # Consumer mode for the primary StatefulSet: "default" or "retry"
+      mode: default
       topics:
         prefix: alerts
         items:
@@ -53,6 +58,11 @@ siren:
       poll-timeout: 1s
 
   alerts:
+    device-label:
+      # Stream Valkey key prefix used for device labels
+      valkey-key-prefix: "api"
+      # Timeout for optional device-label cache lookups
+      lookup-timeout: 50ms
     device-inactive:
       evaluation-interval: 1m
     dispatcher:
@@ -85,6 +95,11 @@ kafka:
 # Number of replicas for the StatefulSet
 # Note: Only the first replica (pod-0) will have ENABLE_DEVICE_INACTIVE_EVALUATION="true"
 replicaCount: 1
+
+# Optional retry-mode StatefulSet running in parallel with the primary instance.
+retry:
+  enabled: false
+  replicaCount: 1
 
 image:
   repository: ghcr.io/truvami/siren
