@@ -27,7 +27,9 @@ data:
     pod="${POD_NAME:-$HOSTNAME}"
     ordinal="${pod##*-}"
 
-    if [[ "$ordinal" == "0" ]]; then
+    if [[ -n "${ENABLE_DEVICE_INACTIVE_EVALUATION:-}" ]]; then
+      export ENABLE_DEVICE_INACTIVE_EVALUATION
+    elif [[ "$ordinal" == "0" ]]; then
       export ENABLE_DEVICE_INACTIVE_EVALUATION="true"
     else
       export ENABLE_DEVICE_INACTIVE_EVALUATION="false"

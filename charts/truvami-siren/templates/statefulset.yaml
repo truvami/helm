@@ -1,9 +1,12 @@
+{{- $configuredRetryGroupID := (index .Values.siren.kafka "retry-group" "id") | default "" }}
+{{- $retryGroupID := default (printf "%s-retry" .Release.Name) $configuredRetryGroupID }}
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   name: {{ include "truvami-siren.fullname" . }}
   labels:
     {{- include "truvami-siren.labels" . | nindent 4 }}
+    app.kubernetes.io/component: default
 spec:
   serviceName: {{ include "truvami-siren.fullname" . }}
   {{- if not .Values.autoscaling.enabled }}
@@ -12,6 +15,7 @@ spec:
   selector:
     matchLabels:
       {{- include "truvami-siren.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: default
   template:
     metadata:
       {{- with .Values.podAnnotations }}
@@ -20,6 +24,7 @@ spec:
       {{- end }}
       labels:
         {{- include "truvami-siren.labels" . | nindent 8 }}
+        app.kubernetes.io/component: default
         {{- with .Values.podLabels }}
         {{- toYaml . | nindent 8 }}
         {{- end }}
@@ -38,6 +43,7 @@ spec:
           labelSelector:
             matchLabels:
               {{- include "truvami-siren.selectorLabels" . | nindent 14 }}
+              app.kubernetes.io/component: default
       containers:
         - name: {{ .Chart.Name }}
           # Run the wrapper script, forward args to the binary
@@ -67,9 +73,11 @@ spec:
             {{- toYaml .Values.resources | nindent 12 }}
           env:
             - name: KAFKA_GROUP_ID
-              value: {{ .Release.Name }}
+              value: {{ .Release.Name | quote }}
+            - name: KAFKA_RETRY_GROUP_ID
+              value: {{ $retryGroupID | quote }}
             - name: TRUVAMI_ENVIRONMENT
-              value: {{ .Values.enviroment | default "production" }}
+              value: {{ .Values.enviroment | default "production" | quote }}
             - name: KAFKA_SSL_KEYSTORE_LOCATION
               value: /var/run/secrets/kafka/user.p12
             - name: KAFKA_SSL_KEYSTORE_PASSWORD
@@ -127,3 +135,143 @@ spec:
       tolerations:
         {{- toYaml . | nindent 8 }}
       {{- end }}
+{{- if .Values.retry.enabled }}
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ include "truvami-siren.fullname" . }}-retry
+  labels:
+    {{- include "truvami-siren.labels" . | nindent 4 }}
+    app.kubernetes.io/component: retry
+spec:
+  serviceName: {{ include "truvami-siren.fullname" . }}
+  replicas: {{ .Values.retry.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "truvami-siren.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: retry
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "truvami-siren.labels" . | nindent 8 }}
+        app.kubernetes.io/component: retry
+        {{- with .Values.podLabels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "truvami-siren.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      topologySpreadConstraints:
+        - maxSkew: 1
+          topologyKey: kubernetes.io/hostname
+          whenUnsatisfiable: ScheduleAnyway
+          labelSelector:
+            matchLabels:
+              {{- include "truvami-siren.selectorLabels" . | nindent 14 }}
+              app.kubernetes.io/component: retry
+      containers:
+        - name: {{ .Chart.Name }}
+          # Run the wrapper script, forward args to the binary
+          command:
+            - /bin/bash
+            - /etc/truvami-siren/set-env.sh
+          args:
+            - /usr/bin/truvami-siren
+            - --config
+            - /etc/truvami-siren/config.yaml
+            - --alerts-mode
+            - retry
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.service.port }}
+              protocol: TCP
+            - name: metrics
+              containerPort: 9090
+              protocol: TCP
+          livenessProbe:
+            {{- toYaml .Values.livenessProbe | nindent 12 }}
+          readinessProbe:
+            {{- toYaml .Values.readinessProbe | nindent 12 }}
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          env:
+            - name: KAFKA_GROUP_ID
+              value: {{ .Release.Name | quote }}
+            - name: KAFKA_RETRY_GROUP_ID
+              value: {{ $retryGroupID | quote }}
+            - name: ENABLE_DEVICE_INACTIVE_EVALUATION
+              value: "false"
+            - name: TRUVAMI_ENVIRONMENT
+              value: {{ .Values.enviroment | default "production" | quote }}
+            - name: KAFKA_SSL_KEYSTORE_LOCATION
+              value: /var/run/secrets/kafka/user.p12
+            - name: KAFKA_SSL_KEYSTORE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  key: user.password
+                  name: "truvami-siren-kafka"
+                  optional: false
+            - name: KAFKA_SSL_KEY_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  key: user.password
+                  name: "truvami-siren-kafka"
+                  optional: false
+            - name: VALKEY_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  key: {{ .Values.valkey.secretKey }}
+                  name: {{ .Values.valkey.secretName }}
+                  optional: false
+            # Downward API: pod name for ordinal detection in set-env.sh
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: ALERTS_DISPATCHER_WHATSAPP_PHONE_NUMBER_ID
+              valueFrom:
+                secretKeyRef:
+                  key: ALERTS_DISPATCHER_WHATSAPP_PHONE_NUMBER_ID
+                  name: truvami-siren
+                  optional: false
+            - name: ALERTS_DISPATCHER_WHATSAPP_ACCESS_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  key: ALERTS_DISPATCHER_WHATSAPP_ACCESS_TOKEN
+                  name: truvami-siren
+                  optional: false
+          volumeMounts:
+            {{- with .Values.volumeMounts }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
+      volumes:
+        {{- with .Values.volumes }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+{{- end }}

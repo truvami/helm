@@ -1,5 +1,7 @@
 {{- $root := . -}}
 {{- $prefix := .Values.siren.kafka.alerts.topics.prefix -}}
+{{- $configuredRetryGroupID := (index .Values.siren.kafka "retry-group" "id") | default "" -}}
+{{- $retryGroupID := default (printf "%s-retry" .Release.Name) $configuredRetryGroupID -}}
 {{- range $item := .Values.siren.kafka.alerts.topics.items }}
 apiVersion: kafka.strimzi.io/v1beta2
 kind: KafkaTopic
@@ -80,5 +82,16 @@ spec:
           name: {{ .Release.Name }}
           patternType: literal
           type: group
+      {{- if ne $retryGroupID .Release.Name }}
+      - host: '*'
+        operations:
+          - Describe
+          - Read
+          - Write
+        resource:
+          name: {{ $retryGroupID }}
+          patternType: literal
+          type: group
+      {{- end }}
     type: simple
 ---
