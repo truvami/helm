@@ -11,6 +11,12 @@ gateway:
     enable: true
     endpoint: "localhost:4318"
 
+  jwks:
+    enabled: false
+    location: "/var/run/secrets/gateway/jwks.json"
+    secretName: "locksmith-jwks-public"
+    secretKey: "jwks.json"
+
   kafka:
     bootstrap:
       servers:

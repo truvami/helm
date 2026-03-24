@@ -1,6 +1,6 @@
 # truvami-gateway
 
-![Version: 0.0.32](https://img.shields.io/badge/Version-0.0.32-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v2.5.6-rc1](https://img.shields.io/badge/AppVersion-v2.5.6--rc1-informational?style=flat-square)
+![Version: 0.0.33](https://img.shields.io/badge/Version-0.0.33-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v2.5.6-rc1](https://img.shields.io/badge/AppVersion-v2.5.6--rc1-informational?style=flat-square)
 
 A Helm chart for Kubernetes
 
@@ -15,6 +15,10 @@ A Helm chart for Kubernetes
 | autoscaling.targetCPUUtilizationPercentage | int | `80` |  |
 | fullnameOverride | string | `""` |  |
 | gateway.cluster | string | `"truvami-stack"` |  |
+| gateway.jwks.enabled | bool | `false` |  |
+| gateway.jwks.location | string | `"/var/run/secrets/gateway/jwks.json"` |  |
+| gateway.jwks.secretKey | string | `"jwks.json"` |  |
+| gateway.jwks.secretName | string | `"locksmith-jwks-public"` |  |
 | gateway.kafka."allow.auto.create.topics" | bool | `false` |  |
 | gateway.kafka."enable.ssl.certificate.verification" | bool | `false` |  |
 | gateway.kafka.bootstrap.servers[0] | string | `"truvami-stack-kafka-bootstrap:9093"` |  |
