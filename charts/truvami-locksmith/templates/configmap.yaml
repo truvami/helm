@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: "config-locksmith"
+data:
+  locksmith.yaml: |
+    {{ .Values.locksmith | toYaml | nindent 4 }}

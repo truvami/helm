@@ -1,0 +1,113 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "truvami-locksmith.fullname" . }}
+  annotations:
+    argocd.argoproj.io/sync-wave: "0"
+  labels:
+    {{- include "truvami-locksmith.labels" . | nindent 4 }}
+spec:
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "truvami-locksmith.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "truvami-locksmith.labels" . | nindent 8 }}
+        {{- with .Values.podLabels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "truvami-locksmith.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ .Chart.Name }}
+          command:
+            - /usr/bin/truvami-locksmith
+          args:
+            - '--config'
+            - /etc/truvami-locksmith/locksmith.yaml
+          env:
+            {{- include "truvami-locksmith.databaseEnv" . | nindent 12 }}
+            - name: TRUVAMI_LOCKSMITH_VALKEY_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  key: {{ .Values.valkey.secretKey }}
+                  name: {{ .Values.valkey.secretName }}
+                  optional: false
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: grpc
+              containerPort: {{ .Values.locksmith.grpc.port }}
+              protocol: TCP
+            {{- if .Values.locksmith.metrics.enabled }}
+            - name: metrics
+              containerPort: {{ .Values.locksmith.metrics.port }}
+              protocol: TCP
+            {{- end }}
+          livenessProbe:
+            {{- toYaml .Values.livenessProbe | nindent 12 }}
+          readinessProbe:
+            {{- toYaml .Values.readinessProbe | nindent 12 }}
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          volumeMounts:
+            - mountPath: /etc/truvami-locksmith
+              name: config
+              readOnly: true
+            - mountPath: /var/run/secrets/locksmith/public
+              name: signing-public
+              readOnly: true
+            - mountPath: /var/run/secrets/locksmith/private
+              name: signing-private
+              readOnly: true
+            {{- with .Values.volumeMounts }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
+      volumes:
+        - name: config
+          configMap:
+            name: "config-locksmith"
+            optional: false
+        - name: signing-public
+          secret:
+            secretName: {{ .Values.signingKeys.public.secretName }}
+            items:
+              - key: {{ .Values.signingKeys.public.key }}
+                path: jwks.json
+        - name: signing-private
+          secret:
+            secretName: {{ .Values.signingKeys.private.secretName }}
+            items:
+              - key: {{ .Values.signingKeys.private.key }}
+                path: private.json
+        {{- with .Values.volumes }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

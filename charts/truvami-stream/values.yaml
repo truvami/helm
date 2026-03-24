@@ -266,3 +266,8 @@ serviceMonitor:
 # -- Kubernetes NetworkPolicy
 networkPolicy:
   enabled: false
+
+pdb:
+  enabled: false
+  minAvailable: 1
+  # maxUnavailable: 1

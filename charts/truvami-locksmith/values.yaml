@@ -1,0 +1,217 @@
+# Application configuration
+# This section is serialized to /etc/truvami-locksmith/locksmith.yaml
+locksmith:
+  grpc:
+    host: "0.0.0.0"
+    port: 5005
+
+  metrics:
+    enabled: true
+    port: 8899
+
+  health:
+    checkInterval: 10s
+    checkTimeout: 2s
+    maxUnhealthyDuration: 5m
+
+  otel:
+    enabled: false
+    endpoint: "localhost:4318"
+
+  valkey:
+    host: truvami-stack-valkey-primary:6379
+    username: default
+
+  database:
+    initializationTimeout: 15s
+    migrateTimeout: 1m
+    connectionMaxLifetime: 30m
+    connectionMaxIdleTime: 5m
+
+  jwks:
+    location: "/var/run/secrets/locksmith/public/jwks.json"
+
+  signingKey:
+    location: "/var/run/secrets/locksmith/private/private.json"
+
+  signingMaterial:
+    reloadInterval: 5s
+
+  logging:
+    level: info
+    encoding: json
+    time-encoder: rfc3339
+
+# External database configuration (used when postgres.enabled is false)
+database:
+  host: "truvami-stack-pooler"
+  port: 5432
+  name: "locksmith"
+  secretName: truvami-stack-app
+  secretKey: uri
+
+# CNPG PostgreSQL cluster (creates its own database when enabled)
+postgres:
+  enabled: false
+  replicaCount: 1
+  image:
+    repository: ghcr.io/cloudnative-pg/postgresql
+    tag: "18"
+  storage:
+    size: 1Gi
+    storageClass: ""
+  sharedBuffers: "256MB"
+  resources:
+    limits:
+      cpu: 500m
+      memory: 1Gi
+    requests:
+      cpu: 100m
+      memory: 256Mi
+  pooler:
+    instances: 1
+    type: "rw"
+    poolMode: "session"
+    maxClientConn: "100"
+    defaultPoolSize: "15"
+    image:
+      repository: ghcr.io/cloudnative-pg/pgbouncer
+      tag: "1.24.1-23"
+    resources:
+      limits:
+        cpu: 200m
+        memory: 256Mi
+      requests:
+        cpu: 100m
+        memory: 128Mi
+    monitoring:
+      enabled: true
+      podMonitorLabels: {}
+    nodeSelector: {}
+    affinity: {}
+    tolerations: []
+    parameters: {}
+  backup:
+    enable: false
+    retentionPolicy: "30d"
+    barmanObjectStore: {}
+
+# Valkey secret
+valkey:
+  secretName: truvami-stack-valkey
+  secretKey: valkey-password
+
+# Signing key secrets (must be pre-created externally)
+signingKeys:
+  public:
+    secretName: "locksmith-jwks-public"
+    key: "jwks.json"
+  private:
+    secretName: "locksmith-signing-private"
+    key: "private.json"
+
+replicaCount: 1
+
+image:
+  repository: ghcr.io/truvami/locksmith
+  pullPolicy: Always
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: ""
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  create: false
+  automount: true
+  annotations: {}
+  name: ""
+
+podAnnotations: {}
+podLabels: {}
+
+podSecurityContext: {}
+
+securityContext:
+  capabilities:
+    drop:
+      - ALL
+  readOnlyRootFilesystem: true
+  runAsNonRoot: true
+  runAsUser: 65534
+  runAsGroup: 65534
+
+livenessProbe:
+  httpGet:
+    path: /healthz
+    port: metrics
+
+readinessProbe:
+  httpGet:
+    path: /readyz
+    port: metrics
+
+resources:
+  limits:
+    cpu: 100m
+    memory: 128Mi
+    ephemeral-storage: 1Gi
+  requests:
+    cpu: 100m
+    memory: 128Mi
+    ephemeral-storage: 512Mi
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 100
+  targetCPUUtilizationPercentage: 80
+
+ingress:
+  enabled: false
+  className: ""
+  annotations: {}
+  hosts:
+    - host: locksmith.truvami.com
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
+  tls: []
+
+migration:
+  resources:
+    limits:
+      cpu: 100m
+      memory: 128Mi
+      ephemeral-storage: 1Gi
+    requests:
+      cpu: 100m
+      memory: 128Mi
+      ephemeral-storage: 512Mi
+  securityContext:
+    capabilities:
+      drop:
+        - ALL
+    readOnlyRootFilesystem: true
+    runAsNonRoot: true
+    runAsUser: 65534
+    runAsGroup: 65534
+
+serviceMonitor:
+  enabled: false
+
+networkPolicy:
+  enabled: false
+
+volumes: []
+volumeMounts: []
+
+nodeSelector: {}
+tolerations: []
+affinity: {}
+
+pdb:
+  enabled: false
+  minAvailable: 1
+  # maxUnavailable: 1

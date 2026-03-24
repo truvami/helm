@@ -52,6 +52,8 @@ A Helm chart for Kubernetes
 | migration.resources.requests.memory | string | `"256Mi"` |  |
 | nameOverride | string | `""` |  |
 | nodeSelector | object | `{}` |  |
+| pdb.enabled | bool | `false` |  |
+| pdb.minAvailable | int | `1` |  |
 | podAnnotations | object | `{}` |  |
 | podLabels | object | `{}` |  |
 | podSecurityContext | object | `{}` |  |

@@ -142,3 +142,8 @@ affinity: {}
 
 serviceMonitor:
   enabled: true
+
+pdb:
+  enabled: false
+  minAvailable: 1
+  # maxUnavailable: 1

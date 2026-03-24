@@ -1,0 +1,9 @@
+truvami-locksmith has been deployed.
+
+gRPC endpoint: {{ include "truvami-locksmith.fullname" . }}:{{ .Values.locksmith.grpc.port }}
+
+{{- if .Values.postgres.enabled }}
+Database: CNPG cluster {{ .Release.Name }}-locksmith-db (pooler: {{ .Release.Name }}-locksmith-db-pooler)
+{{- else }}
+Database: external ({{ .Values.database.host }}:{{ .Values.database.port }}/{{ .Values.database.name }})
+{{- end }}

@@ -73,6 +73,8 @@ A Helm chart for Kubernetes
 | nameOverride | string | `""` |  |
 | networkPolicy.enabled | bool | `false` |  |
 | nodeSelector | object | `{}` |  |
+| pdb.enabled | bool | `false` |  |
+| pdb.minAvailable | int | `1` |  |
 | podAnnotations | object | `{}` |  |
 | podLabels | object | `{}` |  |
 | podSecurityContext | object | `{}` |  |

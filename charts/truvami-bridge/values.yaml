@@ -199,3 +199,8 @@ initContainers: []
   #       "-c",
   #       'curl -Iv -m 30 xyz.com | grep "400 Bad Request"',
   #     ]
+
+pdb:
+  enabled: false
+  minAvailable: 1
+  # maxUnavailable: 1

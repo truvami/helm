@@ -1,0 +1,10 @@
+apiVersion: v2
+name: truvami-locksmith
+description: A Helm chart for truvami locksmith - API key management service
+icon: https://raw.githubusercontent.com/truvami/helm/main/assets/icon.svg
+
+type: application
+
+version: 0.0.1
+
+appVersion: "v0.1.0"

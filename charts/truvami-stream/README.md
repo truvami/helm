@@ -28,6 +28,8 @@ A Helm chart for Kubernetes
 | nameOverride | string | `""` | Override the chart name |
 | networkPolicy | object | `{"enabled":false}` | Kubernetes NetworkPolicy |
 | nodeSelector | object | `{}` | Node selector constraints |
+| pdb.enabled | bool | `false` |  |
+| pdb.minAvailable | int | `1` |  |
 | podAnnotations | object | `{}` | Annotations added to every Pod |
 | podLabels | object | `{}` | Labels added to every Pod |
 | podSecurityContext | object | `{}` | Pod-level security context (merged with secure defaults in the template) |

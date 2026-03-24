@@ -55,6 +55,8 @@ Truvami Dashboard Helm chart with Better Auth integration
 | openTelemetry.serviceName | string | truvami-dashboard | OPTIONAL: Service name for traces |
 | openTelemetry.serviceVersion | string | 0.1.0 | OPTIONAL: Service version for traces (automatically uses NEXT_PUBLIC_VERSION from Docker build if available) |
 | openTelemetry.tempoEndpoint | string | http://tempo:4318 | REQUIRED: Tempo/OTEL endpoint for trace export |
+| pdb.enabled | bool | `false` |  |
+| pdb.minAvailable | int | `1` |  |
 | podAnnotations | object | `{}` |  |
 | podLabels | object | `{}` |  |
 | podSecurityContext | object | `{}` |  |
