@@ -75,6 +75,15 @@ stream:
     # -- Duration of continuous failures before liveness probe fails
     maxUnhealthyDuration: 5m
 
+  rate_limit:
+    # -- Enable or disable rate limiting globally
+    enabled: false
+    cache_miss:
+      # -- Number of cache-miss requests allowed per window (per user)
+      requests: 15
+      # -- Sliding window duration (e.g. 15s, 1m, 5m)
+      window: 15s
+
   datasources:
     # -- Global maximum SSE refresh interval in seconds
     max_live_interval_seconds: 3600

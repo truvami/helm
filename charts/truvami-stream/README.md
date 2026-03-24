@@ -1,6 +1,6 @@
 # truvami-stream
 
-![Version: 0.1.0](https://img.shields.io/badge/Version-0.1.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v0.1.0](https://img.shields.io/badge/AppVersion-v0.1.0-informational?style=flat-square)
+![Version: 0.2.0](https://img.shields.io/badge/Version-0.2.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v0.1.0](https://img.shields.io/badge/AppVersion-v0.1.0-informational?style=flat-square)
 
 A Helm chart for Kubernetes
 
@@ -43,7 +43,7 @@ A Helm chart for Kubernetes
 | serviceAccount.create | bool | `false` | Whether to create a dedicated ServiceAccount |
 | serviceAccount.name | string | `""` | Explicit ServiceAccount name; generated from fullname when empty |
 | serviceMonitor | object | `{"enabled":false}` | Prometheus ServiceMonitor (requires stream.metrics.enabled) |
-| stream | object | `{"auth":{"issuer":"https://sso.sbcdc.ch/auth/realms/truvami","jwksURL":"https://sso.sbcdc.ch/auth/realms/truvami/protocol/openid-connect/certs"},"database":{"connectionMaxIdleTime":"5m","connectionMaxLifetime":"30m","initializationTimeout":"15s"},"datasources":{"events":{"enabled":true,"max_items":1000,"min_live_interval_seconds":1},"max_live_interval_seconds":3600},"health":{"checkInterval":"10s","checkTimeout":"2s","maxUnhealthyDuration":"5m"},"logging":{"encoding":"json","level":"info","time-encoder":"rfc3339"},"metrics":{"enabled":true,"port":8891},"otel":{"enabled":false,"endpoint":"tempo.grafana-tempo.svc.cluster.local:4318"},"server":{"cors":{"allowedOrigins":["http://localhost:3000","https://stream.truvami.com","https://stream.test.truvami.com"]},"port":8890},"valkey":{"host":"truvami-stack-valkey-primary:6379","stats":{"httpCache":{"bucketSize":"1m","keyPrefix":"stream:http:v1:stats","namespaceVersion":1}},"stream_prefix":"api","username":"default"}}` | Application configuration (mounted as stream.yaml ConfigMap). This block contains only non-sensitive settings; all secrets (DATABASE_URI, VALKEY_PASSWORD) are injected as env vars from Kubernetes Secrets — never place credentials here. |
+| stream | object | `{"auth":{"issuer":"https://sso.sbcdc.ch/auth/realms/truvami","jwksURL":"https://sso.sbcdc.ch/auth/realms/truvami/protocol/openid-connect/certs"},"database":{"connectionMaxIdleTime":"5m","connectionMaxLifetime":"30m","initializationTimeout":"15s"},"datasources":{"events":{"enabled":true,"max_items":1000,"min_live_interval_seconds":1},"max_live_interval_seconds":3600},"health":{"checkInterval":"10s","checkTimeout":"2s","maxUnhealthyDuration":"5m"},"logging":{"encoding":"json","level":"info","time-encoder":"rfc3339"},"metrics":{"enabled":true,"port":8891},"otel":{"enabled":false,"endpoint":"tempo.grafana-tempo.svc.cluster.local:4318"},"rate_limit":{"cache_miss":{"requests":15,"window":"15s"},"enabled":false},"server":{"cors":{"allowedOrigins":["http://localhost:3000","https://stream.truvami.com","https://stream.test.truvami.com"]},"port":8890},"valkey":{"host":"truvami-stack-valkey-primary:6379","stats":{"httpCache":{"bucketSize":"1m","keyPrefix":"stream:http:v1:stats","namespaceVersion":1}},"stream_prefix":"api","username":"default"}}` | Application configuration (mounted as stream.yaml ConfigMap). This block contains only non-sensitive settings; all secrets (DATABASE_URI, VALKEY_PASSWORD) are injected as env vars from Kubernetes Secrets — never place credentials here. |
 | stream.auth.issuer | string | `"https://sso.sbcdc.ch/auth/realms/truvami"` | Expected JWT issuer claim |
 | stream.auth.jwksURL | string | `"https://sso.sbcdc.ch/auth/realms/truvami/protocol/openid-connect/certs"` | JWKS endpoint URL for JWT validation |
 | stream.database.connectionMaxIdleTime | string | `"5m"` | Maximum idle time before a connection is closed |
@@ -63,6 +63,9 @@ A Helm chart for Kubernetes
 | stream.metrics.port | int | `8891` | Metrics server listen port |
 | stream.otel.enabled | bool | `false` | Enable OpenTelemetry tracing |
 | stream.otel.endpoint | string | `"tempo.grafana-tempo.svc.cluster.local:4318"` | OpenTelemetry collector OTLP endpoint |
+| stream.rate_limit.cache_miss.requests | int | `15` | Number of cache-miss requests allowed per window (per user) |
+| stream.rate_limit.cache_miss.window | string | `"15s"` | Sliding window duration (e.g. 15s, 1m, 5m) |
+| stream.rate_limit.enabled | bool | `false` | Enable or disable rate limiting globally |
 | stream.server.cors.allowedOrigins | list | `["http://localhost:3000","https://stream.truvami.com","https://stream.test.truvami.com"]` | Origins allowed for CORS requests |
 | stream.server.port | int | `8890` | HTTP server listen port |
 | stream.valkey.host | string | `"truvami-stack-valkey-primary:6379"` | Valkey (Redis-compatible) host:port address |
