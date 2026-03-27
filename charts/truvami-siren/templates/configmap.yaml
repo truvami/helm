@@ -29,8 +29,10 @@ data:
 
     if [[ "$ordinal" == "0" ]]; then
       export ENABLE_DEVICE_INACTIVE_EVALUATION="true"
+      export ALERTS_MODE="{{ .Values.siren.kafka.alerts.mode | default "default" }}"
     else
       export ENABLE_DEVICE_INACTIVE_EVALUATION="false"
+      export ALERTS_MODE="default"
     fi
 
-    exec "$@"
+    exec "$@" --alerts-mode "$ALERTS_MODE"

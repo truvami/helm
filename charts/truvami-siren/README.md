@@ -1,6 +1,6 @@
 # truvami-siren
 
-![Version: 0.3.0](https://img.shields.io/badge/Version-0.3.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v1.1.0](https://img.shields.io/badge/AppVersion-v1.1.0-informational?style=flat-square)
+![Version: 0.4.0](https://img.shields.io/badge/Version-0.4.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v1.1.0](https://img.shields.io/badge/AppVersion-v1.1.0-informational?style=flat-square)
 
 A Helm chart for Kubernetes
 
@@ -54,12 +54,14 @@ A Helm chart for Kubernetes
 | serviceAccount.name | string | `""` |  |
 | serviceMonitor.enabled | bool | `false` |  |
 | siren.alerts.device-inactive.evaluation-interval | string | `"1m"` |  |
+| siren.alerts.device-label.lookup-timeout | string | `"50ms"` |  |
 | siren.alerts.dispatcher.webhook.timeout | string | `"5s"` |  |
 | siren.alerts.dispatcher.worker-pool.queue | int | `32` |  |
 | siren.alerts.dispatcher.worker-pool.size | int | `8` |  |
 | siren.cluster | string | `"truvami-stack"` |  |
 | siren.grpc.server | string | `"truvami-stack-truvami-api:5001"` |  |
 | siren.kafka."enable.ssl.certificate.verification" | bool | `false` |  |
+| siren.kafka.alerts.mode | string | `"default"` |  |
 | siren.kafka.alerts.poll-timeout | string | `"1s"` |  |
 | siren.kafka.alerts.retry.first-retry | string | `"5s"` |  |
 | siren.kafka.alerts.retry.second-retry | string | `"10m"` |  |
@@ -75,6 +77,9 @@ A Helm chart for Kubernetes
 | siren.kafka.alerts.topics.prefix | string | `"alerts"` |  |
 | siren.kafka.bootstrap.servers[0] | string | `"truvami-stack-kafka-bootstrap:9093"` |  |
 | siren.kafka.group.id | string | `"siren"` |  |
+| siren.kafka.producer.delivery-status-drain-timeout | string | `"1500ms"` |  |
+| siren.kafka.producer.flush-timeout | string | `"5s"` |  |
+| siren.kafka.retry-group.id | string | `""` |  |
 | siren.kafka.security.protocol | string | `"SSL"` |  |
 | siren.kafka.ssl.ca.location | string | `"/var/run/secrets/kafka/ca.crt"` |  |
 | siren.metrics.port | int | `9090` |  |

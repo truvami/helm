@@ -29,12 +29,18 @@ siren:
     enable.ssl.certificate.verification: false
     group:
       id: siren
+    retry-group:
+      id: ""
     ssl:
       ca:
         location: /var/run/secrets/kafka/ca.crt
     security:
       protocol: SSL
+    producer:
+      flush-timeout: 5s
+      delivery-status-drain-timeout: 1500ms
     alerts:
+      mode: default
       topics:
         prefix: alerts
         items:
@@ -53,6 +59,8 @@ siren:
       poll-timeout: 1s
 
   alerts:
+    device-label:
+      lookup-timeout: 50ms
     device-inactive:
       evaluation-interval: 1m
     dispatcher:
