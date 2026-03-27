@@ -77,7 +77,16 @@ spec:
           - Read
           - Write
         resource:
-          name: {{ .Release.Name }}
+          name: {{ .Values.siren.kafka.group.id }}
+          patternType: literal
+          type: group
+      - host: '*'
+        operations:
+          - Describe
+          - Read
+          - Write
+        resource:
+          name: {{ index .Values "siren" "kafka" "retry-group" "id" }}
           patternType: literal
           type: group
     type: simple

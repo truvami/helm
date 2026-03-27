@@ -1,6 +1,6 @@
 # truvami-siren
 
-![Version: 0.4.1](https://img.shields.io/badge/Version-0.4.1-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v1.1.0](https://img.shields.io/badge/AppVersion-v1.1.0-informational?style=flat-square)
+![Version: 0.4.2](https://img.shields.io/badge/Version-0.4.2-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v1.1.0](https://img.shields.io/badge/AppVersion-v1.1.0-informational?style=flat-square)
 
 A Helm chart for Kubernetes
 
@@ -76,10 +76,10 @@ A Helm chart for Kubernetes
 | siren.kafka.alerts.topics.items[7] | string | `"sniffed-devices"` |  |
 | siren.kafka.alerts.topics.prefix | string | `"alerts"` |  |
 | siren.kafka.bootstrap.servers[0] | string | `"truvami-stack-kafka-bootstrap:9093"` |  |
-| siren.kafka.group.id | string | `"siren"` |  |
+| siren.kafka.group.id | string | `"truvami-siren"` |  |
 | siren.kafka.producer.delivery-status-drain-timeout | string | `"1500ms"` |  |
 | siren.kafka.producer.flush-timeout | string | `"5s"` |  |
-| siren.kafka.retry-group.id | string | `""` |  |
+| siren.kafka.retry-group.id | string | `"truvami-siren-retry"` |  |
 | siren.kafka.security.protocol | string | `"SSL"` |  |
 | siren.kafka.ssl.ca.location | string | `"/var/run/secrets/kafka/ca.crt"` |  |
 | siren.metrics.port | int | `9090` |  |
