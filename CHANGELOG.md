@@ -27,6 +27,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Update CHANGELOG.md [skip ci] by @michaelbeutler
 - Update CHANGELOG.md [skip ci] by @michaelbeutler
 - Update CHANGELOG.md [skip ci] by @michaelbeutler
+- Update CHANGELOG.md [skip ci] by @michaelbeutler
 
 ### Features
 - Added migrateTimeout to `api` by @niko-kriznik-globtim
@@ -41,6 +42,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add new locksmith chart and pdb for all charts by @michaelbeutler
 - Add jwks to gateway by @michaelbeutler
 - Add rate limit configuration to values by @michaelbeutler
+- `--alerts-mode` flag to pod-0 by @michaelbeutler
+- Update Go version to 1.26 in release workflow by @michaelbeutler
+- Bump chart versions for truvami-siren and truvami-stack to 0.4.1 and 0.1.238 respectively by @michaelbeutler
 
 ### Fixes
 - Improve formatting of alert descriptions to show values with two decimal places by @michaelbeutler
