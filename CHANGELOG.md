@@ -29,6 +29,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Update CHANGELOG.md [skip ci] by @michaelbeutler
 - Update CHANGELOG.md [skip ci] by @michaelbeutler
 - Update CHANGELOG.md [skip ci] by @michaelbeutler
+- Update CHANGELOG.md [skip ci] by @michaelbeutler
 
 ### Features
 - Added migrateTimeout to `api` by @niko-kriznik-globtim
@@ -47,6 +48,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Update Go version to 1.26 in release workflow by @michaelbeutler
 - Bump chart versions for truvami-siren and truvami-stack to 0.4.1 and 0.1.238 respectively by @michaelbeutler
 - Bump truvami-siren version to 0.4.2 and update Kafka user permissions by @michaelbeutler
+- Add gateway.unauthorized Kafka topic to truvami-gateway chart by @michaelbeutler
+- Add gateway.unauthorized Kafka topic (#59) by @michaelbeutler in [#59](https://github.com/truvami/helm/pull/59)
 
 ### Fixes
 - Improve formatting of alert descriptions to show values with two decimal places by @michaelbeutler
