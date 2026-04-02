@@ -750,6 +750,18 @@ entries:
     urls:
     - https://github.com/truvami/helm/releases/download/truvami-bridge-0.0.1/truvami-bridge-0.0.1.tgz
     version: 0.0.1
+  truvami-coverage:
+  - apiVersion: v2
+    appVersion: v0.1.0
+    created: "2026-04-02T15:39:29.509487952Z"
+    description: A Helm chart for Kubernetes
+    digest: bb7f0d5693f44ed1f6dde72ed6ce09ef579252181a38d725b1013f2dee5f1428
+    icon: https://raw.githubusercontent.com/truvami/helm/main/assets/icon.svg
+    name: truvami-coverage
+    type: application
+    urls:
+    - https://github.com/truvami/helm/releases/download/truvami-coverage-0.0.1/truvami-coverage-0.0.1.tgz
+    version: 0.0.1
   truvami-dashboard:
   - apiVersion: v2
     appVersion: v2.8.0-rc13
@@ -10369,4 +10381,4 @@ entries:
     urls:
     - https://github.com/truvami/helm/releases/download/truvami-stream-0.1.0/truvami-stream-0.1.0.tgz
     version: 0.1.0
-generated: "2026-04-01T07:04:34.525352648Z"
+generated: "2026-04-02T15:39:29.510505998Z"
