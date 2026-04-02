@@ -34,6 +34,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Update CHANGELOG.md [skip ci] by @michaelbeutler
 - Update CHANGELOG.md [skip ci] by @michaelbeutler
 - Generate README for truvami-coverage chart by @michaelbeutler
+- Update CHANGELOG.md [skip ci] by @michaelbeutler
 
 ### Features
 - Added migrateTimeout to `api` by @niko-kriznik-globtim
@@ -63,6 +64,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Remove diagram optimization step from CI workflow by @michaelbeutler
 - Add missing public url by @michaelbeutler
 - Correct tile-server image name and bump appVersion to v0.4.0 by @michaelbeutler
+- Add competition.enabled flag to tiler TOML config by @michaelbeutler
 
 ### Refactors
 - Address review comments by @michaelbeutler
