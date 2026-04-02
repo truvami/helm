@@ -1,0 +1,265 @@
+# Default values for truvami-coverage.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+# -- Coverage-tiler (Rust) configuration
+# These settings are rendered into a TOML ConfigMap for the tiler CronJobs.
+# database.url and s3 credentials are injected via env vars at runtime.
+tiler:
+  computation:
+    # -- Lookback period in days
+    periodDays: 14
+    # -- Minimum tile zoom level
+    minZoom: 8
+    # -- Maximum tile zoom level
+    maxZoom: 16
+    # -- Concurrent customer processing threads
+    workerThreads: 4
+    # -- Per-customer position limit
+    maxPositions: 500000
+  s3:
+    # -- S3 key prefix for tiles
+    prefix: ""
+    # -- Use path-style S3 URLs (required for MinIO)
+    forcePathStyle: false
+  logging:
+    # -- Log level (trace/debug/info/warn/error)
+    level: info
+    # -- Log format ("json" for structured, anything else for plain text)
+    format: json
+    # -- Show progress bar during processing
+    progressBar: false
+  database:
+    # -- Max database connections
+    maxConnections: 4
+  competition:
+    # -- Hex cell size in meters for competition mode
+    hexSizeMeters: 250.0
+    # -- Competition participants
+    # Each entry needs: name, device (LoRaWAN device ID), color (hex color)
+    # Optional: startDate (ISO 8601 date, e.g. "2026-03-25")
+    participants: []
+    # Example:
+    # - name: "Alice"
+    #   device: "10CE45FFFE00D6CC"
+    #   color: "#e6194b"
+    #   startDate: "2026-03-25"
+
+# -- Coverage CronJob scheduling
+coverage:
+  # -- Cron schedule (weekly, Sunday midnight)
+  schedule: "0 0 * * 0"
+  # -- Active deadline for the job in seconds (2 hours)
+  activeDeadlineSeconds: 7200
+  # -- Number of successful job runs to keep
+  successfulJobsHistoryLimit: 3
+  # -- Number of failed job runs to keep
+  failedJobsHistoryLimit: 3
+  resources:
+    limits:
+      cpu: 500m
+      memory: 512Mi
+      ephemeral-storage: 2Gi
+    requests:
+      cpu: 250m
+      memory: 256Mi
+      ephemeral-storage: 1Gi
+  securityContext:
+    capabilities:
+      drop:
+        - ALL
+    readOnlyRootFilesystem: true
+    runAsNonRoot: true
+    runAsUser: 65534
+    runAsGroup: 65534
+
+# -- Challenge/Competition CronJob (disabled by default)
+challenge:
+  enabled: false
+  # -- Cron schedule (daily at 1am)
+  schedule: "0 1 * * *"
+  # -- Active deadline for the job in seconds (2 hours)
+  activeDeadlineSeconds: 7200
+  # -- Number of successful job runs to keep
+  successfulJobsHistoryLimit: 3
+  # -- Number of failed job runs to keep
+  failedJobsHistoryLimit: 3
+  resources:
+    limits:
+      cpu: 500m
+      memory: 512Mi
+      ephemeral-storage: 2Gi
+    requests:
+      cpu: 250m
+      memory: 256Mi
+      ephemeral-storage: 1Gi
+  securityContext:
+    capabilities:
+      drop:
+        - ALL
+    readOnlyRootFilesystem: true
+    runAsNonRoot: true
+    runAsUser: 65534
+    runAsGroup: 65534
+
+# -- Tiles server configuration (rendered as YAML in ConfigMap)
+# The tile-server (Go) uses Viper with env prefix TRUVAMI_COVERAGE_TILER
+# S3 credentials are injected via prefixed env vars, not the config file
+tilesServer:
+  server:
+    port: 8080
+    cors:
+      allowedOrigins:
+        - "*"
+  auth:
+    jwksURL: "https://sso.sbcdc.ch/auth/realms/truvami/protocol/openid-connect/certs"
+    issuer: "https://sso.sbcdc.ch/auth/realms/truvami"
+    audience: "coverage-tiler"
+    devMode: false
+  logging:
+    level: info
+    encoding: json
+
+# -- Database configuration (same pattern as truvami-api, used by tiler CronJobs)
+# The database.url in the tiler TOML config is constructed from this secret.
+database:
+  # Use pooler for connection by default
+  host: "truvami-stack-pooler"
+  port: 5432
+  name: "app"
+  # Fallback to secret-based configuration for backwards compatibility
+  secretName: truvami-stack-app
+  secretKey: uri
+
+# -- S3 configuration (references an existing secret)
+# Used by both tile-server (via TRUVAMI_COVERAGE_TILER_ prefixed env vars)
+# and coverage-tiler CronJobs (via env vars for bucket/region/endpoint/credentials)
+s3:
+  secretName: truvami-coverage-s3
+  bucketKey: bucket
+  regionKey: region
+  endpointKey: endpoint
+  accessKeyIdKey: access-key-id
+  secretAccessKeyKey: secret-access-key
+
+replicaCount: 1
+
+# -- Tiler image (Rust, used by CronJobs for tile generation)
+tilerImage:
+  repository: ghcr.io/truvami/coverage-tiler
+  pullPolicy: Always
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: ""
+
+# -- Server image (Go, used by tiles server Deployment)
+serverImage:
+  repository: ghcr.io/truvami/coverage-server
+  pullPolicy: Always
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: ""
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: false
+  # Automatically mount a ServiceAccount's API credentials?
+  automount: true
+  # Annotations to add to the service account
+  annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""
+
+podAnnotations: {}
+podLabels: {}
+
+podSecurityContext:
+  {}
+  # fsGroup: 2000
+
+securityContext:
+  capabilities:
+    drop:
+      - ALL
+  readOnlyRootFilesystem: true
+  runAsNonRoot: true
+  runAsUser: 65534
+  runAsGroup: 65534
+
+ingress:
+  enabled: false
+  className: ""
+  annotations:
+    {}
+    # kubernetes.io/ingress.class: nginx
+    # kubernetes.io/tls-acme: "true"
+  hosts:
+    - host: chart-example.local
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
+  tls: []
+  #  - secretName: chart-example-tls
+  #    hosts:
+  #      - chart-example.local
+
+# -- Resources for the tiles server Deployment
+resources:
+  limits:
+    cpu: 100m
+    memory: 128Mi
+    ephemeral-storage: 1Gi
+  requests:
+    cpu: 100m
+    memory: 128Mi
+    ephemeral-storage: 512Mi
+
+livenessProbe:
+  httpGet:
+    path: /health
+    port: http
+readinessProbe:
+  httpGet:
+    path: /health
+    port: http
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 100
+  targetCPUUtilizationPercentage: 80
+  # targetMemoryUtilizationPercentage: 80
+
+# Additional volumes on the output Deployment definition.
+volumes:
+  - configMap:
+      defaultMode: 420
+      name: "config-coverage"
+      optional: false
+    name: config
+
+# Additional volumeMounts on the output Deployment definition.
+volumeMounts:
+  - mountPath: /etc/tile-server
+    name: config
+    readOnly: true
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+serviceMonitor:
+  enabled: false
+
+networkPolicy:
+  enabled: false
+
+pdb:
+  enabled: false
+  minAvailable: 1
+  # maxUnavailable: 1

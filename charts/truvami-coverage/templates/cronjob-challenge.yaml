@@ -1,0 +1,122 @@
+{{- if .Values.challenge.enabled }}
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: {{ include "truvami-coverage.fullname" . }}-challenge
+  labels:
+    {{- include "truvami-coverage.labels" . | nindent 4 }}
+    app.kubernetes.io/component: challenge
+  annotations:
+    argocd.argoproj.io/sync-wave: "0"
+spec:
+  schedule: {{ .Values.challenge.schedule | quote }}
+  successfulJobsHistoryLimit: {{ .Values.challenge.successfulJobsHistoryLimit }}
+  failedJobsHistoryLimit: {{ .Values.challenge.failedJobsHistoryLimit }}
+  concurrencyPolicy: Forbid
+  jobTemplate:
+    spec:
+      activeDeadlineSeconds: {{ .Values.challenge.activeDeadlineSeconds }}
+      backoffLimit: 2
+      template:
+        metadata:
+          labels:
+            {{- include "truvami-coverage.selectorLabels" . | nindent 12 }}
+            app.kubernetes.io/component: challenge
+        spec:
+          restartPolicy: Never
+          {{- with .Values.imagePullSecrets }}
+          imagePullSecrets:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          serviceAccountName: {{ include "truvami-coverage.serviceAccountName" . }}
+          securityContext:
+            {{- toYaml .Values.podSecurityContext | nindent 12 }}
+          containers:
+            - name: challenge
+              image: "{{ .Values.tilerImage.repository }}:{{ .Values.tilerImage.tag | default .Chart.AppVersion }}"
+              imagePullPolicy: {{ .Values.tilerImage.pullPolicy }}
+              command:
+                - /usr/local/bin/coverage-tiler
+              args:
+                - '--config'
+                - /etc/coverage-tiler/config.toml
+                - '--competition'
+              env:
+                {{- if .Values.database.host }}
+                - name: DB_PASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      name: {{ .Values.database.secretName }}
+                      key: password
+                - name: DB_USER
+                  valueFrom:
+                    secretKeyRef:
+                      name: {{ .Values.database.secretName }}
+                      key: username
+                - name: DATABASE_URI
+                  value: "postgresql://$(DB_USER):$(DB_PASSWORD)@{{ .Values.database.host }}:{{ .Values.database.port }}/{{ .Values.database.name }}?sslmode=require"
+                {{- else }}
+                - name: DATABASE_URI
+                  valueFrom:
+                    secretKeyRef:
+                      key: {{ .Values.database.secretKey }}
+                      name: {{ .Values.database.secretName }}
+                      optional: false
+                {{- end }}
+                - name: S3_BUCKET
+                  valueFrom:
+                    secretKeyRef:
+                      name: {{ .Values.s3.secretName }}
+                      key: {{ .Values.s3.bucketKey }}
+                - name: S3_REGION
+                  valueFrom:
+                    secretKeyRef:
+                      name: {{ .Values.s3.secretName }}
+                      key: {{ .Values.s3.regionKey }}
+                - name: S3_ENDPOINT
+                  valueFrom:
+                    secretKeyRef:
+                      name: {{ .Values.s3.secretName }}
+                      key: {{ .Values.s3.endpointKey }}
+                - name: AWS_ACCESS_KEY_ID
+                  valueFrom:
+                    secretKeyRef:
+                      name: {{ .Values.s3.secretName }}
+                      key: {{ .Values.s3.accessKeyIdKey }}
+                - name: AWS_SECRET_ACCESS_KEY
+                  valueFrom:
+                    secretKeyRef:
+                      name: {{ .Values.s3.secretName }}
+                      key: {{ .Values.s3.secretAccessKeyKey }}
+              securityContext:
+                {{- toYaml .Values.challenge.securityContext | nindent 16 }}
+              resources:
+                {{- toYaml .Values.challenge.resources | nindent 16 }}
+              volumeMounts:
+                - mountPath: /tmp
+                  name: tmp
+                - mountPath: /etc/coverage-tiler
+                  name: config
+                  readOnly: true
+          volumes:
+            - name: tmp
+              emptyDir: {}
+            - name: config
+              configMap:
+                name: "config-coverage"
+                items:
+                  - key: config.toml
+                    path: config.toml
+          {{- with .Values.nodeSelector }}
+          nodeSelector:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.affinity }}
+          affinity:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.tolerations }}
+          tolerations:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+{{- end }}

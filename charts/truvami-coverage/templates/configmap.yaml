@@ -1,0 +1,41 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: "config-coverage"
+data:
+  tile-server.yaml: |
+    {{ .Values.tilesServer | toYaml | nindent 4 }}
+  config.toml: |
+    [database]
+    max_connections = {{ .Values.tiler.database.maxConnections }}
+
+    [computation]
+    period_days = {{ .Values.tiler.computation.periodDays }}
+    min_zoom = {{ .Values.tiler.computation.minZoom }}
+    max_zoom = {{ .Values.tiler.computation.maxZoom }}
+    worker_threads = {{ .Values.tiler.computation.workerThreads }}
+    max_positions = {{ .Values.tiler.computation.maxPositions }}
+
+    [s3]
+    prefix = {{ .Values.tiler.s3.prefix | quote }}
+    force_path_style = {{ .Values.tiler.s3.forcePathStyle }}
+
+    [logging]
+    level = {{ .Values.tiler.logging.level | quote }}
+    format = {{ .Values.tiler.logging.format | quote }}
+    progress_bar = {{ .Values.tiler.logging.progressBar }}
+
+    [competition]
+    hex_size_meters = {{ .Values.tiler.competition.hexSizeMeters }}
+    {{- if .Values.tiler.competition.participants }}
+    {{- range .Values.tiler.competition.participants }}
+
+    [[competition.participants]]
+    name = {{ .name | quote }}
+    device = {{ .device | quote }}
+    color = {{ .color | quote }}
+    {{- if .startDate }}
+    start_date = {{ .startDate | quote }}
+    {{- end }}
+    {{- end }}
+    {{- end }}
