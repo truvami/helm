@@ -26,6 +26,7 @@ data:
     progress_bar = {{ .Values.tiler.logging.progressBar }}
 
     [competition]
+    enabled = {{ .Values.challenge.enabled }}
     hex_size_meters = {{ .Values.tiler.competition.hexSizeMeters }}
     {{- if .Values.tiler.competition.participants }}
     {{- range .Values.tiler.competition.participants }}
