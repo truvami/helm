@@ -153,7 +153,7 @@ tilerImage:
 
 # -- Server image (Go, used by tiles server Deployment)
 serverImage:
-  repository: ghcr.io/truvami/coverage-server
+  repository: ghcr.io/truvami/tile-server
   pullPolicy: Always
   # Overrides the image tag whose default is the chart appVersion.
   tag: ""
