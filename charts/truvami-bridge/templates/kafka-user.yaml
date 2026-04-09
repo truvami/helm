@@ -1,4 +1,15 @@
 apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaTopic
+metadata:
+  name: "{{ .Values.kafka.topic.unauthorized | default "bridge.unauthorized" }}"
+  labels:
+    strimzi.io/cluster: {{ .Values.bridge.cluster | default .Release.Name }}
+spec:
+  partitions: {{ .Values.kafka.topic.partitions | default 3 }}
+  replicas: {{ .Values.kafka.topic.replicas | default 3 }}
+  config: {{ .Values.kafka.topic.config | toYaml | nindent 4 }}
+---
+apiVersion: kafka.strimzi.io/v1beta2
 kind: KafkaUser
 metadata:
   name: "{{ .Values.bridge.topic }}-bridge-kafka"
@@ -24,6 +35,15 @@ spec:
           - Write
         resource:
           name: truvami-errors
+          patternType: literal
+          type: topic
+      - host: '*'
+        operations:
+          - Create
+          - Describe
+          - Write
+        resource:
+          name: "{{ .Values.kafka.topic.unauthorized | default "bridge.unauthorized" }}"
           patternType: literal
           type: topic
       - host: '*'

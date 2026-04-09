@@ -51,6 +51,7 @@ kafka:
   topic:
     partitions: 12
     replicas: 3
+    unauthorized: bridge.unauthorized
     config:
       retention.ms: 2592000000
       segment.bytes: 1073741824

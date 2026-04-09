@@ -1,6 +1,6 @@
 # truvami-bridge
 
-![Version: 0.1.38](https://img.shields.io/badge/Version-0.1.38-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v2.5.1](https://img.shields.io/badge/AppVersion-v2.5.1-informational?style=flat-square)
+![Version: 0.1.39](https://img.shields.io/badge/Version-0.1.39-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v2.5.1](https://img.shields.io/badge/AppVersion-v2.5.1-informational?style=flat-square)
 
 A Helm chart for Kubernetes
 
@@ -48,6 +48,7 @@ A Helm chart for Kubernetes
 | kafka.topic.config."segment.bytes" | int | `1073741824` |  |
 | kafka.topic.partitions | int | `12` |  |
 | kafka.topic.replicas | int | `3` |  |
+| kafka.topic.unauthorized | string | `"bridge.unauthorized"` |  |
 | livenessProbe.httpGet.path | string | `"/healthz"` |  |
 | livenessProbe.httpGet.port | string | `"metrics"` |  |
 | nameOverride | string | `""` |  |
