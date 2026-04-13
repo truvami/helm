@@ -763,6 +763,17 @@ entries:
     version: 0.0.1
   truvami-coverage:
   - apiVersion: v2
+    appVersion: v0.7.0
+    created: "2026-04-13T09:47:02.639587225Z"
+    description: A Helm chart for Kubernetes
+    digest: b6848b9b20ea5634e902451f8470b3ba9cec1707ca035b18fb4c6d21a3077b0f
+    icon: https://raw.githubusercontent.com/truvami/helm/main/assets/icon.svg
+    name: truvami-coverage
+    type: application
+    urls:
+    - https://github.com/truvami/helm/releases/download/truvami-coverage-0.1.0/truvami-coverage-0.1.0.tgz
+    version: 0.1.0
+  - apiVersion: v2
     appVersion: v0.4.0
     created: "2026-04-02T17:05:42.540285145Z"
     description: A Helm chart for Kubernetes
@@ -10460,4 +10471,4 @@ entries:
     urls:
     - https://github.com/truvami/helm/releases/download/truvami-stream-0.1.0/truvami-stream-0.1.0.tgz
     version: 0.1.0
-generated: "2026-04-09T08:13:25.800060541Z"
+generated: "2026-04-13T09:47:02.834247895Z"
