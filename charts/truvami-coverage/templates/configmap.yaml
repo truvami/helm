@@ -33,7 +33,7 @@ data:
 
     [[competition.participants]]
     name = {{ .name | quote }}
-    device = {{ .device | quote }}
+    devices = {{ .devices | toJson }}
     color = {{ .color | quote }}
     {{- if .startDate }}
     start_date = {{ .startDate | quote }}

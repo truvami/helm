@@ -1,6 +1,6 @@
 # truvami-coverage
 
-![Version: 0.0.3](https://img.shields.io/badge/Version-0.0.3-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v0.4.0](https://img.shields.io/badge/AppVersion-v0.4.0-informational?style=flat-square)
+![Version: 0.1.0](https://img.shields.io/badge/Version-0.1.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v0.7.0](https://img.shields.io/badge/AppVersion-v0.7.0-informational?style=flat-square)
 
 A Helm chart for Kubernetes
 
@@ -61,7 +61,7 @@ A Helm chart for Kubernetes
 | serviceMonitor.enabled | bool | `false` |  |
 | tiler | object | `{"competition":{"hexSizeMeters":250,"participants":[]},"computation":{"maxPositions":500000,"maxZoom":16,"minZoom":8,"periodDays":14,"workerThreads":4},"database":{"maxConnections":4},"logging":{"format":"json","level":"info","progressBar":false},"s3":{"forcePathStyle":false,"prefix":""}}` | Coverage-tiler (Rust) configuration These settings are rendered into a TOML ConfigMap for the tiler CronJobs. database.url and s3 credentials are injected via env vars at runtime. |
 | tiler.competition.hexSizeMeters | float | `250` | Hex cell size in meters for competition mode |
-| tiler.competition.participants | list | `[]` | Competition participants Each entry needs: name, device (LoRaWAN device ID), color (hex color) Optional: startDate (ISO 8601 date, e.g. "2026-03-25") |
+| tiler.competition.participants | list | `[]` | Competition participants Each entry needs: name, devices (list of LoRaWAN device IDs), color (hex color) Optional: startDate (ISO 8601 date, e.g. "2026-03-25") A participant may carry multiple trackers — all devices' positions score for the same participant; the leaderboard shows the first device. |
 | tiler.computation.maxPositions | int | `500000` | Per-customer position limit |
 | tiler.computation.maxZoom | int | `16` | Maximum tile zoom level |
 | tiler.computation.minZoom | int | `8` | Minimum tile zoom level |

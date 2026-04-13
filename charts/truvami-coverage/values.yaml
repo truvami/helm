@@ -36,12 +36,14 @@ tiler:
     # -- Hex cell size in meters for competition mode
     hexSizeMeters: 250.0
     # -- Competition participants
-    # Each entry needs: name, device (LoRaWAN device ID), color (hex color)
+    # Each entry needs: name, devices (list of LoRaWAN device IDs), color (hex color)
     # Optional: startDate (ISO 8601 date, e.g. "2026-03-25")
+    # A participant may carry multiple trackers — all devices' positions score
+    # for the same participant; the leaderboard shows the first device.
     participants: []
     # Example:
     # - name: "Alice"
-    #   device: "10CE45FFFE00D6CC"
+    #   devices: ["10CE45FFFE00D6CC"]
     #   color: "#e6194b"
     #   startDate: "2026-03-25"
 
