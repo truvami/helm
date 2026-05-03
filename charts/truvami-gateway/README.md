@@ -1,6 +1,6 @@
 # truvami-gateway
 
-![Version: 0.0.34](https://img.shields.io/badge/Version-0.0.34-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v2.5.6-rc1](https://img.shields.io/badge/AppVersion-v2.5.6--rc1-informational?style=flat-square)
+![Version: 0.0.37](https://img.shields.io/badge/Version-0.0.37-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v2.5.6-rc1](https://img.shields.io/badge/AppVersion-v2.5.6--rc1-informational?style=flat-square)
 
 A Helm chart for Kubernetes
 
@@ -9,21 +9,25 @@ A Helm chart for Kubernetes
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
 | affinity | object | `{}` |  |
+| apiKeysLegacyLabels.secretKey | string | `"legacyLabels"` |  |
+| apiKeysLegacyLabels.secretName | string | `""` |  |
 | autoscaling.enabled | bool | `false` |  |
 | autoscaling.maxReplicas | int | `100` |  |
 | autoscaling.minReplicas | int | `1` |  |
 | autoscaling.targetCPUUtilizationPercentage | int | `80` |  |
 | fullnameOverride | string | `""` |  |
 | gateway.cluster | string | `"truvami-stack"` |  |
-| gateway.jwks.enabled | bool | `false` |  |
-| gateway.jwks.location | string | `"/var/run/secrets/gateway/jwks.json"` |  |
-| gateway.jwks.secretKey | string | `"jwks.json"` |  |
-| gateway.jwks.secretName | string | `"locksmith-jwks-public"` |  |
 | gateway.kafka."allow.auto.create.topics" | bool | `false` |  |
 | gateway.kafka."enable.ssl.certificate.verification" | bool | `false` |  |
 | gateway.kafka.bootstrap.servers[0] | string | `"truvami-stack-kafka-bootstrap:9093"` |  |
 | gateway.kafka.security.protocol | string | `"SSL"` |  |
 | gateway.kafka.ssl.ca.location | string | `"/var/run/secrets/kafka/ca.crt"` |  |
+| gateway.locksmith.endpoint | string | `""` |  |
+| gateway.locksmith.jwks.location | string | `""` |  |
+| gateway.locksmith.jwks.refreshInterval | string | `"1m"` |  |
+| gateway.locksmith.jwks.reloadInterval | string | `"5s"` |  |
+| gateway.locksmith.jwks.requestTimeout | string | `"2s"` |  |
+| gateway.locksmith.jwt.audience | string | `"gateway"` |  |
 | gateway.otel.enable | bool | `true` |  |
 | gateway.otel.endpoint | string | `"localhost:4318"` |  |
 | gateway.topic | string | `"truvami"` |  |
@@ -35,6 +39,10 @@ A Helm chart for Kubernetes
 | ingress.className | string | `""` |  |
 | ingress.enabled | bool | `false` |  |
 | ingress.tls | list | `[]` |  |
+| jwks.enabled | bool | `false` |  |
+| jwks.mountPath | string | `"/var/run/secrets/gateway"` |  |
+| jwks.secretKey | string | `"jwks.json"` |  |
+| jwks.secretName | string | `"locksmith-jwks-public"` |  |
 | kafka.topic.config."retention.ms" | int | `2592000000` |  |
 | kafka.topic.config."segment.bytes" | int | `1073741824` |  |
 | kafka.topic.partitions | int | `3` |  |
