@@ -82,6 +82,12 @@ spec:
                   key: apikeys
                   name: "{{ .Values.gateway.topic }}-gateway-apikeys"
                   optional: false
+            - name: APIKEYS_LEGACY_LABELS
+              valueFrom:
+                secretKeyRef:
+                  key: {{ .Values.apiKeysLegacyLabels.secretKey | quote }}
+                  name: {{ default (printf "%s-gateway-apikeys" .Values.gateway.topic) .Values.apiKeysLegacyLabels.secretName | quote }}
+                  optional: true
           volumeMounts:
             {{- with .Values.volumeMounts }}
             {{- toYaml . | nindent 12 }}

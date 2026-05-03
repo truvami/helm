@@ -14,7 +14,10 @@ gateway:
   # Locksmith integration. This block is rendered into
   # /etc/truvami-gateway/config.yaml. To enable JWKS-based auth set
   # jwks.enabled (top-level) to mount the JWKS secret AND populate
-  # locksmith.endpoint, locksmith.jwks.location and locksmith.jwt.audience.
+  # locksmith.endpoint and locksmith.jwt.audience. locksmith.jwks.location
+  # is auto-derived from jwks.mountPath + jwks.secretKey when jwks.enabled
+  # is true and location is left empty; set it explicitly only if the JWKS
+  # file lives outside the chart-managed mount.
   locksmith:
     endpoint: ""
     jwks:
@@ -36,6 +39,14 @@ gateway:
         location: /var/run/secrets/kafka/ca.crt
     security:
       protocol: SSL
+
+# APIKEYS_LEGACY_LABELS env var (parallel string array to APIKEYS; the
+# gateway uses these to label JWT claims minted from legacy API keys).
+# Sourced from the same secret as apikeys by default. Always injected
+# with optional=true — leave the secret key absent if you don't need it.
+apiKeysLegacyLabels:
+  secretName: ""
+  secretKey: "legacyLabels"
 
 kafka:
   topic:
