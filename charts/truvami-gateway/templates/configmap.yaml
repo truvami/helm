@@ -1,7 +1,11 @@
+{{- $gateway := deepCopy .Values.gateway -}}
+{{- if and .Values.jwks.enabled (empty $gateway.locksmith.jwks.location) -}}
+{{- $_ := set $gateway.locksmith.jwks "location" (printf "%s/%s" (trimSuffix "/" .Values.jwks.mountPath) .Values.jwks.secretKey) -}}
+{{- end -}}
 apiVersion: v1
 kind: ConfigMap
 metadata:
   name: "{{ .Values.gateway.topic }}-gateway-config"
 data:
   config.yaml: |
-    {{ .Values.gateway | toYaml | nindent 4 }}
+    {{ $gateway | toYaml | nindent 4 }}

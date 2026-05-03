@@ -82,16 +82,18 @@ spec:
                   key: apikeys
                   name: "{{ .Values.gateway.topic }}-gateway-apikeys"
                   optional: false
-            {{- if .Values.gateway.jwks.enabled }}
-            - name: TRUVAMI_GATEWAY_JWKS_LOCATION
-              value: {{ .Values.gateway.jwks.location | quote }}
-            {{- end }}
+            - name: APIKEYS_LEGACY_LABELS
+              valueFrom:
+                secretKeyRef:
+                  key: {{ .Values.apiKeysLegacyLabels.secretKey | quote }}
+                  name: {{ default (printf "%s-gateway-apikeys" .Values.gateway.topic) .Values.apiKeysLegacyLabels.secretName | quote }}
+                  optional: true
           volumeMounts:
             {{- with .Values.volumeMounts }}
             {{- toYaml . | nindent 12 }}
             {{- end }}
-            {{- if .Values.gateway.jwks.enabled }}
-            - mountPath: /var/run/secrets/gateway
+            {{- if .Values.jwks.enabled }}
+            - mountPath: {{ .Values.jwks.mountPath }}
               name: jwks-public
               readOnly: true
             {{- end }}
@@ -99,13 +101,13 @@ spec:
         {{- with .Values.volumes }}
         {{- toYaml . | nindent 8 }}
         {{- end }}
-        {{- if .Values.gateway.jwks.enabled }}
+        {{- if .Values.jwks.enabled }}
         - name: jwks-public
           secret:
-            secretName: {{ .Values.gateway.jwks.secretName }}
+            secretName: {{ .Values.jwks.secretName }}
             items:
-              - key: {{ .Values.gateway.jwks.secretKey }}
-                path: jwks.json
+              - key: {{ .Values.jwks.secretKey }}
+                path: {{ .Values.jwks.secretKey }}
         {{- end }}
       {{- with .Values.nodeSelector }}
       nodeSelector:

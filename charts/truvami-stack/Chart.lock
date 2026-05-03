@@ -1,10 +1,10 @@
 dependencies:
 - name: truvami-gateway
   repository: file://../truvami-gateway
-  version: 0.0.34
+  version: 0.0.37
 - name: truvami-bridge
   repository: file://../truvami-bridge
-  version: 0.1.38
+  version: 0.1.39
 - name: truvami-api
   repository: file://../truvami-api
   version: 0.0.33
@@ -26,5 +26,5 @@ dependencies:
 - name: truvami-locksmith
   repository: file://../truvami-locksmith
   version: 0.0.1
-digest: sha256:b868cbaf3515af27a11cd7c3180483f9564d56f442fa8ea794f3ed1a4730b2ea
-generated: "2026-03-31T20:23:10.105036+02:00"
+digest: sha256:28b0f514b60a25199bfa082a727b9b7458ef576843d7766222f76da0a6e8434a
+generated: "2026-05-03T18:27:41.066456+02:00"

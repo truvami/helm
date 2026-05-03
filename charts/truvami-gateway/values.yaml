@@ -11,11 +11,22 @@ gateway:
     enable: true
     endpoint: "localhost:4318"
 
-  jwks:
-    enabled: false
-    location: "/var/run/secrets/gateway/jwks.json"
-    secretName: "locksmith-jwks-public"
-    secretKey: "jwks.json"
+  # Locksmith integration. This block is rendered into
+  # /etc/truvami-gateway/config.yaml. To enable JWKS-based auth set
+  # jwks.enabled (top-level) to mount the JWKS secret AND populate
+  # locksmith.endpoint and locksmith.jwt.audience. locksmith.jwks.location
+  # is auto-derived from jwks.mountPath + jwks.secretKey when jwks.enabled
+  # is true and location is left empty; set it explicitly only if the JWKS
+  # file lives outside the chart-managed mount.
+  locksmith:
+    endpoint: ""
+    jwks:
+      location: ""
+      reloadInterval: 5s
+      refreshInterval: 1m
+      requestTimeout: 2s
+    jwt:
+      audience: "gateway"
 
   kafka:
     bootstrap:
@@ -29,6 +40,14 @@ gateway:
     security:
       protocol: SSL
 
+# APIKEYS_LEGACY_LABELS env var (parallel string array to APIKEYS; the
+# gateway uses these to label JWT claims minted from legacy API keys).
+# Sourced from the same secret as apikeys by default. Always injected
+# with optional=true — leave the secret key absent if you don't need it.
+apiKeysLegacyLabels:
+  secretName: ""
+  secretKey: "legacyLabels"
+
 kafka:
   topic:
     unauthorized: gateway.unauthorized
@@ -37,6 +56,17 @@ kafka:
     config:
       retention.ms: 2592000000
       segment.bytes: 1073741824
+
+# JWKS public secret mount (chart-only; not rendered into config.yaml).
+# When enabled, the locksmith-managed JWKS public key set is mounted at
+# {mountPath}/{secretKey}. To make the gateway actually validate JWTs, also
+# set gateway.locksmith.endpoint, gateway.locksmith.jwks.location and
+# gateway.locksmith.jwt.audience.
+jwks:
+  enabled: false
+  secretName: "locksmith-jwks-public"
+  secretKey: "jwks.json"
+  mountPath: "/var/run/secrets/gateway"
 
 replicaCount: 1
 
