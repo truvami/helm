@@ -1,0 +1,87 @@
+{{- if and .Values.thanos.enabled .Values.thanos.querier.enabled }}
+{{- $name := include "truvami-monitoring.thanos.querier.name" . -}}
+{{- $storeGateway := include "truvami-monitoring.thanos.storeGateway.name" . -}}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ $name }}
+  labels: {{- include "truvami-monitoring.labels" . | nindent 4 }}
+    app.kubernetes.io/component: thanos-querier
+spec:
+  replicas: {{ .Values.thanos.querier.replicas }}
+  selector:
+    matchLabels: {{- include "truvami-monitoring.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: thanos-querier
+  template:
+    metadata:
+      labels: {{- include "truvami-monitoring.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/component: thanos-querier
+    spec:
+      securityContext:
+        fsGroup: 65534
+        runAsGroup: 65534
+        runAsNonRoot: true
+        runAsUser: 65534
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: thanos
+          image: "{{ .Values.thanos.image.repository }}:{{ .Values.thanos.image.tag }}"
+          imagePullPolicy: {{ .Values.thanos.image.pullPolicy }}
+          args:
+            - query
+            - --log.level={{ .Values.thanos.querier.logLevel }}
+            - --log.format=json
+            - --http-address=0.0.0.0:{{ .Values.thanos.querier.service.httpPort }}
+            - --grpc-address=0.0.0.0:{{ .Values.thanos.querier.service.grpcPort }}
+            - --query.replica-label={{ .Values.thanos.querier.replicaLabel }}
+            - --endpoint=dnssrv+_grpc._tcp.prometheus-operated.{{ .Release.Namespace }}.svc.cluster.local
+            {{- if .Values.thanos.storeGateway.enabled }}
+            - --endpoint=dnssrv+_grpc._tcp.{{ $storeGateway }}.{{ .Release.Namespace }}.svc.cluster.local
+            {{- end }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.thanos.querier.service.httpPort }}
+              protocol: TCP
+            - name: grpc
+              containerPort: {{ .Values.thanos.querier.service.grpcPort }}
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /-/healthy
+              port: http
+            initialDelaySeconds: 10
+            periodSeconds: 30
+          readinessProbe:
+            httpGet:
+              path: /-/ready
+              port: http
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          resources: {{- toYaml .Values.thanos.querier.resources | nindent 12 }}
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop: ["ALL"]
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ $name }}
+  labels: {{- include "truvami-monitoring.labels" . | nindent 4 }}
+    app.kubernetes.io/component: thanos-querier
+spec:
+  type: {{ .Values.thanos.querier.service.type }}
+  ports:
+    - name: http
+      port: {{ .Values.thanos.querier.service.httpPort }}
+      targetPort: http
+      protocol: TCP
+    - name: grpc
+      port: {{ .Values.thanos.querier.service.grpcPort }}
+      targetPort: grpc
+      protocol: TCP
+  selector: {{- include "truvami-monitoring.selectorLabels" . | nindent 4 }}
+    app.kubernetes.io/component: thanos-querier
+{{- end }}

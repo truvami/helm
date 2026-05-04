@@ -20,6 +20,108 @@ prometheus:
       cpu: "1"
       memory: "1Gi"
 
+# Thanos long-term storage
+# When enabled, the Prometheus Operator runs a Thanos sidecar that ships TSDB
+# blocks to object storage (e.g. S3). A Thanos Querier, Store Gateway, and
+# Compactor are deployed to query and maintain historical data.
+#
+# Object storage credentials must be provided via a Kubernetes Secret containing
+# an `objstore.yml` key. Either:
+#   - reference an existing secret via `thanos.objectStorage.existingSecret`, or
+#   - provide the config inline via `thanos.objectStorage.config` and the chart
+#     will create the secret for you.
+#
+# See https://thanos.io/tip/thanos/storage.md/ for the objstore.yml format.
+thanos:
+  enabled: false
+
+  # Thanos image used by the sidecar, querier, store gateway, and compactor.
+  image:
+    repository: quay.io/thanos/thanos
+    tag: v0.39.2
+    pullPolicy: IfNotPresent
+
+  # Object storage configuration (S3, GCS, Azure, etc.)
+  objectStorage:
+    # Reference an existing secret with key `objstore.yml`. Takes precedence
+    # over `config` below.
+    existingSecret:
+      name: ""
+      key: "objstore.yml"
+
+    # Inline objstore.yml config. Templated into a Secret if `existingSecret.name`
+    # is empty. Example for S3:
+    #
+    # config:
+    #   type: S3
+    #   config:
+    #     bucket: "truvami-thanos"
+    #     endpoint: "s3.eu-central-1.amazonaws.com"
+    #     region: "eu-central-1"
+    #     access_key: "<AWS_ACCESS_KEY_ID>"
+    #     secret_key: "<AWS_SECRET_ACCESS_KEY>"
+    #     insecure: false
+    config: {}
+
+  # Thanos Querier - federates queries across the sidecars (recent data) and
+  # the Store Gateway (historical data). Point Grafana at this service.
+  querier:
+    enabled: true
+    replicas: 2
+    logLevel: info
+    # Deduplicate samples across HA Prometheus replicas using this label.
+    # Prometheus Operator sets `prometheus_replica` on each replica.
+    replicaLabel: prometheus_replica
+    resources:
+      requests:
+        cpu: "100m"
+        memory: "256Mi"
+      limits:
+        cpu: "500m"
+        memory: "1Gi"
+    service:
+      type: ClusterIP
+      httpPort: 9090
+      grpcPort: 10901
+
+  # Thanos Store Gateway - exposes blocks from object storage to the Querier.
+  storeGateway:
+    enabled: true
+    replicas: 1
+    logLevel: info
+    resources:
+      requests:
+        cpu: "100m"
+        memory: "512Mi"
+      limits:
+        cpu: "1"
+        memory: "2Gi"
+    persistence:
+      enabled: true
+      size: "10Gi"
+      storageClassName: ""
+
+  # Thanos Compactor - compacts and downsamples blocks in object storage and
+  # enforces retention. Must run as a singleton per bucket.
+  compactor:
+    enabled: true
+    logLevel: info
+    # Retention per resolution. Empty string means retain forever.
+    retentionResolutionRaw: "30d"
+    retentionResolution5m: "180d"
+    retentionResolution1h: "1y"
+    resources:
+      requests:
+        cpu: "100m"
+        memory: "512Mi"
+      limits:
+        cpu: "1"
+        memory: "2Gi"
+    persistence:
+      enabled: true
+      size: "10Gi"
+      storageClassName: ""
+
 # Prometheus Rule configuration
 prometheusRule:
   enabled: true

@@ -1,6 +1,6 @@
 # truvami-monitoring
 
-![Version: 0.2.6](https://img.shields.io/badge/Version-0.2.6-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)
+![Version: 0.3.0](https://img.shields.io/badge/Version-0.3.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)
 
 This chart contains all CRD's for the truvami-stack monitoring and alerting.
 
@@ -232,6 +232,46 @@ This chart contains all CRD's for the truvami-stack monitoring and alerting.
 | prometheusRule.enabled | bool | `true` |  |
 | prometheusRule.interval | string | `"30s"` |  |
 | prometheusRule.labels | object | `{}` |  |
+| thanos.compactor.enabled | bool | `true` |  |
+| thanos.compactor.logLevel | string | `"info"` |  |
+| thanos.compactor.persistence.enabled | bool | `true` |  |
+| thanos.compactor.persistence.size | string | `"10Gi"` |  |
+| thanos.compactor.persistence.storageClassName | string | `""` |  |
+| thanos.compactor.resources.limits.cpu | string | `"1"` |  |
+| thanos.compactor.resources.limits.memory | string | `"2Gi"` |  |
+| thanos.compactor.resources.requests.cpu | string | `"100m"` |  |
+| thanos.compactor.resources.requests.memory | string | `"512Mi"` |  |
+| thanos.compactor.retentionResolution1h | string | `"1y"` |  |
+| thanos.compactor.retentionResolution5m | string | `"180d"` |  |
+| thanos.compactor.retentionResolutionRaw | string | `"30d"` |  |
+| thanos.enabled | bool | `false` |  |
+| thanos.image.pullPolicy | string | `"IfNotPresent"` |  |
+| thanos.image.repository | string | `"quay.io/thanos/thanos"` |  |
+| thanos.image.tag | string | `"v0.39.2"` |  |
+| thanos.objectStorage.config | object | `{}` |  |
+| thanos.objectStorage.existingSecret.key | string | `"objstore.yml"` |  |
+| thanos.objectStorage.existingSecret.name | string | `""` |  |
+| thanos.querier.enabled | bool | `true` |  |
+| thanos.querier.logLevel | string | `"info"` |  |
+| thanos.querier.replicaLabel | string | `"prometheus_replica"` |  |
+| thanos.querier.replicas | int | `2` |  |
+| thanos.querier.resources.limits.cpu | string | `"500m"` |  |
+| thanos.querier.resources.limits.memory | string | `"1Gi"` |  |
+| thanos.querier.resources.requests.cpu | string | `"100m"` |  |
+| thanos.querier.resources.requests.memory | string | `"256Mi"` |  |
+| thanos.querier.service.grpcPort | int | `10901` |  |
+| thanos.querier.service.httpPort | int | `9090` |  |
+| thanos.querier.service.type | string | `"ClusterIP"` |  |
+| thanos.storeGateway.enabled | bool | `true` |  |
+| thanos.storeGateway.logLevel | string | `"info"` |  |
+| thanos.storeGateway.persistence.enabled | bool | `true` |  |
+| thanos.storeGateway.persistence.size | string | `"10Gi"` |  |
+| thanos.storeGateway.persistence.storageClassName | string | `""` |  |
+| thanos.storeGateway.replicas | int | `1` |  |
+| thanos.storeGateway.resources.limits.cpu | string | `"1"` |  |
+| thanos.storeGateway.resources.limits.memory | string | `"2Gi"` |  |
+| thanos.storeGateway.resources.requests.cpu | string | `"100m"` |  |
+| thanos.storeGateway.resources.requests.memory | string | `"512Mi"` |  |
 | watchdog.webhookUrl | string | `""` |  |
 
 ----------------------------------------------

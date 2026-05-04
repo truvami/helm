@@ -87,6 +87,13 @@ spec:
       name: "{{ include "truvami-monitoring.fullname" . }}"
       port: web
   enableRemoteWriteReceiver: {{ .Values.prometheus.enableRemoteWriteReceiver | default "false" }}
+  {{- if .Values.thanos.enabled }}
+  thanos:
+    image: "{{ .Values.thanos.image.repository }}:{{ .Values.thanos.image.tag }}"
+    objectStorageConfig:
+      name: {{ include "truvami-monitoring.thanos.objstoreSecretName" . }}
+      key: {{ include "truvami-monitoring.thanos.objstoreSecretKey" . }}
+  {{- end }}
 
 ---
 apiVersion: monitoring.coreos.com/v1

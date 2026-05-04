@@ -62,6 +62,41 @@ Create the name of the service account to use
 {{- end }}
 
 {{/*
+Thanos component name helpers
+*/}}
+{{- define "truvami-monitoring.thanos.querier.name" -}}
+{{ include "truvami-monitoring.fullname" . }}-thanos-querier
+{{- end }}
+
+{{- define "truvami-monitoring.thanos.storeGateway.name" -}}
+{{ include "truvami-monitoring.fullname" . }}-thanos-store-gateway
+{{- end }}
+
+{{- define "truvami-monitoring.thanos.compactor.name" -}}
+{{ include "truvami-monitoring.fullname" . }}-thanos-compactor
+{{- end }}
+
+{{/*
+Name of the Secret holding objstore.yml. Either an existing user-supplied
+secret or one created by this chart from inline config.
+*/}}
+{{- define "truvami-monitoring.thanos.objstoreSecretName" -}}
+{{- if .Values.thanos.objectStorage.existingSecret.name -}}
+{{- .Values.thanos.objectStorage.existingSecret.name -}}
+{{- else -}}
+{{ include "truvami-monitoring.fullname" . }}-thanos-objstore
+{{- end -}}
+{{- end }}
+
+{{- define "truvami-monitoring.thanos.objstoreSecretKey" -}}
+{{- if .Values.thanos.objectStorage.existingSecret.name -}}
+{{- .Values.thanos.objectStorage.existingSecret.key | default "objstore.yml" -}}
+{{- else -}}
+objstore.yml
+{{- end -}}
+{{- end }}
+
+{{/*
 Alert configuration helper - checks if an alert group is enabled
 */}}
 {{- define "truvami-monitoring.alertEnabled" -}}
