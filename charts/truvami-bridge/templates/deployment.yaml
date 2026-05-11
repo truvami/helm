@@ -81,6 +81,12 @@ spec:
                   key: apikey
                   name: "{{ .Values.bridge.topic }}-google"
                   optional: false
+            - name: HERE_APIKEY
+              valueFrom:
+                secretKeyRef:
+                  key: apikey
+                  name: "{{ .Values.bridge.topic }}-here"
+                  optional: true # only required when using the HERE WiFi solver
             - name: VALKEY_PASSWORD
               valueFrom:
                 secretKeyRef:
