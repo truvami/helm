@@ -15,8 +15,31 @@ bridge:
 
   topic: "truvami"
 
+  idle:
+    warn:
+      threshold: 15m
+    error:
+      threshold: 1h
+
+  validation:
+    maxCapturedAtDrift: 1h
+
   grpc:
     server: truvami-stack-truvami-api:5001
+    health:
+      service: "" # empty means default gRPC server health
+
+  locksmith:
+    server: truvami-locksmith:5005
+    requestTimeout: 2s
+    health:
+      service: "" # empty means default gRPC server health
+    keyPrefix: "locksmith"
+
+  valkey:
+    host: "truvami-stack-valkey-primary:6379"
+    username: "default"
+    requestTimeout: 200ms
 
   kafka:
     bootstrap:
@@ -29,6 +52,17 @@ bridge:
         location: /var/run/secrets/kafka/ca.crt
     security:
       protocol: SSL
+    consumer:
+      session:
+        timeout:
+          ms: 45000 # 45 seconds - how long broker waits for heartbeat
+      heartbeat:
+        interval:
+          ms: 3000 # 3 seconds - how often to send heartbeats
+      max:
+        poll:
+          interval:
+            ms: 300000 # 5 minutes - max time between polls
     alerts:
       topics:
         uplinks: alerts.uplinks
@@ -36,8 +70,11 @@ bridge:
         battery-statuses: alerts.battery-statuses
         rotations: alerts.rotations
         events: alerts.events
+        sniffed-devices: alerts.sniffed-devices
       flush-timeout: 10s
       flush-remaining-timeout: 1s
+    unauthorized:
+      topic: bridge.unauthorized
     integrations:
       cache:
         duration: 1m
@@ -46,6 +83,55 @@ bridge:
     # Holcim
     fed1a230-cee8-11ee-9ddb-47f5f8bdd1a5:
       doNotFallbackSetCapturedAt: true
+
+  wifisolver:
+    rssiRef: -35.0
+    pathLossExp: 3.0
+    outlierMaxDist: 500.0
+    weiszfeldIter: 100
+    baseRadius: 15.0
+    matchCountExp: 0.5
+    spreadWeight: 0.3
+    rssiRangeWeight: 0.15
+    meanRssiWeight: 0.1
+    minAccuracy: 10.0
+    maxAccuracy: 500.0
+
+  lorasolver:
+    rssiRef: -30.0
+    pathLossExp: 2.7
+    outlierMaxDist: 10000.0
+    weiszfeldIter: 100
+    baseRadius: 250.0
+    matchCountExp: 0.5
+    spreadWeight: 0.3
+    rssiRangeWeight: 0.15
+    meanRssiWeight: 0.1
+    minAccuracy: 100.0
+    maxAccuracy: 5000.0
+
+  blesolver:
+    rssiRef: -50.0
+    pathLossExp: 2.5
+    outlierMaxDist: 200.0
+    weiszfeldIter: 100
+    baseRadius: 10.0
+    matchCountExp: 0.5
+    spreadWeight: 0.3
+    rssiRangeWeight: 0.15
+    meanRssiWeight: 0.1
+    minAccuracy: 5.0
+    maxAccuracy: 300.0
+
+  logging:
+    level: info # debug, info, warn, error
+    encoding: json # json, console
+    time-encoder: iso8601 # rfc3339, iso8601, epoch
+
+# Valkey secret
+valkey:
+  secretName: truvami-stack-valkey
+  secretKey: valkey-password
 
 kafka:
   topic:

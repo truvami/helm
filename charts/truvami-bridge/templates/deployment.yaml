@@ -81,6 +81,12 @@ spec:
                   key: apikey
                   name: "{{ .Values.bridge.topic }}-google"
                   optional: false
+            - name: VALKEY_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  key: {{ .Values.valkey.secretKey }}
+                  name: {{ .Values.valkey.secretName }}
+                  optional: false
             - name: KAFKA_SSL_KEYSTORE_LOCATION
               value: /var/run/secrets/kafka/user.p12
             - name: KAFKA_SSL_KEYSTORE_PASSWORD

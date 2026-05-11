@@ -1,6 +1,6 @@
 # truvami-bridge
 
-![Version: 0.1.39](https://img.shields.io/badge/Version-0.1.39-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v2.5.1](https://img.shields.io/badge/AppVersion-v2.5.1-informational?style=flat-square)
+![Version: 0.1.40](https://img.shields.io/badge/Version-0.1.40-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v2.5.1](https://img.shields.io/badge/AppVersion-v2.5.1-informational?style=flat-square)
 
 A Helm chart for Kubernetes
 
@@ -13,9 +13,23 @@ A Helm chart for Kubernetes
 | autoscaling.maxReplicas | int | `100` |  |
 | autoscaling.minReplicas | int | `1` |  |
 | autoscaling.targetCPUUtilizationPercentage | int | `80` |  |
+| bridge.blesolver.baseRadius | float | `10` |  |
+| bridge.blesolver.matchCountExp | float | `0.5` |  |
+| bridge.blesolver.maxAccuracy | float | `300` |  |
+| bridge.blesolver.meanRssiWeight | float | `0.1` |  |
+| bridge.blesolver.minAccuracy | float | `5` |  |
+| bridge.blesolver.outlierMaxDist | float | `200` |  |
+| bridge.blesolver.pathLossExp | float | `2.5` |  |
+| bridge.blesolver.rssiRangeWeight | float | `0.15` |  |
+| bridge.blesolver.rssiRef | float | `-50` |  |
+| bridge.blesolver.spreadWeight | float | `0.3` |  |
+| bridge.blesolver.weiszfeldIter | int | `100` |  |
 | bridge.cluster | string | `"truvami-stack"` |  |
 | bridge.featureFlags.fed1a230-cee8-11ee-9ddb-47f5f8bdd1a5.doNotFallbackSetCapturedAt | bool | `true` |  |
+| bridge.grpc.health.service | string | `""` |  |
 | bridge.grpc.server | string | `"truvami-stack-truvami-api:5001"` |  |
+| bridge.idle.error.threshold | string | `"1h"` |  |
+| bridge.idle.warn.threshold | string | `"15m"` |  |
 | bridge.kafka."allow.auto.create.topics" | bool | `false` |  |
 | bridge.kafka."enable.ssl.certificate.verification" | bool | `false` |  |
 | bridge.kafka.alerts.flush-remaining-timeout | string | `"1s"` |  |
@@ -24,15 +38,53 @@ A Helm chart for Kubernetes
 | bridge.kafka.alerts.topics.events | string | `"alerts.events"` |  |
 | bridge.kafka.alerts.topics.positions | string | `"alerts.positions"` |  |
 | bridge.kafka.alerts.topics.rotations | string | `"alerts.rotations"` |  |
+| bridge.kafka.alerts.topics.sniffed-devices | string | `"alerts.sniffed-devices"` |  |
 | bridge.kafka.alerts.topics.uplinks | string | `"alerts.uplinks"` |  |
 | bridge.kafka.bootstrap.servers[0] | string | `"truvami-stack-kafka-bootstrap:9093"` |  |
+| bridge.kafka.consumer.heartbeat.interval.ms | int | `3000` |  |
+| bridge.kafka.consumer.max.poll.interval.ms | int | `300000` |  |
+| bridge.kafka.consumer.session.timeout.ms | int | `45000` |  |
 | bridge.kafka.integrations.cache.duration | string | `"1m"` |  |
 | bridge.kafka.security.protocol | string | `"SSL"` |  |
 | bridge.kafka.ssl.ca.location | string | `"/var/run/secrets/kafka/ca.crt"` |  |
+| bridge.kafka.unauthorized.topic | string | `"bridge.unauthorized"` |  |
+| bridge.locksmith.health.service | string | `""` |  |
+| bridge.locksmith.keyPrefix | string | `"locksmith"` |  |
+| bridge.locksmith.requestTimeout | string | `"2s"` |  |
+| bridge.locksmith.server | string | `"truvami-locksmith:5005"` |  |
+| bridge.logging.encoding | string | `"json"` |  |
+| bridge.logging.level | string | `"info"` |  |
+| bridge.logging.time-encoder | string | `"iso8601"` |  |
+| bridge.lorasolver.baseRadius | float | `250` |  |
+| bridge.lorasolver.matchCountExp | float | `0.5` |  |
+| bridge.lorasolver.maxAccuracy | float | `5000` |  |
+| bridge.lorasolver.meanRssiWeight | float | `0.1` |  |
+| bridge.lorasolver.minAccuracy | float | `100` |  |
+| bridge.lorasolver.outlierMaxDist | float | `10000` |  |
+| bridge.lorasolver.pathLossExp | float | `2.7` |  |
+| bridge.lorasolver.rssiRangeWeight | float | `0.15` |  |
+| bridge.lorasolver.rssiRef | float | `-30` |  |
+| bridge.lorasolver.spreadWeight | float | `0.3` |  |
+| bridge.lorasolver.weiszfeldIter | int | `100` |  |
 | bridge.metrics.port | int | `9090` |  |
 | bridge.otel.enable | bool | `true` |  |
 | bridge.otel.endpoint | string | `"tempo.grafana-tempo.svc.cluster.local:4318"` |  |
 | bridge.topic | string | `"truvami"` |  |
+| bridge.validation.maxCapturedAtDrift | string | `"1h"` |  |
+| bridge.valkey.host | string | `"truvami-stack-valkey-primary:6379"` |  |
+| bridge.valkey.requestTimeout | string | `"200ms"` |  |
+| bridge.valkey.username | string | `"default"` |  |
+| bridge.wifisolver.baseRadius | float | `15` |  |
+| bridge.wifisolver.matchCountExp | float | `0.5` |  |
+| bridge.wifisolver.maxAccuracy | float | `500` |  |
+| bridge.wifisolver.meanRssiWeight | float | `0.1` |  |
+| bridge.wifisolver.minAccuracy | float | `10` |  |
+| bridge.wifisolver.outlierMaxDist | float | `500` |  |
+| bridge.wifisolver.pathLossExp | float | `3` |  |
+| bridge.wifisolver.rssiRangeWeight | float | `0.15` |  |
+| bridge.wifisolver.rssiRef | float | `-35` |  |
+| bridge.wifisolver.spreadWeight | float | `0.3` |  |
+| bridge.wifisolver.weiszfeldIter | int | `100` |  |
 | fullnameOverride | string | `""` |  |
 | image.pullPolicy | string | `"Always"` |  |
 | image.repository | string | `"ghcr.io/truvami/bridge"` |  |
@@ -77,6 +129,8 @@ A Helm chart for Kubernetes
 | serviceAccount.name | string | `""` |  |
 | serviceMonitor.enabled | bool | `false` |  |
 | tolerations | list | `[]` |  |
+| valkey.secretKey | string | `"valkey-password"` |  |
+| valkey.secretName | string | `"truvami-stack-valkey"` |  |
 | volumeMounts[0].mountPath | string | `"/etc/truvami-bridge"` |  |
 | volumeMounts[0].name | string | `"config"` |  |
 | volumeMounts[0].readOnly | bool | `true` |  |
