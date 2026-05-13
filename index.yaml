@@ -2992,6 +2992,18 @@ entries:
     urls:
     - https://github.com/truvami/helm/releases/download/truvami-monitoring-0.1.0/truvami-monitoring-0.1.0.tgz
     version: 0.1.0
+  truvami-rmx:
+  - apiVersion: v2
+    appVersion: v2.8.0-rc13
+    created: "2026-05-13T11:42:37.102140286Z"
+    description: Truvami RMX Dashboard Helm chart with Better Auth integration
+    digest: 35b8fe47cc2274d922cac9603fed9ff0975c86f4c5e40bab32ca153e7dc09077
+    icon: https://raw.githubusercontent.com/truvami/helm/main/assets/icon.svg
+    name: truvami-rmx
+    type: application
+    urls:
+    - https://github.com/truvami/helm/releases/download/truvami-rmx-1.0.12/truvami-rmx-1.0.12.tgz
+    version: 1.0.12
   truvami-seedbox:
   - apiVersion: v2
     appVersion: v0.1.0
@@ -10698,4 +10710,4 @@ entries:
     urls:
     - https://github.com/truvami/helm/releases/download/truvami-stream-0.1.0/truvami-stream-0.1.0.tgz
     version: 0.1.0
-generated: "2026-05-11T09:38:33.846271259Z"
+generated: "2026-05-13T11:42:37.102932319Z"
