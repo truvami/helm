@@ -6,8 +6,14 @@ set -e
 
 echo "🔍 Validating values.yaml files..."
 
-# Get changed values.yaml files
-changed_values=$(git diff --cached --name-only | grep "values\.yaml$")
+# pre-commit passes the matched files as arguments; fall back to staged
+# values.yaml when invoked directly (e.g. as a manual git hook with no args).
+# The `|| true` keeps `set -e` from aborting when grep finds no match.
+if [ "$#" -gt 0 ]; then
+    changed_values=$(printf '%s\n' "$@" | grep "values\.yaml$" || true)
+else
+    changed_values=$(git diff --cached --name-only | grep "values\.yaml$" || true)
+fi
 
 if [ -z "$changed_values" ]; then
     echo "✅ No values.yaml changes detected"
