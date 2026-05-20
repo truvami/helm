@@ -42,6 +42,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Update CHANGELOG.md [skip ci] by @michaelbeutler
 - Update CHANGELOG.md [skip ci] by @michaelbeutler
 - Update CHANGELOG.md [skip ci] by @michaelbeutler
+- Update CHANGELOG.md [skip ci] by @michaelbeutler
 
 ### Features
 - Added migrateTimeout to `api` by @niko-kriznik-globtim
@@ -81,6 +82,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add missing public url by @michaelbeutler
 - Correct tile-server image name and bump appVersion to v0.4.0 by @michaelbeutler
 - Add competition.enabled flag to tiler TOML config by @michaelbeutler
+- Honor pre-commit filenames in values-check & avoid set -e abort by @michaelbeutler
+- Honor pre-commit filenames in values-check & avoid set -e abort (#63) by @michaelbeutler in [#63](https://github.com/truvami/helm/pull/63)
 
 ### Refactors
 - Address review comments by @michaelbeutler
