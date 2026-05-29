@@ -44,6 +44,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Update CHANGELOG.md [skip ci] by @michaelbeutler
 - Update CHANGELOG.md [skip ci] by @michaelbeutler
 - Update CHANGELOG.md [skip ci] by @michaelbeutler
+- Update CHANGELOG.md [skip ci] by @michaelbeutler
 
 ### Features
 - Added migrateTimeout to `api` by @niko-kriznik-globtim
@@ -76,7 +77,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add Helm chart for truvami-rmx application by @michaelbeutler
 
 ### Fixes
-- Add configurable `thanos.sidecar.resources` to truvami-monitoring (bump to 0.3.2) so the Thanos sidecar gets explicit resource requests/limits, preventing OOMKills under restrictive namespace LimitRanges during block uploads by @michaelbeutler
 - Improve formatting of alert descriptions to show values with two decimal places by @michaelbeutler
 - Use new Traxmate counters by @niko-kriznik-globtim
 - Remove hardcoded dimensions for diagram generation by @michaelbeutler
@@ -86,6 +86,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add competition.enabled flag to tiler TOML config by @michaelbeutler
 - Honor pre-commit filenames in values-check & avoid set -e abort by @michaelbeutler
 - Honor pre-commit filenames in values-check & avoid set -e abort (#63) by @michaelbeutler in [#63](https://github.com/truvami/helm/pull/63)
+- Add configurable Thanos sidecar resources by @michaelbeutler
 
 ### Refactors
 - Address review comments by @michaelbeutler
