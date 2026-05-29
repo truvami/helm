@@ -93,6 +93,10 @@ spec:
     objectStorageConfig:
       name: {{ include "truvami-monitoring.thanos.objstoreSecretName" . }}
       key: {{ include "truvami-monitoring.thanos.objstoreSecretKey" . }}
+    {{- with .Values.thanos.sidecar.resources }}
+    resources:
+      {{- toYaml . | nindent 6 }}
+    {{- end }}
   {{- end }}
 
 ---

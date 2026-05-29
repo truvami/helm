@@ -63,6 +63,22 @@ thanos:
     #     insecure: false
     config: {}
 
+  # Thanos sidecar - runs alongside each Prometheus replica (injected by the
+  # Prometheus Operator via the Prometheus CR) and ships TSDB blocks to object
+  # storage. The Operator passes these resources straight to the sidecar
+  # container. Setting an explicit memory limit is important: without it the
+  # sidecar inherits the namespace LimitRange default, which can be far too low
+  # and cause OOMKills (exit 137) while uploading blocks. The defaults below are
+  # sized to survive block uploads on a large TSDB.
+  sidecar:
+    resources:
+      requests:
+        cpu: "100m"
+        memory: "256Mi"
+      limits:
+        cpu: "500m"
+        memory: "1Gi"
+
   # Thanos Querier - federates queries across the sidecars (recent data) and
   # the Store Gateway (historical data). Point Grafana at this service.
   querier:

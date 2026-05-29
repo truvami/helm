@@ -1,6 +1,6 @@
 # truvami-monitoring
 
-![Version: 0.3.1](https://img.shields.io/badge/Version-0.3.1-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)
+![Version: 0.3.2](https://img.shields.io/badge/Version-0.3.2-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)
 
 This chart contains all CRD's for the truvami-stack monitoring and alerting.
 
@@ -262,6 +262,10 @@ This chart contains all CRD's for the truvami-stack monitoring and alerting.
 | thanos.querier.service.grpcPort | int | `10901` |  |
 | thanos.querier.service.httpPort | int | `9090` |  |
 | thanos.querier.service.type | string | `"ClusterIP"` |  |
+| thanos.sidecar.resources.limits.cpu | string | `"500m"` |  |
+| thanos.sidecar.resources.limits.memory | string | `"1Gi"` |  |
+| thanos.sidecar.resources.requests.cpu | string | `"100m"` |  |
+| thanos.sidecar.resources.requests.memory | string | `"256Mi"` |  |
 | thanos.storeGateway.enabled | bool | `true` |  |
 | thanos.storeGateway.logLevel | string | `"info"` |  |
 | thanos.storeGateway.persistence.enabled | bool | `true` |  |

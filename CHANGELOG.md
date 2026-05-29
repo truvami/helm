@@ -76,6 +76,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add Helm chart for truvami-rmx application by @michaelbeutler
 
 ### Fixes
+- Add configurable `thanos.sidecar.resources` to truvami-monitoring (bump to 0.3.2) so the Thanos sidecar gets explicit resource requests/limits, preventing OOMKills under restrictive namespace LimitRanges during block uploads by @michaelbeutler
 - Improve formatting of alert descriptions to show values with two decimal places by @michaelbeutler
 - Use new Traxmate counters by @niko-kriznik-globtim
 - Remove hardcoded dimensions for diagram generation by @michaelbeutler
