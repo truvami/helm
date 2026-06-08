@@ -32,6 +32,28 @@ spec:
   config: {{ .Values.kafka.topic.config | toYaml | nindent 4 }}
 ---
 apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaTopic
+metadata:
+  name: "{{ .Values.kafka.topic.cat1 | default "gateway.cat1" }}"
+  labels:
+    strimzi.io/cluster: {{ .Values.gateway.cluster | default .Release.Name }}
+spec:
+  partitions: {{ .Values.kafka.topic.partitions | default 3 }}
+  replicas: {{ .Values.kafka.topic.replicas | default 3 }}
+  config: {{ .Values.kafka.topic.config | toYaml | nindent 4 }}
+---
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaTopic
+metadata:
+  name: "{{ .Values.kafka.topic.cat1Error | default "gateway.cat1.errors" }}"
+  labels:
+    strimzi.io/cluster: {{ .Values.gateway.cluster | default .Release.Name }}
+spec:
+  partitions: {{ .Values.kafka.topic.partitions | default 3 }}
+  replicas: {{ .Values.kafka.topic.replicas | default 3 }}
+  config: {{ .Values.kafka.topic.config | toYaml | nindent 4 }}
+---
+apiVersion: kafka.strimzi.io/v1beta2
 kind: KafkaUser
 metadata:
   name: "{{ .Values.gateway.topic }}-gateway-kafka"
@@ -64,6 +86,24 @@ spec:
       - resource:
           type: topic
           name: "{{ .Values.kafka.topic.unauthorized | default "gateway.unauthorized" }}"
+          patternType: literal
+        operations:
+          - Create
+          - Describe
+          - Write
+        host: "*"
+      - resource:
+          type: topic
+          name: "{{ .Values.kafka.topic.cat1 | default "gateway.cat1" }}"
+          patternType: literal
+        operations:
+          - Create
+          - Describe
+          - Write
+        host: "*"
+      - resource:
+          type: topic
+          name: "{{ .Values.kafka.topic.cat1Error | default "gateway.cat1.errors" }}"
           patternType: literal
         operations:
           - Create
