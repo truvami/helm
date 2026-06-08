@@ -15,6 +15,9 @@ siren:
 
   grpc:
     server: truvami-stack-truvami-api:5001
+    listen:
+      # Port for the Siren-owned AlertStateService gRPC server
+      port: 5002
 
   valkey:
     host: truvami-stack-valkey-primary:6379

@@ -1,6 +1,6 @@
 # truvami-siren
 
-![Version: 0.4.2](https://img.shields.io/badge/Version-0.4.2-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v1.1.0](https://img.shields.io/badge/AppVersion-v1.1.0-informational?style=flat-square)
+![Version: 0.5.0](https://img.shields.io/badge/Version-0.5.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v1.1.0](https://img.shields.io/badge/AppVersion-v1.1.0-informational?style=flat-square)
 
 A Helm chart for Kubernetes
 
@@ -59,6 +59,7 @@ A Helm chart for Kubernetes
 | siren.alerts.dispatcher.worker-pool.queue | int | `32` |  |
 | siren.alerts.dispatcher.worker-pool.size | int | `8` |  |
 | siren.cluster | string | `"truvami-stack"` |  |
+| siren.grpc.listen.port | int | `5002` |  |
 | siren.grpc.server | string | `"truvami-stack-truvami-api:5001"` |  |
 | siren.kafka."enable.ssl.certificate.verification" | bool | `false` |  |
 | siren.kafka.alerts.mode | string | `"default"` |  |
