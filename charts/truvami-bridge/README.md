@@ -1,6 +1,6 @@
 # truvami-bridge
 
-![Version: 0.1.41](https://img.shields.io/badge/Version-0.1.41-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v2.5.1](https://img.shields.io/badge/AppVersion-v2.5.1-informational?style=flat-square)
+![Version: 0.1.42](https://img.shields.io/badge/Version-0.1.42-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v2.5.1](https://img.shields.io/badge/AppVersion-v2.5.1-informational?style=flat-square)
 
 A Helm chart for Kubernetes
 
@@ -41,6 +41,8 @@ A Helm chart for Kubernetes
 | bridge.kafka.alerts.topics.sniffed-devices | string | `"alerts.sniffed-devices"` |  |
 | bridge.kafka.alerts.topics.uplinks | string | `"alerts.uplinks"` |  |
 | bridge.kafka.bootstrap.servers[0] | string | `"truvami-stack-kafka-bootstrap:9093"` |  |
+| bridge.kafka.cat1.errorTopic | string | `"gateway.cat1.errors"` |  |
+| bridge.kafka.cat1.topic | string | `"gateway.cat1.uplinks"` |  |
 | bridge.kafka.consumer.heartbeat.interval.ms | int | `3000` |  |
 | bridge.kafka.consumer.max.poll.interval.ms | int | `300000` |  |
 | bridge.kafka.consumer.session.timeout.ms | int | `45000` |  |
@@ -96,6 +98,8 @@ A Helm chart for Kubernetes
 | ingress.tls | list | `[]` |  |
 | initContainers | list | `[]` |  |
 | kafka.additionalAcls | list | `[]` |  |
+| kafka.topic.cat1 | string | `"gateway.cat1.uplinks"` |  |
+| kafka.topic.cat1Error | string | `"gateway.cat1.errors"` |  |
 | kafka.topic.config."retention.ms" | int | `2592000000` |  |
 | kafka.topic.config."segment.bytes" | int | `1073741824` |  |
 | kafka.topic.partitions | int | `12` |  |

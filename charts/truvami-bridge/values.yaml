@@ -75,6 +75,9 @@ bridge:
       flush-remaining-timeout: 1s
     unauthorized:
       topic: bridge.unauthorized
+    cat1:
+      topic: gateway.cat1.uplinks
+      errorTopic: gateway.cat1.errors
     integrations:
       cache:
         duration: 1m
@@ -138,6 +141,8 @@ kafka:
     partitions: 12
     replicas: 3
     unauthorized: bridge.unauthorized
+    cat1: gateway.cat1.uplinks
+    cat1Error: gateway.cat1.errors
     config:
       retention.ms: 2592000000
       segment.bytes: 1073741824

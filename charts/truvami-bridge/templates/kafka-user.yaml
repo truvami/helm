@@ -30,11 +30,28 @@ spec:
           type: topic
       - host: '*'
         operations:
+          - Read
+          - Describe
+        resource:
+          name: "{{ .Values.kafka.topic.cat1 | default "gateway.cat1.uplinks" }}"
+          patternType: literal
+          type: topic
+      - host: '*'
+        operations:
           - Create
           - Describe
           - Write
         resource:
           name: truvami-errors
+          patternType: literal
+          type: topic
+      - host: '*'
+        operations:
+          - Create
+          - Describe
+          - Write
+        resource:
+          name: "{{ .Values.kafka.topic.cat1Error | default "gateway.cat1.errors" }}"
           patternType: literal
           type: topic
       - host: '*'
