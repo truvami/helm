@@ -34,7 +34,7 @@ spec:
 apiVersion: kafka.strimzi.io/v1beta2
 kind: KafkaTopic
 metadata:
-  name: "{{ .Values.kafka.topic.cat1 | default "gateway.cat1" }}"
+  name: "{{ .Values.kafka.topic.cat1 | default "gateway.cat1.uplinks" }}"
   labels:
     strimzi.io/cluster: {{ .Values.gateway.cluster | default .Release.Name }}
 spec:
@@ -94,7 +94,7 @@ spec:
         host: "*"
       - resource:
           type: topic
-          name: "{{ .Values.kafka.topic.cat1 | default "gateway.cat1" }}"
+          name: "{{ .Values.kafka.topic.cat1 | default "gateway.cat1.uplinks" }}"
           patternType: literal
         operations:
           - Create

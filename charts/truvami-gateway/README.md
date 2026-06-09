@@ -1,6 +1,6 @@
 # truvami-gateway
 
-![Version: 0.0.39](https://img.shields.io/badge/Version-0.0.39-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v2.5.6-rc1](https://img.shields.io/badge/AppVersion-v2.5.6--rc1-informational?style=flat-square)
+![Version: 0.0.40](https://img.shields.io/badge/Version-0.0.40-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v2.5.6-rc1](https://img.shields.io/badge/AppVersion-v2.5.6--rc1-informational?style=flat-square)
 
 A Helm chart for Kubernetes
 
@@ -43,7 +43,7 @@ A Helm chart for Kubernetes
 | jwks.mountPath | string | `"/var/run/secrets/gateway"` |  |
 | jwks.secretKey | string | `"jwks.json"` |  |
 | jwks.secretName | string | `"locksmith-jwks-public"` |  |
-| kafka.topic.cat1 | string | `"gateway.cat1"` |  |
+| kafka.topic.cat1 | string | `"gateway.cat1.uplinks"` |  |
 | kafka.topic.cat1Error | string | `"gateway.cat1.errors"` |  |
 | kafka.topic.config."retention.ms" | int | `2592000000` |  |
 | kafka.topic.config."segment.bytes" | int | `1073741824` |  |

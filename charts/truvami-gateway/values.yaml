@@ -51,7 +51,7 @@ apiKeysLegacyLabels:
 kafka:
   topic:
     unauthorized: gateway.unauthorized
-    cat1: gateway.cat1
+    cat1: gateway.cat1.uplinks
     cat1Error: gateway.cat1.errors
     partitions: 3
     replicas: 3
