@@ -12,6 +12,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Enhance CI/CD workflows with new jobs (#49) by @michaelbeutler in [#49](https://github.com/truvami/helm/pull/49)
 - Fix Make targets by @michaelbeutler
 - Update go version by @michaelbeutler
+- Migrate GitHub Pages to Actions-based deployment by @michaelbeutler
+- Migrate GitHub Pages to Actions-based deployment (#64) by @michaelbeutler in [#64](https://github.com/truvami/helm/pull/64)
 
 ### Documentation
 - Ran `helm-docs` by @niko-kriznik-globtim
@@ -34,6 +36,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Update CHANGELOG.md [skip ci] by @michaelbeutler
 - Update CHANGELOG.md [skip ci] by @michaelbeutler
 - Generate README for truvami-coverage chart by @michaelbeutler
+- Update CHANGELOG.md [skip ci] by @michaelbeutler
 - Update CHANGELOG.md [skip ci] by @michaelbeutler
 - Update CHANGELOG.md [skip ci] by @michaelbeutler
 - Update CHANGELOG.md [skip ci] by @michaelbeutler
