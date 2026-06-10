@@ -1,6 +1,6 @@
 # truvami-siren
 
-![Version: 0.5.0](https://img.shields.io/badge/Version-0.5.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v1.1.0](https://img.shields.io/badge/AppVersion-v1.1.0-informational?style=flat-square)
+![Version: 0.6.0](https://img.shields.io/badge/Version-0.6.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v1.2.0](https://img.shields.io/badge/AppVersion-v1.2.0-informational?style=flat-square)
 
 A Helm chart for Kubernetes
 
@@ -13,6 +13,7 @@ A Helm chart for Kubernetes
 | autoscaling.maxReplicas | int | `100` |  |
 | autoscaling.minReplicas | int | `1` |  |
 | autoscaling.targetCPUUtilizationPercentage | int | `80` |  |
+| environment | string | `"production"` |  |
 | fullnameOverride | string | `""` |  |
 | image.pullPolicy | string | `"Always"` |  |
 | image.repository | string | `"ghcr.io/truvami/siren"` |  |
@@ -83,6 +84,8 @@ A Helm chart for Kubernetes
 | siren.kafka.retry-group.id | string | `"truvami-siren-retry"` |  |
 | siren.kafka.security.protocol | string | `"SSL"` |  |
 | siren.kafka.ssl.ca.location | string | `"/var/run/secrets/kafka/ca.crt"` |  |
+| siren.leader-election.lease-ttl | string | `"30s"` |  |
+| siren.leader-election.renew-interval | string | `"10s"` |  |
 | siren.metrics.port | int | `9090` |  |
 | siren.otel.endpoint | string | `"tempo.grafana-tempo.svc.cluster.local:4318"` |  |
 | siren.valkey.cache-ttl | string | `"15m"` |  |
@@ -105,8 +108,6 @@ A Helm chart for Kubernetes
 | volumes[0].configMap.defaultMode | int | `420` |  |
 | volumes[0].configMap.items[0].key | string | `"config.yaml"` |  |
 | volumes[0].configMap.items[0].path | string | `"config.yaml"` |  |
-| volumes[0].configMap.items[1].key | string | `"set-env.sh"` |  |
-| volumes[0].configMap.items[1].path | string | `"set-env.sh"` |  |
 | volumes[0].configMap.name | string | `"siren-config"` |  |
 | volumes[0].configMap.optional | bool | `false` |  |
 | volumes[0].name | string | `"config"` |  |

@@ -19,20 +19,3 @@ data:
     {{- $_ := set $siren.kafka.alerts "retry-topics" $retryTopics }}
     {{- $_ := set $siren.kafka.alerts "dlq-topics" $dlqTopics }}
     {{ $siren | toYaml | nindent 4 }}
-  set-env.sh: |
-    #!/usr/bin/env bash
-    set -euo pipefail
-
-    # Use POD_NAME if provided (Downward API), else fall back to HOSTNAME.
-    pod="${POD_NAME:-$HOSTNAME}"
-    ordinal="${pod##*-}"
-
-    if [[ "$ordinal" == "0" ]]; then
-      export ENABLE_DEVICE_INACTIVE_EVALUATION="true"
-      export ALERTS_MODE="{{ .Values.siren.kafka.alerts.mode | default "default" }}"
-    else
-      export ENABLE_DEVICE_INACTIVE_EVALUATION="false"
-      export ALERTS_MODE="default"
-    fi
-
-    exec "$@" --alerts-mode "$ALERTS_MODE"

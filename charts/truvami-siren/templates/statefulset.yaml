@@ -40,12 +40,10 @@ spec:
               {{- include "truvami-siren.selectorLabels" . | nindent 14 }}
       containers:
         - name: {{ .Chart.Name }}
-          # Run the wrapper script, forward args to the binary
-          command:
-            - /bin/bash
-            - /etc/truvami-siren/set-env.sh
+          # The runtime image is `scratch` (no shell), so run the binary directly
+          # via its entrypoint. Singleton background evaluations are coordinated at
+          # runtime via Valkey leader election — no per-pod shell wrapper needed.
           args:
-            - /usr/bin/truvami-siren
             - --config
             - /etc/truvami-siren/config.yaml
           securityContext:
@@ -60,7 +58,7 @@ spec:
               containerPort: {{ .Values.siren.grpc.listen.port }}
               protocol: TCP
             - name: metrics
-              containerPort: 9090
+              containerPort: {{ .Values.siren.metrics.port }}
               protocol: TCP
           livenessProbe:
             {{- toYaml .Values.livenessProbe | nindent 12 }}
@@ -72,7 +70,7 @@ spec:
             - name: KAFKA_GROUP_ID
               value: {{ .Release.Name }}
             - name: TRUVAMI_ENVIRONMENT
-              value: {{ .Values.enviroment | default "production" }}
+              value: {{ .Values.environment | default "production" }}
             - name: KAFKA_SSL_KEYSTORE_LOCATION
               value: /var/run/secrets/kafka/user.p12
             - name: KAFKA_SSL_KEYSTORE_PASSWORD
@@ -93,7 +91,7 @@ spec:
                   key: {{ .Values.valkey.secretKey }}
                   name: {{ .Values.valkey.secretName }}
                   optional: false
-            # Downward API: pod name for ordinal detection in set-env.sh
+            # Downward API: pod name used as the unique instance ID for Valkey leader election
             - name: POD_NAME
               valueFrom:
                 fieldRef:
