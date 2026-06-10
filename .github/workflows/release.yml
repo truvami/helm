@@ -104,3 +104,48 @@ jobs:
             echo "Pushing $pkg to oci://ghcr.io/truvami/helm"
             helm push "$pkg" oci://ghcr.io/truvami/helm
           done
+
+  # Publishes the Helm repo index (the gh-pages branch) to GitHub Pages using the
+  # GitHub Actions deployment pipeline. This replaces the legacy "deploy from a
+  # branch" build, whose auto-injected pages-build-deployment workflow started
+  # failing with "401 Requires authentication". The first run flips the Pages
+  # build type from "legacy" to "workflow" via configure-pages enablement.
+  deploy-pages:
+    needs: charts
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    # Avoid overlapping Pages deployments; let an in-progress one finish.
+    concurrency:
+      group: github-pages
+      cancel-in-progress: false
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Checkout gh-pages
+        uses: actions/checkout@v6
+        with:
+          ref: gh-pages
+          path: gh-pages
+
+      - name: Stage site content
+        run: |
+          mkdir -p _site
+          rsync -a --exclude='.git' gh-pages/ _site/
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+        with:
+          enablement: true
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
