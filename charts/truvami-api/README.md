@@ -1,6 +1,6 @@
 # truvami-api
 
-![Version: 0.0.33](https://img.shields.io/badge/Version-0.0.33-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v0.10.0](https://img.shields.io/badge/AppVersion-v0.10.0-informational?style=flat-square)
+![Version: 0.0.34](https://img.shields.io/badge/Version-0.0.34-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v0.10.0](https://img.shields.io/badge/AppVersion-v0.10.0-informational?style=flat-square)
 
 A Helm chart for Kubernetes
 
@@ -11,8 +11,12 @@ A Helm chart for Kubernetes
 | affinity | object | `{}` |  |
 | api.auth.issuer | string | `"https://sso.sbcdc.ch/auth/realms/truvami"` |  |
 | api.auth.jwksURL | string | `"https://sso.sbcdc.ch/auth/realms/truvami/protocol/openid-connect/certs"` |  |
+| api.database.connectionMaxIdle | int | `40` |  |
+| api.database.connectionMaxOpen | int | `40` |  |
 | api.database.initializationTimeout | string | `"15s"` |  |
 | api.database.migrateTimeout | string | `"1m"` |  |
+| api.database.statementCacheCapacity | int | `200` |  |
+| api.database.verifyPoolerConfig | bool | `true` |  |
 | api.grpc.host | string | `"0.0.0.0"` |  |
 | api.grpc.port | int | `5001` |  |
 | api.metrics.enabled | bool | `true` |  |
@@ -36,6 +40,7 @@ A Helm chart for Kubernetes
 | autoscaling.maxReplicas | int | `100` |  |
 | autoscaling.minReplicas | int | `1` |  |
 | autoscaling.targetCPUUtilizationPercentage | int | `80` |  |
+| database.directHost | string | `"truvami-stack-rw"` |  |
 | database.host | string | `"truvami-stack-pooler"` |  |
 | database.name | string | `"app"` |  |
 | database.port | int | `5432` |  |

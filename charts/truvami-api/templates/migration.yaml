@@ -46,6 +46,10 @@ spec:
                   key: username
             - name: DATABASE_URI
               value: "postgresql://$(DB_USER):$(DB_PASSWORD)@{{ .Values.database.host }}:{{ .Values.database.port }}/{{ .Values.database.name }}?sslmode=require"
+            # Migrations must bypass the transaction-mode pooler and hit the
+            # direct -rw service; the migrate command prefers directUri over uri.
+            - name: DATABASE_DIRECTURI
+              value: "postgresql://$(DB_USER):$(DB_PASSWORD)@{{ .Values.database.directHost | default .Values.database.host }}:{{ .Values.database.port }}/{{ .Values.database.name }}?sslmode=require"
             {{- else }}
             - name: DATABASE_URI
               valueFrom:

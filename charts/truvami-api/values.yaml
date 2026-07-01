@@ -35,6 +35,15 @@ api:
   database:
     initializationTimeout: 15s
     migrateTimeout: 1m
+    # Connection pool sizing for the transaction-mode PgBouncer pooler.
+    # Keep (replicaCount * connectionMaxOpen) below the pooler's max_client_conn.
+    connectionMaxOpen: 40
+    connectionMaxIdle: 40
+    # Server-side prepared statement cache; must stay <= the pooler's
+    # max_prepared_statements to remain safe under transaction pooling.
+    statementCacheCapacity: 200
+    # Best-effort, non-fatal startup check against the PgBouncer admin console.
+    verifyPoolerConfig: true
 
   # This should be set using environment variables
   # encryption:
@@ -55,6 +64,10 @@ api:
 database:
   # Use pooler for connection by default
   host: "truvami-stack-pooler"
+  # Direct read-write service (bypasses the pooler), used by the migrate job.
+  # DDL such as `ALTER TYPE ... ADD VALUE` and goose NO TRANSACTION migrations
+  # are unsafe through a transaction-mode pooler. Falls back to `host` if unset.
+  directHost: "truvami-stack-rw"
   port: 5432
   name: "app"
   # Fallback to secret-based configuration for backwards compatibility
