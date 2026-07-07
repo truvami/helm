@@ -16,7 +16,7 @@ dependencies:
     repository: "file://../truvami-gateway"
     condition: truvami-gateway.enabled
   - name: truvami-bridge
-    version: 0.1.42
+    version: 0.1.43
     repository: "file://../truvami-bridge"
     condition: truvami-bridge.enabled
   - name: truvami-api
