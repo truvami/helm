@@ -345,6 +345,17 @@ entries:
   truvami-bridge:
   - apiVersion: v2
     appVersion: v2.5.1
+    created: "2026-07-07T21:54:18.957763984Z"
+    description: A Helm chart for Kubernetes
+    digest: cebbd17f533b8704446c8444eb14404f3266914c98ee88cce05ab57044eee2ba
+    icon: https://raw.githubusercontent.com/truvami/helm/main/assets/icon.svg
+    name: truvami-bridge
+    type: application
+    urls:
+    - https://github.com/truvami/helm/releases/download/truvami-bridge-0.1.43/truvami-bridge-0.1.43.tgz
+    version: 0.1.43
+  - apiVersion: v2
+    appVersion: v2.5.1
     created: "2026-06-09T09:21:03.110580687Z"
     description: A Helm chart for Kubernetes
     digest: a33f88ff517a06f0f106e1e5f411901d5e2c40e62570f4d29897e41a3644f81a
@@ -11222,4 +11233,4 @@ entries:
     urls:
     - https://github.com/truvami/helm/releases/download/truvami-stream-0.1.0/truvami-stream-0.1.0.tgz
     version: 0.1.0
-generated: "2026-07-01T10:18:42.829016661Z"
+generated: "2026-07-07T21:54:19.151290629Z"
