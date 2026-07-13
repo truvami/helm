@@ -9,7 +9,7 @@ A Helm chart for Kubernetes
 | Repository | Name | Version |
 |------------|------|---------|
 | file://../truvami-api | truvami-api | 0.0.34 |
-| file://../truvami-bridge | truvami-bridge | 0.1.42 |
+| file://../truvami-bridge | truvami-bridge | 0.1.43 |
 | file://../truvami-dashboard | truvami-dashboard | 1.0.12 |
 | file://../truvami-decoder | truvami-decoder | 0.0.22 |
 | file://../truvami-docs | truvami-docs | 0.2.0 |
