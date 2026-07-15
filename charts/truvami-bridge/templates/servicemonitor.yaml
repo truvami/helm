@@ -7,6 +7,12 @@ metadata:
     {{- include "truvami-bridge.labels" . | nindent 4 }}
 spec:
   jobLabel: k8s-apps
+  {{- with .Values.serviceMonitor.sampleLimit }}
+  # Fails the whole scrape when a target exposes more samples than this after
+  # metricRelabelings are applied - a label explosion then breaks one scrape
+  # target instead of the entire monitoring stack.
+  sampleLimit: {{ int64 . }}
+  {{- end }}
   selector:
     matchLabels:
     {{- include "truvami-bridge.selectorLabels" . | nindent 6 }}
@@ -17,4 +23,8 @@ spec:
   - port: metrics
     interval: 15s
     path: /metrics
+    {{- with .Values.serviceMonitor.metricRelabelings }}
+    metricRelabelings:
+      {{- toYaml . | nindent 6 }}
+    {{- end }}
 {{- end -}}

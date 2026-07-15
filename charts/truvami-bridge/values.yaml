@@ -192,6 +192,20 @@ serviceAccount:
 
 serviceMonitor:
   enabled: false
+  # Fail the scrape if a target still exposes more than this many samples
+  # after metricRelabelings - guards Prometheus against label explosions.
+  # Set to 0 to disable.
+  sampleLimit: 150000
+  # Scrape-time series drops (Prometheus relabel_config format).
+  # bridge <= v2.9.x labels truvami_kafka_messages_consumed_count with the
+  # full Kafka message coordinate ("truvami-uplinks[0]@2986753") instead of
+  # the topic name - one new series per consumed message (~567k series, 83%
+  # of the prod TSDB). Drop those series at scrape time until the exporter
+  # labels only the plain topic name.
+  metricRelabelings:
+    - action: drop
+      sourceLabels: [topic]
+      regex: '.*\[\d+\]@\d+'
 
 podAnnotations: {}
 podLabels: {}

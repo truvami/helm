@@ -55,6 +55,9 @@ spec:
       kubernetes.io/metadata.name : {{ .Release.Namespace }}
   logFormat: "json"
   retention: {{ .Values.prometheus.retention | default "10d" }}
+  {{- with .Values.prometheus.retentionSize }}
+  retentionSize: {{ . | quote }}
+  {{- end }}
   resources: {{ toYaml .Values.prometheus.resources | nindent 4 }}
   securityContext:
     fsGroup: 0
@@ -95,6 +98,10 @@ spec:
       key: {{ include "truvami-monitoring.thanos.objstoreSecretKey" . }}
     {{- with .Values.thanos.sidecar.resources }}
     resources:
+      {{- toYaml . | nindent 6 }}
+    {{- end }}
+    {{- with .Values.thanos.sidecar.additionalArgs }}
+    additionalArgs:
       {{- toYaml . | nindent 6 }}
     {{- end }}
   {{- end }}

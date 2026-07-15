@@ -1,0 +1,111 @@
+{{- if and .Values.thanos.enabled .Values.thanos.serviceMonitor.enabled }}
+{{- $interval := .Values.thanos.serviceMonitor.interval }}
+{{- if .Values.thanos.querier.enabled }}
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: {{ include "truvami-monitoring.thanos.querier.name" . }}
+  namespace: {{ .Release.Namespace | quote }}
+  labels: {{- include "truvami-monitoring.labels" . | nindent 4 }}
+    app.kubernetes.io/component: thanos-querier
+spec:
+  selector:
+    matchLabels: {{- include "truvami-monitoring.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: thanos-querier
+  namespaceSelector:
+    matchNames:
+      - {{ .Release.Namespace }}
+  endpoints:
+    - port: http
+      path: /metrics
+      interval: {{ $interval }}
+{{- end }}
+{{- if .Values.thanos.storeGateway.enabled }}
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: {{ include "truvami-monitoring.thanos.storeGateway.name" . }}
+  namespace: {{ .Release.Namespace | quote }}
+  labels: {{- include "truvami-monitoring.labels" . | nindent 4 }}
+    app.kubernetes.io/component: thanos-store-gateway
+spec:
+  selector:
+    matchLabels: {{- include "truvami-monitoring.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: thanos-store-gateway
+  namespaceSelector:
+    matchNames:
+      - {{ .Release.Namespace }}
+  endpoints:
+    - port: http
+      path: /metrics
+      interval: {{ $interval }}
+{{- end }}
+{{- if .Values.thanos.compactor.enabled }}
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: {{ include "truvami-monitoring.thanos.compactor.name" . }}
+  namespace: {{ .Release.Namespace | quote }}
+  labels: {{- include "truvami-monitoring.labels" . | nindent 4 }}
+    app.kubernetes.io/component: thanos-compactor
+spec:
+  selector:
+    matchLabels: {{- include "truvami-monitoring.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: thanos-compactor
+  namespaceSelector:
+    matchNames:
+      - {{ .Release.Namespace }}
+  endpoints:
+    - port: http
+      path: /metrics
+      interval: {{ $interval }}
+{{- end }}
+---
+# The Thanos sidecar runs inside the operator-managed Prometheus pods and has
+# no Service of its own, so it is scraped via a PodMonitor. Port "http"
+# (10902) is the sidecar's metrics port; the Prometheus container's own port
+# is named "web".
+apiVersion: monitoring.coreos.com/v1
+kind: PodMonitor
+metadata:
+  name: {{ include "truvami-monitoring.fullname" . }}-thanos-sidecar
+  namespace: {{ .Release.Namespace | quote }}
+  labels: {{- include "truvami-monitoring.labels" . | nindent 4 }}
+    app.kubernetes.io/component: thanos-sidecar
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: prometheus
+      operator.prometheus.io/name: {{ include "truvami-monitoring.fullname" . }}
+  namespaceSelector:
+    matchNames:
+      - {{ .Release.Namespace }}
+  podMetricsEndpoints:
+    - port: http
+      path: /metrics
+      interval: {{ $interval }}
+{{- if .Values.thanos.serviceMonitor.scrapePrometheus }}
+---
+apiVersion: monitoring.coreos.com/v1
+kind: PodMonitor
+metadata:
+  name: {{ include "truvami-monitoring.fullname" . }}-prometheus
+  namespace: {{ .Release.Namespace | quote }}
+  labels: {{- include "truvami-monitoring.labels" . | nindent 4 }}
+    app.kubernetes.io/component: prometheus
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: prometheus
+      operator.prometheus.io/name: {{ include "truvami-monitoring.fullname" . }}
+  namespaceSelector:
+    matchNames:
+      - {{ .Release.Namespace }}
+  podMetricsEndpoints:
+    - port: web
+      path: /metrics
+      interval: {{ $interval }}
+{{- end }}
+{{- end }}

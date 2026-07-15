@@ -1,6 +1,6 @@
 # truvami-monitoring
 
-![Version: 0.3.2](https://img.shields.io/badge/Version-0.3.2-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)
+![Version: 0.4.0](https://img.shields.io/badge/Version-0.4.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)
 
 This chart contains all CRD's for the truvami-stack monitoring and alerting.
 
@@ -196,6 +196,8 @@ This chart contains all CRD's for the truvami-stack monitoring and alerting.
 | alerts.serviceHealth.enabled | bool | `true` |  |
 | alerts.signalQuality.enabled | bool | `false` |  |
 | alerts.siren.enabled | bool | `true` |  |
+| alerts.thanos.enabled | bool | `true` |  |
+| alerts.thanos.headSeriesThreshold | int | `500000` |  |
 | dashboards.annotations.k8s-sidecar-target-directory | string | `"/tmp/dashboards"` |  |
 | dashboards.enabled | bool | `true` |  |
 | dashboards.general | object | `{}` |  |
@@ -227,12 +229,16 @@ This chart contains all CRD's for the truvami-stack monitoring and alerting.
 | prometheus.resources.requests.cpu | string | `"100m"` |  |
 | prometheus.resources.requests.memory | string | `"256Mi"` |  |
 | prometheus.retention | string | `"10d"` |  |
+| prometheus.retentionSize | string | `""` |  |
 | prometheus.storageSize | string | `"10Gi"` |  |
 | prometheusRule.annotations | object | `{}` |  |
 | prometheusRule.enabled | bool | `true` |  |
 | prometheusRule.interval | string | `"30s"` |  |
 | prometheusRule.labels | object | `{}` |  |
+| thanos.compactor.deduplicationFunc | string | `"penalty"` |  |
+| thanos.compactor.deduplicationReplicaLabel | string | `""` | query.replica-label, which is non-destructive. Only enable this (with deduplicationFunc=penalty, required for HA Prometheus scrapers - the naive default corrupts independently-scraped counter streams) after backing up the bucket. Halves bucket storage for 2 replicas. |
 | thanos.compactor.enabled | bool | `true` |  |
+| thanos.compactor.extraArgs | list | `[]` |  |
 | thanos.compactor.logLevel | string | `"info"` |  |
 | thanos.compactor.persistence.enabled | bool | `true` |  |
 | thanos.compactor.persistence.size | string | `"10Gi"` |  |
@@ -251,22 +257,35 @@ This chart contains all CRD's for the truvami-stack monitoring and alerting.
 | thanos.objectStorage.config | object | `{}` |  |
 | thanos.objectStorage.existingSecret.key | string | `"objstore.yml"` |  |
 | thanos.objectStorage.existingSecret.name | string | `""` |  |
+| thanos.querier.autoDownsampling | bool | `true` |  |
 | thanos.querier.enabled | bool | `true` |  |
+| thanos.querier.extraArgs | list | `[]` |  |
 | thanos.querier.logLevel | string | `"info"` |  |
+| thanos.querier.maxConcurrent | int | `8` |  |
+| thanos.querier.queryTimeout | string | `"2m"` |  |
 | thanos.querier.replicaLabel | string | `"prometheus_replica"` |  |
 | thanos.querier.replicas | int | `2` |  |
-| thanos.querier.resources.limits.cpu | string | `"500m"` |  |
-| thanos.querier.resources.limits.memory | string | `"1Gi"` |  |
+| thanos.querier.resources.limits.cpu | string | `"1"` |  |
+| thanos.querier.resources.limits.memory | string | `"2Gi"` |  |
 | thanos.querier.resources.requests.cpu | string | `"100m"` |  |
-| thanos.querier.resources.requests.memory | string | `"256Mi"` |  |
+| thanos.querier.resources.requests.memory | string | `"512Mi"` |  |
 | thanos.querier.service.grpcPort | int | `10901` |  |
 | thanos.querier.service.httpPort | int | `9090` |  |
 | thanos.querier.service.type | string | `"ClusterIP"` |  |
-| thanos.sidecar.resources.limits.cpu | string | `"500m"` |  |
-| thanos.sidecar.resources.limits.memory | string | `"1Gi"` |  |
+| thanos.querier.storeResponseTimeout | string | `"1m"` |  |
+| thanos.serviceMonitor.enabled | bool | `true` |  |
+| thanos.serviceMonitor.interval | string | `"30s"` |  |
+| thanos.serviceMonitor.scrapePrometheus | bool | `true` |  |
+| thanos.sidecar.additionalArgs | list | `[]` |  |
+| thanos.sidecar.resources.limits.cpu | string | `"1"` |  |
+| thanos.sidecar.resources.limits.memory | string | `"2Gi"` |  |
 | thanos.sidecar.resources.requests.cpu | string | `"100m"` |  |
-| thanos.sidecar.resources.requests.memory | string | `"256Mi"` |  |
+| thanos.sidecar.resources.requests.memory | string | `"512Mi"` |  |
 | thanos.storeGateway.enabled | bool | `true` |  |
+| thanos.storeGateway.extraArgs | list | `[]` |  |
+| thanos.storeGateway.indexHeaderLazyReader | bool | `true` |  |
+| thanos.storeGateway.limits.requestSamples | string | `"200000000"` |  |
+| thanos.storeGateway.limits.requestSeries | string | `"200000"` |  |
 | thanos.storeGateway.logLevel | string | `"info"` |  |
 | thanos.storeGateway.persistence.enabled | bool | `true` |  |
 | thanos.storeGateway.persistence.size | string | `"10Gi"` |  |

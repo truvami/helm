@@ -12,6 +12,10 @@ prometheus:
   enableRemoteWriteReceiver: false
   storageSize: "10Gi"
   retention: "10d"
+  # Optional size-based retention guard (e.g. "450GB"). Prometheus deletes the
+  # oldest blocks once the TSDB exceeds this size, protecting the PV from
+  # filling up regardless of time-based retention. Empty string disables it.
+  retentionSize: ""
   resources:
     requests:
       cpu: "100m"
@@ -74,10 +78,17 @@ thanos:
     resources:
       requests:
         cpu: "100m"
-        memory: "256Mi"
+        memory: "512Mi"
       limits:
-        cpu: "500m"
-        memory: "1Gi"
+        cpu: "1"
+        memory: "2Gi"
+    # Extra CLI args passed to the sidecar via the Prometheus CR
+    # (spec.thanos.additionalArgs). Example — reject oversized Series calls
+    # instead of buffering them into an OOMKill:
+    #   additionalArgs:
+    #     - name: store.limits.request-series
+    #       value: "200000"
+    additionalArgs: []
 
   # Thanos Querier - federates queries across the sidecars (recent data) and
   # the Store Gateway (historical data). Point Grafana at this service.
@@ -88,13 +99,26 @@ thanos:
     # Deduplicate samples across HA Prometheus replicas using this label.
     # Prometheus Operator sets `prometheus_replica` on each replica.
     replicaLabel: prometheus_replica
+    # Per-query guardrails. Without these a single heavy dashboard query
+    # buffers unbounded data from every store and OOMKills the querier.
+    # Abort any single query after this long.
+    queryTimeout: 2m
+    # Maximum number of queries evaluated concurrently.
+    maxConcurrent: 8
+    # Give up on a store (sidecar / store gateway) that stops responding.
+    storeResponseTimeout: 1m
+    # Serve long-range queries from downsampled blocks when available instead
+    # of streaming raw resolution data.
+    autoDownsampling: true
+    # Additional raw CLI args, e.g. "--query.partial-response".
+    extraArgs: []
     resources:
       requests:
         cpu: "100m"
-        memory: "256Mi"
+        memory: "512Mi"
       limits:
-        cpu: "500m"
-        memory: "1Gi"
+        cpu: "1"
+        memory: "2Gi"
     service:
       type: ClusterIP
       httpPort: 9090
@@ -105,6 +129,18 @@ thanos:
     enabled: true
     replicas: 1
     logLevel: info
+    # Build block index-headers lazily on first use instead of all at startup.
+    # With a large bucket, eager loading can take minutes and get the pod
+    # killed by its liveness probe before it ever becomes ready.
+    indexHeaderLazyReader: true
+    # Reject gRPC Series calls that would touch more than this many series /
+    # samples instead of buffering them into an OOMKill. Values are strings so
+    # Helm renders them verbatim; set to "" to disable a limit.
+    limits:
+      requestSeries: "200000"
+      requestSamples: "200000000"
+    # Additional raw CLI args.
+    extraArgs: []
     resources:
       requests:
         cpu: "100m"
@@ -126,6 +162,21 @@ thanos:
     retentionResolutionRaw: "30d"
     retentionResolution5m: "180d"
     retentionResolution1h: "1y"
+    # OFFLINE deduplication of HA Prometheus replica blocks. WARNING: setting
+    # a replica label implicitly enables Thanos' experimental vertical
+    # compaction, which IRREVERSIBLY merges replica blocks in the bucket.
+    # Off by default; the querier already deduplicates at query time via
+    # --query.replica-label, which is non-destructive. Only enable this
+    # (with deduplicationFunc=penalty, required for HA Prometheus scrapers -
+    # the naive default corrupts independently-scraped counter streams) after
+    # backing up the bucket. Halves bucket storage for 2 replicas.
+    deduplicationReplicaLabel: ""
+    # Dedup algorithm used when deduplicationReplicaLabel is set. "penalty" is
+    # the only correct choice for HA Prometheus replicas; the naive default
+    # ("") is only safe for Thanos Receive replication with identical samples.
+    deduplicationFunc: penalty
+    # Additional raw CLI args.
+    extraArgs: []
     resources:
       requests:
         cpu: "100m"
@@ -137,6 +188,16 @@ thanos:
       enabled: true
       size: "10Gi"
       storageClassName: ""
+
+  # Scrape the Thanos components (querier, store gateway, compactor, sidecar)
+  # and Prometheus itself. Without this, failures like a halted compactor or
+  # failing sidecar uploads are invisible to alerting.
+  serviceMonitor:
+    enabled: true
+    interval: 30s
+    # Also scrape the Prometheus replicas via the prometheus-operated service.
+    # Disable if another ServiceMonitor already covers them.
+    scrapePrometheus: true
 
 # Prometheus Rule configuration
 prometheusRule:
@@ -285,6 +346,15 @@ alerts:
   integration:
     enabled: true
     # Add integration alerts configuration here
+
+  # Thanos / monitoring-stack self-health. Requires thanos.serviceMonitor to
+  # be enabled so the metrics these alerts use are actually scraped. Rendered
+  # whenever thanos.enabled is set, independent of prometheusRule.enabled, so
+  # the release that owns Thanos also owns its alerts.
+  thanos:
+    enabled: true
+    # prometheus_tsdb_head_series above this fires a cardinality warning.
+    headSeriesThreshold: 500000
 
 # Global alert defaults that can be overridden per alert
 alertDefaults:

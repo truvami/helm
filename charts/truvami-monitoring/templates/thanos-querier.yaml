@@ -35,9 +35,18 @@ spec:
             - --http-address=0.0.0.0:{{ .Values.thanos.querier.service.httpPort }}
             - --grpc-address=0.0.0.0:{{ .Values.thanos.querier.service.grpcPort }}
             - --query.replica-label={{ .Values.thanos.querier.replicaLabel }}
+            - --query.timeout={{ .Values.thanos.querier.queryTimeout }}
+            - --query.max-concurrent={{ .Values.thanos.querier.maxConcurrent }}
+            - --store.response-timeout={{ .Values.thanos.querier.storeResponseTimeout }}
+            {{- if .Values.thanos.querier.autoDownsampling }}
+            - --query.auto-downsampling
+            {{- end }}
             - --endpoint=dnssrv+_grpc._tcp.prometheus-operated.{{ .Release.Namespace }}.svc.cluster.local
             {{- if .Values.thanos.storeGateway.enabled }}
             - --endpoint=dnssrv+_grpc._tcp.{{ $storeGateway }}.{{ .Release.Namespace }}.svc.cluster.local
+            {{- end }}
+            {{- range .Values.thanos.querier.extraArgs }}
+            - {{ . }}
             {{- end }}
           ports:
             - name: http
@@ -52,12 +61,16 @@ spec:
               port: http
             initialDelaySeconds: 10
             periodSeconds: 30
+            # The kubelet default of 1s gets pods killed during GC pauses
+            # under memory pressure.
+            timeoutSeconds: 5
           readinessProbe:
             httpGet:
               path: /-/ready
               port: http
             initialDelaySeconds: 5
             periodSeconds: 10
+            timeoutSeconds: 5
           resources: {{- toYaml .Values.thanos.querier.resources | nindent 12 }}
           securityContext:
             allowPrivilegeEscalation: false

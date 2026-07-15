@@ -63,6 +63,13 @@ spec:
             {{- with .Values.thanos.compactor.retentionResolution1h }}
             - --retention.resolution-1h={{ . }}
             {{- end }}
+            {{- with .Values.thanos.compactor.deduplicationReplicaLabel }}
+            - --deduplication.replica-label={{ . }}
+            - --deduplication.func={{ $.Values.thanos.compactor.deduplicationFunc | default "penalty" }}
+            {{- end }}
+            {{- range .Values.thanos.compactor.extraArgs }}
+            - {{ . }}
+            {{- end }}
           ports:
             - name: http
               containerPort: 10902
@@ -73,12 +80,14 @@ spec:
               port: http
             initialDelaySeconds: 30
             periodSeconds: 30
+            timeoutSeconds: 5
           readinessProbe:
             httpGet:
               path: /-/ready
               port: http
             initialDelaySeconds: 10
             periodSeconds: 10
+            timeoutSeconds: 5
           resources: {{- toYaml .Values.thanos.compactor.resources | nindent 12 }}
           securityContext:
             allowPrivilegeEscalation: false

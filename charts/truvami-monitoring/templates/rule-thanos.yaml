@@ -1,0 +1,192 @@
+{{- /*
+Thanos / monitoring-stack self-health alerts.
+
+Deliberately gated on thanos.enabled + alerts.thanos.enabled instead of
+prometheusRule.enabled: the release that owns the Thanos components must also
+own their alerts, even in environments that source the general alert rules
+from another release. A 46-day silent compactor halt and a 34-day upload
+outage went unnoticed because none of these signals were scraped or alerted.
+*/}}
+{{- if and .Values.thanos.enabled .Values.alerts.thanos.enabled }}
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: {{ include "truvami-monitoring.fullname" . }}-thanos
+  namespace: {{ .Release.Namespace | quote }}
+  labels:
+    {{- include "truvami-monitoring.labels" . | nindent 4 }}
+    {{- with .Values.prometheusRule.labels }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+  {{- with .Values.prometheusRule.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  groups:
+  - name: truvami-thanos
+    interval: {{ .Values.prometheusRule.interval | default "30s" }}
+    rules:
+    {{- if .Values.thanos.compactor.enabled }}
+    # Compactor halt - Thanos halts compaction permanently on a critical
+    # error and keeps running as if healthy. While halted, no compaction,
+    # downsampling, deduplication, or bucket retention runs and the bucket
+    # grows without bound.
+    - alert: TruvamiThanosCompactorHalted
+      expr: max(thanos_compact_halted) == 1
+      for: 15m
+      labels:
+        namespace: {{ .Release.Namespace }}
+        severity: critical
+        service: thanos
+        component: compactor
+        {{- with .Values.alertLabels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+      annotations:
+        summary: "Thanos compactor is halted"
+        description: |
+          The Thanos compactor hit a critical error and has permanently halted.
+
+          While halted:
+          - No compaction or downsampling runs
+          - Bucket retention is NOT applied - object storage grows unbounded
+          - HA replica deduplication stops
+
+          Restart the compactor pod and check its first-iteration logs for the
+          halt error (often an overlapping or corrupted block that must be
+          marked with a no-compact marker).
+
+    # Compactor metrics disappeared entirely (pod gone or scrape broken).
+    - alert: TruvamiThanosCompactorAbsent
+      expr: absent(thanos_compact_halted)
+      for: 30m
+      labels:
+        namespace: {{ .Release.Namespace }}
+        severity: warning
+        service: thanos
+        component: compactor
+        {{- with .Values.alertLabels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+      annotations:
+        summary: "Thanos compactor metrics are absent"
+        description: |
+          No thanos_compact_halted series is being scraped. Either the
+          compactor is down or its ServiceMonitor/scrape is broken. Without
+          these metrics a compactor halt is invisible.
+    {{- end }}
+
+    # Object storage uploads failing (sidecar block shipping or compactor).
+    - alert: TruvamiThanosObjstoreUploadFailing
+      expr: increase(thanos_objstore_bucket_operation_failures_total{operation="upload"}[15m]) > 0
+      for: 30m
+      labels:
+        namespace: {{ .Release.Namespace }}
+        severity: critical
+        service: thanos
+        component: objstore
+        {{- with .Values.alertLabels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+      annotations:
+        summary: "Thanos object storage uploads are failing on {{ "{{" }} $labels.pod }}"
+        description: |
+          Uploads to the Thanos object storage bucket have been failing for
+          30+ minutes ({{ "{{" }} $value }} failures in the last 15m window).
+
+          If block shipping stays broken longer than the local Prometheus
+          retention window, that data is permanently lost. Check sidecar or
+          compactor logs for the objstore error (quota exceeded, credentials,
+          backend down) and fix the bucket backend first.
+
+    # Sidecar has not shipped a block for 3h+ (blocks are cut every 2h).
+    # Scoped to the sidecar job: compactor/store gateway expose the same
+    # gauge but upload irregularly. max_over_time survives the gauge being
+    # absent until the first upload after a pod restart.
+    - alert: TruvamiThanosSidecarNoRecentUpload
+      expr: time() - max by (pod) (max_over_time(thanos_objstore_bucket_last_successful_upload_time{job=~".*thanos-sidecar.*"}[24h])) > 3 * 60 * 60
+      for: 30m
+      labels:
+        namespace: {{ .Release.Namespace }}
+        severity: critical
+        service: thanos
+        component: sidecar
+        {{- with .Values.alertLabels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+      annotations:
+        summary: "Thanos sidecar {{ "{{" }} $labels.pod }} has not uploaded a block in over 3 hours"
+        description: |
+          TSDB blocks are cut every 2 hours, so a healthy sidecar should
+          upload at least every ~2h. No successful upload for 3h+ means block
+          shipping is stuck; data older than the local Prometheus retention
+          will be lost permanently.
+
+    {{- if .Values.thanos.storeGateway.enabled }}
+    # Store gateway repeatedly failing to load blocks from the bucket.
+    - alert: TruvamiThanosStoreGatewayBlockLoadFailures
+      expr: increase(thanos_bucket_store_block_load_failures_total[15m]) > 0
+      for: 30m
+      labels:
+        namespace: {{ .Release.Namespace }}
+        severity: warning
+        service: thanos
+        component: store-gateway
+        {{- with .Values.alertLabels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+      annotations:
+        summary: "Thanos store gateway is failing to load blocks"
+        description: |
+          The store gateway has been failing to load blocks from object
+          storage for 30+ minutes. Historical queries may return incomplete
+          data. Check for corrupted/partial blocks in the bucket (e.g. from
+          interrupted uploads) and object storage read errors.
+    {{- end }}
+
+    # Thanos component down (scraped target not reachable).
+    - alert: TruvamiThanosComponentDown
+      expr: up{job=~".*thanos.*"} == 0
+      for: 15m
+      labels:
+        namespace: {{ .Release.Namespace }}
+        severity: warning
+        service: thanos
+        component: availability
+        {{- with .Values.alertLabels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+      annotations:
+        summary: "Thanos target {{ "{{" }} $labels.job }} ({{ "{{" }} $labels.pod }}) is down"
+        description: |
+          A Thanos scrape target has been unreachable for 15+ minutes. If this
+          is the querier, Grafana dashboards backed by it will fail; if it is
+          a sidecar, its Prometheus replica's data is invisible to Thanos and
+          block shipping may be stopped.
+
+    # TSDB cardinality guard - catches label explosions before they take the
+    # whole monitoring stack down.
+    - alert: TruvamiPrometheusHighSeriesCardinality
+      expr: max by (pod) (prometheus_tsdb_head_series) > {{ int64 .Values.alerts.thanos.headSeriesThreshold }}
+      for: 30m
+      labels:
+        namespace: {{ .Release.Namespace }}
+        severity: warning
+        service: prometheus
+        component: tsdb
+        {{- with .Values.alertLabels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+      annotations:
+        summary: "Prometheus {{ "{{" }} $labels.pod }} holds {{ "{{" }} $value }} head series"
+        description: |
+          The TSDB head exceeds {{ int64 .Values.alerts.thanos.headSeriesThreshold }} series - usually an unbounded
+          label (per-message IDs, UUIDs, offsets) on some exporter.
+
+          Find the offender via the TSDB status API:
+            /api/v1/status/tsdb -> seriesCountByMetricName / labelValueCountByLabelName
+
+          High cardinality inflates memory on Prometheus, the Thanos sidecar,
+          querier, and store gateway, and grows every uploaded block.
+{{- end }}

@@ -1,6 +1,6 @@
 # truvami-bridge
 
-![Version: 0.1.43](https://img.shields.io/badge/Version-0.1.43-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v2.5.1](https://img.shields.io/badge/AppVersion-v2.5.1-informational?style=flat-square)
+![Version: 0.1.44](https://img.shields.io/badge/Version-0.1.44-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v2.5.1](https://img.shields.io/badge/AppVersion-v2.5.1-informational?style=flat-square)
 
 A Helm chart for Kubernetes
 
@@ -132,6 +132,10 @@ A Helm chart for Kubernetes
 | serviceAccount.create | bool | `false` |  |
 | serviceAccount.name | string | `""` |  |
 | serviceMonitor.enabled | bool | `false` |  |
+| serviceMonitor.metricRelabelings[0].action | string | `"drop"` |  |
+| serviceMonitor.metricRelabelings[0].regex | string | `".*\\[\\d+\\]@\\d+"` |  |
+| serviceMonitor.metricRelabelings[0].sourceLabels[0] | string | `"topic"` |  |
+| serviceMonitor.sampleLimit | int | `150000` |  |
 | tolerations | list | `[]` |  |
 | valkey.secretKey | string | `"valkey-password"` |  |
 | valkey.secretName | string | `"truvami-stack-valkey"` |  |
