@@ -57,6 +57,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Update CHANGELOG.md [skip ci] by @michaelbeutler
 - Update CHANGELOG.md [skip ci] by @michaelbeutler
 - Update CHANGELOG.md [skip ci] by @michaelbeutler
+- Update CHANGELOG.md [skip ci] by @michaelbeutler
 
 ### Features
 - Added migrateTimeout to `api` by @niko-kriznik-globtim
@@ -101,6 +102,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Honor pre-commit filenames in values-check & avoid set -e abort by @michaelbeutler
 - Honor pre-commit filenames in values-check & avoid set -e abort (#63) by @michaelbeutler in [#63](https://github.com/truvami/helm/pull/63)
 - Add configurable Thanos sidecar resources by @michaelbeutler
+- Harden Thanos monitoring stack after 2026-07 prod outage by @michaelbeutler
 
 ### Refactors
 - Address review comments by @michaelbeutler
