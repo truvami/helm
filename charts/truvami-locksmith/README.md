@@ -1,6 +1,6 @@
 # truvami-locksmith
 
-![Version: 0.0.1](https://img.shields.io/badge/Version-0.0.1-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v0.1.0](https://img.shields.io/badge/AppVersion-v0.1.0-informational?style=flat-square)
+![Version: 0.0.2](https://img.shields.io/badge/Version-0.0.2-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v0.1.0](https://img.shields.io/badge/AppVersion-v0.1.0-informational?style=flat-square)
 
 A Helm chart for truvami locksmith - API key management service
 
@@ -18,6 +18,8 @@ A Helm chart for truvami locksmith - API key management service
 | database.port | int | `5432` |  |
 | database.secretKey | string | `"uri"` |  |
 | database.secretName | string | `"truvami-stack-app"` |  |
+| downlinkCredentialKeys.key | string | `"keyring.json"` |  |
+| downlinkCredentialKeys.secretName | string | `"locksmith-downlink-credentials"` |  |
 | fullnameOverride | string | `""` |  |
 | image.pullPolicy | string | `"Always"` |  |
 | image.repository | string | `"ghcr.io/truvami/locksmith"` |  |
@@ -36,6 +38,8 @@ A Helm chart for truvami locksmith - API key management service
 | locksmith.database.connectionMaxLifetime | string | `"30m"` |  |
 | locksmith.database.initializationTimeout | string | `"15s"` |  |
 | locksmith.database.migrateTimeout | string | `"1m"` |  |
+| locksmith.downlinkCredentials.keyring.activeKeyId | string | `"v1"` |  |
+| locksmith.downlinkCredentials.keyring.location | string | `"/var/run/secrets/locksmith/downlink/keyring.json"` |  |
 | locksmith.grpc.host | string | `"0.0.0.0"` |  |
 | locksmith.grpc.port | int | `5005` |  |
 | locksmith.health.checkInterval | string | `"10s"` |  |
@@ -66,6 +70,7 @@ A Helm chart for truvami locksmith - API key management service
 | migration.securityContext.runAsUser | int | `65534` |  |
 | nameOverride | string | `""` |  |
 | networkPolicy.enabled | bool | `false` |  |
+| networkPolicy.ingressFrom | list | `[]` |  |
 | nodeSelector | object | `{}` |  |
 | pdb.enabled | bool | `false` |  |
 | pdb.minAvailable | int | `1` |  |

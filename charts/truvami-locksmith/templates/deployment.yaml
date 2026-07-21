@@ -76,6 +76,9 @@ spec:
             - mountPath: /var/run/secrets/locksmith/private
               name: signing-private
               readOnly: true
+            - mountPath: /var/run/secrets/locksmith/downlink
+              name: downlink-credentials
+              readOnly: true
             {{- with .Values.volumeMounts }}
             {{- toYaml . | nindent 12 }}
             {{- end }}
@@ -96,6 +99,12 @@ spec:
             items:
               - key: {{ .Values.signingKeys.private.key }}
                 path: private.json
+        - name: downlink-credentials
+          secret:
+            secretName: {{ .Values.downlinkCredentialKeys.secretName }}
+            items:
+              - key: {{ .Values.downlinkCredentialKeys.key }}
+                path: keyring.json
         {{- with .Values.volumes }}
         {{- toYaml . | nindent 8 }}
         {{- end }}

@@ -44,6 +44,6 @@ dependencies:
     repository: "file://../truvami-docs"
     condition: truvami-docs.enabled
   - name: truvami-locksmith
-    version: 0.0.1
+    version: 0.0.2
     repository: "file://../truvami-locksmith"
     condition: truvami-locksmith.enabled

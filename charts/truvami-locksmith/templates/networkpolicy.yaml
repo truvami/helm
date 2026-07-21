@@ -13,7 +13,9 @@ spec:
     - Ingress
     - Egress
   ingress:
-    - from: []
+    {{- if .Values.networkPolicy.ingressFrom }}
+    - from:
+        {{- toYaml .Values.networkPolicy.ingressFrom | nindent 8 }}
       ports:
         - protocol: TCP
           port: {{ .Values.locksmith.grpc.port }}
@@ -21,6 +23,9 @@ spec:
         - protocol: TCP
           port: {{ .Values.locksmith.metrics.port }}
         {{- end }}
+    {{- else }}
+    []
+    {{- end }}
   egress:
     # Allow DNS resolution
     - to: []
