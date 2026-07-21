@@ -43,7 +43,9 @@ locksmith:
       activeKeyId: "v1"
     thingpark:
       # Exact HTTPS LRC hosts accepted for encrypted credential records.
-      allowedHosts: []
+      allowedHosts:
+        - gateway.truvami.com
+        - portal.lpn.swisscom.ch
 
   logging:
     level: info
