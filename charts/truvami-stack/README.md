@@ -14,7 +14,7 @@ A Helm chart for Kubernetes
 | file://../truvami-decoder | truvami-decoder | 0.0.22 |
 | file://../truvami-docs | truvami-docs | 0.2.0 |
 | file://../truvami-gateway | truvami-gateway | 0.0.40 |
-| file://../truvami-locksmith | truvami-locksmith | 0.0.1 |
+| file://../truvami-locksmith | truvami-locksmith | 0.0.2 |
 | file://../truvami-monitoring | truvami-monitoring | 0.4.0 |
 | file://../truvami-siren | truvami-siren | 0.6.1 |
 
