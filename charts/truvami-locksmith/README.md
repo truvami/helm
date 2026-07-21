@@ -40,6 +40,7 @@ A Helm chart for truvami locksmith - API key management service
 | locksmith.database.migrateTimeout | string | `"1m"` |  |
 | locksmith.downlinkCredentials.keyring.activeKeyId | string | `"v1"` |  |
 | locksmith.downlinkCredentials.keyring.location | string | `"/var/run/secrets/locksmith/downlink/keyring.json"` |  |
+| locksmith.downlinkCredentials.thingpark.allowedHosts | list | `[]` |  |
 | locksmith.grpc.host | string | `"0.0.0.0"` |  |
 | locksmith.grpc.port | int | `5005` |  |
 | locksmith.health.checkInterval | string | `"10s"` |  |
