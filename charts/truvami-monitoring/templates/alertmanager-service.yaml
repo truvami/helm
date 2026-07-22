@@ -1,0 +1,39 @@
+{{- if .Values.alertmanager.enabled }}
+{{/*
+Service fronting this release's Alertmanager pods.
+
+The Prometheus CR's spec.alerting.alertmanagers[] entry addresses Alertmanager
+by *Service* name - prometheus-operator resolves that Service's Endpoints to
+build the alerting targets. Without this object the reference dangles and
+Prometheus reports zero activeAlertmanagers, so every firing alert is silently
+dropped. The operator's own `alertmanager-operated` Service is not a substitute:
+it selects `app.kubernetes.io/name: alertmanager` across the whole namespace, so
+where several Alertmanager CRs coexist it would fan alerts out to all of them.
+
+The `alertmanager` label is set by prometheus-operator on the pods it creates
+for an Alertmanager CR, and carries that CR's name - so this selector matches
+only the Alertmanager owned by this release.
+*/}}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "truvami-monitoring.fullname" . }}
+  namespace: {{ .Release.Namespace | quote }}
+  labels:
+    {{- include "truvami-monitoring.labels" . | nindent 4 }}
+    app.kubernetes.io/component: alertmanager
+spec:
+  type: ClusterIP
+  # Alertmanager gossips over the mesh ports; peers must be discoverable before
+  # they are Ready, and Prometheus should keep addressing a peer that is still
+  # settling rather than lose its only alerting target during a rollout.
+  publishNotReadyAddresses: true
+  selector:
+    alertmanager: {{ include "truvami-monitoring.fullname" . }}
+    app.kubernetes.io/name: alertmanager
+  ports:
+    - name: {{ .Values.alertmanager.portName | default "web" }}
+      port: 9093
+      targetPort: {{ .Values.alertmanager.portName | default "web" }}
+      protocol: TCP
+{{- end }}

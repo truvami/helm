@@ -373,7 +373,40 @@ watchdog:
 
 # AlertManager configuration
 alertmanager:
-  enabled: true
+  # Alerting is handled by Grafana-managed alert rules, not by Alertmanager, so
+  # this defaults to off.
+  #
+  # When false, no Alertmanager CR, AlertmanagerConfig, Alertmanager secrets or
+  # Alertmanager Service are rendered, AND the Prometheus CR omits its
+  # spec.alerting block - so Prometheus is not left pointed at a Service that
+  # was never created.
+  #
+  # Prior to chart 0.5.0 the Alertmanager CR ignored this flag and was always
+  # created, so environments that set `enabled: false` still ran Alertmanager
+  # pods. Upgrading to >=0.5.0 removes them; see CHANGELOG.md.
+  enabled: false
+
+  # Everything below applies only when `enabled: true`.
+
+  # Number of Alertmanager replicas. Keep >1 so a single node event cannot take
+  # the alerting path down.
+  replicas: 2
+
+  # Name of the Alertmanager container port, and the port name referenced by
+  # both the Service and the Prometheus spec.alerting entry. Changing this
+  # keeps all three in sync.
+  portName: web
+
+  # How long Alertmanager retains resolved alert state.
+  retention: 120h
+
+  # Labels an AlertmanagerConfig in this namespace must carry to be merged into
+  # this Alertmanager, via spec.alertmanagerConfigSelector. The chart's own
+  # config is attached separately as the top-level configuration and does not
+  # need this label. Set to {} to select every AlertmanagerConfig in the
+  # namespace, which is rarely what you want.
+  configSelectorLabels:
+    truvami.com/alertmanager-config: "true"
 
   # Resource configuration for Alertmanager
   resources:
