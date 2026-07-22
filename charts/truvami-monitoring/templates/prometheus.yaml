@@ -139,8 +139,21 @@ spec:
   # Additionally select any AlertmanagerConfig in this namespace that opts in,
   # so teams can attach extra routes/receivers without editing this chart.
   # Previously unset, which meant zero AlertmanagerConfigs were ever selected.
+  #
+  # An explicitly configured empty map is a meaningful value here -
+  # matchLabels: {} selects *every* AlertmanagerConfig in the namespace - so it
+  # must be distinguishable from "not configured".
+  #
+  # `default` cannot do that (it treats {} as empty), and neither can `hasKey`:
+  # the key is always present because values.yaml declares it. So the declared
+  # default is null, and only null means "not configured" - Helm lets a user
+  # map replace a null base wholesale, whereas a non-empty default map would be
+  # merged with the user's value and could never be reduced back to empty.
+  {{- $configSelector := .Values.alertmanager.configSelectorLabels }}
+  {{- if kindIs "invalid" $configSelector }}
+  {{- $configSelector = dict "truvami.com/alertmanager-config" "true" }}
+  {{- end }}
   alertmanagerConfigSelector:
-    matchLabels:
-      {{- toYaml (.Values.alertmanager.configSelectorLabels | default (dict "truvami.com/alertmanager-config" "true")) | nindent 6 }}
+    matchLabels: {{- toYaml $configSelector | nindent 6 }}
   resources: {{ toYaml .Values.alertmanager.resources | default "{}" | nindent 4 }}
 {{- end }}

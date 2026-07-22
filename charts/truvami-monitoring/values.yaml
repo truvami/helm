@@ -383,7 +383,13 @@ alertmanager:
   #
   # Prior to chart 0.5.0 the Alertmanager CR ignored this flag and was always
   # created, so environments that set `enabled: false` still ran Alertmanager
-  # pods. Upgrading to >=0.5.0 removes them; see CHANGELOG.md.
+  # pods.
+  #
+  # From 0.5.0 the chart stops *rendering* those objects - it does not delete
+  # what is already deployed. Where ArgoCD pruning is disabled (it is on both
+  # the dev and prod truvami-monitoring apps), the existing Alertmanager CR and
+  # the pods it owns survive the upgrade and must be removed by hand:
+  #   kubectl -n <namespace> delete alertmanager <release-name>
   enabled: false
 
   # Everything below applies only when `enabled: true`.
@@ -403,10 +409,16 @@ alertmanager:
   # Labels an AlertmanagerConfig in this namespace must carry to be merged into
   # this Alertmanager, via spec.alertmanagerConfigSelector. The chart's own
   # config is attached separately as the top-level configuration and does not
-  # need this label. Set to {} to select every AlertmanagerConfig in the
-  # namespace, which is rarely what you want.
+  # need this label.
+  #
+  # Left null, the chart selects on `truvami.com/alertmanager-config: "true"`.
+  # Set a map to select on your own labels, or `{}` to select EVERY
+  # AlertmanagerConfig in the namespace (rarely what you want).
+  #
+  # The default is expressed in the template rather than here on purpose: Helm
+  # merges map values, so a non-empty default here could be added to but never
+  # reduced back to `{}`.
   configSelectorLabels:
-    truvami.com/alertmanager-config: "true"
 
   # Resource configuration for Alertmanager
   resources:

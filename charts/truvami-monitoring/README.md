@@ -17,7 +17,7 @@ This chart contains all CRD's for the truvami-stack monitoring and alerting.
 | alertLabels.altravis_test | string | `"true"` |  |
 | alertLabels.code | string | `"SBCC"` |  |
 | alertLabels.customer | string | `"truvami"` |  |
-| alertmanager.configSelectorLabels."truvami.com/alertmanager-config" | string | `"true"` |  |
+| alertmanager.configSelectorLabels | string | `nil` |  |
 | alertmanager.enabled | bool | `false` |  |
 | alertmanager.global.http_config.enable_http2 | bool | `true` |  |
 | alertmanager.global.http_config.follow_redirects | bool | `true` |  |
