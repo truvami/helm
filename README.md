@@ -11,6 +11,7 @@ charts/
 ├── truvami-dashboard/    # Web dashboard
 ├── truvami-decoder/      # Data decoder service
 ├── truvami-gateway/      # Gateway service
+├── truvami-pulse/        # Configuration campaign execution service
 ├── truvami-siren/        # Alert service
 ├── truvami-monitoring/   # Monitoring stack (Prometheus, Grafana, AlertManager)
 └── truvami-stack/        # Umbrella chart for complete deployment
@@ -86,6 +87,7 @@ Each chart includes detailed documentation generated from `values.yaml`. See ind
 - [truvami-dashboard](./charts/truvami-dashboard/README.md)
 - [truvami-decoder](./charts/truvami-decoder/README.md)
 - [truvami-gateway](./charts/truvami-gateway/README.md)
+- [truvami-pulse](./charts/truvami-pulse/README.md)
 - [truvami-siren](./charts/truvami-siren/README.md)
 - [truvami-monitoring](./charts/truvami-monitoring/README.md)
 - [truvami-stack](./charts/truvami-stack/README.md)

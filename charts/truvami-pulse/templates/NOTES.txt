@@ -1,0 +1,39 @@
+truvami-pulse has been deployed.
+
+gRPC endpoint: {{ include "truvami-pulse.fullname" . }}:{{ include "truvami-pulse.grpcPort" . }}
+Metrics/health: {{ include "truvami-pulse.fullname" . }}:{{ .Values.pulse.metrics.port }} (/healthz, /readyz, /metrics)
+
+{{ if include "truvami-pulse.downlinkEnabled" . -}}
+Downlink sender: ThingPark via locksmith {{ .Values.pulse.grpc.locksmith.address }}{{ if .Values.pulse.grpc.locksmith.insecure }} (plaintext){{ end }}
+  DownlinkService.SendDownlink is registered.
+  Allowed LRC hosts: {{ join ", " (index .Values.pulse.downlink "thingpark" "allowed-hosts") }}
+  Credentials are resolved per send by gateway API-key JTI, so revocations and
+  rotations take effect immediately. Locksmith's encrypted downlink credential
+  RPCs and key ring must be deployed, and each relevant gateway API key must
+  link matching ThingPark credentials.
+{{- else -}}
+Downlink sender: DISABLED (pulse.grpc.locksmith.address is empty)
+  DownlinkService is not registered and pulse.worker.enabled cannot be used.
+{{- end }}
+
+{{ if .Values.pulse.worker.enabled -}}
+Campaign worker: ENABLED (api {{ .Values.pulse.grpc.api.address }}{{ if .Values.pulse.grpc.api.insecure }}, plaintext{{ end }})
+
+  WARNING: pulse limits ThingPark downlinks per process while ThingPark
+  aggregates by source IP. Coordinate {{ index .Values.pulse.downlink "rate-limit" "requests-per-second" }} req/s
+  with every other ThingPark caller sharing this egress IP. The direct
+  DownlinkService and the campaign worker share one process-local limiter.
+
+  Active campaign UUIDs are held in memory. The API/orchestrator must replay
+  StartCampaign after a pulse restart.
+{{- else -}}
+Campaign worker: disabled (service-only deployment).
+
+  Before setting pulse.worker.enabled=true, confirm the deployment constraints
+  in https://github.com/truvami/pulse#deployment-constraints — in particular
+  that the API execution-store RPCs are reachable and that claimed jobs carry
+  gateway JTI, port, payload, confirmed and deadline fields.
+{{- end }}
+
+/healthz and /readyz report process health only. They do not verify the API
+execution store, worker state, locksmith, or LNS connectivity.
