@@ -41,11 +41,6 @@ locksmith:
     keyring:
       location: "/var/run/secrets/locksmith/downlink/keyring.json"
       activeKeyId: "v1"
-    thingpark:
-      # Exact HTTPS LRC hosts accepted for encrypted credential records.
-      allowedHosts:
-        - gateway.truvami.com
-        - portal.lpn.swisscom.ch
 
   logging:
     level: info
