@@ -1,4 +1,14 @@
 {{- if .Values.pdb.enabled }}
+{{- $minAvailable := .Values.pdb.minAvailable }}
+{{- $maxUnavailable := .Values.pdb.maxUnavailable }}
+{{- $hasMin := not (kindIs "invalid" $minAvailable) }}
+{{- $hasMax := not (kindIs "invalid" $maxUnavailable) }}
+{{- if and $hasMin $hasMax }}
+{{- fail "pdb.minAvailable and pdb.maxUnavailable are mutually exclusive; set one and null out the other" }}
+{{- end }}
+{{- if not (or $hasMin $hasMax) }}
+{{- fail "pdb.enabled=true requires either pdb.minAvailable or pdb.maxUnavailable" }}
+{{- end }}
 apiVersion: policy/v1
 kind: PodDisruptionBudget
 metadata:
@@ -6,11 +16,11 @@ metadata:
   labels:
     {{- include "truvami-pulse.labels" . | nindent 4 }}
 spec:
-  {{- if .Values.pdb.minAvailable }}
-  minAvailable: {{ .Values.pdb.minAvailable }}
+  {{- if $hasMin }}
+  minAvailable: {{ $minAvailable }}
   {{- end }}
-  {{- if .Values.pdb.maxUnavailable }}
-  maxUnavailable: {{ .Values.pdb.maxUnavailable }}
+  {{- if $hasMax }}
+  maxUnavailable: {{ $maxUnavailable }}
   {{- end }}
   selector:
     matchLabels:

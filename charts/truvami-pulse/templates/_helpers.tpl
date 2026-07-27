@@ -62,15 +62,22 @@ Create the name of the service account to use
 {{- end }}
 
 {{/*
+Extract the port from a host:port address. Takes a dict of "key" (for the error
+message) and "address".
+*/}}
+{{- define "truvami-pulse.portFromAddress" -}}
+{{- $port := splitList ":" .address | last -}}
+{{- if not (regexMatch "^[0-9]+$" $port) -}}
+{{- fail (printf "%s %q must end in a numeric port" .key .address) -}}
+{{- end -}}
+{{- $port -}}
+{{- end }}
+
+{{/*
 gRPC container port, derived from pulse.grpc.listen.address (e.g. ":5002").
 */}}
 {{- define "truvami-pulse.grpcPort" -}}
-{{- $address := default ":5002" .Values.pulse.grpc.listen.address -}}
-{{- $port := splitList ":" $address | last -}}
-{{- if not (regexMatch "^[0-9]+$" $port) -}}
-{{- fail (printf "pulse.grpc.listen.address %q must end in a numeric port" $address) -}}
-{{- end -}}
-{{- $port -}}
+{{- include "truvami-pulse.portFromAddress" (dict "key" "pulse.grpc.listen.address" "address" (default ":5002" .Values.pulse.grpc.listen.address)) -}}
 {{- end }}
 
 {{/*
@@ -104,11 +111,15 @@ downlink rate and splits campaign state across pods.
 {{- if not (trim (default "" .Values.pulse.grpc.api.address)) }}
 {{- fail "pulse.worker.enabled=true requires pulse.grpc.api.address to be set" }}
 {{- end }}
-{{- if gt (int .Values.replicaCount) 1 }}
+{{- if ne (int .Values.replicaCount) 1 }}
 {{- fail "pulse.worker.enabled=true requires replicaCount=1; pulse cannot coordinate campaign state or downlink rate limits across replicas" }}
 {{- end }}
 {{- if .Values.autoscaling.enabled }}
 {{- fail "pulse.worker.enabled=true is incompatible with autoscaling.enabled=true; pulse cannot coordinate campaign state or downlink rate limits across replicas" }}
+{{- end }}
+{{- $strategyType := (.Values.updateStrategy | default dict).type }}
+{{- if and $strategyType (ne $strategyType "Recreate") }}
+{{- fail (printf "pulse.worker.enabled=true forces the Recreate update strategy, but updateStrategy.type is %q; a rolling update would briefly run two campaign workers" $strategyType) }}
 {{- end }}
 {{- end }}
 {{- end }}

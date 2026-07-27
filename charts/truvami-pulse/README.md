@@ -28,7 +28,9 @@ A Helm chart for truvami pulse - configuration campaign execution service
 | livenessProbe.httpGet.path | string | `"/healthz"` |  |
 | livenessProbe.httpGet.port | string | `"metrics"` |  |
 | nameOverride | string | `""` |  |
+| networkPolicy.apiPeers | list | `[{"podSelector":{"matchLabels":{"app.kubernetes.io/name":"truvami-api"}}}]` | Egress peers allowed on the truvami-api gRPC port. Defaults to pods labelled app.kubernetes.io/name=truvami-api in this namespace. Set to [] to allow any destination, or add a namespaceSelector for a split install. |
 | networkPolicy.enabled | bool | `false` |  |
+| networkPolicy.locksmithPeers | list | `[{"podSelector":{"matchLabels":{"app.kubernetes.io/name":"truvami-locksmith"}}}]` | Egress peers allowed on the truvami-locksmith gRPC port. Defaults to pods labelled app.kubernetes.io/name=truvami-locksmith in this namespace. |
 | nodeSelector | object | `{}` |  |
 | pdb.enabled | bool | `false` |  |
 | pdb.minAvailable | int | `1` |  |

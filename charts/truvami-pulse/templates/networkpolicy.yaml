@@ -37,16 +37,24 @@ spec:
       ports:
         - protocol: TCP
           port: 80
+    {{- $apiAddress := trim (default "" .Values.pulse.grpc.api.address) }}
+    {{- if $apiAddress }}
     # Allow the truvami-api execution-store gRPC endpoint
-    - to: []
+    - to:
+        {{- toYaml (.Values.networkPolicy.apiPeers | default list) | nindent 8 }}
       ports:
         - protocol: TCP
-          port: 5001
+          port: {{ include "truvami-pulse.portFromAddress" (dict "key" "pulse.grpc.api.address" "address" $apiAddress) }}
+    {{- end }}
+    {{- $locksmithAddress := trim (default "" .Values.pulse.grpc.locksmith.address) }}
+    {{- if $locksmithAddress }}
     # Allow the truvami-locksmith credential-resolution gRPC endpoint
-    - to: []
+    - to:
+        {{- toYaml (.Values.networkPolicy.locksmithPeers | default list) | nindent 8 }}
       ports:
         - protocol: TCP
-          port: 5005
+          port: {{ include "truvami-pulse.portFromAddress" (dict "key" "pulse.grpc.locksmith.address" "address" $locksmithAddress) }}
+    {{- end }}
     # Allow OTLP HTTP trace export
     - to: []
       ports:

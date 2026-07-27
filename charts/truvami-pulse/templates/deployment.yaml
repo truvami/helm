@@ -12,11 +12,11 @@ spec:
   replicas: {{ .Values.replicaCount }}
   {{- end }}
   strategy:
-    {{- if .Values.updateStrategy }}
-    {{- toYaml .Values.updateStrategy | nindent 4 }}
-    {{- else if .Values.pulse.worker.enabled }}
+    {{- if .Values.pulse.worker.enabled }}
     # Never overlap two campaign workers during a rollout.
     type: Recreate
+    {{- else if .Values.updateStrategy }}
+    {{- toYaml .Values.updateStrategy | nindent 4 }}
     {{- else }}
     type: RollingUpdate
     {{- end }}
