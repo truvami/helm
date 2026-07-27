@@ -3089,6 +3089,19 @@ entries:
     urls:
     - https://github.com/truvami/helm/releases/download/truvami-monitoring-0.1.0/truvami-monitoring-0.1.0.tgz
     version: 0.1.0
+  truvami-pulse:
+  - apiVersion: v2
+    appVersion: v0.1.0
+    created: "2026-07-27T09:05:36.764595287Z"
+    description: A Helm chart for truvami pulse - configuration campaign execution
+      service
+    digest: 991833794debb0cb70107b5f8250ebaed4ea2c30e49da79d7dab2fb509f24ded
+    icon: https://raw.githubusercontent.com/truvami/helm/main/assets/icon.svg
+    name: truvami-pulse
+    type: application
+    urls:
+    - https://github.com/truvami/helm/releases/download/truvami-pulse-0.0.1/truvami-pulse-0.0.1.tgz
+    version: 0.0.1
   truvami-rmx:
   - apiVersion: v2
     appVersion: v2.8.0-rc13
@@ -11300,4 +11313,4 @@ entries:
     urls:
     - https://github.com/truvami/helm/releases/download/truvami-stream-0.1.0/truvami-stream-0.1.0.tgz
     version: 0.1.0
-generated: "2026-07-15T08:33:11.097193762Z"
+generated: "2026-07-27T09:05:36.766048468Z"
