@@ -1,0 +1,102 @@
+{{- include "truvami-pulse.validateWorker" . -}}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "truvami-pulse.fullname" . }}
+  annotations:
+    argocd.argoproj.io/sync-wave: "0"
+  labels:
+    {{- include "truvami-pulse.labels" . | nindent 4 }}
+spec:
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.replicaCount }}
+  {{- end }}
+  strategy:
+    {{- if .Values.pulse.worker.enabled }}
+    # Never overlap two campaign workers during a rollout.
+    type: Recreate
+    {{- else if .Values.updateStrategy }}
+    {{- toYaml .Values.updateStrategy | nindent 4 }}
+    {{- else }}
+    type: RollingUpdate
+    {{- end }}
+  selector:
+    matchLabels:
+      {{- include "truvami-pulse.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
+        {{- with .Values.podAnnotations }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+      labels:
+        {{- include "truvami-pulse.labels" . | nindent 8 }}
+        {{- with .Values.podLabels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "truvami-pulse.serviceAccountName" . }}
+      terminationGracePeriodSeconds: {{ .Values.terminationGracePeriodSeconds }}
+      {{- $defaultPodSecCtx := dict "runAsNonRoot" true }}
+      {{- $podSecCtx := mustMergeOverwrite $defaultPodSecCtx (.Values.podSecurityContext | default dict) }}
+      securityContext:
+        {{- toYaml $podSecCtx | nindent 8 }}
+      containers:
+        - name: {{ .Chart.Name }}
+          command:
+            - /usr/bin/truvami-pulse
+          args:
+            - '--config'
+            - /etc/truvami-pulse/pulse.yaml
+          {{- $defaultSecCtx := dict "allowPrivilegeEscalation" false "readOnlyRootFilesystem" true "runAsNonRoot" true "runAsUser" 65534 "runAsGroup" 65534 "capabilities" (dict "drop" (list "ALL")) "seccompProfile" (dict "type" "RuntimeDefault") }}
+          {{- $secCtx := mustMergeOverwrite $defaultSecCtx (.Values.securityContext | default dict) }}
+          securityContext:
+            {{- toYaml $secCtx | nindent 12 }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: grpc
+              containerPort: {{ include "truvami-pulse.grpcPort" . }}
+              protocol: TCP
+            - name: metrics
+              containerPort: {{ .Values.pulse.metrics.port }}
+              protocol: TCP
+          livenessProbe:
+            {{- toYaml .Values.livenessProbe | nindent 12 }}
+          readinessProbe:
+            {{- toYaml .Values.readinessProbe | nindent 12 }}
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          volumeMounts:
+            - mountPath: /etc/truvami-pulse
+              name: config
+              readOnly: true
+            {{- with .Values.volumeMounts }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
+      volumes:
+        - name: config
+          configMap:
+            defaultMode: 420
+            name: {{ include "truvami-pulse.fullname" . }}-config
+            optional: false
+        {{- with .Values.volumes }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

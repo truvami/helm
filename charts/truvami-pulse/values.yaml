@@ -1,0 +1,196 @@
+# Application configuration
+# This section is serialized to /etc/truvami-pulse/pulse.yaml
+pulse:
+  metrics:
+    # -- Port serving /healthz, /readyz and /metrics
+    port: 7777
+
+  grpc:
+    listen:
+      # -- Listen address of the pulse gRPC server (health, reflection,
+      # DownlinkService, CampaignExecutionControlService)
+      address: ":5002"
+    api:
+      # -- truvami-api address exposing the configuration campaign
+      # execution-store RPCs. Required when pulse.worker.enabled is true.
+      address: truvami-stack-truvami-api:5001
+      # -- Use plaintext transport towards the API. TLS with server
+      # authentication is used when false.
+      insecure: false
+    locksmith:
+      # -- truvami-locksmith address used to resolve ThingPark downlink
+      # credentials by gateway API-key JTI. Leaving this empty disables the
+      # downlink sender entirely (DownlinkService is not registered and
+      # pulse.worker.enabled fails to start).
+      address: truvami-stack-truvami-locksmith:5005
+      # -- Use plaintext transport towards locksmith. Only set true inside a
+      # trusted service mesh with the restrictive locksmith NetworkPolicy on.
+      insecure: false
+      # -- Timeout bounding a single credential-resolution RPC
+      request-timeout: 5s
+
+  otel:
+    # -- Enable OpenTelemetry trace export
+    enable: true
+    # -- OTLP HTTP endpoint for trace export
+    endpoint: "tempo.grafana-tempo.svc.cluster.local:4318"
+
+  # Campaign execution worker. Keep disabled for a service-only deployment; see
+  # the deployment constraints in the pulse README before enabling. When
+  # enabled, exactly one replica may run (see the guardrails in _helpers.tpl).
+  worker:
+    # -- Enable campaign job polling and execution
+    enabled: false
+    # -- Interval between claim attempts
+    poll-interval: 5s
+    # -- Number of jobs claimed per poll
+    batch-size: 10
+    # -- Job lease duration in seconds
+    lease-seconds: 60
+    # -- Maximum number of jobs executed concurrently
+    max-concurrency: 4
+    # -- Interval between lease heartbeats
+    heartbeat-interval: 15s
+    # -- Timeout for a single claim RPC
+    claim-timeout: 10s
+
+  downlink:
+    # -- Timeout bounding a single AS-to-LRC ThingPark request
+    http-timeout: 30s
+    thingpark:
+      # -- Exact external LRC hosts pulse may reach. Must be non-empty whenever
+      # pulse.grpc.locksmith.address is set; hosts must resolve to public
+      # addresses, and redirects off this list are rejected.
+      allowed-hosts:
+        - proxy1.lpn.swisscom.ch
+    # Pulse limits are process-local; ThingPark aggregates callers by source IP.
+    # Coordinate these values with any other ThingPark caller sharing the egress IP.
+    rate-limit:
+      # -- Sustained downlink request rate
+      requests-per-second: 15
+      # -- Downlink request burst allowance
+      burst: 60
+      # -- Minimum interval between downlinks to the same device (0s disables)
+      per-device-min-interval: 0s
+
+  logging:
+    # -- Log level (debug, info, warn, error)
+    level: info
+    # -- Log encoding (json, console)
+    encoding: json
+    # -- Timestamp encoding (rfc3339, iso8601, epoch)
+    time-encoder: iso8601
+
+# -- Number of replicas. Must be 1 while pulse.worker.enabled is true.
+replicaCount: 1
+
+image:
+  # -- Image repository
+  repository: ghcr.io/truvami/pulse
+  # -- Image pull policy
+  pullPolicy: Always
+  # -- Overrides the image tag whose default is the chart appVersion.
+  tag: ""
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  create: false
+  automount: true
+  annotations: {}
+  name: ""
+
+podAnnotations: {}
+podLabels: {}
+
+podSecurityContext: {}
+
+securityContext:
+  allowPrivilegeEscalation: false
+  capabilities:
+    drop:
+      - ALL
+  readOnlyRootFilesystem: true
+  runAsNonRoot: true
+  runAsUser: 65534
+  runAsGroup: 65534
+  seccompProfile:
+    type: RuntimeDefault
+
+# -- Deployment update strategy. Defaults to Recreate when pulse.worker.enabled
+# is true so that a rollout never runs two campaign workers at once.
+updateStrategy: {}
+
+# -- Grace period for draining in-flight campaign jobs on shutdown
+terminationGracePeriodSeconds: 30
+
+livenessProbe:
+  httpGet:
+    path: /healthz
+    port: metrics
+
+readinessProbe:
+  httpGet:
+    path: /readyz
+    port: metrics
+
+resources:
+  limits:
+    cpu: 100m
+    memory: 128Mi
+    ephemeral-storage: 1Gi
+  requests:
+    cpu: 100m
+    memory: 128Mi
+    ephemeral-storage: 512Mi
+
+# Autoscaling must stay disabled while pulse.worker.enabled is true.
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 100
+  targetCPUUtilizationPercentage: 80
+
+ingress:
+  enabled: false
+  className: ""
+  annotations: {}
+  hosts:
+    - host: pulse.truvami.com
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
+  tls: []
+
+serviceMonitor:
+  enabled: false
+
+networkPolicy:
+  enabled: false
+  # -- Egress peers allowed on the truvami-api gRPC port. Defaults to pods
+  # labelled app.kubernetes.io/name=truvami-api in this namespace. Set to []
+  # to allow any destination, or add a namespaceSelector for a split install.
+  apiPeers:
+    - podSelector:
+        matchLabels:
+          app.kubernetes.io/name: truvami-api
+  # -- Egress peers allowed on the truvami-locksmith gRPC port. Defaults to pods
+  # labelled app.kubernetes.io/name=truvami-locksmith in this namespace.
+  locksmithPeers:
+    - podSelector:
+        matchLabels:
+          app.kubernetes.io/name: truvami-locksmith
+
+volumes: []
+volumeMounts: []
+
+nodeSelector: {}
+tolerations: []
+affinity: {}
+
+pdb:
+  enabled: false
+  minAvailable: 1
+  # maxUnavailable: 1
