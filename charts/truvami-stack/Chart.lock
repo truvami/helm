@@ -25,6 +25,6 @@ dependencies:
   version: 0.2.0
 - name: truvami-locksmith
   repository: file://../truvami-locksmith
-  version: 0.0.1
-digest: sha256:48b4b3fce0a030172d4137830bd3e9e23d0aaf3704c3731c1227c83593a55b51
-generated: "2026-07-15T09:56:06.665312+02:00"
+  version: 0.0.2
+digest: sha256:78491e1e390d48ace823ef205776ef0404238bed6e24cc82bf8b6b3a092502d6
+generated: "2026-07-21T08:20:36.526073614Z"

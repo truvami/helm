@@ -37,6 +37,11 @@ locksmith:
   signingMaterial:
     reloadInterval: 5s
 
+  downlinkCredentials:
+    keyring:
+      location: "/var/run/secrets/locksmith/downlink/keyring.json"
+      activeKeyId: "v1"
+
   logging:
     level: info
     encoding: json
@@ -109,6 +114,12 @@ signingKeys:
   private:
     secretName: "locksmith-signing-private"
     key: "private.json"
+
+# Downlink credential key ring secret (must be pre-created externally).
+# The file is a JSON object mapping key IDs to base64-encoded 32-byte AES keys.
+downlinkCredentialKeys:
+  secretName: "locksmith-downlink-credentials"
+  key: "keyring.json"
 
 replicaCount: 1
 
@@ -203,6 +214,9 @@ serviceMonitor:
 
 networkPolicy:
   enabled: false
+  # When enabled, an empty list denies all ingress. Add the trusted Pulse/API
+  # pod and namespace selectors supplied by the service-mesh deployment.
+  ingressFrom: []
 
 volumes: []
 volumeMounts: []
