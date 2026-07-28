@@ -3414,6 +3414,52 @@ entries:
     version: 0.1.2
   truvami-stack:
   - apiVersion: v2
+    created: "2026-07-28T11:21:47.842762859Z"
+    dependencies:
+    - condition: truvami-gateway.enabled
+      name: truvami-gateway
+      repository: file://../truvami-gateway
+      version: 0.0.40
+    - condition: truvami-bridge.enabled
+      name: truvami-bridge
+      repository: file://../truvami-bridge
+      version: 0.1.44
+    - condition: truvami-api.enabled
+      name: truvami-api
+      repository: file://../truvami-api
+      version: 0.0.34
+    - condition: truvami-decoder.enabled
+      name: truvami-decoder
+      repository: file://../truvami-decoder
+      version: 0.0.22
+    - condition: truvami-dashboard.enabled
+      name: truvami-dashboard
+      repository: file://../truvami-dashboard
+      version: 1.0.12
+    - condition: truvami-monitoring.enabled
+      name: truvami-monitoring
+      repository: file://../truvami-monitoring
+      version: 0.4.0
+    - condition: truvami-siren.enabled
+      name: truvami-siren
+      repository: file://../truvami-siren
+      version: 0.6.1
+    - condition: truvami-docs.enabled
+      name: truvami-docs
+      repository: file://../truvami-docs
+      version: 0.2.0
+    - condition: truvami-locksmith.enabled
+      name: truvami-locksmith
+      repository: file://../truvami-locksmith
+      version: 0.0.2
+    description: A Helm chart for Kubernetes
+    digest: c0407c378619ad0a784c68c13bd35fd413f5fcb897a2e632cd4634783c2a1f8d
+    name: truvami-stack
+    type: application
+    urls:
+    - https://github.com/truvami/helm/releases/download/truvami-stack-0.1.258/truvami-stack-0.1.258.tgz
+    version: 0.1.258
+  - apiVersion: v2
     created: "2026-07-15T08:33:11.096145879Z"
     dependencies:
     - condition: truvami-gateway.enabled
@@ -11313,4 +11359,4 @@ entries:
     urls:
     - https://github.com/truvami/helm/releases/download/truvami-stream-0.1.0/truvami-stream-0.1.0.tgz
     version: 0.1.0
-generated: "2026-07-27T09:05:36.766048468Z"
+generated: "2026-07-28T11:21:47.843208744Z"
