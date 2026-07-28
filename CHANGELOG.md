@@ -61,6 +61,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Update CHANGELOG.md [skip ci] by @michaelbeutler
 - Update CHANGELOG.md [skip ci] by @michaelbeutler
 - Update generated READMEs by @niko-kriznik-globtim
+- Update CHANGELOG.md [skip ci] by @michaelbeutler
 
 ### Features
 - Added migrateTimeout to `api` by @niko-kriznik-globtim
@@ -114,6 +115,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Configure ThingPark host allowlist by @niko-kriznik-globtim
 - Allow trusted ThingPark hosts by @niko-kriznik-globtim
 - Allow custom ThingPark hosts by @niko-kriznik-globtim
+- Bump chart to 0.0.3 to republish after failed release by @michaelbeutler
+- Bump chart to 0.0.3 to republish after failed release (#72) by @michaelbeutler in [#72](https://github.com/truvami/helm/pull/72)
 
 ### Refactors
 - Address review comments by @michaelbeutler
