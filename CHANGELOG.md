@@ -62,6 +62,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Update CHANGELOG.md [skip ci] by @michaelbeutler
 - Update generated READMEs by @niko-kriznik-globtim
 - Update CHANGELOG.md [skip ci] by @michaelbeutler
+- Update CHANGELOG.md [skip ci] by @michaelbeutler
 
 ### Features
 - Added migrateTimeout to `api` by @niko-kriznik-globtim
@@ -98,6 +99,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add helm chart for pulse campaign execution service (#71) by @michaelbeutler in [#71](https://github.com/truvami/helm/pull/71)
 - Secure downlink credential deployment by @niko-kriznik-globtim
 - Secure downlink credentials deployment (#69) by @michaelbeutler in [#69](https://github.com/truvami/helm/pull/69)
+- New env vars by @michaelbeutler
 
 ### Fixes
 - Improve formatting of alert descriptions to show values with two decimal places by @michaelbeutler
