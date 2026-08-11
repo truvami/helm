@@ -79,6 +79,18 @@ spec:
                   key: thingpark-assecret
                   name: truvami-api
                   optional: false
+            - name: STORAGE_ACCESSKEYID
+              valueFrom:
+                secretKeyRef:
+                  key: storage-access-key-id
+                  name: truvami-api
+                  optional: false
+            - name: STORAGE_SECRETACCESSKEY
+              valueFrom:
+                secretKeyRef:
+                  key: storage-secret-access-key
+                  name: truvami-api
+                  optional: false
             - name: VALKEY_PASSWORD
               valueFrom:
                 secretKeyRef:
