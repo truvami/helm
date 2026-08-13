@@ -89,6 +89,15 @@ spec:
           name: {{ .Release.Name }}
           patternType: literal
           type: group
+      - host: '*'
+        operations:
+          - Describe
+          - Read
+          - Write
+        resource:
+          name: {{ .Release.Name }}-cat1
+          patternType: literal
+          type: group
 {{- with .Values.kafka.additionalAcls }}
 {{ toYaml . | nindent 6 }}
 {{- end }}
