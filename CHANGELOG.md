@@ -69,6 +69,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Update CHANGELOG.md [skip ci] by @michaelbeutler
 - Update generated READMEs by @niko-kriznik-globtim
 - Update CHANGELOG.md [skip ci] by @michaelbeutler
+- Update CHANGELOG.md [skip ci] by @michaelbeutler
+- Update generated READMEs by @niko-kriznik-globtim
 
 ### Features
 - Added migrateTimeout to `api` by @niko-kriznik-globtim
@@ -108,6 +110,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - New env vars by @michaelbeutler
 - Manage customer maps ConfigMap in chart by @niko-kriznik-globtim
 - Manage customer maps ConfigMap in chart (#74) by @michaelbeutler in [#74](https://github.com/truvami/helm/pull/74)
+- Add Valkey persistence wiring to chart 0.4.0 by @niko-kriznik-globtim
+- Add Valkey persistence wiring (chart 0.4.0) (#77) by @michaelbeutler in [#77](https://github.com/truvami/helm/pull/77)
 
 ### Fixes
 - Improve formatting of alert descriptions to show values with two decimal places by @michaelbeutler
