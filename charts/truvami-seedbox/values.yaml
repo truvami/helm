@@ -23,8 +23,8 @@ seedbox:
     # -- Interval between synthetic data productions
     interval: 10s
     maps:
-      # -- Path to map CSV files inside the container
-      path: ./maps
+      # -- Path to customer preset directories inside the container
+      path: /maps
     weights:
       # -- Relative weight for position messages
       position: 10
@@ -149,6 +149,19 @@ autoscaling:
   minReplicas: 1
   maxReplicas: 10
   targetCPUUtilizationPercentage: 80
+
+# -- Customer route preset maps (ConfigMap + volume mount)
+maps:
+  # -- Mount customer preset maps at seedbox.producer.maps.path
+  enabled: false
+  # -- Customer UUID subdirectory under the maps mount (e.g. maps/<uuid>/preset.yaml)
+  customerUUID: ""
+  # -- Mount path inside the container
+  mountPath: /maps
+  # -- Use an existing ConfigMap instead of creating one (disables chart-managed maps ConfigMap)
+  existingConfigMap: ""
+  # -- Inline map files (keys: preset.yaml, a.csv, ...). Overrides bundled demo-maps/ when set.
+  data: {}
 
 # -- Additional volumes on the Deployment
 volumes: []
