@@ -1,6 +1,6 @@
 # truvami-seedbox
 
-![Version: 0.1.0](https://img.shields.io/badge/Version-0.1.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v0.1.0](https://img.shields.io/badge/AppVersion-v0.1.0-informational?style=flat-square)
+![Version: 0.1.1](https://img.shields.io/badge/Version-0.1.1-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v0.1.0](https://img.shields.io/badge/AppVersion-v0.1.0-informational?style=flat-square)
 
 A Helm chart for Kubernetes
 
@@ -29,7 +29,7 @@ A Helm chart for Kubernetes
 | replicaCount | int | `1` | Number of pod replicas |
 | resources | object | `{"limits":{"ephemeral-storage":"1Gi","memory":"128Mi"},"requests":{"cpu":"100m","ephemeral-storage":"512Mi","memory":"128Mi"}}` | Resource requests and limits. |
 | securityContext | object | `{"capabilities":{"drop":["ALL"]},"readOnlyRootFilesystem":true,"runAsGroup":65534,"runAsNonRoot":true,"runAsUser":65534}` | Container-level security context (merged with secure defaults in the template) |
-| seedbox | object | `{"metrics":{"port":7070},"otel":{"enabled":false,"endpoint":"tempo.grafana-tempo.svc.cluster.local:4318"},"producer":{"batteryStatus":{"maxVoltage":4.5,"minVoltage":1.5},"customerDevices":{},"interval":"10s","maps":{"path":"./maps"},"position":{"maxAltitude":8848,"maxLatitude":90,"maxLongitude":180,"minAltitude":0,"minLatitude":-90,"minLongitude":-180},"uplink":{"maxAverageRssi":-10,"maxAverageSnr":15,"minAverageRssi":-128,"minAverageSnr":-20},"weights":{"batteryStatus":5,"event":3,"position":10}},"relay":{"channelsCapacity":10,"grpc":"truvami-stack-truvami-api:5001"}}` | Application configuration (mounted as seedbox.yaml ConfigMap). This block contains only non-sensitive settings. |
+| seedbox | object | `{"metrics":{"port":7070},"otel":{"enabled":false,"endpoint":"tempo.grafana-tempo.svc.cluster.local:4318"},"producer":{"batteryStatus":{"maxVoltage":4.5,"minVoltage":1.5},"customerDevices":{},"interval":"10s","maps":{"path":"./maps"},"position":{"maxAltitude":8848,"maxLatitude":90,"maxLongitude":180,"minAltitude":0,"minLatitude":-90,"minLongitude":-180},"uplink":{"maxAverageRssi":-10,"maxAverageSnr":15,"minAverageRssi":-128,"minAverageSnr":-20},"weights":{"batterystatus":5,"event":3,"position":10}},"relay":{"channelsCapacity":10,"grpc":"truvami-stack-truvami-api:5001"}}` | Application configuration (mounted as seedbox.yaml ConfigMap). This block contains only non-sensitive settings. |
 | seedbox.metrics.port | int | `7070` | Prometheus metrics endpoint listen port |
 | seedbox.otel.enabled | bool | `false` | Enable OpenTelemetry tracing |
 | seedbox.otel.endpoint | string | `"tempo.grafana-tempo.svc.cluster.local:4318"` | OpenTelemetry collector OTLP endpoint |
@@ -48,7 +48,7 @@ A Helm chart for Kubernetes
 | seedbox.producer.uplink.maxAverageSnr | int | `15` | Maximum average SNR value |
 | seedbox.producer.uplink.minAverageRssi | int | `-128` | Minimum average RSSI value |
 | seedbox.producer.uplink.minAverageSnr | int | `-20` | Minimum average SNR value |
-| seedbox.producer.weights.batteryStatus | int | `5` | Relative weight for battery status messages |
+| seedbox.producer.weights.batterystatus | int | `5` | Relative weight for battery status messages (must match producer code key) |
 | seedbox.producer.weights.event | int | `3` | Relative weight for event messages |
 | seedbox.producer.weights.position | int | `10` | Relative weight for position messages |
 | seedbox.relay.channelsCapacity | int | `10` | Capacity of internal relay channels |
