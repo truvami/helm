@@ -64,6 +64,15 @@ spec:
             - /etc/truvami-seedbox/seedbox.yaml
           command:
             - /usr/bin/truvami-seedbox
+          env:
+            {{- if .Values.seedbox.valkey.enabled }}
+            - name: VALKEY_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  key: {{ .Values.valkey.secretKey }}
+                  name: {{ required "valkey.secretName is required when seedbox.valkey.enabled" .Values.valkey.secretName }}
+                  optional: false
+            {{- end }}
           {{- $defaultSecCtx := dict "allowPrivilegeEscalation" false "readOnlyRootFilesystem" true "runAsNonRoot" true "runAsUser" 1000 "runAsGroup" 1000 "capabilities" (dict "drop" (list "ALL")) "seccompProfile" (dict "type" "RuntimeDefault") }}
           {{- $secCtx := mustMergeOverwrite $defaultSecCtx (.Values.securityContext | default dict) }}
           securityContext:

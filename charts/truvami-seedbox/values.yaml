@@ -13,6 +13,18 @@ seedbox:
     # -- OpenTelemetry collector OTLP endpoint
     endpoint: "tempo.grafana-tempo.svc.cluster.local:4318"
 
+  valkey:
+    # -- Persist route and battery checkpoints in Valkey
+    enabled: false
+    # -- Valkey host:port address
+    host: "redis-leader:6379"
+    # -- Valkey authentication username
+    username: default
+    # -- Route checkpoint key prefix
+    routeKeyPrefix: "seedbox:route:v1"
+    # -- Battery checkpoint key prefix
+    batteryKeyPrefix: "seedbox:battery:v1"
+
   relay:
     # -- gRPC target for the truvami API
     grpc: "truvami-stack-truvami-api:5001"
@@ -61,6 +73,13 @@ seedbox:
       minVoltage: 1.5
       # -- Maximum battery voltage
       maxVoltage: 4.5
+      # -- Maximum per-report voltage change
+      maxVoltageStep: 0.02
+
+# -- Valkey secret injection for simulation-state persistence
+valkey:
+  secretName: ""
+  secretKey: password
 
 # -- Number of pod replicas
 replicaCount: 1
