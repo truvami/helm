@@ -64,6 +64,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Update CHANGELOG.md [skip ci] by @michaelbeutler
 - Update CHANGELOG.md [skip ci] by @michaelbeutler
 - Update CHANGELOG.md [skip ci] by @michaelbeutler
+- Update CHANGELOG.md [skip ci] by @michaelbeutler
+- Drop batterystatus comment parenthetical by @niko-kriznik-globtim
 
 ### Features
 - Added migrateTimeout to `api` by @niko-kriznik-globtim
@@ -101,6 +103,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Secure downlink credential deployment by @niko-kriznik-globtim
 - Secure downlink credentials deployment (#69) by @michaelbeutler in [#69](https://github.com/truvami/helm/pull/69)
 - New env vars by @michaelbeutler
+- Manage customer maps ConfigMap in chart by @niko-kriznik-globtim
+- Manage customer maps ConfigMap in chart (#74) by @michaelbeutler in [#74](https://github.com/truvami/helm/pull/74)
 
 ### Fixes
 - Improve formatting of alert descriptions to show values with two decimal places by @michaelbeutler
@@ -120,6 +124,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Allow custom ThingPark hosts by @niko-kriznik-globtim
 - Bump chart to 0.0.3 to republish after failed release by @michaelbeutler
 - Bump chart to 0.0.3 to republish after failed release (#72) by @michaelbeutler in [#72](https://github.com/truvami/helm/pull/72)
+- Use batteryStatus weight key in chart defaults by @niko-kriznik-globtim
 
 ### Refactors
 - Address review comments by @michaelbeutler
