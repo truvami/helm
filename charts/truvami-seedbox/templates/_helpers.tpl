@@ -82,7 +82,7 @@ Customer UUID for maps volume paths.
 */}}
 {{- define "truvami-seedbox.mapsCustomerUUID" -}}
 {{- $nested := .Values.seedbox.producer.maps | default dict -}}
-{{- required "maps customer UUID is required (maps.customerUUID or seedbox.producer.maps.customerUUID)" (default $nested.customerUUID .Values.maps.customerUUID) -}}
+{{- required "maps customer UUID is required (maps.customerUUID or seedbox.producer.maps.customerUUID)" (default .Values.maps.customerUUID $nested.customerUUID) -}}
 {{- end }}
 
 {{/*

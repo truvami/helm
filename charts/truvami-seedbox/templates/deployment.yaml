@@ -15,13 +15,13 @@ spec:
       {{- include "truvami-seedbox.selectorLabels" . | nindent 6 }}
   template:
     metadata:
-      {{- if or .Values.podAnnotations (eq (include "truvami-seedbox.mapsEnabled" .) "true") }}
+      {{- if or .Values.podAnnotations (eq (include "truvami-seedbox.mapsEnabled" $) "true") }}
       annotations:
         {{- with .Values.podAnnotations }}
         {{- toYaml . | nindent 8 }}
         {{- end }}
-        {{- if eq (include "truvami-seedbox.mapsEnabled" .) "true" }}
-        checksum/maps: {{ include (print $.Template.BasePath "/maps-configmap.yaml") . | sha256sum }}
+        {{- if eq (include "truvami-seedbox.mapsEnabled" $) "true" }}
+        checksum/maps: {{ include (print $.Template.BasePath "/maps-configmap.yaml") $ | sha256sum }}
         {{- end }}
       {{- end }}
       labels:
