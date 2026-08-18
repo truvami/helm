@@ -1,6 +1,6 @@
 # truvami-seedbox
 
-![Version: 0.2.1](https://img.shields.io/badge/Version-0.2.1-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v0.1.0](https://img.shields.io/badge/AppVersion-v0.1.0-informational?style=flat-square)
+![Version: 0.3.0](https://img.shields.io/badge/Version-0.3.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v0.1.0](https://img.shields.io/badge/AppVersion-v0.1.0-informational?style=flat-square)
 
 A Helm chart for Kubernetes
 
@@ -19,10 +19,10 @@ A Helm chart for Kubernetes
 | livenessProbe | object | `{"failureThreshold":3,"httpGet":{"path":"/metrics","port":"metrics"},"initialDelaySeconds":15,"periodSeconds":10,"timeoutSeconds":5}` | Liveness probe configuration (port "metrics" = seedbox.metrics.port) |
 | maps | object | `{"customerUUID":"","data":{},"enabled":false,"existingConfigMap":"","mountPath":"/maps"}` | Customer route preset maps (ConfigMap + volume mount) |
 | maps.customerUUID | string | `""` | Customer UUID subdirectory under the maps mount (e.g. maps/<uuid>/preset.yaml) |
-| maps.data | object | `{}` | Inline map files (keys: preset.yaml, a.csv, ...). Overrides bundled demo-maps/ when set. |
-| maps.enabled | bool | `false` | Mount customer preset maps at seedbox.producer.maps.path |
-| maps.existingConfigMap | string | `""` | Use an existing ConfigMap instead of creating one (disables chart-managed maps ConfigMap) |
-| maps.mountPath | string | `"/maps"` | Mount path inside the container |
+| maps.data | object | `{}` | Inline map files for chart-managed maps (must include preset.yaml) |
+| maps.enabled | bool | `false` | Mount customer preset maps |
+| maps.existingConfigMap | string | `""` | Existing ConfigMap whose keys are map filenames. Set podAnnotations to roll pods when its content changes. |
+| maps.mountPath | string | `"/maps"` | Root path inside the container; must match seedbox.producer.maps.path |
 | nameOverride | string | `""` | Override the chart name |
 | networkPolicy | object | `{"enabled":false}` | Kubernetes NetworkPolicy |
 | nodeSelector | object | `{}` | Node selector constraints |
