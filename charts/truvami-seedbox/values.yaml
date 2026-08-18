@@ -33,7 +33,7 @@ seedbox:
 
   producer:
     # -- Interval between synthetic data productions
-    interval: 10s
+    interval: 2m
     maps:
       # -- Path to customer preset directories inside the container
       path: /maps
@@ -73,8 +73,16 @@ seedbox:
       minVoltage: 1.5
       # -- Maximum battery voltage
       maxVoltage: 4.5
-      # -- Maximum per-report voltage change
-      maxVoltageStep: 0.02
+      holdDuration:
+        # -- Minimum time to hold battery voltage constant
+        min: 12h
+        # -- Maximum time to hold battery voltage constant
+        max: 24h
+      dropDuration:
+        # -- Minimum time for the battery voltage drop
+        min: 1h
+        # -- Maximum time for the battery voltage drop
+        max: 2h
 
 # -- Valkey secret injection for simulation-state persistence
 valkey:
