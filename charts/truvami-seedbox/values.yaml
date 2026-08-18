@@ -152,15 +152,15 @@ autoscaling:
 
 # -- Customer route preset maps (ConfigMap + volume mount)
 maps:
-  # -- Mount customer preset maps at seedbox.producer.maps.path
+  # -- Mount customer preset maps
   enabled: false
   # -- Customer UUID subdirectory under the maps mount (e.g. maps/<uuid>/preset.yaml)
   customerUUID: ""
-  # -- Mount path inside the container
+  # -- Root path inside the container; must match seedbox.producer.maps.path
   mountPath: /maps
-  # -- Use an existing ConfigMap instead of creating one (disables chart-managed maps ConfigMap)
+  # -- Existing ConfigMap whose keys are map filenames. Set podAnnotations to roll pods when its content changes.
   existingConfigMap: ""
-  # -- Inline map files (keys: preset.yaml, a.csv, ...). Overrides bundled demo-maps/ when set.
+  # -- Inline map files for chart-managed maps (must include preset.yaml)
   data: {}
 
 # -- Additional volumes on the Deployment
