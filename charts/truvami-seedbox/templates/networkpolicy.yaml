@@ -35,4 +35,11 @@ spec:
       ports:
         - protocol: TCP
           port: 4318
+    {{- if .Values.seedbox.valkey.enabled }}
+    # Allow Valkey persistence
+    - to: []
+      ports:
+        - protocol: TCP
+          port: 6379
+    {{- end }}
 {{- end }}
