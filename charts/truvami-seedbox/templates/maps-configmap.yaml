@@ -1,5 +1,12 @@
-{{- if and .Values.maps.enabled (not .Values.maps.existingConfigMap) }}
-{{- $customerUUID := required "maps.customerUUID is required when maps.enabled" .Values.maps.customerUUID }}
+{{- if and (eq (include "truvami-seedbox.mapsEnabled" .) "true") (not .Values.maps.existingConfigMap) }}
+{{- $customerUUID := include "truvami-seedbox.mapsCustomerUUID" . }}
+{{- $nested := .Values.seedbox.producer.maps | default dict }}
+{{- $mapsData := .Values.maps.data }}
+{{- if $nested.files }}
+{{- $mapsData = $nested.files }}
+{{- else if $nested.data }}
+{{- $mapsData = $nested.data }}
+{{- end }}
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -7,8 +14,8 @@ metadata:
   labels:
     {{- include "truvami-seedbox.labels" . | nindent 4 }}
 data:
-  {{- if .Values.maps.data }}
-  {{- range $key, $val := .Values.maps.data }}
+  {{- if $mapsData }}
+  {{- range $key, $val := $mapsData }}
   {{ $key }}: |
     {{- $val | nindent 4 }}
   {{- end }}

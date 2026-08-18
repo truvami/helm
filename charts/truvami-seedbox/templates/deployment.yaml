@@ -15,9 +15,14 @@ spec:
       {{- include "truvami-seedbox.selectorLabels" . | nindent 6 }}
   template:
     metadata:
-      {{- with .Values.podAnnotations }}
+      {{- if or .Values.podAnnotations (eq (include "truvami-seedbox.mapsEnabled" $) "true") }}
       annotations:
+        {{- with .Values.podAnnotations }}
         {{- toYaml . | nindent 8 }}
+        {{- end }}
+        {{- if eq (include "truvami-seedbox.mapsEnabled" $) "true" }}
+        checksum/maps: {{ include (print $.Template.BasePath "/maps-configmap.yaml") $ | sha256sum }}
+        {{- end }}
       {{- end }}
       labels:
         {{- include "truvami-seedbox.labels" . | nindent 8 }}
@@ -61,9 +66,9 @@ spec:
             - mountPath: /etc/truvami-seedbox
               name: config
               readOnly: true
-            {{- if .Values.maps.enabled }}
+            {{- if eq (include "truvami-seedbox.mapsEnabled" .) "true" }}
             - name: maps
-              mountPath: {{ .Values.maps.mountPath }}
+              mountPath: {{ include "truvami-seedbox.mapsMountPath" . }}
               readOnly: true
             {{- end }}
             {{- with .Values.volumeMounts }}
@@ -75,7 +80,7 @@ spec:
             name: {{ include "truvami-seedbox.fullname" . }}-config
             optional: false
           name: config
-        {{- if .Values.maps.enabled }}
+        {{- if eq (include "truvami-seedbox.mapsEnabled" .) "true" }}
         - name: maps
           configMap:
             name: {{ include "truvami-seedbox.mapsConfigMapName" . }}
