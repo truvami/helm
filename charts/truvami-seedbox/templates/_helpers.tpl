@@ -69,12 +69,44 @@ Maps ConfigMap name (created by chart or referenced when maps.existingConfigMap 
 {{- end }}
 
 {{/*
+True when chart-managed customer maps should be mounted.
+Supports top-level .Values.maps and nested .Values.seedbox.producer.maps (gitops-friendly).
+*/}}
+{{- define "truvami-seedbox.mapsEnabled" -}}
+{{- $nested := .Values.seedbox.producer.maps | default dict -}}
+{{- if or .Values.maps.enabled $nested.enabled $nested.data $nested.files -}}true{{- end -}}
+{{- end }}
+
+{{/*
+Customer UUID for maps volume paths.
+*/}}
+{{- define "truvami-seedbox.mapsCustomerUUID" -}}
+{{- $nested := .Values.seedbox.producer.maps | default dict -}}
+{{- required "maps customer UUID is required (maps.customerUUID or seedbox.producer.maps.customerUUID)" (default $nested.customerUUID .Values.maps.customerUUID) -}}
+{{- end }}
+
+{{/*
+Mount path for customer maps inside the container.
+*/}}
+{{- define "truvami-seedbox.mapsMountPath" -}}
+{{- $nested := .Values.seedbox.producer.maps | default dict -}}
+{{- default .Values.maps.mountPath $nested.path | default "/maps" -}}
+{{- end }}
+
+{{/*
 Volume items mounting each map file under maps.customerUUID/<filename>.
 */}}
 {{- define "truvami-seedbox.mapsVolumeItems" -}}
-{{- $customerUUID := required "maps.customerUUID is required when maps.enabled" .Values.maps.customerUUID -}}
-{{- if .Values.maps.data -}}
-{{- range $key, $_ := .Values.maps.data }}
+{{- $customerUUID := include "truvami-seedbox.mapsCustomerUUID" . -}}
+{{- $nested := .Values.seedbox.producer.maps | default dict -}}
+{{- $mapsData := .Values.maps.data -}}
+{{- if $nested.files -}}
+{{- $mapsData = $nested.files -}}
+{{- else if $nested.data -}}
+{{- $mapsData = $nested.data -}}
+{{- end -}}
+{{- if $mapsData -}}
+{{- range $key, $_ := $mapsData }}
 - key: {{ $key }}
   path: {{ $customerUUID }}/{{ $key }}
 {{- end }}
