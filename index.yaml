@@ -3150,6 +3150,16 @@ entries:
   truvami-seedbox:
   - apiVersion: v2
     appVersion: v0.1.0
+    created: "2026-08-18T13:28:19.314461138Z"
+    description: A Helm chart for Kubernetes
+    digest: 4f6b37b3ccd93e2b0486efb5aa8d73dbcef5373a3e4eedd62d1ebece29c245bf
+    name: truvami-seedbox
+    type: application
+    urls:
+    - https://github.com/truvami/helm/releases/download/truvami-seedbox-0.4.0/truvami-seedbox-0.4.0.tgz
+    version: 0.4.0
+  - apiVersion: v2
+    appVersion: v0.1.0
     created: "2026-08-18T11:47:44.853427721Z"
     description: A Helm chart for Kubernetes
     digest: b95ba53a2ac2046239be6b38c40fa6009b87405465ed066eb266a8e3f2137416
@@ -11560,4 +11570,4 @@ entries:
     urls:
     - https://github.com/truvami/helm/releases/download/truvami-stream-0.1.0/truvami-stream-0.1.0.tgz
     version: 0.1.0
-generated: "2026-08-18T11:47:44.989709283Z"
+generated: "2026-08-18T13:28:19.471378896Z"
