@@ -28,7 +28,7 @@ seedbox:
     weights:
       # -- Relative weight for position messages
       position: 10
-      # -- Relative weight for battery status messages (must match producer code key)
+      # -- Relative weight for battery status messages
       batterystatus: 5
       # -- Relative weight for event messages
       event: 3

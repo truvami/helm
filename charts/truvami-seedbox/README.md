@@ -54,7 +54,7 @@ A Helm chart for Kubernetes
 | seedbox.producer.uplink.maxAverageSnr | int | `15` | Maximum average SNR value |
 | seedbox.producer.uplink.minAverageRssi | int | `-128` | Minimum average RSSI value |
 | seedbox.producer.uplink.minAverageSnr | int | `-20` | Minimum average SNR value |
-| seedbox.producer.weights.batterystatus | int | `5` | Relative weight for battery status messages (must match producer code key) |
+| seedbox.producer.weights.batterystatus | int | `5` | Relative weight for battery status messages |
 | seedbox.producer.weights.event | int | `3` | Relative weight for event messages |
 | seedbox.producer.weights.position | int | `10` | Relative weight for position messages |
 | seedbox.relay.channelsCapacity | int | `10` | Capacity of internal relay channels |
