@@ -60,3 +60,28 @@ Create the name of the service account to use
 {{- default "default" .Values.serviceAccount.name }}
 {{- end }}
 {{- end }}
+
+{{/*
+Maps ConfigMap name (created by chart or referenced when maps.existingConfigMap is set).
+*/}}
+{{- define "truvami-seedbox.mapsConfigMapName" -}}
+{{- default (printf "%s-maps" (include "truvami-seedbox.fullname" .)) .Values.maps.existingConfigMap -}}
+{{- end }}
+
+{{/*
+Volume items mounting each map file under maps.customerUUID/<filename>.
+*/}}
+{{- define "truvami-seedbox.mapsVolumeItems" -}}
+{{- $customerUUID := required "maps.customerUUID is required when maps.enabled" .Values.maps.customerUUID -}}
+{{- if .Values.maps.data -}}
+{{- range $key, $_ := .Values.maps.data }}
+- key: {{ $key }}
+  path: {{ $customerUUID }}/{{ $key }}
+{{- end }}
+{{- else -}}
+{{- range $path, $_ := .Files.Glob (printf "demo-maps/%s/*" $customerUUID) }}
+- key: {{ base $path }}
+  path: {{ $customerUUID }}/{{ base $path }}
+{{- end }}
+{{- end }}
+{{- end }}

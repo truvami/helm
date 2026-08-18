@@ -61,6 +61,11 @@ spec:
             - mountPath: /etc/truvami-seedbox
               name: config
               readOnly: true
+            {{- if .Values.maps.enabled }}
+            - name: maps
+              mountPath: {{ .Values.maps.mountPath }}
+              readOnly: true
+            {{- end }}
             {{- with .Values.volumeMounts }}
             {{- toYaml . | nindent 12 }}
             {{- end }}
@@ -70,6 +75,13 @@ spec:
             name: {{ include "truvami-seedbox.fullname" . }}-config
             optional: false
           name: config
+        {{- if .Values.maps.enabled }}
+        - name: maps
+          configMap:
+            name: {{ include "truvami-seedbox.mapsConfigMapName" . }}
+            items:
+              {{- include "truvami-seedbox.mapsVolumeItems" . | nindent 14 }}
+        {{- end }}
         {{- with .Values.volumes }}
         {{- toYaml . | nindent 8 }}
         {{- end }}

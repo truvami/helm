@@ -1,0 +1,21 @@
+{{- if and .Values.maps.enabled (not .Values.maps.existingConfigMap) }}
+{{- $customerUUID := required "maps.customerUUID is required when maps.enabled" .Values.maps.customerUUID }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "truvami-seedbox.mapsConfigMapName" . }}
+  labels:
+    {{- include "truvami-seedbox.labels" . | nindent 4 }}
+data:
+  {{- if .Values.maps.data }}
+  {{- range $key, $val := .Values.maps.data }}
+  {{ $key }}: |
+    {{- $val | nindent 4 }}
+  {{- end }}
+  {{- else }}
+  {{- range $path, $_ := .Files.Glob (printf "demo-maps/%s/*" $customerUUID) }}
+  {{ base $path }}: |
+    {{- $.Files.Get $path | nindent 4 }}
+  {{- end }}
+  {{- end }}
+{{- end }}
