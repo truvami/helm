@@ -66,6 +66,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Update CHANGELOG.md [skip ci] by @michaelbeutler
 - Update CHANGELOG.md [skip ci] by @michaelbeutler
 - Drop batterystatus comment parenthetical by @niko-kriznik-globtim
+- Update CHANGELOG.md [skip ci] by @michaelbeutler
+- Update generated READMEs by @niko-kriznik-globtim
 
 ### Features
 - Added migrateTimeout to `api` by @niko-kriznik-globtim
@@ -125,6 +127,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bump chart to 0.0.3 to republish after failed release by @michaelbeutler
 - Bump chart to 0.0.3 to republish after failed release (#72) by @michaelbeutler in [#72](https://github.com/truvami/helm/pull/72)
 - Use batteryStatus weight key in chart defaults by @niko-kriznik-globtim
+- Read maps config from seedbox.producer.maps by @niko-kriznik-globtim
+- Address CodeRabbit review on maps helpers by @niko-kriznik-globtim
+- Read maps from seedbox.producer.maps (0.2.1) (#75) by @michaelbeutler in [#75](https://github.com/truvami/helm/pull/75)
 
 ### Refactors
 - Address review comments by @michaelbeutler
