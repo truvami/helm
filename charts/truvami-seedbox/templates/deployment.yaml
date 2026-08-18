@@ -1,3 +1,26 @@
+{{- $mapsCustomerUUID := "" -}}
+{{- $mapsMountRoot := "" -}}
+{{- $seedboxMaps := .Values.seedbox.producer.maps | default dict -}}
+{{- range $key := list "enabled" "customerUUID" "data" "files" -}}
+{{- if hasKey $seedboxMaps $key -}}
+{{- fail (printf "seedbox.producer.maps.%s is not supported; move deployment map settings to top-level maps" $key) -}}
+{{- end -}}
+{{- end -}}
+{{- if .Values.maps.enabled -}}
+{{- $mapsCustomerUUID = required "maps.customerUUID is required when maps.enabled" .Values.maps.customerUUID -}}
+{{- if not (regexMatch "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$" $mapsCustomerUUID) -}}
+{{- fail "maps.customerUUID must be a canonical UUID" -}}
+{{- end -}}
+{{- $mapsMountRoot = clean (required "maps.mountPath is required when maps.enabled" .Values.maps.mountPath) -}}
+{{- $mapsReadRoot := clean (required "seedbox.producer.maps.path is required when maps.enabled" $seedboxMaps.path) -}}
+{{- if ne $mapsMountRoot $mapsReadRoot -}}
+{{- fail (printf "maps.mountPath (%s) must match seedbox.producer.maps.path (%s)" $mapsMountRoot $mapsReadRoot) -}}
+{{- end -}}
+{{- end -}}
+{{- $podAnnotations := deepCopy (.Values.podAnnotations | default dict) -}}
+{{- if and .Values.maps.enabled (not .Values.maps.existingConfigMap) -}}
+{{- $_ := set $podAnnotations "checksum/maps" (include (print $.Template.BasePath "/maps-configmap.yaml") $ | sha256sum) -}}
+{{- end -}}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -15,14 +38,9 @@ spec:
       {{- include "truvami-seedbox.selectorLabels" . | nindent 6 }}
   template:
     metadata:
-      {{- if or .Values.podAnnotations (eq (include "truvami-seedbox.mapsEnabled" $) "true") }}
+      {{- with $podAnnotations }}
       annotations:
-        {{- with .Values.podAnnotations }}
         {{- toYaml . | nindent 8 }}
-        {{- end }}
-        {{- if eq (include "truvami-seedbox.mapsEnabled" $) "true" }}
-        checksum/maps: {{ include (print $.Template.BasePath "/maps-configmap.yaml") $ | sha256sum }}
-        {{- end }}
       {{- end }}
       labels:
         {{- include "truvami-seedbox.labels" . | nindent 8 }}
@@ -66,9 +84,9 @@ spec:
             - mountPath: /etc/truvami-seedbox
               name: config
               readOnly: true
-            {{- if eq (include "truvami-seedbox.mapsEnabled" .) "true" }}
+            {{- if .Values.maps.enabled }}
             - name: maps
-              mountPath: {{ include "truvami-seedbox.mapsMountPath" . }}
+              mountPath: {{ printf "%s/%s" (trimSuffix "/" $mapsMountRoot) $mapsCustomerUUID | quote }}
               readOnly: true
             {{- end }}
             {{- with .Values.volumeMounts }}
@@ -80,12 +98,10 @@ spec:
             name: {{ include "truvami-seedbox.fullname" . }}-config
             optional: false
           name: config
-        {{- if eq (include "truvami-seedbox.mapsEnabled" .) "true" }}
+        {{- if .Values.maps.enabled }}
         - name: maps
           configMap:
             name: {{ include "truvami-seedbox.mapsConfigMapName" . }}
-            items:
-              {{- include "truvami-seedbox.mapsVolumeItems" . | nindent 14 }}
         {{- end }}
         {{- with .Values.volumes }}
         {{- toYaml . | nindent 8 }}
