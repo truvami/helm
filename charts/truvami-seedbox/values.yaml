@@ -36,6 +36,8 @@ seedbox:
   producer:
     # -- Interval between synthetic data productions
     interval: 2m
+    # -- Symmetric per-device variation around interval (0 disables jitter)
+    intervalJitter: 0s
     maps:
       # -- Path to customer preset directories inside the container
       path: /maps
@@ -73,6 +75,8 @@ seedbox:
       minAltitude: 0
       # -- Maximum altitude in meters
       maxAltitude: 8848
+      # -- Uniform positional noise radius in meters (0 keeps exact route coordinates)
+      noiseRadiusMeters: 0
     batteryStatus:
       # -- Minimum battery voltage
       minVoltage: 1.5
