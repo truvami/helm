@@ -1,6 +1,6 @@
 # truvami-seedbox
 
-![Version: 0.7.0](https://img.shields.io/badge/Version-0.7.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v0.1.0](https://img.shields.io/badge/AppVersion-v0.1.0-informational?style=flat-square)
+![Version: 0.8.0](https://img.shields.io/badge/Version-0.8.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v0.1.0](https://img.shields.io/badge/AppVersion-v0.1.0-informational?style=flat-square)
 
 A Helm chart for Kubernetes
 
@@ -35,7 +35,7 @@ A Helm chart for Kubernetes
 | replicaCount | int | `1` | Number of pod replicas |
 | resources | object | `{"limits":{"ephemeral-storage":"1Gi","memory":"128Mi"},"requests":{"cpu":"100m","ephemeral-storage":"512Mi","memory":"128Mi"}}` | Resource requests and limits. |
 | securityContext | object | `{"capabilities":{"drop":["ALL"]},"readOnlyRootFilesystem":true,"runAsGroup":65534,"runAsNonRoot":true,"runAsUser":65534}` | Container-level security context (merged with secure defaults in the template) |
-| seedbox | object | `{"metrics":{"port":7070},"otel":{"enabled":false,"endpoint":"tempo.grafana-tempo.svc.cluster.local:4318"},"producer":{"backfill":{"startDates":{}},"batteryStatus":{"dropDuration":{"max":"2h","min":"1h"},"holdDuration":{"max":"24h","min":"12h"},"maxVoltage":4.5,"minVoltage":1.5},"customerDevices":{},"interval":"2m","intervalJitter":"0s","maps":{"path":"/maps"},"position":{"maxAltitude":8848,"maxLatitude":90,"maxLongitude":180,"minAltitude":0,"minLatitude":-90,"minLongitude":-180,"noiseRadiusMeters":0},"uplink":{"maxAverageRssi":-10,"maxAverageSnr":15,"minAverageRssi":-128,"minAverageSnr":-20},"weights":{"batteryStatus":5,"event":3,"position":10}},"relay":{"channelsCapacity":10,"grpc":"truvami-stack-truvami-api:5001"},"valkey":{"batteryKeyPrefix":"seedbox:battery:v1","cursorKeyPrefix":"seedbox:cursor:v1","enabled":false,"host":"redis-leader:6379","routeKeyPrefix":"seedbox:route:v1","username":"default"}}` | Application configuration (mounted as seedbox.yaml ConfigMap). This block contains only non-sensitive settings. |
+| seedbox | object | `{"metrics":{"port":7070},"otel":{"enabled":false,"endpoint":"tempo.grafana-tempo.svc.cluster.local:4318"},"producer":{"backfill":{"startDates":{}},"batteryStatus":{"dropDuration":{"max":"2h","min":"1h"},"holdDuration":{"max":"24h","min":"12h"},"maxVoltage":4.5,"minVoltage":1.5},"customerDevices":{},"interval":"2m","intervalJitter":"0s","maps":{"path":"/maps"},"position":{"maxAltitude":8848,"maxLatitude":90,"maxLongitude":180,"minAltitude":0,"minLatitude":-90,"minLongitude":-180,"noiseRadiusMeters":0,"routeStepMeters":0},"uplink":{"maxAverageRssi":-10,"maxAverageSnr":15,"minAverageRssi":-128,"minAverageSnr":-20},"weights":{"batteryStatus":5,"event":3,"position":10}},"relay":{"channelsCapacity":10,"grpc":"truvami-stack-truvami-api:5001"},"valkey":{"batteryKeyPrefix":"seedbox:battery:v1","cursorKeyPrefix":"seedbox:cursor:v1","enabled":false,"host":"redis-leader:6379","routeKeyPrefix":"seedbox:route:v1","username":"default"}}` | Application configuration (mounted as seedbox.yaml ConfigMap). This block contains only non-sensitive settings. |
 | seedbox.metrics.port | int | `7070` | Prometheus metrics endpoint listen port |
 | seedbox.otel.enabled | bool | `false` | Enable OpenTelemetry tracing |
 | seedbox.otel.endpoint | string | `"tempo.grafana-tempo.svc.cluster.local:4318"` | OpenTelemetry collector OTLP endpoint |
@@ -57,6 +57,7 @@ A Helm chart for Kubernetes
 | seedbox.producer.position.minLatitude | int | `-90` | Minimum latitude |
 | seedbox.producer.position.minLongitude | int | `-180` | Minimum longitude |
 | seedbox.producer.position.noiseRadiusMeters | int | `0` | Uniform positional noise radius in meters (0 keeps exact route coordinates) |
+| seedbox.producer.position.routeStepMeters | int | `0` | Approximate spacing in meters between interpolated positions along route segments (0 keeps waypoint-only behavior) |
 | seedbox.producer.uplink.maxAverageRssi | int | `-10` | Maximum average RSSI value |
 | seedbox.producer.uplink.maxAverageSnr | int | `15` | Maximum average SNR value |
 | seedbox.producer.uplink.minAverageRssi | int | `-128` | Minimum average RSSI value |
