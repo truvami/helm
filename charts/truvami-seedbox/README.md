@@ -1,6 +1,6 @@
 # truvami-seedbox
 
-![Version: 0.5.0](https://img.shields.io/badge/Version-0.5.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v0.1.0](https://img.shields.io/badge/AppVersion-v0.1.0-informational?style=flat-square)
+![Version: 0.6.0](https://img.shields.io/badge/Version-0.6.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v0.1.0](https://img.shields.io/badge/AppVersion-v0.1.0-informational?style=flat-square)
 
 A Helm chart for Kubernetes
 
@@ -35,10 +35,11 @@ A Helm chart for Kubernetes
 | replicaCount | int | `1` | Number of pod replicas |
 | resources | object | `{"limits":{"ephemeral-storage":"1Gi","memory":"128Mi"},"requests":{"cpu":"100m","ephemeral-storage":"512Mi","memory":"128Mi"}}` | Resource requests and limits. |
 | securityContext | object | `{"capabilities":{"drop":["ALL"]},"readOnlyRootFilesystem":true,"runAsGroup":65534,"runAsNonRoot":true,"runAsUser":65534}` | Container-level security context (merged with secure defaults in the template) |
-| seedbox | object | `{"metrics":{"port":7070},"otel":{"enabled":false,"endpoint":"tempo.grafana-tempo.svc.cluster.local:4318"},"producer":{"batteryStatus":{"dropDuration":{"max":"2h","min":"1h"},"holdDuration":{"max":"24h","min":"12h"},"maxVoltage":4.5,"minVoltage":1.5},"customerDevices":{},"interval":"2m","maps":{"path":"/maps"},"position":{"maxAltitude":8848,"maxLatitude":90,"maxLongitude":180,"minAltitude":0,"minLatitude":-90,"minLongitude":-180},"uplink":{"maxAverageRssi":-10,"maxAverageSnr":15,"minAverageRssi":-128,"minAverageSnr":-20},"weights":{"batteryStatus":5,"event":3,"position":10}},"relay":{"channelsCapacity":10,"grpc":"truvami-stack-truvami-api:5001"},"valkey":{"batteryKeyPrefix":"seedbox:battery:v1","enabled":false,"host":"redis-leader:6379","routeKeyPrefix":"seedbox:route:v1","username":"default"}}` | Application configuration (mounted as seedbox.yaml ConfigMap). This block contains only non-sensitive settings. |
+| seedbox | object | `{"metrics":{"port":7070},"otel":{"enabled":false,"endpoint":"tempo.grafana-tempo.svc.cluster.local:4318"},"producer":{"backfill":{"startDates":{}},"batteryStatus":{"dropDuration":{"max":"2h","min":"1h"},"holdDuration":{"max":"24h","min":"12h"},"maxVoltage":4.5,"minVoltage":1.5},"customerDevices":{},"interval":"2m","maps":{"path":"/maps"},"position":{"maxAltitude":8848,"maxLatitude":90,"maxLongitude":180,"minAltitude":0,"minLatitude":-90,"minLongitude":-180},"uplink":{"maxAverageRssi":-10,"maxAverageSnr":15,"minAverageRssi":-128,"minAverageSnr":-20},"weights":{"batteryStatus":5,"event":3,"position":10}},"relay":{"channelsCapacity":10,"grpc":"truvami-stack-truvami-api:5001"},"valkey":{"batteryKeyPrefix":"seedbox:battery:v1","cursorKeyPrefix":"seedbox:cursor:v1","enabled":false,"host":"redis-leader:6379","routeKeyPrefix":"seedbox:route:v1","username":"default"}}` | Application configuration (mounted as seedbox.yaml ConfigMap). This block contains only non-sensitive settings. |
 | seedbox.metrics.port | int | `7070` | Prometheus metrics endpoint listen port |
 | seedbox.otel.enabled | bool | `false` | Enable OpenTelemetry tracing |
 | seedbox.otel.endpoint | string | `"tempo.grafana-tempo.svc.cluster.local:4318"` | OpenTelemetry collector OTLP endpoint |
+| seedbox.producer.backfill.startDates | object | `{}` | Per-device historical replay start dates (devEUI -> RFC3339 or YYYY-MM-DD) |
 | seedbox.producer.batteryStatus.dropDuration.max | string | `"2h"` | Maximum time for the battery voltage drop |
 | seedbox.producer.batteryStatus.dropDuration.min | string | `"1h"` | Minimum time for the battery voltage drop |
 | seedbox.producer.batteryStatus.holdDuration.max | string | `"24h"` | Maximum time to hold battery voltage constant |
@@ -64,6 +65,7 @@ A Helm chart for Kubernetes
 | seedbox.relay.channelsCapacity | int | `10` | Capacity of internal relay channels |
 | seedbox.relay.grpc | string | `"truvami-stack-truvami-api:5001"` | gRPC target for the truvami API |
 | seedbox.valkey.batteryKeyPrefix | string | `"seedbox:battery:v1"` | Battery checkpoint key prefix |
+| seedbox.valkey.cursorKeyPrefix | string | `"seedbox:cursor:v1"` | Backfill cursor key prefix |
 | seedbox.valkey.enabled | bool | `false` | Persist route and battery checkpoints in Valkey |
 | seedbox.valkey.host | string | `"redis-leader:6379"` | Valkey host:port address |
 | seedbox.valkey.routeKeyPrefix | string | `"seedbox:route:v1"` | Route checkpoint key prefix |
