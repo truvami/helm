@@ -24,6 +24,8 @@ seedbox:
     routeKeyPrefix: "seedbox:route:v1"
     # -- Battery checkpoint key prefix
     batteryKeyPrefix: "seedbox:battery:v1"
+    # -- Backfill cursor key prefix
+    cursorKeyPrefix: "seedbox:cursor:v1"
 
   relay:
     # -- gRPC target for the truvami API
@@ -46,6 +48,9 @@ seedbox:
       event: 3
     # -- Map of customer ID to device EUIs (populated per-environment)
     customerDevices: {}
+    backfill:
+      # -- Per-device historical replay start dates (devEUI -> RFC3339 or YYYY-MM-DD)
+      startDates: {}
     uplink:
       # -- Minimum average RSSI value
       minAverageRssi: -128
