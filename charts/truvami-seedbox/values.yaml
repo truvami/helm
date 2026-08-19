@@ -77,8 +77,8 @@ seedbox:
       maxAltitude: 8848
       # -- Uniform positional noise radius in meters (0 keeps exact route coordinates)
       noiseRadiusMeters: 0
-      # -- Approximate spacing in meters between interpolated positions along route segments (0 keeps waypoint-only behavior)
-      routeStepMeters: 0
+      # -- Emit one random interior point per template segment instead of exact waypoints
+      randomizeBetweenWaypoints: false
     batteryStatus:
       # -- Minimum battery voltage
       minVoltage: 1.5
