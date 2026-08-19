@@ -74,6 +74,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Update CHANGELOG.md [skip ci] by @michaelbeutler
 - Update CHANGELOG.md [skip ci] by @niko-kriznik-globtim
 - Update generated READMEs by @niko-kriznik-globtim
+- Update CHANGELOG.md [skip ci] by @michaelbeutler
+- Update generated READMEs by @niko-kriznik-globtim
 
 ### Features
 - Added migrateTimeout to `api` by @niko-kriznik-globtim
@@ -118,6 +120,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Configure realistic telemetry cadence (#78) by @niko-kriznik-globtim in [#78](https://github.com/truvami/helm/pull/78)
 - Add backfill cursor config to chart 0.6.0 by @niko-kriznik-globtim
 - Add backfill cursor config (chart 0.6.0) (#79) by @michaelbeutler in [#79](https://github.com/truvami/helm/pull/79)
+- Expose interval jitter and position noise in chart 0.7.0 by @niko-kriznik-globtim
+- Expose interval jitter and position noise in chart 0.7.0 (#80) by @michaelbeutler in [#80](https://github.com/truvami/helm/pull/80)
 
 ### Fixes
 - Improve formatting of alert descriptions to show values with two decimal places by @michaelbeutler
