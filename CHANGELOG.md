@@ -76,6 +76,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Update generated READMEs by @niko-kriznik-globtim
 - Update CHANGELOG.md [skip ci] by @michaelbeutler
 - Update generated READMEs by @niko-kriznik-globtim
+- Update CHANGELOG.md [skip ci] by @michaelbeutler
+- Update generated READMEs by @niko-kriznik-globtim
+- Update generated READMEs by @niko-kriznik-globtim
 
 ### Features
 - Added migrateTimeout to `api` by @niko-kriznik-globtim
@@ -122,6 +125,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add backfill cursor config (chart 0.6.0) (#79) by @michaelbeutler in [#79](https://github.com/truvami/helm/pull/79)
 - Expose interval jitter and position noise in chart 0.7.0 by @niko-kriznik-globtim
 - Expose interval jitter and position noise in chart 0.7.0 (#80) by @michaelbeutler in [#80](https://github.com/truvami/helm/pull/80)
+- Expose routeStepMeters in chart 0.8.0 by @niko-kriznik-globtim
+- Expose randomizeBetweenWaypoints in chart 0.8.0 (#81) by @michaelbeutler in [#81](https://github.com/truvami/helm/pull/81)
 
 ### Fixes
 - Improve formatting of alert descriptions to show values with two decimal places by @michaelbeutler
@@ -147,6 +152,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Read maps from seedbox.producer.maps (0.2.1) (#75) by @michaelbeutler in [#75](https://github.com/truvami/helm/pull/75)
 - Restore maps deployment contract by @niko-kriznik-globtim
 - Restore maps deployment contract (0.3.0) (#76) by @michaelbeutler in [#76](https://github.com/truvami/helm/pull/76)
+- Expose randomizeBetweenWaypoints in chart 0.8.0 by @niko-kriznik-globtim
 
 ### Refactors
 - Address review comments by @michaelbeutler
