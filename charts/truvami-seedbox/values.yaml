@@ -48,6 +48,10 @@ seedbox:
       batteryStatus: 5
       # -- Relative weight for event messages
       event: 3
+      # -- Relative weight for temperature messages (0 disables)
+      temperature: 0
+      # -- Relative weight for humidity messages (0 disables)
+      humidity: 0
     # -- Map of customer ID to device EUIs (populated per-environment)
     customerDevices: {}
     backfill:
@@ -94,6 +98,15 @@ seedbox:
         min: 1h
         # -- Maximum time for the battery voltage drop
         max: 2h
+    environment:
+      # -- Minimum simulated temperature in degrees Celsius
+      minTemperature: 15
+      # -- Maximum simulated temperature in degrees Celsius
+      maxTemperature: 30
+      # -- Minimum simulated humidity in percent
+      minHumidity: 30
+      # -- Maximum simulated humidity in percent
+      maxHumidity: 80
 
 # -- Valkey secret injection for simulation-state persistence
 valkey:
@@ -110,7 +123,7 @@ image:
   # -- Image pull policy (IfNotPresent recommended with pinned tags)
   pullPolicy: IfNotPresent
   # -- Image tag; defaults to the chart appVersion if empty
-  tag: "v0.1.0"
+  tag: "v1.2.0-rc1"
 
 # -- Docker registry pull secrets
 imagePullSecrets: []
