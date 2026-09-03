@@ -1,6 +1,6 @@
 # truvami-seedbox
 
-![Version: 0.8.0](https://img.shields.io/badge/Version-0.8.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v0.1.0](https://img.shields.io/badge/AppVersion-v0.1.0-informational?style=flat-square)
+![Version: 0.9.0](https://img.shields.io/badge/Version-0.9.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v1.2.0-rc1](https://img.shields.io/badge/AppVersion-v1.2.0--rc1-informational?style=flat-square)
 
 A Helm chart for Kubernetes
 
@@ -11,10 +11,10 @@ A Helm chart for Kubernetes
 | affinity | object | `{}` | Pod affinity / anti-affinity rules |
 | autoscaling | object | `{"enabled":false,"maxReplicas":10,"minReplicas":1,"targetCPUUtilizationPercentage":80}` | Horizontal Pod Autoscaler settings |
 | fullnameOverride | string | `""` | Override the full release name |
-| image | object | `{"pullPolicy":"IfNotPresent","repository":"ghcr.io/truvami/seedbox","tag":"v0.1.0"}` | Container image settings |
+| image | object | `{"pullPolicy":"IfNotPresent","repository":"ghcr.io/truvami/seedbox","tag":"v1.2.0-rc1"}` | Container image settings |
 | image.pullPolicy | string | `"IfNotPresent"` | Image pull policy (IfNotPresent recommended with pinned tags) |
 | image.repository | string | `"ghcr.io/truvami/seedbox"` | Image repository |
-| image.tag | string | `"v0.1.0"` | Image tag; defaults to the chart appVersion if empty |
+| image.tag | string | `"v1.2.0-rc1"` | Image tag; defaults to the chart appVersion if empty |
 | imagePullSecrets | list | `[]` | Docker registry pull secrets |
 | livenessProbe | object | `{"failureThreshold":3,"httpGet":{"path":"/metrics","port":"metrics"},"initialDelaySeconds":15,"periodSeconds":10,"timeoutSeconds":5}` | Liveness probe configuration (port "metrics" = seedbox.metrics.port) |
 | maps | object | `{"customerUUID":"","data":{},"enabled":false,"existingConfigMap":"","mountPath":"/maps"}` | Customer route preset maps (ConfigMap + volume mount) |
@@ -35,7 +35,7 @@ A Helm chart for Kubernetes
 | replicaCount | int | `1` | Number of pod replicas |
 | resources | object | `{"limits":{"ephemeral-storage":"1Gi","memory":"128Mi"},"requests":{"cpu":"100m","ephemeral-storage":"512Mi","memory":"128Mi"}}` | Resource requests and limits. |
 | securityContext | object | `{"capabilities":{"drop":["ALL"]},"readOnlyRootFilesystem":true,"runAsGroup":65534,"runAsNonRoot":true,"runAsUser":65534}` | Container-level security context (merged with secure defaults in the template) |
-| seedbox | object | `{"metrics":{"port":7070},"otel":{"enabled":false,"endpoint":"tempo.grafana-tempo.svc.cluster.local:4318"},"producer":{"backfill":{"startDates":{}},"batteryStatus":{"dropDuration":{"max":"2h","min":"1h"},"holdDuration":{"max":"24h","min":"12h"},"maxVoltage":4.5,"minVoltage":1.5},"customerDevices":{},"interval":"2m","intervalJitter":"0s","maps":{"path":"/maps"},"position":{"maxAltitude":8848,"maxLatitude":90,"maxLongitude":180,"minAltitude":0,"minLatitude":-90,"minLongitude":-180,"noiseRadiusMeters":0,"randomizeBetweenWaypoints":false},"uplink":{"maxAverageRssi":-10,"maxAverageSnr":15,"minAverageRssi":-128,"minAverageSnr":-20},"weights":{"batteryStatus":5,"event":3,"position":10}},"relay":{"channelsCapacity":10,"grpc":"truvami-stack-truvami-api:5001"},"valkey":{"batteryKeyPrefix":"seedbox:battery:v1","cursorKeyPrefix":"seedbox:cursor:v1","enabled":false,"host":"redis-leader:6379","routeKeyPrefix":"seedbox:route:v1","username":"default"}}` | Application configuration (mounted as seedbox.yaml ConfigMap). This block contains only non-sensitive settings. |
+| seedbox | object | `{"metrics":{"port":7070},"otel":{"enabled":false,"endpoint":"tempo.grafana-tempo.svc.cluster.local:4318"},"producer":{"backfill":{"startDates":{}},"batteryStatus":{"dropDuration":{"max":"2h","min":"1h"},"holdDuration":{"max":"24h","min":"12h"},"maxVoltage":4.5,"minVoltage":1.5},"customerDevices":{},"environment":{"maxHumidity":80,"maxTemperature":30,"minHumidity":30,"minTemperature":15},"interval":"2m","intervalJitter":"0s","maps":{"path":"/maps"},"position":{"maxAltitude":8848,"maxLatitude":90,"maxLongitude":180,"minAltitude":0,"minLatitude":-90,"minLongitude":-180,"noiseRadiusMeters":0,"randomizeBetweenWaypoints":false},"uplink":{"maxAverageRssi":-10,"maxAverageSnr":15,"minAverageRssi":-128,"minAverageSnr":-20},"weights":{"batteryStatus":5,"event":3,"humidity":0,"position":10,"temperature":0}},"relay":{"channelsCapacity":10,"grpc":"truvami-stack-truvami-api:5001"},"valkey":{"batteryKeyPrefix":"seedbox:battery:v1","cursorKeyPrefix":"seedbox:cursor:v1","enabled":false,"host":"redis-leader:6379","routeKeyPrefix":"seedbox:route:v1","username":"default"}}` | Application configuration (mounted as seedbox.yaml ConfigMap). This block contains only non-sensitive settings. |
 | seedbox.metrics.port | int | `7070` | Prometheus metrics endpoint listen port |
 | seedbox.otel.enabled | bool | `false` | Enable OpenTelemetry tracing |
 | seedbox.otel.endpoint | string | `"tempo.grafana-tempo.svc.cluster.local:4318"` | OpenTelemetry collector OTLP endpoint |
@@ -47,6 +47,10 @@ A Helm chart for Kubernetes
 | seedbox.producer.batteryStatus.maxVoltage | float | `4.5` | Maximum battery voltage |
 | seedbox.producer.batteryStatus.minVoltage | float | `1.5` | Minimum battery voltage |
 | seedbox.producer.customerDevices | object | `{}` | Map of customer ID to device EUIs (populated per-environment) |
+| seedbox.producer.environment.maxHumidity | int | `80` | Maximum simulated humidity in percent |
+| seedbox.producer.environment.maxTemperature | int | `30` | Maximum simulated temperature in degrees Celsius |
+| seedbox.producer.environment.minHumidity | int | `30` | Minimum simulated humidity in percent |
+| seedbox.producer.environment.minTemperature | int | `15` | Minimum simulated temperature in degrees Celsius |
 | seedbox.producer.interval | string | `"2m"` | Interval between synthetic data productions |
 | seedbox.producer.intervalJitter | string | `"0s"` | Symmetric per-device variation around interval (0 disables jitter) |
 | seedbox.producer.maps.path | string | `"/maps"` | Path to customer preset directories inside the container |
@@ -64,7 +68,9 @@ A Helm chart for Kubernetes
 | seedbox.producer.uplink.minAverageSnr | int | `-20` | Minimum average SNR value |
 | seedbox.producer.weights.batteryStatus | int | `5` | Relative weight for battery status messages |
 | seedbox.producer.weights.event | int | `3` | Relative weight for event messages |
+| seedbox.producer.weights.humidity | int | `0` | Relative weight for humidity messages (0 disables) |
 | seedbox.producer.weights.position | int | `10` | Relative weight for position messages |
+| seedbox.producer.weights.temperature | int | `0` | Relative weight for temperature messages (0 disables) |
 | seedbox.relay.channelsCapacity | int | `10` | Capacity of internal relay channels |
 | seedbox.relay.grpc | string | `"truvami-stack-truvami-api:5001"` | gRPC target for the truvami API |
 | seedbox.valkey.batteryKeyPrefix | string | `"seedbox:battery:v1"` | Battery checkpoint key prefix |
