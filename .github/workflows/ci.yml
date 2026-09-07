@@ -19,7 +19,7 @@ jobs:
       dashboards: ${{ steps.filter.outputs.dashboards }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
       - name: Paths filter
         id: filter
         uses: dorny/paths-filter@v4
@@ -35,7 +35,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           fetch-depth: 0
 
@@ -45,7 +45,7 @@ jobs:
           version: '3.16.1'
 
       - name: Cache Helm repository data
-        uses: actions/cache@v5
+        uses: actions/cache@v6
         with:
           path: ~/.cache/helm
           key: helm-cache-${{ runner.os }}-${{ hashFiles('charts/**/Chart.yaml') }}
@@ -90,7 +90,7 @@ jobs:
       contents: read
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           fetch-depth: 0
 
@@ -133,7 +133,7 @@ jobs:
       contents: read
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           fetch-depth: 0
 
@@ -178,7 +178,7 @@ jobs:
       contents: write
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - name: Install helm-docs
         run: |
@@ -228,12 +228,12 @@ jobs:
     if: needs.changes.outputs.dashboards == 'true'
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           fetch-depth: 0
 
       - name: Set up Go (for Jsonnet tools)
-        uses: actions/setup-go@v6
+        uses: actions/setup-go@v7
         with:
           go-version: '1.23'
           cache: true
@@ -244,7 +244,7 @@ jobs:
           go install github.com/jsonnet-bundler/jsonnet-bundler/cmd/jb@latest
 
       - name: Cache Jsonnet dependencies
-        uses: actions/cache@v5
+        uses: actions/cache@v6
         with:
           path: dashboards/vendor
           key: jsonnet-deps-${{ hashFiles('dashboards/jsonnetfile.lock.json') }}
@@ -263,7 +263,7 @@ jobs:
       pull-requests: write
     steps:
       - name: Checkout PR branch
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           fetch-depth: 0
 
