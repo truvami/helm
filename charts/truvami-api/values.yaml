@@ -27,6 +27,21 @@ api:
     enabled: false
     endpoint: "localhost:4318"
 
+  almanac:
+    # Upstream GNSS almanac provider proxied by GET /v1/admin/almanac, used to
+    # flash the newest almanac onto devices during production at the EMS.
+    url: "https://lw.traxmate.io/api/v1/almanac/full"
+    # The upstream API key is injected as ALMANAC_APIKEY from the secret
+    # configured under the top-level `almanac` key. Leave it unset to disable
+    # the endpoint (it then answers 503).
+    # apiKey: "xxxxxxxx"
+    # Bounds one upstream fetch, only ever paid on a cache miss.
+    requestTimeout: 30s
+    # The response is cached globally; this TTL alone decides how many upstream
+    # (quota-metered) requests are spent — 6h is ~4/day.
+    cacheTTL: 6h
+    # maxResponseBytes: 8388608 # 8 MiB — guard against a misbehaving upstream
+
   webhook:
     initializationTimeout: 15s
     postRequestTimeout: 5s
@@ -77,6 +92,12 @@ database:
 valkey:
   secretName: truvami-stack-valkey
   secretKey: valkey-password
+
+almanac:
+  # Secret holding the upstream almanac provider API key (ALMANAC_APIKEY).
+  # Optional: when the secret or key is missing the almanac endpoint answers 503.
+  secretName: truvami-api
+  secretKey: almanac-apikey
 
 replicaCount: 1
 
