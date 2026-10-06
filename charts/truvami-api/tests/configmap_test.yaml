@@ -1,0 +1,14 @@
+suite: configmap
+templates:
+  - templates/configmap.yaml
+tests:
+  - it: should render almanac settings into the config file
+    asserts:
+      - matchRegex:
+          path: data["config.yaml"]
+          pattern: 'almanac:\s+cacheTTL: 6h\s+requestTimeout: 30s\s+url: https://lw\.traxmate\.io/api/v1/almanac/full'
+  - it: should not render the almanac api key into the config file
+    asserts:
+      - notMatchRegex:
+          path: data["config.yaml"]
+          pattern: apiKey

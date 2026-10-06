@@ -8,3 +8,28 @@ tests:
           of: Deployment
       - exists:
           path: spec.template.spec.containers[0].image
+  - it: should inject the optional almanac api key from the default secret
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: ALMANAC_APIKEY
+            valueFrom:
+              secretKeyRef:
+                key: almanac-apikey
+                name: truvami-api
+                optional: true
+  - it: should allow overriding the almanac secret
+    set:
+      almanac.secretName: truvami-almanac
+      almanac.secretKey: apikey
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: ALMANAC_APIKEY
+            valueFrom:
+              secretKeyRef:
+                key: apikey
+                name: truvami-almanac
+                optional: true

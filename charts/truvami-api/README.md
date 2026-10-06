@@ -1,6 +1,6 @@
 # truvami-api
 
-![Version: 0.0.35](https://img.shields.io/badge/Version-0.0.35-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v0.10.0](https://img.shields.io/badge/AppVersion-v0.10.0-informational?style=flat-square)
+![Version: 0.0.36](https://img.shields.io/badge/Version-0.0.36-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v0.10.0](https://img.shields.io/badge/AppVersion-v0.10.0-informational?style=flat-square)
 
 A Helm chart for Kubernetes
 
@@ -9,6 +9,11 @@ A Helm chart for Kubernetes
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
 | affinity | object | `{}` |  |
+| almanac.secretKey | string | `"almanac-apikey"` |  |
+| almanac.secretName | string | `"truvami-api"` |  |
+| api.almanac.cacheTTL | string | `"6h"` |  |
+| api.almanac.requestTimeout | string | `"30s"` |  |
+| api.almanac.url | string | `"https://lw.traxmate.io/api/v1/almanac/full"` |  |
 | api.auth.issuer | string | `"https://sso.sbcdc.ch/auth/realms/truvami"` |  |
 | api.auth.jwksURL | string | `"https://sso.sbcdc.ch/auth/realms/truvami/protocol/openid-connect/certs"` |  |
 | api.database.connectionMaxIdle | int | `40` |  |

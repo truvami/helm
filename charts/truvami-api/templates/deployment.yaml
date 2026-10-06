@@ -103,6 +103,12 @@ spec:
                   key: apikey
                   name: truvami-loracloud
                   optional: true # only required for some devices
+            - name: ALMANAC_APIKEY
+              valueFrom:
+                secretKeyRef:
+                  key: {{ .Values.almanac.secretKey }}
+                  name: {{ .Values.almanac.secretName }}
+                  optional: true # almanac endpoint answers 503 when unset
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
