@@ -84,11 +84,17 @@ spec:
   serviceMonitorNamespaceSelector:
     matchLabels:
       kubernetes.io/metadata.name: {{ .Release.Namespace }}
+  {{- if .Values.alertmanager.enabled }}
   alerting:
     alertmanagers:
+    # Addresses the Service created by templates/alertmanager-service.yaml.
+    # Only emitted when the Alertmanager is enabled - pointing Prometheus at a
+    # Service that is not rendered leaves it with zero activeAlertmanagers and
+    # silently discards every firing alert.
     - namespace: {{ .Release.Namespace }}
       name: "{{ include "truvami-monitoring.fullname" . }}"
-      port: web
+      port: {{ .Values.alertmanager.portName | default "web" }}
+  {{- end }}
   enableRemoteWriteReceiver: {{ .Values.prometheus.enableRemoteWriteReceiver | default "false" }}
   {{- if .Values.thanos.enabled }}
   thanos:
@@ -106,12 +112,48 @@ spec:
     {{- end }}
   {{- end }}
 
+{{- if .Values.alertmanager.enabled }}
 ---
 apiVersion: monitoring.coreos.com/v1
 kind: Alertmanager
 metadata:
   name: "{{ include "truvami-monitoring.fullname" . }}"
+  labels:
+    {{- include "truvami-monitoring.labels" . | nindent 4 }}
 spec:
-  replicas: 2
-  configSecret: "{{ include "truvami-monitoring.fullname" . }}-alertmanager-config"
+  replicas: {{ .Values.alertmanager.replicas | default 2 }}
+  portName: {{ .Values.alertmanager.portName | default "web" }}
+  {{- with .Values.alertmanager.retention }}
+  retention: {{ . | quote }}
+  {{- end }}
+  # Use the AlertmanagerConfig rendered by templates/alertmanager-config.yaml as
+  # this Alertmanager's top-level configuration.
+  #
+  # This replaces the previous `configSecret` reference, which named a Secret
+  # ("<fullname>-alertmanager-config") that no template in this chart has ever
+  # created. With that Secret absent, prometheus-operator fell back to its
+  # built-in default configuration, whose root route sends everything to the
+  # "null" receiver - so alerts were accepted and then discarded.
+  alertmanagerConfiguration:
+    name: {{ include "truvami-monitoring.fullname" . }}-config
+  # Additionally select any AlertmanagerConfig in this namespace that opts in,
+  # so teams can attach extra routes/receivers without editing this chart.
+  # Previously unset, which meant zero AlertmanagerConfigs were ever selected.
+  #
+  # An explicitly configured empty map is a meaningful value here -
+  # matchLabels: {} selects *every* AlertmanagerConfig in the namespace - so it
+  # must be distinguishable from "not configured".
+  #
+  # `default` cannot do that (it treats {} as empty), and neither can `hasKey`:
+  # the key is always present because values.yaml declares it. So the declared
+  # default is null, and only null means "not configured" - Helm lets a user
+  # map replace a null base wholesale, whereas a non-empty default map would be
+  # merged with the user's value and could never be reduced back to empty.
+  {{- $configSelector := .Values.alertmanager.configSelectorLabels }}
+  {{- if kindIs "invalid" $configSelector }}
+  {{- $configSelector = dict "truvami.com/alertmanager-config" "true" }}
+  {{- end }}
+  alertmanagerConfigSelector:
+    matchLabels: {{- toYaml $configSelector | nindent 6 }}
   resources: {{ toYaml .Values.alertmanager.resources | default "{}" | nindent 4 }}
+{{- end }}

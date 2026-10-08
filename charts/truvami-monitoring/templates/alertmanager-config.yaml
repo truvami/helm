@@ -33,10 +33,15 @@ spec:
       repeatInterval: '1h'
 
     # Watchdog alerts route
+    # NOTE: this must match the alert name emitted by templates/rule-watchdog.yaml,
+    # which is "TruvamiWatchdog". It previously read "Watchdog", and because the
+    # matcher is an exact match it never fired - so the dead-man's-switch
+    # heartbeat never reached watchdog.webhookUrl even when everything else in
+    # the alerting path was healthy.
     - matchers:
       - matchType: "="
         name: "alertname"
-        value: "Watchdog"
+        value: "TruvamiWatchdog"
       receiver: 'watchdog-heartbeat'
       groupWait: '0s'
       groupInterval: '1m'

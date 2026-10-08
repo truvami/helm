@@ -1,6 +1,6 @@
 # truvami-monitoring
 
-![Version: 0.4.0](https://img.shields.io/badge/Version-0.4.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)
+![Version: 0.5.0](https://img.shields.io/badge/Version-0.5.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)
 
 This chart contains all CRD's for the truvami-stack monitoring and alerting.
 
@@ -17,7 +17,8 @@ This chart contains all CRD's for the truvami-stack monitoring and alerting.
 | alertLabels.altravis_test | string | `"true"` |  |
 | alertLabels.code | string | `"SBCC"` |  |
 | alertLabels.customer | string | `"truvami"` |  |
-| alertmanager.enabled | bool | `true` |  |
+| alertmanager.configSelectorLabels | string | `nil` |  |
+| alertmanager.enabled | bool | `false` |  |
 | alertmanager.global.http_config.enable_http2 | bool | `true` |  |
 | alertmanager.global.http_config.follow_redirects | bool | `true` |  |
 | alertmanager.global.resolve_timeout | string | `"5m"` |  |
@@ -32,6 +33,7 @@ This chart contains all CRD's for the truvami-stack monitoring and alerting.
 | alertmanager.inhibit_rules[1].equal[0] | string | `"service"` |  |
 | alertmanager.inhibit_rules[1].source_matchers[0] | string | `"maintenance=\"true\""` |  |
 | alertmanager.inhibit_rules[1].target_matchers[0] | string | `"service=~\".*\""` |  |
+| alertmanager.portName | string | `"web"` |  |
 | alertmanager.receivers.critical.enabled | bool | `true` |  |
 | alertmanager.receivers.critical.slack.channel | string | `"#critical-alerts"` |  |
 | alertmanager.receivers.critical.slack.enabled | bool | `false` |  |
@@ -91,10 +93,12 @@ This chart contains all CRD's for the truvami-stack monitoring and alerting.
 | alertmanager.receivers.teams.summary | string | `"{{ range .Alerts }}{{ .Annotations.summary }}{{ end }}"` |  |
 | alertmanager.receivers.teams.title | string | `"{{ .GroupLabels.alertname }}"` |  |
 | alertmanager.receivers.teams.webhook_url | string | `""` |  |
+| alertmanager.replicas | int | `2` |  |
 | alertmanager.resources.limits.cpu | string | `"500m"` |  |
 | alertmanager.resources.limits.memory | string | `"512Mi"` |  |
 | alertmanager.resources.requests.cpu | string | `"50m"` |  |
 | alertmanager.resources.requests.memory | string | `"128Mi"` |  |
+| alertmanager.retention | string | `"120h"` |  |
 | alertmanager.route.group_by[0] | string | `"alertname"` |  |
 | alertmanager.route.group_by[1] | string | `"cluster"` |  |
 | alertmanager.route.group_by[2] | string | `"service"` |  |
