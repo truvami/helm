@@ -79,6 +79,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Update CHANGELOG.md [skip ci] by @michaelbeutler
 - Update generated READMEs by @niko-kriznik-globtim
 - Update generated READMEs by @niko-kriznik-globtim
+- Update CHANGELOG.md [skip ci] by @michaelbeutler
 
 ### Features
 - Added migrateTimeout to `api` by @niko-kriznik-globtim
@@ -127,6 +128,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Expose interval jitter and position noise in chart 0.7.0 (#80) by @michaelbeutler in [#80](https://github.com/truvami/helm/pull/80)
 - Expose routeStepMeters in chart 0.8.0 by @niko-kriznik-globtim
 - Expose randomizeBetweenWaypoints in chart 0.8.0 (#81) by @michaelbeutler in [#81](https://github.com/truvami/helm/pull/81)
+- Expose environmental telemetry settings by @niko-kriznik-globtim
+- Expose environmental telemetry settings (#82) by @michaelbeutler in [#82](https://github.com/truvami/helm/pull/82)
+- Update truvami-api chart version to 0.0.36 and add almanac settings by @michaelbeutler
+- Add almanac config and api key secret (#84) by @michaelbeutler in [#84](https://github.com/truvami/helm/pull/84)
+- Add Traxmate WiFi solver secret and resilience config by @michaelbeutler
+- Add Traxmate WiFi solver secret and resilience config (#85) by @michaelbeutler in [#85](https://github.com/truvami/helm/pull/85)
 
 ### Fixes
 - Improve formatting of alert descriptions to show values with two decimal places by @michaelbeutler
