@@ -82,10 +82,26 @@ bridge:
       cache:
         duration: 1m
 
+  # Per-customer feature flags, keyed by customer UUID.
+  # Google WiFi positioning always runs. HERE and Traxmate are billed per
+  # request and only run for customers listed here with the flag set:
+  #   hereWifiSolver: true      # needs the <topic>-here secret (key apikey)
+  #   traxmateWifiSolver: true  # needs the <topic>-traxmate secret (keys servicetoken, idsalt)
   featureFlags:
     # Holcim
     fed1a230-cee8-11ee-9ddb-47f5f8bdd1a5:
       doNotFallbackSetCapturedAt: true
+
+  # Timeouts, retries and a circuit breaker per external WiFi solver (Google,
+  # HERE, Traxmate). An open breaker skips that provider only; it never pauses
+  # the Kafka consumer. 400/401/403 are not retried, 404 is "no result".
+  wifiResilience:
+    attemptTimeout: 1.5s     # one HTTP call
+    backoff: [200ms, 600ms]  # wait before each retry; length = retry count
+    budget: 4s               # all attempts + backoff for one scan
+    breaker:
+      maxConsecutiveFailures: 5
+      openTimeout: 30s
 
   wifisolver:
     rssiRef: -35.0

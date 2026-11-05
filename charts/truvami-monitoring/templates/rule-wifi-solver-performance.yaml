@@ -108,3 +108,65 @@ spec:
             {{- with .Values.alertLabels }}
             {{- toYaml . | nindent 12 }}
             {{- end }}
+
+        - alert: TruvamiTraxmateQuotaExhausted
+          annotations:
+            description: >-
+              **What's happening:** Traxmate rejects WiFi solver requests with 401/403
+              ({{ "{{" }} $value }} rejections in the last 5 minutes).
+
+              **Why this occurred:** `truvami_traxmate_wifi_quota_exhausted_count` increases when Traxmate answers
+              401 or 403. Traxmate documents 403 as "out of credits", but it answered 401 when the purchased requests
+              ran out in the 2026-04-14 incident (truvami/bridge#219). It can also mean the service token was revoked
+              or rotated. Every further request fails until this is fixed. Uplinks keep flowing: Google positions are
+              still published and the Traxmate breaker stops the calls.
+
+              **What to do:**
+              1. Check the remaining request credits in the Traxmate portal and buy more if they are used up
+              2. Verify the `<topic>-traxmate` secret (key `servicetoken`) matches the token in Traxmate
+              3. Check bridge logs for "Traxmate WiFi solver quota exhausted or token rejected" and the `traxmateLogId`
+              4. If it can't be fixed quickly, remove `traxmateWifiSolver` from the affected customers' feature flags
+            summary: >-
+              Traxmate WiFi solver out of credits or token rejected
+          expr: >-
+            increase(truvami_traxmate_wifi_quota_exhausted_count[5m]) > 0
+          for: 0m
+          labels:
+            namespace: {{ .Release.Namespace }}
+            severity: critical
+            node: truvami-bridge
+            service: truvami-bridge
+            component: wifi-solver
+            provider: traxmate
+            {{- with .Values.alertLabels }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
+
+        - alert: TruvamiWiFiSolverBreakerOpen
+          annotations:
+            description: >-
+              **What's happening:** The circuit breaker for the {{ "{{" }} $labels.provider }} WiFi solver is open.
+
+              **Why this occurred:** `truvami_wifi_solver_breaker_state` is 2 (open) after 5 consecutive failures
+              (timeouts, 429/5xx, or 400/401/403). While open, the bridge skips this provider and probes it again
+              every 30 seconds. Uplinks keep flowing; only positions from this provider are missing.
+
+              **What to do:**
+              1. Check the provider's status page and `truvami_wifi_solver_duration_seconds{provider="{{ "{{" }} $labels.provider }}"}`
+              2. Review bridge logs for the provider's last errors (status codes, timeouts)
+              3. For Traxmate, also check `TruvamiTraxmateQuotaExhausted`
+              4. For Google (all customers), escalate: WiFi positions are missing for every customer
+            summary: >-
+              {{ "{{" }} $labels.provider }} WiFi solver circuit breaker open
+          expr: >-
+            max by (provider) (truvami_wifi_solver_breaker_state) == 2
+          for: 2m
+          labels:
+            namespace: {{ .Release.Namespace }}
+            severity: major
+            node: truvami-bridge
+            service: truvami-bridge
+            component: wifi-solver
+            {{- with .Values.alertLabels }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}

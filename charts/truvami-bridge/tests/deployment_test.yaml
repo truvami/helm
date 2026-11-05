@@ -8,3 +8,26 @@ tests:
           of: Deployment
       - exists:
           path: spec.template.spec.containers[0].image
+
+  - it: should inject the optional Traxmate service token and id salt from the <topic>-traxmate secret
+    set:
+      bridge.topic: truvami
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: TRUVAMI_BRIDGE_TRAXMATE_SERVICETOKEN
+            valueFrom:
+              secretKeyRef:
+                key: servicetoken
+                name: truvami-traxmate
+                optional: true
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: TRUVAMI_BRIDGE_TRAXMATE_IDSALT
+            valueFrom:
+              secretKeyRef:
+                key: idsalt
+                name: truvami-traxmate
+                optional: true
