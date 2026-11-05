@@ -1,0 +1,20 @@
+suite: configmap
+templates:
+  - templates/configmap.yaml
+tests:
+  - it: should pass wifiResilience defaults and WiFi solver feature flags to the bridge config
+    set:
+      bridge.featureFlags:
+        88d8df05-b3ab-4e05-aac8-c824a677bc7f:
+          hereWifiSolver: true
+          traxmateWifiSolver: true
+    asserts:
+      - matchRegex:
+          path: data["config.yaml"]
+          pattern: "wifiResilience:\\n\\s+attemptTimeout: 1.5s"
+      - matchRegex:
+          path: data["config.yaml"]
+          pattern: "traxmateWifiSolver: true"
+      - matchRegex:
+          path: data["config.yaml"]
+          pattern: "hereWifiSolver: true"

@@ -1,6 +1,6 @@
 # truvami-bridge
 
-![Version: 0.1.45](https://img.shields.io/badge/Version-0.1.45-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v2.5.1](https://img.shields.io/badge/AppVersion-v2.5.1-informational?style=flat-square)
+![Version: 0.1.46](https://img.shields.io/badge/Version-0.1.46-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v2.5.1](https://img.shields.io/badge/AppVersion-v2.5.1-informational?style=flat-square)
 
 A Helm chart for Kubernetes
 
@@ -76,6 +76,12 @@ A Helm chart for Kubernetes
 | bridge.valkey.host | string | `"truvami-stack-valkey-primary:6379"` |  |
 | bridge.valkey.requestTimeout | string | `"200ms"` |  |
 | bridge.valkey.username | string | `"default"` |  |
+| bridge.wifiResilience.attemptTimeout | string | `"1.5s"` |  |
+| bridge.wifiResilience.backoff[0] | string | `"200ms"` |  |
+| bridge.wifiResilience.backoff[1] | string | `"600ms"` |  |
+| bridge.wifiResilience.breaker.maxConsecutiveFailures | int | `5` |  |
+| bridge.wifiResilience.breaker.openTimeout | string | `"30s"` |  |
+| bridge.wifiResilience.budget | string | `"4s"` |  |
 | bridge.wifisolver.baseRadius | float | `15` |  |
 | bridge.wifisolver.matchCountExp | float | `0.5` |  |
 | bridge.wifisolver.maxAccuracy | float | `500` |  |

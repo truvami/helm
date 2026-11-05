@@ -87,6 +87,18 @@ spec:
                   key: apikey
                   name: "{{ .Values.bridge.topic }}-here"
                   optional: true # only required when using the HERE WiFi solver
+            - name: TRUVAMI_BRIDGE_TRAXMATE_SERVICETOKEN
+              valueFrom:
+                secretKeyRef:
+                  key: servicetoken
+                  name: "{{ .Values.bridge.topic }}-traxmate"
+                  optional: true # only required when using the Traxmate WiFi solver
+            - name: TRUVAMI_BRIDGE_TRAXMATE_IDSALT
+              valueFrom:
+                secretKeyRef:
+                  key: idsalt
+                  name: "{{ .Values.bridge.topic }}-traxmate"
+                  optional: true # without it no device id is sent to Traxmate
             - name: TRUVAMI_BRIDGE_VALKEY_PASSWORD
               valueFrom:
                 secretKeyRef:
