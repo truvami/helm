@@ -367,6 +367,17 @@ entries:
   truvami-bridge:
   - apiVersion: v2
     appVersion: v2.5.1
+    created: "2026-11-05T15:49:26.46052703Z"
+    description: A Helm chart for Kubernetes
+    digest: 90bc9e05471fe367729f452ef1fe2342b872ca4ae06a7723f9a40e7c34f47fd2
+    icon: https://raw.githubusercontent.com/truvami/helm/main/assets/icon.svg
+    name: truvami-bridge
+    type: application
+    urls:
+    - https://github.com/truvami/helm/releases/download/truvami-bridge-0.1.46/truvami-bridge-0.1.46.tgz
+    version: 0.1.46
+  - apiVersion: v2
+    appVersion: v2.5.1
     created: "2026-08-13T09:50:52.294227082Z"
     description: A Helm chart for Kubernetes
     digest: 4a788e51a8e3e11cf667aa045ad19faed0b7159b0db5ef5a0995b363dd76088d
@@ -1937,6 +1948,16 @@ entries:
     - https://github.com/truvami/helm/releases/download/truvami-locksmith-0.0.1/truvami-locksmith-0.0.1.tgz
     version: 0.0.1
   truvami-monitoring:
+  - apiVersion: v2
+    created: "2026-11-05T15:49:26.846453607Z"
+    description: This chart contains all CRD's for the truvami-stack monitoring and
+      alerting.
+    digest: 33360dd228cef7f7530335887e5edf6f8f7cc3edb4e518140e4f167df4c8c8c2
+    name: truvami-monitoring
+    type: application
+    urls:
+    - https://github.com/truvami/helm/releases/download/truvami-monitoring-0.4.1/truvami-monitoring-0.4.1.tgz
+    version: 0.4.1
   - apiVersion: v2
     created: "2026-07-15T08:33:10.930504635Z"
     description: This chart contains all CRD's for the truvami-stack monitoring and
@@ -3547,6 +3568,52 @@ entries:
     - https://github.com/truvami/helm/releases/download/truvami-siren-0.1.2/truvami-siren-0.1.2.tgz
     version: 0.1.2
   truvami-stack:
+  - apiVersion: v2
+    created: "2026-11-05T15:49:27.184696865Z"
+    dependencies:
+    - condition: truvami-gateway.enabled
+      name: truvami-gateway
+      repository: file://../truvami-gateway
+      version: 0.0.40
+    - condition: truvami-bridge.enabled
+      name: truvami-bridge
+      repository: file://../truvami-bridge
+      version: 0.1.46
+    - condition: truvami-api.enabled
+      name: truvami-api
+      repository: file://../truvami-api
+      version: 0.0.36
+    - condition: truvami-decoder.enabled
+      name: truvami-decoder
+      repository: file://../truvami-decoder
+      version: 0.0.22
+    - condition: truvami-dashboard.enabled
+      name: truvami-dashboard
+      repository: file://../truvami-dashboard
+      version: 1.0.12
+    - condition: truvami-monitoring.enabled
+      name: truvami-monitoring
+      repository: file://../truvami-monitoring
+      version: 0.4.1
+    - condition: truvami-siren.enabled
+      name: truvami-siren
+      repository: file://../truvami-siren
+      version: 0.6.1
+    - condition: truvami-docs.enabled
+      name: truvami-docs
+      repository: file://../truvami-docs
+      version: 0.2.0
+    - condition: truvami-locksmith.enabled
+      name: truvami-locksmith
+      repository: file://../truvami-locksmith
+      version: 0.0.3
+    description: A Helm chart for Kubernetes
+    digest: 5e51dccfdbb7560d2515040f100e49a2afb5b1abbc6b765f27767ea5db4f1848
+    name: truvami-stack
+    type: application
+    urls:
+    - https://github.com/truvami/helm/releases/download/truvami-stack-0.1.263/truvami-stack-0.1.263.tgz
+    version: 0.1.263
   - apiVersion: v2
     created: "2026-10-06T08:16:52.453209381Z"
     dependencies:
@@ -11677,4 +11744,4 @@ entries:
     urls:
     - https://github.com/truvami/helm/releases/download/truvami-stream-0.1.0/truvami-stream-0.1.0.tgz
     version: 0.1.0
-generated: "2026-10-06T08:16:52.453977019Z"
+generated: "2026-11-05T15:49:27.18574091Z"
