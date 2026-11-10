@@ -80,6 +80,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Update generated READMEs by @niko-kriznik-globtim
 - Update generated READMEs by @niko-kriznik-globtim
 - Update CHANGELOG.md [skip ci] by @michaelbeutler
+- Update CHANGELOG.md [skip ci] by @michaelbeutler
 
 ### Features
 - Added migrateTimeout to `api` by @niko-kriznik-globtim
@@ -134,6 +135,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add almanac config and api key secret (#84) by @michaelbeutler in [#84](https://github.com/truvami/helm/pull/84)
 - Add Traxmate WiFi solver secret and resilience config by @michaelbeutler
 - Add Traxmate WiFi solver secret and resilience config (#85) by @michaelbeutler in [#85](https://github.com/truvami/helm/pull/85)
+- Kafka access for LTE Cat 1 downlinks
+- Kafka access for LTE Cat 1 downlinks (#86) by @StefanSmile in [#86](https://github.com/truvami/helm/pull/86)
 
 ### Fixes
 - Improve formatting of alert descriptions to show values with two decimal places by @michaelbeutler
@@ -160,6 +163,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Restore maps deployment contract by @niko-kriznik-globtim
 - Restore maps deployment contract (0.3.0) (#76) by @michaelbeutler in [#76](https://github.com/truvami/helm/pull/76)
 - Expose randomizeBetweenWaypoints in chart 0.8.0 by @niko-kriznik-globtim
+- Guard LTE downlinks on the image version
+- Require v2.8.0-rc1 or later for LTE downlinks
 
 ### Refactors
 - Address review comments by @michaelbeutler
