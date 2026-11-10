@@ -25,14 +25,14 @@ A Helm chart for truvami pulse - configuration campaign execution service
 | ingress.hosts[0].paths[0].path | string | `"/"` |  |
 | ingress.hosts[0].paths[0].pathType | string | `"ImplementationSpecific"` |  |
 | ingress.tls | list | `[]` |  |
-| kafka.cluster | string | `"truvami-stack"` | Strimzi cluster that owns the downlink topic |
+| kafka.cluster | string | `"truvami-stack"` | Strimzi cluster that owns the downlink topic. Pulse is deployed on its own, not as part of truvami-stack, so set this to the Kafka cluster's name when it differs; the KafkaUser label, the default CA secret and the default Kafka NetworkPolicy peers all follow it. |
 | kafka.clusterCaSecretName | string | `""` | Secret holding the Kafka cluster CA that signs the broker certificates. Defaults to Strimzi's "<kafka.cluster>-cluster-ca-cert". The KafkaUser secret's ca.crt is the clients CA and cannot verify the brokers. |
 | livenessProbe.httpGet.path | string | `"/healthz"` |  |
 | livenessProbe.httpGet.port | string | `"metrics"` |  |
 | nameOverride | string | `""` |  |
 | networkPolicy.apiPeers | list | `[{"podSelector":{"matchLabels":{"app.kubernetes.io/name":"truvami-api"}}}]` | Egress peers allowed on the truvami-api gRPC port. Defaults to pods labelled app.kubernetes.io/name=truvami-api in this namespace. Set to [] to allow any destination, or add a namespaceSelector for a split install. |
 | networkPolicy.enabled | bool | `false` |  |
-| networkPolicy.kafkaPeers | list | `[{"podSelector":{"matchLabels":{"strimzi.io/cluster":"truvami-stack","strimzi.io/kind":"Kafka"}}}]` | Egress peers allowed on the Kafka bootstrap ports while pulse.cat1.enabled is true. Defaults to the broker pods of the truvami-stack Strimzi cluster in this namespace. |
+| networkPolicy.kafkaPeers | list | `nil` | Egress peers allowed on the Kafka bootstrap ports while pulse.cat1.enabled is true. Unset, it selects the broker pods of the kafka.cluster Strimzi cluster in this namespace. Set to [] to allow any destination. |
 | networkPolicy.locksmithPeers | list | `[{"podSelector":{"matchLabels":{"app.kubernetes.io/name":"truvami-locksmith"}}}]` | Egress peers allowed on the truvami-locksmith gRPC port. Defaults to pods labelled app.kubernetes.io/name=truvami-locksmith in this namespace. |
 | nodeSelector | object | `{}` |  |
 | pdb.enabled | bool | `false` |  |

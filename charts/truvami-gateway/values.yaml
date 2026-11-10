@@ -43,7 +43,8 @@ gateway:
   # LTE Cat 1 downlinks. When enabled, Cat 1 uplink responses carry the device's downlinks
   # that Pulse queued on the kafka.topic.cat1Downlinks topic. A read that fails or exceeds
   # scanTimeout answers 204, so uplinks are never held up. groupId is also the consumer
-  # group the chart's KafkaUser may use.
+  # group the chart's KafkaUser may use. Enabling requires gateway v2.8.0-rc1 or later
+  # (image.tag); the chart refuses older versions.
   cat1:
     downlinks:
       enabled: false
