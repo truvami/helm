@@ -1,6 +1,6 @@
 # truvami-gateway
 
-![Version: 0.0.40](https://img.shields.io/badge/Version-0.0.40-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v2.5.6-rc1](https://img.shields.io/badge/AppVersion-v2.5.6--rc1-informational?style=flat-square)
+![Version: 0.0.41](https://img.shields.io/badge/Version-0.0.41-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v2.5.6-rc1](https://img.shields.io/badge/AppVersion-v2.5.6--rc1-informational?style=flat-square)
 
 A Helm chart for Kubernetes
 
@@ -16,6 +16,11 @@ A Helm chart for Kubernetes
 | autoscaling.minReplicas | int | `1` |  |
 | autoscaling.targetCPUUtilizationPercentage | int | `80` |  |
 | fullnameOverride | string | `""` |  |
+| gateway.cat1.downlinks.consumers | int | `4` |  |
+| gateway.cat1.downlinks.enabled | bool | `false` |  |
+| gateway.cat1.downlinks.groupId | string | `"gateway-cat1-downlinks"` |  |
+| gateway.cat1.downlinks.maxRows | int | `16` |  |
+| gateway.cat1.downlinks.scanTimeout | string | `"2s"` |  |
 | gateway.cluster | string | `"truvami-stack"` |  |
 | gateway.kafka."allow.auto.create.topics" | bool | `false` |  |
 | gateway.kafka."enable.ssl.certificate.verification" | bool | `false` |  |
@@ -44,6 +49,7 @@ A Helm chart for Kubernetes
 | jwks.secretKey | string | `"jwks.json"` |  |
 | jwks.secretName | string | `"locksmith-jwks-public"` |  |
 | kafka.topic.cat1 | string | `"gateway.cat1.uplinks"` |  |
+| kafka.topic.cat1Downlinks | string | `"gateway.cat1.downlinks"` |  |
 | kafka.topic.cat1Error | string | `"gateway.cat1.errors"` |  |
 | kafka.topic.config."retention.ms" | int | `2592000000` |  |
 | kafka.topic.config."segment.bytes" | int | `1073741824` |  |

@@ -54,6 +54,19 @@ spec:
   config: {{ .Values.kafka.topic.config | toYaml | nindent 4 }}
 ---
 apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaTopic
+metadata:
+  name: "{{ .Values.kafka.topic.cat1Downlinks | default "gateway.cat1.downlinks" }}"
+  labels:
+    strimzi.io/cluster: {{ .Values.gateway.cluster | default .Release.Name }}
+spec:
+  partitions: {{ .Values.kafka.topic.partitions | default 3 }}
+  replicas: {{ .Values.kafka.topic.replicas | default 3 }}
+  # Always delete, never compact: the topic is keyed by DevEUI and compaction would keep only
+  # each device's latest event, dropping its other queued downlinks.
+  config: {{ merge (dict "cleanup.policy" "delete") (deepCopy (.Values.kafka.topic.config | default dict)) | toYaml | nindent 4 }}
+---
+apiVersion: kafka.strimzi.io/v1beta2
 kind: KafkaUser
 metadata:
   name: "{{ .Values.gateway.topic }}-gateway-kafka"
@@ -109,5 +122,24 @@ spec:
           - Create
           - Describe
           - Write
+        host: "*"
+      # LTE Cat 1 downlinks: the gateway reads the device's queued downlinks, writes the
+      # delivered events, and keeps its scan bookmark in the consumer group.
+      - resource:
+          type: topic
+          name: "{{ .Values.kafka.topic.cat1Downlinks | default "gateway.cat1.downlinks" }}"
+          patternType: literal
+        operations:
+          - Describe
+          - Read
+          - Write
+        host: "*"
+      - resource:
+          type: group
+          name: "{{ dig "cat1" "downlinks" "groupId" "gateway-cat1-downlinks" .Values.gateway }}"
+          patternType: literal
+        operations:
+          - Describe
+          - Read
         host: "*"
 ---

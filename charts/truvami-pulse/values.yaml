@@ -73,6 +73,36 @@ pulse:
       # -- Minimum interval between downlinks to the same device (0s disables)
       per-device-min-interval: 0s
 
+  # LTE (Cat 1) downlinks. When enabled, pulse queues the LTE rows of campaign jobs
+  # on the Kafka downlink topic, withdraws them through DownlinkService, and reports
+  # the gateway's delivered events to the API. The chart then creates a Strimzi
+  # KafkaUser for pulse and mounts its credentials. The topic itself is created by
+  # the truvami-gateway chart.
+  cat1:
+    # -- Enable LTE downlinks. Requires pulse.grpc.api.address and
+    # pulse.kafka.bootstrap.servers.
+    enabled: false
+
+  kafka:
+    bootstrap:
+      # -- Kafka bootstrap servers (host:port); the ports are opened in the NetworkPolicy
+      servers:
+        - truvami-stack-kafka-bootstrap:9093
+    topics:
+      # -- LTE downlink topic shared with the gateway (truvami-gateway
+      # kafka.topic.cat1Downlinks); the KafkaUser ACLs follow this name
+      cat1Downlinks: gateway.cat1.downlinks
+    # -- Verify the brokers' certificates against the cluster CA mounted from
+    # kafka.clusterCaSecretName
+    enable.ssl.certificate.verification: true
+    ssl:
+      ca:
+        # -- Cluster CA used to verify the brokers (see kafka.clusterCaSecretName)
+        location: /var/run/secrets/kafka-cluster-ca/ca.crt
+    security:
+      # -- Kafka security protocol; the client certificate comes from the KafkaUser secret
+      protocol: SSL
+
   logging:
     # -- Log level (debug, info, warn, error)
     level: info
@@ -182,6 +212,22 @@ networkPolicy:
     - podSelector:
         matchLabels:
           app.kubernetes.io/name: truvami-locksmith
+  # -- (list) Egress peers allowed on the Kafka bootstrap ports while pulse.cat1.enabled
+  # is true. Unset, it selects the broker pods of the kafka.cluster Strimzi
+  # cluster in this namespace. Set to [] to allow any destination.
+  kafkaPeers: null
+
+# Kafka resources, used only while pulse.cat1.enabled is true.
+kafka:
+  # -- Strimzi cluster that owns the downlink topic. Pulse is deployed on its own,
+  # not as part of truvami-stack, so set this to the Kafka cluster's name when it
+  # differs; the KafkaUser label, the default CA secret and the default Kafka
+  # NetworkPolicy peers all follow it.
+  cluster: truvami-stack
+  # -- Secret holding the Kafka cluster CA that signs the broker certificates.
+  # Defaults to Strimzi's "<kafka.cluster>-cluster-ca-cert". The KafkaUser secret's
+  # ca.crt is the clients CA and cannot verify the brokers.
+  clusterCaSecretName: ""
 
 volumes: []
 volumeMounts: []

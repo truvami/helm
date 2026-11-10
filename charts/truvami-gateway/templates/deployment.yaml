@@ -1,3 +1,4 @@
+{{- include "truvami-gateway.validateCat1Downlinks" . -}}
 apiVersion: apps/v1
 kind: Deployment
 metadata:

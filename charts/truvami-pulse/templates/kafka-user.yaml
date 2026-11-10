@@ -1,0 +1,39 @@
+{{- if include "truvami-pulse.cat1Enabled" . }}
+# Pulse's Kafka identity for LTE downlinks. Strimzi writes its client certificate to a
+# secret of the same name, which the deployment mounts.
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaUser
+metadata:
+  name: {{ include "truvami-pulse.kafkaUserName" . }}
+  annotations:
+    # Before the deployment (wave 0), which mounts the user's secret.
+    argocd.argoproj.io/sync-wave: "-1"
+  labels:
+    {{- include "truvami-pulse.labels" . | nindent 4 }}
+    strimzi.io/cluster: {{ .Values.kafka.cluster }}
+spec:
+  authentication:
+    type: tls
+  authorization:
+    type: simple
+    acls:
+      # Queue downlinks and cancellations, and read the gateway's delivered events.
+      - resource:
+          type: topic
+          name: {{ .Values.pulse.kafka.topics.cat1Downlinks | default "gateway.cat1.downlinks" | quote }}
+          patternType: literal
+        operations:
+          - Describe
+          - Read
+          - Write
+        host: "*"
+      # Consumer group of the delivered-event reader (fixed in pulse).
+      - resource:
+          type: group
+          name: pulse-cat1-deliveries
+          patternType: literal
+        operations:
+          - Describe
+          - Read
+        host: "*"
+{{- end }}

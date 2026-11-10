@@ -55,6 +55,24 @@ spec:
         - protocol: TCP
           port: {{ include "truvami-pulse.portFromAddress" (dict "key" "pulse.grpc.locksmith.address" "address" $locksmithAddress) }}
     {{- end }}
+    {{- if include "truvami-pulse.cat1Enabled" . }}
+    # Allow the Kafka brokers (LTE downlink topic)
+    {{- $kafkaPorts := list }}
+    {{- range $server := dig "bootstrap" "servers" list (.Values.pulse.kafka | default dict) }}
+    {{- $kafkaPorts = append $kafkaPorts (include "truvami-pulse.portFromAddress" (dict "key" "pulse.kafka.bootstrap.servers" "address" (trim $server))) }}
+    {{- end }}
+    {{- $kafkaPeers := .Values.networkPolicy.kafkaPeers }}
+    {{- if kindIs "invalid" $kafkaPeers }}
+    {{- $kafkaPeers = list (dict "podSelector" (dict "matchLabels" (dict "strimzi.io/cluster" .Values.kafka.cluster "strimzi.io/kind" "Kafka"))) }}
+    {{- end }}
+    - to:
+        {{- toYaml $kafkaPeers | nindent 8 }}
+      ports:
+        {{- range $port := $kafkaPorts | uniq }}
+        - protocol: TCP
+          port: {{ $port }}
+        {{- end }}
+    {{- end }}
     # Allow OTLP HTTP trace export
     - to: []
       ports:

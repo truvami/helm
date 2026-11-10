@@ -1,6 +1,6 @@
 # truvami-pulse
 
-![Version: 0.0.1](https://img.shields.io/badge/Version-0.0.1-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v0.1.0](https://img.shields.io/badge/AppVersion-v0.1.0-informational?style=flat-square)
+![Version: 0.0.2](https://img.shields.io/badge/Version-0.0.2-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v0.1.0](https://img.shields.io/badge/AppVersion-v0.1.0-informational?style=flat-square)
 
 A Helm chart for truvami pulse - configuration campaign execution service
 
@@ -25,11 +25,14 @@ A Helm chart for truvami pulse - configuration campaign execution service
 | ingress.hosts[0].paths[0].path | string | `"/"` |  |
 | ingress.hosts[0].paths[0].pathType | string | `"ImplementationSpecific"` |  |
 | ingress.tls | list | `[]` |  |
+| kafka.cluster | string | `"truvami-stack"` | Strimzi cluster that owns the downlink topic. Pulse is deployed on its own, not as part of truvami-stack, so set this to the Kafka cluster's name when it differs; the KafkaUser label, the default CA secret and the default Kafka NetworkPolicy peers all follow it. |
+| kafka.clusterCaSecretName | string | `""` | Secret holding the Kafka cluster CA that signs the broker certificates. Defaults to Strimzi's "<kafka.cluster>-cluster-ca-cert". The KafkaUser secret's ca.crt is the clients CA and cannot verify the brokers. |
 | livenessProbe.httpGet.path | string | `"/healthz"` |  |
 | livenessProbe.httpGet.port | string | `"metrics"` |  |
 | nameOverride | string | `""` |  |
 | networkPolicy.apiPeers | list | `[{"podSelector":{"matchLabels":{"app.kubernetes.io/name":"truvami-api"}}}]` | Egress peers allowed on the truvami-api gRPC port. Defaults to pods labelled app.kubernetes.io/name=truvami-api in this namespace. Set to [] to allow any destination, or add a namespaceSelector for a split install. |
 | networkPolicy.enabled | bool | `false` |  |
+| networkPolicy.kafkaPeers | list | `nil` | Egress peers allowed on the Kafka bootstrap ports while pulse.cat1.enabled is true. Unset, it selects the broker pods of the kafka.cluster Strimzi cluster in this namespace. Set to [] to allow any destination. |
 | networkPolicy.locksmithPeers | list | `[{"podSelector":{"matchLabels":{"app.kubernetes.io/name":"truvami-locksmith"}}}]` | Egress peers allowed on the truvami-locksmith gRPC port. Defaults to pods labelled app.kubernetes.io/name=truvami-locksmith in this namespace. |
 | nodeSelector | object | `{}` |  |
 | pdb.enabled | bool | `false` |  |
@@ -37,6 +40,7 @@ A Helm chart for truvami pulse - configuration campaign execution service
 | podAnnotations | object | `{}` |  |
 | podLabels | object | `{}` |  |
 | podSecurityContext | object | `{}` |  |
+| pulse.cat1.enabled | bool | `false` | Enable LTE downlinks. Requires pulse.grpc.api.address and pulse.kafka.bootstrap.servers. |
 | pulse.downlink.http-timeout | string | `"30s"` | Timeout bounding a single AS-to-LRC ThingPark request |
 | pulse.downlink.rate-limit.burst | int | `60` | Downlink request burst allowance |
 | pulse.downlink.rate-limit.per-device-min-interval | string | `"0s"` | Minimum interval between downlinks to the same device (0s disables) |
@@ -48,6 +52,11 @@ A Helm chart for truvami pulse - configuration campaign execution service
 | pulse.grpc.locksmith.address | string | `"truvami-stack-truvami-locksmith:5005"` | truvami-locksmith address used to resolve ThingPark downlink credentials by gateway API-key JTI. Leaving this empty disables the downlink sender entirely (DownlinkService is not registered and pulse.worker.enabled fails to start). |
 | pulse.grpc.locksmith.insecure | bool | `false` | Use plaintext transport towards locksmith. Only set true inside a trusted service mesh with the restrictive locksmith NetworkPolicy on. |
 | pulse.grpc.locksmith.request-timeout | string | `"5s"` | Timeout bounding a single credential-resolution RPC |
+| pulse.kafka."enable.ssl.certificate.verification" | bool | `true` | Verify the brokers' certificates against the cluster CA mounted from kafka.clusterCaSecretName |
+| pulse.kafka.bootstrap.servers | list | `["truvami-stack-kafka-bootstrap:9093"]` | Kafka bootstrap servers (host:port); the ports are opened in the NetworkPolicy |
+| pulse.kafka.security.protocol | string | `"SSL"` | Kafka security protocol; the client certificate comes from the KafkaUser secret |
+| pulse.kafka.ssl.ca.location | string | `"/var/run/secrets/kafka-cluster-ca/ca.crt"` | Cluster CA used to verify the brokers (see kafka.clusterCaSecretName) |
+| pulse.kafka.topics.cat1Downlinks | string | `"gateway.cat1.downlinks"` | LTE downlink topic shared with the gateway (truvami-gateway kafka.topic.cat1Downlinks); the KafkaUser ACLs follow this name |
 | pulse.logging.encoding | string | `"json"` | Log encoding (json, console) |
 | pulse.logging.level | string | `"info"` | Log level (debug, info, warn, error) |
 | pulse.logging.time-encoder | string | `"iso8601"` | Timestamp encoding (rfc3339, iso8601, epoch) |

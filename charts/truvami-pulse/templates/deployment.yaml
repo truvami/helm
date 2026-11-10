@@ -72,10 +72,35 @@ spec:
             {{- toYaml .Values.readinessProbe | nindent 12 }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
+          {{- if include "truvami-pulse.cat1Enabled" . }}
+          env:
+            - name: TRUVAMI_PULSE_KAFKA_SSL_KEYSTORE_LOCATION
+              value: /var/run/secrets/kafka/user.p12
+            - name: TRUVAMI_PULSE_KAFKA_SSL_KEYSTORE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  key: user.password
+                  name: {{ include "truvami-pulse.kafkaUserName" . | quote }}
+                  optional: false
+            - name: TRUVAMI_PULSE_KAFKA_SSL_KEY_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  key: user.password
+                  name: {{ include "truvami-pulse.kafkaUserName" . | quote }}
+                  optional: false
+          {{- end }}
           volumeMounts:
             - mountPath: /etc/truvami-pulse
               name: config
               readOnly: true
+            {{- if include "truvami-pulse.cat1Enabled" . }}
+            - mountPath: /var/run/secrets/kafka
+              name: kafka-credentials
+              readOnly: true
+            - mountPath: /var/run/secrets/kafka-cluster-ca
+              name: kafka-cluster-ca
+              readOnly: true
+            {{- end }}
             {{- with .Values.volumeMounts }}
             {{- toYaml . | nindent 12 }}
             {{- end }}
@@ -85,6 +110,21 @@ spec:
             defaultMode: 420
             name: {{ include "truvami-pulse.fullname" . }}-config
             optional: false
+        {{- if include "truvami-pulse.cat1Enabled" . }}
+        - name: kafka-credentials
+          secret:
+            defaultMode: 420
+            optional: false
+            secretName: {{ include "truvami-pulse.kafkaUserName" . | quote }}
+        - name: kafka-cluster-ca
+          secret:
+            defaultMode: 420
+            optional: false
+            secretName: {{ include "truvami-pulse.kafkaClusterCaSecretName" . | quote }}
+            items:
+              - key: ca.crt
+                path: ca.crt
+        {{- end }}
         {{- with .Values.volumes }}
         {{- toYaml . | nindent 8 }}
         {{- end }}

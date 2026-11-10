@@ -60,3 +60,17 @@ Create the name of the service account to use
 {{- default "default" .Values.serviceAccount.name }}
 {{- end }}
 {{- end }}
+
+{{/*
+LTE Cat 1 downlinks need gateway v2.8.0-rc1 or later; older images ignore
+gateway.cat1.downlinks and would silently hand out nothing. Tags that are not a
+version (a digest or branch build) are accepted as they are.
+*/}}
+{{- define "truvami-gateway.validateCat1Downlinks" -}}
+{{- if dig "cat1" "downlinks" "enabled" false .Values.gateway }}
+{{- $tag := .Values.image.tag | default .Chart.AppVersion | toString }}
+{{- if and (regexMatch "^v?[0-9]+\\.[0-9]+\\.[0-9]+(-[0-9A-Za-z.-]+)?$" $tag) (not (semverCompare ">=2.8.0-rc1" $tag)) }}
+{{- fail (printf "gateway.cat1.downlinks.enabled=true requires gateway v2.8.0-rc1 or later, but the image tag is %q; set image.tag" $tag) }}
+{{- end }}
+{{- end }}
+{{- end }}
