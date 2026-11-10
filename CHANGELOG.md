@@ -81,6 +81,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Update generated READMEs by @niko-kriznik-globtim
 - Update CHANGELOG.md [skip ci] by @michaelbeutler
 - Update CHANGELOG.md [skip ci] by @michaelbeutler
+- Update CHANGELOG.md [skip ci] by @StefanSmile
 
 ### Features
 - Added migrateTimeout to `api` by @niko-kriznik-globtim
