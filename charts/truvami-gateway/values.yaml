@@ -40,6 +40,18 @@ gateway:
     security:
       protocol: SSL
 
+  # LTE Cat 1 downlinks. When enabled, Cat 1 uplink responses carry the device's downlinks
+  # that Pulse queued on the kafka.topic.cat1Downlinks topic. A read that fails or exceeds
+  # scanTimeout answers 204, so uplinks are never held up. groupId is also the consumer
+  # group the chart's KafkaUser may use.
+  cat1:
+    downlinks:
+      enabled: false
+      scanTimeout: 2s
+      maxRows: 16
+      groupId: gateway-cat1-downlinks
+      consumers: 4
+
 # APIKEYS_LEGACY_LABELS env var (parallel string array to APIKEYS; the
 # gateway uses these to label JWT claims minted from legacy API keys).
 # Sourced from the same secret as apikeys by default. Always injected
@@ -53,6 +65,11 @@ kafka:
     unauthorized: gateway.unauthorized
     cat1: gateway.cat1.uplinks
     cat1Error: gateway.cat1.errors
+    # LTE Cat 1 downlink topic shared with Pulse (keyed by DevEUI). Must match
+    # gateway.kafka.topics.cat1Downlinks and Pulse's kafka.topics.cat1Downlinks when either
+    # is overridden. Retention must cover the longest campaign downlink validity, and the
+    # partition count must not change once in use (it moves devices to other partitions).
+    cat1Downlinks: gateway.cat1.downlinks
     partitions: 3
     replicas: 3
     config:

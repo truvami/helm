@@ -90,6 +90,27 @@ a worker-enabled process refuses to start.
 {{- end }}
 
 {{/*
+Are LTE downlinks enabled? They need Kafka credentials, mounts and egress.
+*/}}
+{{- define "truvami-pulse.cat1Enabled" -}}
+{{- if (.Values.pulse.cat1 | default dict).enabled -}}true{{- end -}}
+{{- end }}
+
+{{/*
+Strimzi KafkaUser name; Strimzi stores its credentials in a secret of the same name.
+*/}}
+{{- define "truvami-pulse.kafkaUserName" -}}
+{{- printf "%s-kafka" (include "truvami-pulse.fullname" .) | trunc 63 | trimSuffix "-" -}}
+{{- end }}
+
+{{/*
+Secret holding the Kafka cluster CA that signs the broker certificates.
+*/}}
+{{- define "truvami-pulse.kafkaClusterCaSecretName" -}}
+{{- .Values.kafka.clusterCaSecretName | default (printf "%s-cluster-ca-cert" .Values.kafka.cluster) -}}
+{{- end }}
+
+{{/*
 Guardrails that turn pulse startup failures into template failures.
 
 Pulse keeps active campaign UUIDs in memory and its ThingPark downlink limiter
@@ -102,6 +123,14 @@ downlink rate and splits campaign state across pods.
 {{- if $downlink }}
 {{- if not (index (index .Values.pulse.downlink "thingpark" | default dict) "allowed-hosts") }}
 {{- fail "pulse.grpc.locksmith.address is set but pulse.downlink.thingpark.allowed-hosts is empty; pulse refuses to start without at least one allowed ThingPark host" }}
+{{- end }}
+{{- end }}
+{{- if include "truvami-pulse.cat1Enabled" . }}
+{{- if not (trim (default "" .Values.pulse.grpc.api.address)) }}
+{{- fail "pulse.cat1.enabled=true requires pulse.grpc.api.address to be set; pulse reports LTE deliveries to the API" }}
+{{- end }}
+{{- if not (dig "bootstrap" "servers" list (.Values.pulse.kafka | default dict)) }}
+{{- fail "pulse.cat1.enabled=true requires pulse.kafka.bootstrap.servers to be set" }}
 {{- end }}
 {{- end }}
 {{- if .Values.pulse.worker.enabled }}
