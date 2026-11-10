@@ -69,7 +69,7 @@ version (a digest or branch build) are accepted as they are.
 {{- define "truvami-gateway.validateCat1Downlinks" -}}
 {{- if dig "cat1" "downlinks" "enabled" false .Values.gateway }}
 {{- $tag := .Values.image.tag | default .Chart.AppVersion | toString }}
-{{- if and (regexMatch "^v?[0-9]+\\.[0-9]+\\.[0-9]+(-[0-9A-Za-z.-]+)?$" $tag) (not (semverCompare ">=2.8.0-0" $tag)) }}
+{{- if and (regexMatch "^v?[0-9]+\\.[0-9]+\\.[0-9]+(-[0-9A-Za-z.-]+)?$" $tag) (not (semverCompare ">=2.8.0-rc1" $tag)) }}
 {{- fail (printf "gateway.cat1.downlinks.enabled=true requires gateway v2.8.0-rc1 or later, but the image tag is %q; set image.tag" $tag) }}
 {{- end }}
 {{- end }}
